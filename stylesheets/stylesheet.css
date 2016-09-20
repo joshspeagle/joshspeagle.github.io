@@ -7,8 +7,8 @@ body {
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.5;
-  background: 0a0a2c;
-  color: #eff0f0; }
+  color: #eff0f0;
+  background-color: #0a0a2c; }
 
 a {
   color: #ffa500;
