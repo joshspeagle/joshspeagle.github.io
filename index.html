@@ -4,364 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joshua S. Speagle | Astrostatistics & Data Science</title>
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: #e8e9ea;
-            background: linear-gradient(135deg, #0a0a2c 0%, #1a1a3a 25%, #0d1421 50%, #1a0a2c 75%, #0a0a2c 100%);
-            min-height: 100vh;
-        }
-
-        /* Header - Now with mobile optimization */
-        .header {
-            background: linear-gradient(135deg, #1e3a5f 0%, #4a0e4e 50%, #1a237e 100%);
-            padding: 2rem 0;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .header.compact {
-            padding: 1rem 0;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="1" fill="white" opacity="0.1"/><circle cx="80" cy="30" r="0.5" fill="white" opacity="0.2"/><circle cx="40" cy="70" r="1.5" fill="white" opacity="0.1"/><circle cx="90" cy="80" r="0.8" fill="white" opacity="0.15"/><circle cx="10" cy="90" r="1.2" fill="white" opacity="0.1"/></svg>') repeat;
-            animation: float 20s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-100px); }
-        }
-
-        .header-content {
-            position: relative;
-            z-index: 1;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .name {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(45deg, #ffffff, #64b5f6, #81c784);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            transition: all 0.3s ease;
-        }
-
-        .chinese-name {
-            font-size: 1.2rem;
-            opacity: 0.8;
-            margin-bottom: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .tagline {
-            font-size: 1.4rem;
-            font-weight: 300;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            transition: all 0.3s ease;
-        }
-
-        .leave-notice {
-            background: rgba(255, 193, 7, 0.1);
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1rem 0;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        /* Mobile toggle button */
-        .header-toggle {
-            display: none;
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 0.5rem;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 10;
-            transition: all 0.3s ease;
-            width: 40px;
-            height: 40px;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .header-toggle:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* Hide elements when compact on mobile */
-        .header.compact .chinese-name,
-        .header.compact .tagline,
-        .header.compact .leave-notice {
-            display: none;
-        }
-
-        .header.compact .name {
-            font-size: 2rem;
-            margin-bottom: 0;
-        }
-
-        /* Navigation */
-        .nav {
-            background: rgba(13, 20, 33, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding: 0 2rem;
-        }
-
-        .nav-link {
-            color: #e8e9ea;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-link:hover {
-            background: rgba(100, 181, 246, 0.2);
-            border-color: #64b5f6;
-            transform: translateY(-2px);
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section {
-            margin: 4rem 0;
-            padding: 3rem;
-            background: rgba(255, 255, 255, 0.02);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            background: linear-gradient(45deg, #64b5f6, #81c784, #ffb74d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .intro-grid {
-            display: grid;
-            grid-template-columns: 1fr 250px;
-            gap: 3rem;
-            align-items: start;
-        }
-
-        .profile-image {
-            width: 100%;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .two-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            margin-top: 2rem;
-        }
-
-        .highlight-box {
-            background: linear-gradient(135deg, rgba(100, 181, 246, 0.1), rgba(129, 199, 132, 0.1));
-            border: 1px solid rgba(100, 181, 246, 0.3);
-            border-radius: 15px;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-
-        .highlight-box h3 {
-            color: #64b5f6;
-            margin-bottom: 1rem;
-        }
-
-        .contact-info {
-            background: rgba(129, 199, 132, 0.1);
-            border: 1px solid rgba(129, 199, 132, 0.3);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .dog-photos {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .dog-photo {
-            text-align: center;
-        }
-
-        .dog-photo img {
-            width: 100%;
-            max-width: 200px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .dog-photo p {
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-            opacity: 0.8;
-        }
-
-        /* Links */
-        a {
-            color: #64b5f6;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        a:hover {
-            color: #81c784;
-            text-decoration: underline;
-        }
-
-        /* Footer */
-        .footer {
-            background: rgba(13, 20, 33, 0.9);
-            padding: 2rem 0;
-            text-align: center;
-            margin-top: 4rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        /* Mobile-specific styles */
-        @media (max-width: 768px) {
-            .header-toggle {
-                display: flex;
-            }
-            
-            .name {
-                font-size: 2.5rem;
-            }
-            
-            .chinese-name {
-                font-size: 1rem;
-            }
-            
-            .tagline {
-                font-size: 1.1rem;
-            }
-            
-            .leave-notice {
-                font-size: 0.9rem;
-                padding: 0.8rem;
-            }
-            
-            .intro-grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .two-column {
-                grid-template-columns: 1fr;
-            }
-            
-            .nav-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .section {
-                padding: 2rem 1rem;
-                margin: 2rem 0;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-        }
-
-        /* Extra small screens */
-        @media (max-width: 480px) {
-            .name {
-                font-size: 2rem;
-            }
-            
-            .header {
-                padding: 1.5rem 0;
-            }
-            
-            .header-content {
-                padding: 0 1rem;
-            }
-            
-            .nav-link {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* Smooth transitions */
-        .section {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease;
-        }
-
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
 </head>
 <body>
     <!-- Header -->
@@ -376,7 +26,12 @@
             
             <div class="leave-notice">
                 <strong>Note that I am on leave until Nov 2025.</strong><br>
-                During my leave, I am working as a Research Scientist at <a href="https://www.linkedin.com/company/river-run-trading/">River Run Trading</a>. Please direct business-related inquiries to <a href="mailto:joshspeagle@rtwotrading.com">joshspeagle@rtwotrading.com</a>. University-related inquiries should still be directed to <a href="mailto:j.speagle@utoronto.ca">j.speagle@utoronto.ca</a>.
+                During my leave, I am working as a Research Scientist at 
+                <a href="https://www.linkedin.com/company/river-run-trading/">River Run Trading</a>. 
+                Please direct business-related inquiries to 
+                <a href="mailto:joshspeagle@rtwotrading.com">joshspeagle@rtwotrading.com</a>. 
+                University-related inquiries should still be directed to 
+                <a href="mailto:j.speagle@utoronto.ca">j.speagle@utoronto.ca</a>.
             </div>
         </div>
     </header>
@@ -411,7 +66,7 @@
                     </div>
                 </div>
                 <div>
-                    <img src="NSERC_Speagle_Joshua_thumbnail.jpg" alt="Josh Speagle" class="profile-image">
+                    <img src="assets/images/NSERC_Speagle_Joshua_thumbnail.jpg" alt="Josh Speagle" class="profile-image">
                     <p style="text-align: center; font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
                         Photo courtesy of <a href="https://sgomez.org/">Sebastian Gomez</a>
                     </p>
@@ -447,7 +102,7 @@
                     <p>This led me to move in 2011 to Boston, Massachusetts, to pursue my studies at <a href="http://www.harvard.edu/"><strong>Harvard University</strong></a>, where I completed my Bachelor's Degree with Honors jointly in Astrophysics and Physics in 2015. During my time at Harvard, I participated in multiple research projects across a wide range of topics in astronomy with truly wonderful mentors.</p>
                 </div>
                 <div style="text-align: center;">
-                    <img src="china_childhood.jpg" alt="Childhood picture" style="width: 100%; max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);">
+                    <img src="assets/images/china_childhood.jpg" alt="Childhood picture" style="width: 100%; max-width: 300px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);">
                     <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
                         Photo of my younger brother Gary (left), my mother Wei (center), and me (right). Photo courtesy of Ron Speagle.
                     </p>
@@ -464,11 +119,11 @@
 
             <div class="dog-photos">
                 <div class="dog-photo">
-                    <img src="Kumo_laura.JPG" alt="Kumo">
+                    <img src="assets/images/Kumo_laura.JPG" alt="Kumo">
                     <p>Photo of Kumo courtesy of <a href="https://www.instagram.com/lmackphoto/?hl=en">Laura Mackereth</a>.</p>
                 </div>
                 <div class="dog-photo">
-                    <img src="aki.JPG" alt="Aki">
+                    <img src="assets/images/aki.JPG" alt="Aki">
                     <p>Photo of Aki courtesy of me!</p>
                 </div>
             </div>
@@ -527,14 +182,14 @@
             <h2 class="section-title">Publications</h2>
             
             <p>A mostly complete list of my publications can be found on:</p>
-            <ul style="list-style: none; padding: 0;">
-                <li style="margin: 1rem 0; padding: 1rem; background: rgba(100, 181, 246, 0.1); border-radius: 10px;">
+            <ul class="publication-links">
+                <li>
                     📚 <a href="https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0">SAO/NASA Astrophysics Data System</a>
                 </li>
-                <li style="margin: 1rem 0; padding: 1rem; background: rgba(129, 199, 132, 0.1); border-radius: 10px;">
+                <li>
                     🎓 <a href="https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ">Google Scholar</a>
                 </li>
-                <li style="margin: 1rem 0; padding: 1rem; background: rgba(255, 183, 77, 0.1); border-radius: 10px;">
+                <li>
                     📄 <a href="https://arxiv.org/search/?query=speagle%2C+j&searchtype=author&abstracts=show&order=-announced_date_first&size=50">arXiv</a>
                 </li>
             </ul>
@@ -561,10 +216,10 @@
 
             <div class="highlight-box">
                 <h3>Quick Links</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-                    <a href="https://joshspeagle.com/bio-cv/CV_speagle.pdf" style="display: block; padding: 1rem; background: rgba(100, 181, 246, 0.1); border-radius: 10px; text-align: center;">📄 CV</a>
-                    <a href="https://github.com/joshspeagle/" style="display: block; padding: 1rem; background: rgba(129, 199, 132, 0.1); border-radius: 10px; text-align: center;">💻 GitHub</a>
-                    <a href="https://astrostatuoft.com/" style="display: block; padding: 1rem; background: rgba(255, 183, 77, 0.1); border-radius: 10px; text-align: center;">🔬 Research Group</a>
+                <div class="quick-links-grid">
+                    <a href="https://joshspeagle.com/bio-cv/CV_speagle.pdf" class="quick-link">📄 CV</a>
+                    <a href="https://github.com/joshspeagle/" class="quick-link">💻 GitHub</a>
+                    <a href="https://astrostatuoft.com/" class="quick-link">🔬 Research Group</a>
                 </div>
             </div>
         </section>
@@ -580,72 +235,9 @@
         </div>
     </footer>
 
-    <script>
-        // Header toggle functionality
-        const header = document.getElementById('header');
-        const headerToggle = document.getElementById('headerToggle');
-        const toggleIcon = document.getElementById('toggleIcon');
-
-        // Only show toggle on mobile
-        function checkScreenSize() {
-            if (window.innerWidth <= 768) {
-                headerToggle.style.display = 'flex';
-            } else {
-                headerToggle.style.display = 'none';
-                header.classList.remove('compact');
-                toggleIcon.textContent = '−';
-            }
-        }
-
-        headerToggle.addEventListener('click', () => {
-            header.classList.toggle('compact');
-            toggleIcon.textContent = header.classList.contains('compact') ? '+' : '−';
-        });
-
-        // Check screen size on load and resize
-        checkScreenSize();
-        window.addEventListener('resize', checkScreenSize);
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Intersection Observer for fade-in animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        document.querySelectorAll('.section').forEach(section => {
-            observer.observe(section);
-        });
-
-        // Add some interactive elements
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-2px) scale(1.05)';
-            });
-            
-            link.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(-2px) scale(1)';
-            });
-        });
-    </script>
+    <!-- JavaScript Files -->
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/mobile-header.js"></script>
+    <script src="assets/js/animations.js"></script>
 </body>
 </html>

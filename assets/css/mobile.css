@@ -1,0 +1,150 @@
+/* Mobile CSS - Mobile-specific styles and responsive design */
+
+/* Mobile Header Toggle */
+.header-toggle {
+    display: none;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Hide elements when compact on mobile */
+.header.compact .chinese-name,
+.header.compact .tagline,
+.header.compact .leave-notice {
+    display: none;
+}
+
+.header.compact .name {
+    font-size: 2rem;
+    margin-bottom: 0;
+}
+
+/* Tablet styles */
+@media (max-width: 768px) {
+    .header-toggle {
+        display: flex;
+    }
+
+    .name {
+        font-size: 2.5rem;
+    }
+
+    .chinese-name {
+        font-size: 1rem;
+    }
+
+    .tagline {
+        font-size: 1.1rem;
+    }
+
+    .leave-notice {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+
+    .intro-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .nav-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .section {
+        padding: 2rem 1rem;
+        margin: 2rem 0;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .quick-links-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile phone styles */
+@media (max-width: 480px) {
+    .name {
+        font-size: 2rem;
+    }
+
+    .header {
+        padding: 1.5rem 0;
+    }
+
+    .header-content {
+        padding: 0 1rem;
+    }
+
+    .container {
+        padding: 0 1rem;
+    }
+
+    .nav-link {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .section {
+        padding: 1.5rem 1rem;
+        margin: 1.5rem 0;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .highlight-box {
+        padding: 1.5rem;
+    }
+
+    .contact-info {
+        padding: 1rem;
+    }
+
+    .dog-photos {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+    .name {
+        font-size: 1.8rem;
+    }
+
+    .section-title {
+        font-size: 1.6rem;
+    }
+
+    .nav-link {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.8rem;
+    }
+}
