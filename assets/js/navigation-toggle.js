@@ -33,6 +33,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 link.classList.add('active');
             }
         });
+
+        // Don't auto-collapse if user manually expanded the navigation
+        const userExpanded = sessionStorage.getItem('navManuallyExpanded') === 'true';
+        if (shouldCollapseNav() && !userExpanded) {
+            nav.classList.add('nav-collapsed');
+            toggleIcon.textContent = '+';
+        }
     }
 
     // Toggle navigation expanded/collapsed state
@@ -41,8 +48,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const isCollapsed = nav.classList.contains('nav-collapsed');
         toggleIcon.textContent = isCollapsed ? '+' : '−';
 
-        // Store preference
+        // Store both collapse state and manual expansion flag
         sessionStorage.setItem('navCollapsed', isCollapsed);
+        sessionStorage.setItem('navManuallyExpanded', !isCollapsed);
 
         // Visual feedback
         navToggle.style.transform = 'scale(0.9)';
@@ -69,12 +77,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Auto-collapse navigation when clicking a link (on mobile)
     function handleNavLinkClick() {
         if (shouldCollapseNav()) {
-            // Always collapse after clicking a link on mobile
+            // Reset manual expansion flag when user clicks a link
+            sessionStorage.removeItem('navManuallyExpanded');
+
             setTimeout(() => {
                 nav.classList.add('nav-collapsed');
                 toggleIcon.textContent = '+';
                 sessionStorage.setItem('navCollapsed', 'true');
-            }, 300); // Small delay for smooth scrolling
+            }, 300);
         }
     }
 
