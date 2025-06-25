@@ -46,11 +46,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function toggleNavigation() {
         nav.classList.toggle('nav-collapsed');
         const isCollapsed = nav.classList.contains('nav-collapsed');
-        toggleIcon.textContent = isCollapsed ? '+' : '−';
 
-        // Store both collapse state and manual expansion flag
-        sessionStorage.setItem('navCollapsed', isCollapsed);
-        sessionStorage.setItem('navManuallyExpanded', !isCollapsed);
+        // Add/remove manual expansion marker
+        if (isCollapsed) {
+            nav.classList.remove('nav-expanded');
+        } else {
+            nav.classList.add('nav-expanded');
+        }
+
+        toggleIcon.textContent = isCollapsed ? '+' : '−';
 
         // Visual feedback
         navToggle.style.transform = 'scale(0.9)';
@@ -64,12 +68,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (shouldCollapseNav()) {
             navToggle.style.display = 'flex';
 
-            // Always start collapsed on mobile
-            nav.classList.add('nav-collapsed');
-            toggleIcon.textContent = '+';
+            // Only auto-collapse if not manually expanded
+            if (!nav.classList.contains('nav-expanded')) {
+                nav.classList.add('nav-collapsed');
+                toggleIcon.textContent = '+';
+            }
         } else {
             navToggle.style.display = 'none';
-            nav.classList.remove('nav-collapsed');
+            nav.classList.remove('nav-collapsed', 'nav-expanded');
             toggleIcon.textContent = '−';
         }
     }
@@ -77,13 +83,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Auto-collapse navigation when clicking a link (on mobile)
     function handleNavLinkClick() {
         if (shouldCollapseNav()) {
-            // Reset manual expansion flag when user clicks a link
-            sessionStorage.removeItem('navManuallyExpanded');
-
             setTimeout(() => {
                 nav.classList.add('nav-collapsed');
+                nav.classList.remove('nav-expanded'); // Clear manual expansion
                 toggleIcon.textContent = '+';
-                sessionStorage.setItem('navCollapsed', 'true');
             }, 300);
         }
     }
