@@ -10,10 +10,6 @@
     transition: all 0.3s ease;
 }
 
-.header.compact {
-    padding: 1rem 0;
-}
-
 .header::before {
     content: '';
     position: absolute;
