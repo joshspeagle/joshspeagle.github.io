@@ -40,6 +40,12 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.name:hover {
+    filter: drop-shadow(0 0 20px rgba(100, 181, 246, 0.8)) drop-shadow(0 0 40px rgba(129, 199, 132, 0.6));
+    transform: scale(1.02);
 }
 
 .chinese-name {
@@ -53,6 +59,12 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.chinese-name:hover {
+    filter: drop-shadow(0 0 20px rgba(100, 181, 246, 0.8)) drop-shadow(0 0 40px rgba(129, 199, 132, 0.6));
+    transform: scale(1.02);
 }
 
 .tagline {
