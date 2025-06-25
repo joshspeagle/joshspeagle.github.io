@@ -6,7 +6,7 @@
 }
 
 .nav-collapsed .nav-container {
-    justify-content: flex-start;
+    justify-content: space-between;
     flex-wrap: nowrap;
     gap: 0.5rem;
 }
@@ -30,9 +30,14 @@
     }
 
     .nav-link {
-        padding: 0.3rem 0.6rem;
+        padding: 0.4rem 0.8rem;
         border-radius: 15px;
         font-size: 0.8rem;
+        min-height: 44px;
+        /* iOS recommended minimum touch target */
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Header mobile optimization */
@@ -45,7 +50,7 @@
     }
 
     .chinese-name {
-        font-size: 1rem;
+        font-size: 1.8rem;
     }
 
     .tagline {
@@ -97,7 +102,7 @@
     }
 
     .chinese-name {
-        font-size: 0.9rem;
+        font-size: 1.5rem;
     }
 
     .tagline {
@@ -145,6 +150,10 @@
 
     .name {
         font-size: 1.6rem;
+    }
+
+    .chinese-name {
+        font-size: 1.4rem;
     }
 
     .section-title {

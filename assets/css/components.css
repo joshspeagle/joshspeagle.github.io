@@ -32,7 +32,9 @@
 .name {
     font-size: 3.5rem;
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.2rem;
+    color: #ffffff;
+    /* Fallback color */
     background: linear-gradient(45deg, #ffffff, #64b5f6, #81c784);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -41,9 +43,15 @@
 }
 
 .chinese-name {
-    font-size: 1.2rem;
-    opacity: 0.8;
+    font-size: 3.5rem;
+    font-weight: 700;
     margin-bottom: 1rem;
+    color: #ffffff;
+    /* Fallback color */
+    background: linear-gradient(45deg, #ffffff, #64b5f6, #81c784);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     transition: all 0.3s ease;
 }
 
@@ -56,13 +64,17 @@
 }
 
 .leave-notice {
-    background: rgba(255, 193, 7, 0.1);
-    border: 2px solid #ffc107;
+    background: rgba(255, 193, 7, 0.05);
+    /* More subtle */
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    /* Thinner border */
     border-radius: 10px;
     padding: 1rem;
     margin: 1rem 0;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    font-weight: 400;
+    /* Less bold */
+    font-size: 0.9rem;
+    /* Slightly smaller */
 }
 
 /* Navigation */
@@ -117,7 +129,7 @@
     background: #64b5f6;
     border: none;
     color: white;
-    padding: 0.4rem;
+    padding: 0;
     border-radius: 6px;
     cursor: pointer;
     z-index: 20;
@@ -130,6 +142,8 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     -webkit-tap-highlight-color: transparent;
     flex-shrink: 0;
+    line-height: 1;
+    /* Prevents text from sitting high */
 }
 
 .nav-toggle:active {

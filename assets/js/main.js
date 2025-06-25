@@ -51,4 +51,10 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.transform = 'translateY(-2px)';
         });
     });
+
+    // Back to top on logo/name click
+    document.querySelector('.name').addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.style.cursor = 'pointer';
+    });
 });
