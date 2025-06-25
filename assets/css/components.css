@@ -1,7 +1,6 @@
 /* Components CSS - Reusable UI Elements */
 
 /* Header */
-/* Header */
 .header {
     background: linear-gradient(135deg, #1e3a5f 0%, #4a0e4e 50%, #1a237e 100%);
     padding: 2rem 0;
@@ -13,7 +12,6 @@
 
 /* Floating cosmic elements */
 .header::before,
-.header::after,
 .cosmic-element-1,
 .cosmic-element-2,
 .cosmic-element-3,
@@ -27,163 +25,229 @@
     pointer-events: none;
 }
 
-/* Star shape */
+/* Background stars */
 .header::before {
     width: 100%;
-    height: 100%;
-    top: 0;
+    height: 200%;
+    bottom: -100%;
     left: 0;
     background-image:
-        /* Small stars */
-        radial-gradient(2px 2px at 20% 30%, #87CEEB, transparent),
-        radial-gradient(2px 2px at 60% 70%, #FFB6C1, transparent),
+        /* Small bright stars */
+        radial-gradient(2px 2px at 20% 30%, white, transparent),
+        radial-gradient(2px 2px at 60% 70%, #FFE5B4, transparent),
         radial-gradient(1px 1px at 50% 50%, white, transparent),
-        radial-gradient(2px 2px at 80% 10%, #98D8FF, transparent),
-        radial-gradient(3px 3px at 10% 80%, #FFA07A, transparent),
-        radial-gradient(2px 2px at 95% 85%, #DDA0DD, transparent);
-    background-size: 200% 200%;
-    animation: floatUp 40s infinite linear;
+        radial-gradient(2px 2px at 80% 10%, white, transparent),
+        radial-gradient(3px 3px at 10% 80%, #FFF8DC, transparent),
+        radial-gradient(2px 2px at 95% 85%, white, transparent);
+    background-size: 100% 50%;
+    animation: floatUpBackground 40s infinite linear;
 }
 
-/* Larger cosmic objects container */
-.header::after {
+/* Spiral Galaxy 1 - Blue with visible arms */
+.cosmic-element-1 {
+    width: 50px;
+    height: 50px;
+    bottom: -60px;
+    left: 15%;
+    animation: floatUpObject 35s infinite linear;
+}
+
+.cosmic-element-1::before {
+    content: '';
+    position: absolute;
     width: 100%;
     height: 100%;
-    top: 0;
-    left: 0;
-    opacity: 0.6;
-}
-
-/* Spiral Galaxy 1 - Blue */
-.cosmic-element-1 {
-    width: 40px;
-    height: 40px;
-    top: 20%;
-    left: 15%;
-    background: radial-gradient(ellipse at center, #4A90E2 0%, #357ABD 30%, transparent 70%);
+    background: radial-gradient(circle at center, #4A90E2 0%, #357ABD 15%, transparent 50%);
     border-radius: 50%;
-    transform: rotate(45deg) scaleX(1.5);
-    animation: floatUp 35s infinite linear;
 }
 
 .cosmic-element-1::after {
     content: '';
     position: absolute;
-    inset: -5px;
-    background: conic-gradient(from 0deg, transparent, #4A90E280 90deg, transparent 180deg, #4A90E280 270deg, transparent);
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from 0deg,
+            transparent,
+            #4A90E240 30deg,
+            transparent 60deg,
+            #4A90E240 90deg,
+            transparent 120deg,
+            #4A90E240 150deg,
+            transparent 180deg,
+            #4A90E240 210deg,
+            transparent 240deg,
+            #4A90E240 270deg,
+            transparent 300deg,
+            #4A90E240 330deg,
+            transparent);
     border-radius: 50%;
-    transform: scaleX(1.2) scaleY(0.8);
+    transform: rotate(45deg);
 }
 
-/* Elliptical Galaxy 1 - Pink/Red */
+/* Elliptical Galaxy 1 - Red, elongated */
 .cosmic-element-2 {
-    width: 35px;
+    width: 40px;
     height: 20px;
-    top: 60%;
+    bottom: -60px;
     right: 20%;
-    background: radial-gradient(ellipse at center, #FFB6C1 0%, #FF69B4 30%, transparent 70%);
+    background: radial-gradient(ellipse at center, #DC143C 0%, #8B0000 20%, transparent 50%);
     border-radius: 50%;
     transform: rotate(-30deg);
-    animation: floatUp 42s infinite linear;
+    animation: floatUpObject 42s infinite linear;
     animation-delay: -10s;
 }
 
-/* Star Cluster - Orange/Red */
+/* Star Cluster - Bright white/yellow points */
 .cosmic-element-3 {
-    width: 25px;
-    height: 25px;
-    top: 40%;
+    width: 30px;
+    height: 30px;
+    bottom: -60px;
     left: 70%;
     background:
-        radial-gradient(circle at 40% 40%, #FF6B6B, transparent 40%),
-        radial-gradient(circle at 60% 60%, #EE5A24, transparent 30%),
-        radial-gradient(circle at 50% 30%, #FFA502, transparent 35%);
-    animation: floatUp 38s infinite linear;
+        radial-gradient(circle at 40% 40%, white, transparent 30%),
+        radial-gradient(circle at 60% 60%, #FFFACD, transparent 25%),
+        radial-gradient(circle at 50% 30%, white, transparent 20%);
+    animation: floatUpObject 38s infinite linear;
     animation-delay: -5s;
 }
 
-/* Spiral Galaxy 2 - Yellow/Orange */
+/* Spiral Galaxy 2 - Yellow with arms */
 .cosmic-element-4 {
-    width: 45px;
-    height: 45px;
-    bottom: 30%;
+    width: 55px;
+    height: 55px;
+    bottom: -70px;
     left: 40%;
-    background: radial-gradient(ellipse at center, #FFD93D 0%, #FF9F1C 40%, transparent 75%);
-    border-radius: 50%;
-    transform: rotate(120deg) scaleX(1.3);
-    animation: floatUp 45s infinite linear;
+    animation: floatUpObject 45s infinite linear;
     animation-delay: -15s;
+}
+
+.cosmic-element-4::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #FFD700 0%, #FFA500 15%, transparent 45%);
+    border-radius: 50%;
 }
 
 .cosmic-element-4::after {
     content: '';
     position: absolute;
-    inset: -8px;
-    background: conic-gradient(from 45deg, transparent, #FFB6C180 120deg, transparent 200deg, #FFB6C180 280deg, transparent);
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from 20deg,
+            transparent,
+            #FFD70030 40deg,
+            transparent 80deg,
+            #FFD70030 100deg,
+            transparent 140deg,
+            #FFD70030 160deg,
+            transparent 200deg,
+            #FFD70030 220deg,
+            transparent 260deg,
+            #FFD70030 280deg,
+            transparent 320deg,
+            #FFD70030 340deg,
+            transparent);
     border-radius: 50%;
-    transform: scaleX(1.4) scaleY(0.7);
+    transform: rotate(120deg) scale(1.2);
 }
 
-/* Elliptical Galaxy 2 - Red */
+/* Elliptical Galaxy 2 - Deep red, elongated */
 .cosmic-element-5 {
-    width: 30px;
-    height: 18px;
-    top: 80%;
+    width: 35px;
+    height: 15px;
+    bottom: -60px;
     left: 10%;
-    background: radial-gradient(ellipse at center, #FF6B6B 0%, #C44569 50%, transparent 90%);
+    background: radial-gradient(ellipse at center, #CD5C5C 0%, #800000 25%, transparent 55%);
     border-radius: 50%;
     transform: rotate(60deg);
-    animation: floatUp 40s infinite linear;
+    animation: floatUpObject 40s infinite linear;
     animation-delay: -20s;
 }
 
-/* Bright Star - White/Blue */
+/* Bright Star - White/Blue point source */
 .cosmic-element-6 {
-    width: 15px;
-    height: 15px;
-    top: 10%;
+    width: 10px;
+    height: 10px;
+    bottom: -60px;
     right: 40%;
-    background: radial-gradient(circle, #FFFFFF 0%, #87CEEB 50%, transparent 100%);
-    box-shadow: 0 0 20px #87CEEB;
+    background: radial-gradient(circle, white 0%, #87CEEB 30%, transparent 60%);
+    box-shadow: 0 0 15px white;
     border-radius: 50%;
-    animation: floatUp 33s infinite linear, twinkle 3s infinite;
+    animation: floatUpObject 33s infinite linear, twinkle 3s infinite;
     animation-delay: -8s;
 }
 
-/* Small Galaxy - Purple */
+/* Spiral Galaxy 3 - Red with arms */
 .cosmic-element-7 {
-    width: 28px;
-    height: 28px;
-    bottom: 50%;
+    width: 45px;
+    height: 45px;
+    bottom: -60px;
     right: 30%;
-    background: radial-gradient(ellipse at center, #9B59B6 0%, #8E44AD 40%, transparent 80%);
-    border-radius: 50%;
-    transform: rotate(-70deg) scaleY(0.6);
-    animation: floatUp 48s infinite linear;
+    animation: floatUpObject 48s infinite linear;
     animation-delay: -25s;
 }
 
-/* Distant Galaxy - Blue/Green */
+.cosmic-element-7::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at center, #FF6347 0%, #CD5C5C 15%, transparent 50%);
+    border-radius: 50%;
+}
+
+.cosmic-element-7::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: conic-gradient(from -30deg,
+            transparent,
+            #FF634730 50deg,
+            transparent 100deg,
+            #FF634730 130deg,
+            transparent 180deg,
+            #FF634730 210deg,
+            transparent 260deg,
+            #FF634730 290deg,
+            transparent 340deg);
+    border-radius: 50%;
+    transform: rotate(-70deg);
+}
+
+/* Elliptical Galaxy 3 - Dark red, very elongated */
 .cosmic-element-8 {
-    width: 20px;
-    height: 12px;
-    top: 50%;
+    width: 30px;
+    height: 10px;
+    bottom: -60px;
     left: 5%;
-    background: radial-gradient(ellipse at center, #4ECDC4 0%, #44A08D 40%, transparent 80%);
+    background: radial-gradient(ellipse at center, #B22222 0%, #4B0000 20%, transparent 45%);
     border-radius: 50%;
     transform: rotate(15deg);
-    animation: floatUp 50s infinite linear;
+    animation: floatUpObject 50s infinite linear;
     animation-delay: -30s;
 }
 
 /* Animations */
-@keyframes floatUp {
+@keyframes floatUpObject {
     0% {
         transform: translateY(0) translateX(0);
     }
 
     100% {
-        transform: translateY(-100vh) translateX(30px);
+        transform: translateY(calc(-100vh - 120px)) translateX(20px);
+    }
+}
+
+@keyframes floatUpBackground {
+    0% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(-50%);
     }
 }
 
@@ -191,13 +255,13 @@
 
     0%,
     100% {
-        opacity: 0.6;
+        opacity: 0.8;
         transform: scale(1);
     }
 
     50% {
         opacity: 1;
-        transform: scale(1.2);
+        transform: scale(1.3);
     }
 }
 
