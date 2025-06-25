@@ -7,7 +7,8 @@
 
 .nav-collapsed .nav-container {
     justify-content: flex-start;
-    gap: 1rem;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
 }
 
 /* Mobile styles */
