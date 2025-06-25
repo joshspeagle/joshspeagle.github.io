@@ -18,11 +18,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Enhanced navigation link interactions
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('mouseenter', function () {
-            this.style.transform = 'translateY(-2px) scale(1.05)';
+            if (window.innerWidth > 768) { // Only on desktop
+                this.style.transform = 'translateY(-2px) scale(1.05)';
+            }
         });
 
         link.addEventListener('mouseleave', function () {
-            this.style.transform = 'translateY(-2px) scale(1)';
+            if (window.innerWidth > 768) { // Only on desktop
+                this.style.transform = 'translateY(-2px) scale(1)';
+            }
         });
     });
 
@@ -47,31 +51,4 @@ document.addEventListener('DOMContentLoaded', function () {
             this.style.transform = 'translateY(-2px)';
         });
     });
-
-    // Add active state to navigation based on scroll position
-    const sections = document.querySelectorAll('.section');
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    function updateActiveNav() {
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            if (window.pageYOffset >= sectionTop - 200) {
-                current = section.getAttribute('id');
-            }
-        });
-
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === '#' + current) {
-                link.classList.add('active');
-            }
-        });
-    }
-
-    window.addEventListener('scroll', updateActiveNav);
-
-    // Initialize
-    updateActiveNav();
 });
