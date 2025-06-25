@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update active navigation link based on current section
     function updateActiveNavigation() {
         const sections = document.querySelectorAll('.section[id]');
-        let current = '';
+        let current = 'about'; // Default to first section
 
         sections.forEach(section => {
             const sectionTop = section.offsetTop - 100;
@@ -45,9 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
         sessionStorage.setItem('navCollapsed', isCollapsed);
 
         // Visual feedback
-        navToggle.style.transform = 'translateY(-50%) scale(0.9)';
+        navToggle.style.transform = 'scale(0.9)';
         setTimeout(() => {
-            navToggle.style.transform = 'translateY(-50%) scale(1)';
+            navToggle.style.transform = 'scale(1)';
         }, 100);
     }
 
@@ -56,12 +56,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (shouldCollapseNav()) {
             navToggle.style.display = 'flex';
 
-            // Auto-collapse on mobile, or restore saved state
-            const wasCollapsed = sessionStorage.getItem('navCollapsed') === 'true';
-            if (wasCollapsed || !nav.classList.contains('nav-collapsed')) {
-                nav.classList.add('nav-collapsed');
-                toggleIcon.textContent = '+';
-            }
+            // Always start collapsed on mobile
+            nav.classList.add('nav-collapsed');
+            toggleIcon.textContent = '+';
         } else {
             navToggle.style.display = 'none';
             nav.classList.remove('nav-collapsed');
@@ -71,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Auto-collapse navigation when clicking a link (on mobile)
     function handleNavLinkClick() {
-        if (shouldCollapseNav() && !nav.classList.contains('nav-collapsed')) {
+        if (shouldCollapseNav()) {
+            // Always collapse after clicking a link on mobile
             setTimeout(() => {
                 nav.classList.add('nav-collapsed');
                 toggleIcon.textContent = '+';
@@ -97,6 +95,12 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('resize', applyMobileNavState);
 
     // Initialize
-    applyMobileNavState();
+    window.addEventListener('load', function () {
+        updateActiveNavigation(); // Set initial active section
+        applyMobileNavState();     // Apply mobile state after active section is set
+    });
+
+    // Also initialize immediately
     updateActiveNavigation();
+    applyMobileNavState();
 });

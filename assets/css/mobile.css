@@ -2,13 +2,12 @@
 
 /* Mobile navigation optimization */
 .nav-collapsed .nav-link:not(.active) {
-    display: none;
+    display: none !important;
 }
 
 .nav-collapsed .nav-container {
-    justify-content: space-between;
-    padding-right: 60px;
-    /* Space for toggle button */
+    justify-content: flex-start;
+    gap: 1rem;
 }
 
 /* Mobile styles */

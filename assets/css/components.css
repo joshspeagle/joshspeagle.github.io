@@ -118,10 +118,6 @@
 /* Navigation toggle button */
 .nav-toggle {
     display: none;
-    position: absolute;
-    top: 50%;
-    right: 1rem;
-    transform: translateY(-50%);
     background: #64b5f6;
     border: none;
     color: white;
@@ -137,10 +133,11 @@
     font-size: 1rem;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     -webkit-tap-highlight-color: transparent;
+    flex-shrink: 0;
 }
 
 .nav-toggle:active {
-    transform: translateY(-50%) scale(0.95);
+    transform: scale(0.95);
 }
 
 /* Sections */
