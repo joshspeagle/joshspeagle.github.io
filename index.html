@@ -24,13 +24,18 @@
             min-height: 100vh;
         }
 
-        /* Header */
+        /* Header - Now with mobile optimization */
         .header {
             background: linear-gradient(135deg, #1e3a5f 0%, #4a0e4e 50%, #1a237e 100%);
             padding: 2rem 0;
             text-align: center;
             position: relative;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .header.compact {
+            padding: 1rem 0;
         }
 
         .header::before {
@@ -65,12 +70,14 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            transition: all 0.3s ease;
         }
 
         .chinese-name {
             font-size: 1.2rem;
             opacity: 0.8;
             margin-bottom: 1rem;
+            transition: all 0.3s ease;
         }
 
         .tagline {
@@ -78,6 +85,7 @@
             font-weight: 300;
             margin-bottom: 2rem;
             opacity: 0.9;
+            transition: all 0.3s ease;
         }
 
         .leave-notice {
@@ -87,6 +95,43 @@
             padding: 1rem;
             margin: 1rem 0;
             font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        /* Mobile toggle button */
+        .header-toggle {
+            display: none;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-toggle:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hide elements when compact on mobile */
+        .header.compact .chinese-name,
+        .header.compact .tagline,
+        .header.compact .leave-notice {
+            display: none;
+        }
+
+        .header.compact .name {
+            font-size: 2rem;
+            margin-bottom: 0;
         }
 
         /* Navigation */
@@ -238,10 +283,27 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Responsive Design */
+        /* Mobile-specific styles */
         @media (max-width: 768px) {
+            .header-toggle {
+                display: flex;
+            }
+            
             .name {
                 font-size: 2.5rem;
+            }
+            
+            .chinese-name {
+                font-size: 1rem;
+            }
+            
+            .tagline {
+                font-size: 1.1rem;
+            }
+            
+            .leave-notice {
+                font-size: 0.9rem;
+                padding: 0.8rem;
             }
             
             .intro-grid {
@@ -260,6 +322,31 @@
             
             .section {
                 padding: 2rem 1rem;
+                margin: 2rem 0;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .name {
+                font-size: 2rem;
+            }
+            
+            .header {
+                padding: 1.5rem 0;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .nav-link {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
             }
         }
 
@@ -278,7 +365,10 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
+    <header class="header" id="header">
+        <button class="header-toggle" id="headerToggle" aria-label="Toggle header">
+            <span id="toggleIcon">−</span>
+        </button>
         <div class="header-content">
             <h1 class="name">Joshua S. Speagle</h1>
             <p class="chinese-name">(沈佳士)</p>
@@ -491,6 +581,31 @@
     </footer>
 
     <script>
+        // Header toggle functionality
+        const header = document.getElementById('header');
+        const headerToggle = document.getElementById('headerToggle');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        // Only show toggle on mobile
+        function checkScreenSize() {
+            if (window.innerWidth <= 768) {
+                headerToggle.style.display = 'flex';
+            } else {
+                headerToggle.style.display = 'none';
+                header.classList.remove('compact');
+                toggleIcon.textContent = '−';
+            }
+        }
+
+        headerToggle.addEventListener('click', () => {
+            header.classList.toggle('compact');
+            toggleIcon.textContent = header.classList.contains('compact') ? '+' : '−';
+        });
+
+        // Check screen size on load and resize
+        checkScreenSize();
+        window.addEventListener('resize', checkScreenSize);
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
