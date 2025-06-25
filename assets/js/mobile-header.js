@@ -9,13 +9,23 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Check screen size and show/hide toggle accordingly
+    // Check screen size and apply mobile optimizations
     function checkScreenSize() {
-        if (window.innerWidth <= 768) {
+        const isMobile = window.innerWidth <= 768;
+        const isSmallMobile = window.innerWidth <= 480;
+
+        if (isMobile) {
             headerToggle.style.display = 'flex';
+            header.classList.add('mobile-default');
+
+            // Auto-compact on very small screens like iPhone SE
+            if (isSmallMobile && !header.classList.contains('compact')) {
+                header.classList.add('compact');
+                toggleIcon.textContent = '+';
+            }
         } else {
             headerToggle.style.display = 'none';
-            header.classList.remove('compact');
+            header.classList.remove('compact', 'mobile-default');
             toggleIcon.textContent = '−';
         }
     }
@@ -23,10 +33,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // Toggle header compact state
     function toggleHeader() {
         header.classList.toggle('compact');
-        toggleIcon.textContent = header.classList.contains('compact') ? '+' : '−';
+        const isCompact = header.classList.contains('compact');
+        toggleIcon.textContent = isCompact ? '+' : '−';
 
         // Store preference in sessionStorage
-        sessionStorage.setItem('headerCompact', header.classList.contains('compact'));
+        sessionStorage.setItem('headerCompact', isCompact);
+
+        // Visual feedback
+        headerToggle.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+            headerToggle.style.transform = 'scale(1)';
+        }, 100);
     }
 
     // Restore header state from sessionStorage
@@ -40,6 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Event listeners
     headerToggle.addEventListener('click', toggleHeader);
+    headerToggle.addEventListener('touchstart', toggleHeader); // Better mobile support
     window.addEventListener('resize', checkScreenSize);
 
     // Initialize
