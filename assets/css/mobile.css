@@ -160,3 +160,35 @@
         font-size: 1.4rem;
     }
 }
+
+/* Mobile styles for new elements */
+@media (max-width: 768px) {
+    .quick-links-inline {
+        gap: 1rem;
+    }
+
+    .quick-link-inline {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .art-showcase {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .art-logo-img {
+        max-width: 150px;
+        margin: 0 auto;
+    }
+
+    .art-highlights {
+        grid-template-columns: 1fr;
+    }
+
+    .art-cta {
+        flex-direction: column;
+        align-items: center;
+    }
+}

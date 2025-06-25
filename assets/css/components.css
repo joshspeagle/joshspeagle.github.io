@@ -274,3 +274,120 @@
     margin-top: 4rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Quick Links Bar */
+.quick-links-bar {
+    background: rgba(13, 20, 33, 0.95);
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quick-links-inline {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.quick-link-inline {
+    color: #e8e9ea;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    background: rgba(100, 181, 246, 0.1);
+    border: 1px solid rgba(100, 181, 246, 0.3);
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.quick-link-inline:hover {
+    background: rgba(100, 181, 246, 0.2);
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+/* ART Section Styles */
+.art-section {
+    background: linear-gradient(135deg, rgba(100, 181, 246, 0.05), rgba(129, 199, 132, 0.05));
+    border: 2px solid rgba(100, 181, 246, 0.2);
+}
+
+.art-showcase {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 3rem;
+    align-items: center;
+}
+
+.art-logo-img {
+    width: 100%;
+    height: auto;
+    filter: brightness(0) invert(1) sepia(1) saturate(2) hue-rotate(200deg);
+    opacity: 0.9;
+}
+
+.art-tagline {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: #81c784;
+    margin-bottom: 2rem;
+}
+
+.art-highlights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.art-highlight {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.art-highlight h4 {
+    color: #64b5f6;
+    margin-bottom: 0.5rem;
+}
+
+.art-cta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.art-button {
+    background: linear-gradient(45deg, #64b5f6, #81c784);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.art-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(100, 181, 246, 0.3);
+    text-decoration: none;
+    color: white;
+}
+
+.art-button-secondary {
+    background: transparent;
+    color: #64b5f6;
+    padding: 0.8rem 1.5rem;
+    border: 2px solid #64b5f6;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.art-button-secondary:hover {
+    background: #64b5f6;
+    color: white;
+    text-decoration: none;
+}
