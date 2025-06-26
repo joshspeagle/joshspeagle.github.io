@@ -2,253 +2,387 @@
     "header": {
         "name": "Joshua S. Speagle",
         "chineseName": "(沈佳士)",
-        "tagline": "Astrostatistics and Data Science",
-        "leaveNotice": {
-            "title": "Note that I am on leave until Nov 2025.",
-            "content": "During my leave, I am working as a Research Scientist at River Run Trading. Please direct business-related inquiries to joshspeagle@rtwotrading.com. University-related inquiries should still be directed to j.speagle@utoronto.ca.",
-            "links": {
-                "riverRun": "https://www.linkedin.com/company/river-run-trading/",
-                "businessEmail": "mailto:joshspeagle@rtwotrading.com",
-                "academicEmail": "mailto:j.speagle@utoronto.ca"
-            }
-        }
+        "tagline": "Statistical AI for Cosmic Discovery"
     },
+    "quickLinks": [
+        {
+            "icon": "📄",
+            "text": "CV",
+            "url": "https://joshspeagle.com/bio-cv/CV_speagle.pdf",
+            "ariaLabel": "Download CV PDF"
+        },
+        {
+            "icon": "✨",
+            "text": "Research Group",
+            "url": "https://astrostatuoft.com/",
+            "ariaLabel": "Visit Astrostatistics Research Team website"
+        },
+        {
+            "icon": "github",
+            "text": "GitHub",
+            "url": "https://github.com/joshspeagle/",
+            "ariaLabel": "Visit GitHub profile"
+        }
+    ],
     "navigation": [
         {
-            "text": "About",
+            "text": "About Me",
             "href": "#about"
         },
         {
-            "text": "Research",
+            "text": "Our Team",
+            "href": "#team"
+        },
+        {
+            "text": "My Work",
             "href": "#research"
+        },
+        {
+            "text": "Join Us",
+            "href": "#collaboration"
         },
         {
             "text": "Biography",
             "href": "#bio"
-        },
-        {
-            "text": "Teaching",
-            "href": "#teaching"
-        },
-        {
-            "text": "Mentorship",
-            "href": "#mentorship"
-        },
-        {
-            "text": "Publications",
-            "href": "#publications"
-        },
-        {
-            "text": "Contact",
-            "href": "#contact"
         }
     ],
     "sections": {
         "about": {
             "title": "Who am I?",
-            "content": "I am an **Assistant Professor of Astrostatistics** jointly appointed between the Department of Statistical Sciences and the David A. Dunlap Department of Astronomy & Astrophysics at the University of Toronto. I am also an Associate Member of the Dunlap Institute for Astronomy & Astrophysics as well as a Member of the Data Sciences Institute.",
+            "content": "I am an <strong>Assistant Professor of Astrostatistics</strong> jointly appointed between the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a> and the <a href=\"https://www.astro.utoronto.ca/\">David A. Dunlap Department of Astronomy & Astrophysics</a> at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>. I am also an Associate Member of the <a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute for Astronomy & Astrophysics</a> as well as a Member of the <a href=\"https://datasciences.utoronto.ca/\">Data Sciences Institute</a>.",
+            "highlightBox": {
+                "title": "A Few Other Things",
+                "content": "I also teach both undergraduate and graduate courses in statistics and astronomy, serve on a few committees (both within the University of Toronto and some professional societies such as the <a href=\"https://aas.org/\">AAS</a>, <a href=\"https://astrostat.org/\">ASA-AIG</a>, and <a href=\"https://ssc.ca/en/about/sections-regions/data-science-and-analytics\">SSC-DSA</a>), and help manage the <a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">Astronomy & Astrophysics Summer Undergraduate Research Program (SURP)</a> (the largest of its kind in Canada!)."
+            },
             "contactInfo": {
                 "title": "Contact Information",
                 "email": "j.speagle@utoronto.ca",
-                "offices": "UY 9108 (Statistical Sciences) and AB 206 (Astronomy & Astrophysics)",
-                "note": "Note: The odds of pinning me down in one of my offices without setting up an appointment first are likely pretty slim!"
+                "office": "UY 9134 (Statistical Sciences) and AB 206 (Astronomy & Astrophysics)"
             },
-            "links": {
-                "statisticalSciences": "https://www.statistics.utoronto.ca/",
-                "astronomy": "https://www.astro.utoronto.ca/",
-                "uoft": "https://www.utoronto.ca/",
-                "dunlap": "https://www.dunlap.utoronto.ca/",
-                "dataSciencesInstitute": "https://datasciences.utoronto.ca/"
+            "profileImage": {
+                "src": "assets/images/NSERC_Speagle_Joshua_thumbnail.jpg",
+                "alt": "Josh Speagle",
+                "credit": "Photo courtesy of",
+                "creditLink": "https://sgomez.org/",
+                "creditName": "Sebastian Gomez"
             }
+        },
+        "team": {
+            "title": "The Astrostatistics Research Team",
+            "tagline": "Where stars meet statistics",
+            "logo": {
+                "src": "assets/images/art-logo-mod.svg",
+                "alt": "Astrostatistics Research Team Logo - A stylized constellation forming the letters ART"
+            },
+            "content": "I am incredibly fortunate to co-lead the interdisciplinary <strong><a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a></strong> along with its founder <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>.",
+            "highlights": [
+                {
+                    "icon": "🔬",
+                    "title": "Cutting-Edge, Interdisciplinary Research",
+                    "content": "Pioneering new methods in astrophysics at the intersection of statistics and AI"
+                },
+                {
+                    "icon": "👥",
+                    "title": "Collaborative, Inclusive Environment",
+                    "content": "Interdisciplinary team spanning astrophysics, statistics, and data science"
+                }
+            ],
+            "cta": [
+                {
+                    "text": "Explore Our Research",
+                    "url": "https://astrostatuoft.com/",
+                    "type": "primary"
+                },
+                {
+                    "text": "Join Our Team",
+                    "url": "#collaboration",
+                    "type": "secondary"
+                }
+            ]
         },
         "research": {
             "title": "What do I do?",
-            "researchFocus": {
-                "title": "Research Focus",
-                "content": "**My research focuses on using a combination of astronomy, statistics, and data science to understand how galaxies like our own Milky Way form, behave, and evolve over time.** This often involves working with massive datasets from wide-field imaging and spectroscopic surveys containing observations ranging from billions of stars and galaxies to interstellar gas and dust."
+            "intro": "<strong>My research focuses on four main areas:</strong>",
+            "areas": [
+                {
+                    "icon": "🤖",
+                    "title": "Statistical Learning & AI",
+                    "description": "Developing novel methods to discover underlying patterns from (many) large, messy datasets."
+                },
+                {
+                    "icon": "🔍",
+                    "title": "Interpretability & Insight",
+                    "description": "Building up a rigorous understanding of how statistical methods work both in theory and in practice in order to extract novel scientific insights."
+                },
+                {
+                    "icon": "⚡",
+                    "title": "Inference & Computation",
+                    "description": "Establishing robust frameworks and designing tractable algorithms to efficiently quantify how much we can learn from data."
+                },
+                {
+                    "icon": "🌌",
+                    "title": "Discovery & Understanding",
+                    "description": "Applying these methods to large-scale astronomical surveys to uncover new insights about the universe, with a focus on how galaxies like our own Milky Way form, behave, and evolve over time."
+                }
+            ],
+            "additionalContent": "This work often involves working with massive datasets from wide-field imaging and spectroscopic surveys containing observations ranging from billions of stars and galaxies to interstellar gas and dust, but can also include smaller datasets from targeted observations of individual objects along with everything in between.",
+            "publications": {
+                "title": "Publications",
+                "intro": "A mostly complete list of my publications can be found on:",
+                "links": [
+                    {
+                        "name": "SAO/NASA ADS",
+                        "url": "https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0",
+                        "icon": "ads",
+                        "description": "Citations and references",
+                        "meta": "10,000+ citations • h-index: 40+"
+                    },
+                    {
+                        "name": "Google Scholar",
+                        "url": "https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ",
+                        "icon": "scholar",
+                        "description": "Complete bibliography",
+                        "meta": "100+ peer-reviewed papers"
+                    },
+                    {
+                        "name": "arXiv",
+                        "url": "https://arxiv.org/search/?query=speagle%2C+j&searchtype=author&abstracts=show&order=-announced_date_first&size=50",
+                        "icon": "arxiv",
+                        "description": "Preprints and early access papers",
+                        "meta": "Open access research"
+                    },
+                    {
+                        "name": "ORCID",
+                        "url": "https://orcid.org/my-orcid?orcid=0000-0003-2573-9832",
+                        "icon": "orcid",
+                        "description": "Persistent digital identifier",
+                        "meta": "0000-0003-2573-9832"
+                    }
+                ]
+            }
+        },
+        "collaboration": {
+            "title": "Collaboration & Mentorship",
+            "intro": "I consider collaboration and mentorship to be at the heart of my research and love working with students, postdocs, visiting researchers, and faculty across disciplines. If you're interested in working with me on a short-term or long-term project, please don't hesitate to reach out.",
+            "values": {
+                "title": "Our Values",
+                "items": [
+                    {
+                        "title": "Equity, Diversity, and Inclusion",
+                        "content": "We strive to create an environment where diverse backgrounds are an integral and well-supported part of our research community as well as individual members' identities as researchers. All members should know they are always valued."
+                    },
+                    {
+                        "title": "Open and Accessible Science",
+                        "content": "We're committed to growing our community by engaging in reproducible research, releasing open-source tools and pedagogical materials, and mentoring the next generation of astrostatisticians and data scientists through hands-on learning."
+                    }
+                ]
             },
-            "additionalWork": "I also teach both undergraduate and graduate courses in statistics and astronomy, serve on a few committees (both within the University of Toronto and some professional societies such as the AAS, ASA-AIG, and SSC-DSA), and help manage the Astronomy & Astrophysics Summer Undergraduate Research Program (SURP) (the largest of its kind in Canada!).",
-            "collaboration": {
-                "title": "Collaboration",
-                "content": "I am incredibly fortunate to co-lead the interdisciplinary **Astrostatistics Research Team (ART)** along with Gwen Eadie. For more information about the people involved and the research we do, please check out our **homepage**!"
-            },
-            "links": {
-                "aas": "https://aas.org/",
-                "asaAig": "https://astrostat.org/",
-                "sscDsa": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics",
-                "surp": "https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/",
-                "gwenEadie": "https://www.astro.utoronto.ca/~eadie/cover.html",
-                "artHomepage": "https://astrostatuoft.com/"
+            "opportunities": {
+                "title": "Opportunities",
+                "categories": [
+                    {
+                        "title": "Postdoctoral Researchers",
+                        "content": "Gwen and I are always looking for enthusiastic postdoctoral researchers to join the Astrostatistics Research Team! If you are interested in applying your skills to cutting-edge research in astrostatistics, please feel free to reach out to either me and/or Gwen.",
+                        "fellowships": {
+                            "intro": "Fellowship opportunities:",
+                            "links": [
+                                {
+                                    "name": "NSERC",
+                                    "url": "https://www.nserc-crsng.gc.ca/Students-Etudiants/PD-NP/cpra-bprc_eng.asp"
+                                },
+                                {
+                                    "name": "Banting",
+                                    "url": "https://banting.fellowships-bourses.gc.ca/en/home-accueil.html",
+                                    "note": "previously"
+                                },
+                                {
+                                    "name": "Arts & Science",
+                                    "url": "https://www.sgs.utoronto.ca/awards/https-www-artsci-utoronto-ca-faculty-staff-research-supports-services-find-fundingas-postdoctoral-fellowship-program/"
+                                },
+                                {
+                                    "name": "Provost",
+                                    "url": "https://www.sgs.utoronto.ca/awards/provosts-postdoctoral-fellowship-program/",
+                                    "note": "Black & Indigenous"
+                                },
+                                {
+                                    "name": "Dunlap",
+                                    "url": "https://www.dunlap.utoronto.ca/dunlap-fellowship/"
+                                },
+                                {
+                                    "name": "CITA",
+                                    "url": "https://www.cita.utoronto.ca/opportunities/post-docs/"
+                                },
+                                {
+                                    "name": "DSI",
+                                    "url": "https://datasciences.utoronto.ca/postdoctoral-fellowship/"
+                                },
+                                {
+                                    "name": "Schmidt AI in Science",
+                                    "url": "https://datasciences.utoronto.ca/schmidt-fellows/"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "title": "Graduate Students",
+                        "content": "I am always looking for enthusiastic students to join our research group. While I cannot directly admit graduate students, I encourage applications to our Master's/Doctoral programs. Please feel free to reach out if you are interested in learning more about my research and how it might fit into your potential graduate studies.",
+                        "programs": {
+                            "intro": "Programs:",
+                            "links": [
+                                {
+                                    "name": "Astronomy & Astrophysics",
+                                    "url": "https://www.sgs.utoronto.ca/programs/astronomy-and-astrophysics/"
+                                },
+                                {
+                                    "name": "Statistical Sciences",
+                                    "url": "https://www.sgs.utoronto.ca/programs/statistics/"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "title": "Undergraduate Students",
+                        "content": "I love working with undergraduate students both throughout the year and over the summer. I often post opportunities through existing program streams (to ensure equitable review processes), so please keep an eye on some of the opportunities outlined below. If you are interested in learning more, please feel free to reach out.",
+                        "subcategories": [
+                            {
+                                "title": "University of Toronto students:",
+                                "opportunities": [
+                                    {
+                                        "name": "Research Opportunity Program",
+                                        "url": "https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program",
+                                        "abbr": "ROP"
+                                    },
+                                    {
+                                        "name": "Work Study Program",
+                                        "url": "https://www.registrar.utoronto.ca/financial-aid-awards/work-study-program/",
+                                        "abbr": "WSP"
+                                    },
+                                    {
+                                        "name": "University of Toronto Excellence Award",
+                                        "url": "https://www.registrar.utoronto.ca/financial-aid-awards/utea/",
+                                        "abbr": "UTEA"
+                                    },
+                                    {
+                                        "name": "independent study courses",
+                                        "note": "AST, PHY, STA"
+                                    },
+                                    {
+                                        "name": "casual employment"
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "Canadian students:",
+                                "opportunities": [
+                                    {
+                                        "name": "Astronomy & Astrophysics SURP",
+                                        "url": "https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/"
+                                    },
+                                    {
+                                        "name": "CITA SURF",
+                                        "url": "https://www.cita.utoronto.ca/opportunities/surf-at-cita/"
+                                    },
+                                    {
+                                        "name": "DSI SUDS",
+                                        "url": "https://datasciences.utoronto.ca/suds/"
+                                    }
+                                ]
+                            },
+                            {
+                                "title": "International students:",
+                                "opportunities": [
+                                    {
+                                        "name": "Mitacs Globalink Research Internship",
+                                        "url": "https://www.mitacs.ca/our-programs/globalink-research-internship-students/"
+                                    },
+                                    {
+                                        "name": "Mitacs Globalink Research Award",
+                                        "url": "https://www.mitacs.ca/our-programs/globalink-research-award/"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Visiting Researchers & External Collaborators",
+                        "content": "I am always happy to start up new collaborations or strengthen existing ones. If you are interested in coming to the University of Toronto for either a short visit or extended stay, please reach out so we can discuss potential projects and coordinate funding."
+                    }
+                ]
             }
         },
         "biography": {
             "title": "Short Biography",
-            "paragraphs": [
-                "I spent a lot of my childhood shuttling back and forth between the **United States** and **China**, splitting my time between small suburban cities around Milwaukee, Wisconsin and the mega-cities of Beijing and Shanghai. After settling down in Brookfield, Wisconsin in my teenage years, I fell in love with astronomy and physics around the age of 17 after reading a copy of From Eternity to Here: The Quest for the Ultimate Theory of Time by Sean Carroll.",
-                "This led me to move in 2011 to Boston, Massachusetts, to pursue my studies at **Harvard University**, where I completed my Bachelor's Degree with Honors jointly in Astrophysics and Physics in 2015. During my time at Harvard, I participated in multiple research projects across a wide range of topics in astronomy with truly wonderful mentors.",
-                "What struck me across these projects was the extent to which so much of science depended on robust statistical analysis and computational methods. This led me to shift my research focus to the intersection of astrophysics, statistics, and computer science, namely **astrostatistics** and **data science**. In 2015, I moved to Kashiwa, Japan to work with Alexie Leauthaud and Kevin Bundy at the **Kavli Institute for the Physics and Mathematics of the Universe** (Kavli IPMU).",
-                "In 2016 I returned to Boston to pursue my graduate studies in the Department of Astronomy at Harvard. I received my Master's and Doctoral Degrees in 2020 under the joint supervision of Doug Finkbeiner, Charlie Conroy, Alyssa Goodman, and Daniel Eisenstein. My final thesis, **\"Mapping the Milky Way in the Age of Gaia\"**, was only possible thanks to the broad range of expertise provided by my advisers and collaborators.",
-                "Following my second stint at Harvard, I moved to Toronto, Canada in 2020 to work under the supervision of Gwen Eadie as a Banting Fellow and Dunlap Fellow at the **University of Toronto**. In 2022, I was extremely fortunate to be able to join her as the second **Assistant Professor in Astrostatistics** jointly appointed between the Department of Statistical Sciences and the David A. Dunlap Department of Astronomy & Astrophysics at the University of Toronto.",
-                "Outside of work, I mostly enjoy hanging out at home or going out with my wife, Rebecca, our two dogs, Kumo and Aki (pictured below), and our son, Atlas. I also watch way too much anime, play way too many video games, and have a supremely unhealthy love of junk food and soda."
-            ],
-            "links": {
-                "seanCarrollBook": "https://en.wikipedia.org/wiki/From_Eternity_to_Here:_The_Quest_for_the_Ultimate_Theory_of_Time",
-                "seanCarroll": "https://en.wikipedia.org/wiki/Sean_M._Carroll",
-                "harvard": "http://www.harvard.edu/",
-                "alexieLeauthaud": "https://alexie.sites.ucsc.edu/",
-                "kevinBundy": "https://www.ucolick.org/~kbundy/",
-                "kavliIPMU": "http://www.ipmu.jp/",
-                "harvardAstronomy": "http://astronomy.fas.harvard.edu/",
-                "dougFinkbeiner": "https://faun.rc.fas.harvard.edu/nebel/dfink/",
-                "charlieConroy": "http://scholar.harvard.edu/cconroy/home/",
-                "alyssaGoodman": "https://scholar.harvard.edu/agoodman",
-                "danielEisenstein": "http://scholar.harvard.edu/deisenstein/",
-                "thesis": "https://dash.harvard.edu/handle/1/37365889",
-                "gwenEadie": "https://www.astro.utoronto.ca/~eadie/intro.html",
-                "bantingFellow": "https://banting.fellowships-bourses.gc.ca/en/2019-2020-eng.html",
-                "dunlapFellow": "https://www.dunlap.utoronto.ca/people/dunlap-fellows/",
-                "uoft": "https://www.utoronto.ca/"
-            },
-            "dogPhotos": [
+            "timeline": [
                 {
-                    "src": "Kumo_laura.JPG",
-                    "alt": "Kumo",
-                    "caption": "Photo of Kumo courtesy of Laura Mackereth.",
-                    "creditLink": "https://www.instagram.com/lmackphoto/?hl=en"
+                    "title": "Childhood",
+                    "date": "1990s - 2011",
+                    "content": "Shuttled between the US (around Milwaukee) and China (Beijing and Shanghai). Fell in love with astronomy at age 17 after reading <a href=\"https://en.wikipedia.org/wiki/From_Eternity_to_Here:_The_Quest_for_the_Ultimate_Theory_of_Time\">From Eternity to Here</a> by <a href=\"https://en.wikipedia.org/wiki/Sean_M._Carroll\">Sean Carroll</a>.",
+                    "location": "USA & China",
+                    "position": "left"
                 },
                 {
-                    "src": "aki.JPG",
-                    "alt": "Aki",
+                    "title": "Undergraduate",
+                    "date": "2011 - 2015",
+                    "content": "Bachelor's Degree with Honors in Astrophysics and Physics at <a href=\"http://www.harvard.edu/\">Harvard University</a>. Participated in multiple research projects across astronomy.",
+                    "location": "Boston, Massachusetts",
+                    "position": "right"
+                },
+                {
+                    "title": "Research Fellow",
+                    "date": "2015 - 2016",
+                    "content": "Worked with <a href=\"https://alexie.sites.ucsc.edu/\">Alexie Leauthaud</a> and <a href=\"https://www.ucolick.org/~kbundy/\">Kevin Bundy</a> at <a href=\"http://www.ipmu.jp/\">Kavli IPMU</a>. Began shifting my focus to astrostatistics and data science.",
+                    "location": "Kashiwa, Japan",
+                    "position": "left"
+                },
+                {
+                    "title": "Graduate School",
+                    "date": "2016 - 2020",
+                    "content": "Master's and Doctoral Degrees at <a href=\"http://astronomy.fas.harvard.edu/\">Harvard</a>. Thesis: <a href=\"https://dash.harvard.edu/handle/1/37365889\">\"Mapping the Milky Way in the Age of Gaia\"</a> under <a href=\"https://faun.rc.fas.harvard.edu/nebel/dfink/\">Doug Finkbeiner</a>, <a href=\"http://scholar.harvard.edu/cconroy/home/\">Charlie Conroy</a>, and <a href=\"http://scholar.harvard.edu/deisenstein/\">Daniel Eisenstein</a>, with additional supervision by <a href=\"https://scholar.harvard.edu/agoodman\">Alyssa Goodman</a>.",
+                    "location": "Boston, Massachusetts",
+                    "position": "right"
+                },
+                {
+                    "title": "Postdoctoral Fellow",
+                    "date": "2020 - 2022",
+                    "content": "<a href=\"https://banting.fellowships-bourses.gc.ca/en/2019-2020-eng.html\">Banting Fellow</a> and <a href=\"https://www.dunlap.utoronto.ca/people/dunlap-fellows/\">Dunlap Fellow</a> at <a href=\"https://www.utoronto.ca/\">University of Toronto</a>, working with <a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a>.",
+                    "location": "Toronto, Canada",
+                    "position": "left"
+                },
+                {
+                    "title": "Assistant Professor",
+                    "date": "2022 - Present",
+                    "content": "Joint appointment in Statistical Sciences and Astronomy & Astrophysics. Co-leading the <a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a> with Gwen Eadie.",
+                    "location": "Toronto, Canada",
+                    "position": "right",
+                    "current": true
+                },
+                {
+                    "title": "Research Scientist",
+                    "date": "Jan-Apr 2025",
+                    "content": "While on leave from UofT, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on cutting-edge quantitative trading strategies for crypto assets.",
+                    "location": "Toronto, Canada (Remote)",
+                    "position": "left"
+                }
+            ],
+            "personalNote": "Outside of work, I mostly enjoy hanging out at home or going out with my wife, our two dogs, and our son. I also watch way too much anime, play way too many video games, and have a supremely unhealthy love of junk food and soda.",
+            "dogPhotos": [
+                {
+                    "src": "assets/images/Kumo_laura.JPG",
+                    "alt": "Kumo - a small white chihuahua mix with a fluffy coat",
+                    "caption": "Photo of Kumo courtesy of",
+                    "creditLink": "https://www.instagram.com/lmackphoto/?hl=en",
+                    "creditName": "Laura Mackereth"
+                },
+                {
+                    "src": "assets/images/aki.JPG",
+                    "alt": "Aki - a medium-sized brown dauchshund mix with a sleek coat",
                     "caption": "Photo of Aki courtesy of me!"
                 }
             ]
-        },
-        "teaching": {
-            "title": "Teaching",
-            "intro": "I have a strong interest in education and pedagogy, with a focus on practical skills such as programming, applied statistics, and data science that are invaluable but not often taught as part of a typical science curriculum. As part of my teaching, I try to develop online, interactive, and publicly available resources that facilitate \"flipped classroom\" environments focused on encouraging student engagement.",
-            "educationalResources": {
-                "title": "Educational Resources",
-                "content": "I work on publishing pedagogical texts and creating interactive resources. I also am a firm believer in peer-to-peer knowledge exchange as an integral part of learning about science and serve as an active participant in many journal clubs and discussion groups."
-            },
-            "journalClubs": "I founded and organized the Machine Learning Journal Club at the Center for Astrophysics | Harvard & Smithsonian from 2017-2020, and co-founded and organize the Statistics & Machine LEarning (SMILE) discussion group in Astronomy & Astrophysics at the University of Toronto.",
-            "principles": {
-                "edi": {
-                    "title": "Equity, Diversity, and Inclusion",
-                    "content": "For centuries, explicit and implicit discrimination have barred individuals from many backgrounds from participating fully and freely in science. As scientists and people, I feel we have a duty to address these injustices to both better our profession as well as society at large. I endeavor to create an environment in which all members feel that their diverse backgrounds can be an integral part of their identity as a scientist."
-                },
-                "openScience": {
-                    "title": "Open Science",
-                    "content": "I am a big proponent of open, accessible, and reproducible science. When conducting research, my collaborators and I make an active effort to share results along with data products and code. I also love making and sharing interactive visualizations from our projects and ensure my code remains public and well-documented."
-                }
-            },
-            "links": {
-                "cfa": "https://www.cfa.harvard.edu/",
-                "github": "https://github.com/joshspeagle/"
-            }
-        },
-        "mentorship": {
-            "title": "Mentorship",
-            "intro": "I consider mentorship and collaboration to be at the heart of my research and love working with students, postdocs, and faculty across disciplines. If you're interested in working with me on a short-term or long-term project, please don't hesitate to reach out.",
-            "opportunities": {
-                "title": "Opportunities for Students",
-                "graduate": {
-                    "title": "Graduate Students",
-                    "content": "While you are welcome to reach out to chat about my work, I cannot directly admit graduate students. If you are interested in potentially working with me, I would encourage you to apply to the Department of Statistical Sciences and/or David A. Dunlap Department of Astronomy & Astrophysics Master's/Doctoral program streams."
-                },
-                "undergraduate": {
-                    "title": "Undergraduate Students",
-                    "intro": "My general policy is not to accept students through ad hoc channels. Instead, I often post opportunities through existing program streams to ensure a broader cohort of potential applicants whose materials can be reviewed in a more inclusive and equitable manner.",
-                    "categories": [
-                        {
-                            "title": "Current University of Toronto students:",
-                            "content": "Opportunities include the Faculty of Arts & Science Research Opportunity Program (ROP), the University of Toronto Work Study Program (WSP), and various independent study courses."
-                        },
-                        {
-                            "title": "Canadian citizens/permanent residents:",
-                            "content": "Opportunities include the Astronomy & Astrophysics Summer Undergraduate Research Program (SURP) and the Data Sciences Institute's Summer Undergraduate Data Science (SUDS) Opportunities Program."
-                        },
-                        {
-                            "title": "International students:",
-                            "content": "Opportunities include the Mitacs Globalink Research Internship (GRI) and Globalink Research Award."
-                        }
-                    ]
-                }
-            }
-        },
-        "publications": {
-            "title": "Publications",
-            "intro": "A mostly complete list of my publications can be found on:",
-            "links": [
-                {
-                    "emoji": "📚",
-                    "text": "SAO/NASA Astrophysics Data System",
-                    "url": "https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0"
-                },
-                {
-                    "emoji": "🎓",
-                    "text": "Google Scholar",
-                    "url": "https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ"
-                },
-                {
-                    "emoji": "📄",
-                    "text": "arXiv",
-                    "url": "https://arxiv.org/search/?query=speagle%2C+j&searchtype=author&abstracts=show&order=-announced_date_first&size=50"
-                }
-            ]
-        },
-        "contact": {
-            "title": "Get in Touch",
-            "academic": {
-                "title": "Academic Inquiries",
-                "email": "j.speagle@utoronto.ca",
-                "officeHours": "By appointment",
-                "researchGroup": "Astrostatistics Research Team (ART)",
-                "researchGroupLink": "https://astrostatuoft.com/"
-            },
-            "business": {
-                "title": "Business Inquiries",
-                "email": "joshspeagle@rtwotrading.com",
-                "currentPosition": "Research Scientist at River Run Trading",
-                "note": "(On leave from University of Toronto until Nov 2025)",
-                "riverRunLink": "https://www.linkedin.com/company/river-run-trading/"
-            },
-            "quickLinks": {
-                "title": "Quick Links",
-                "links": [
-                    {
-                        "emoji": "📄",
-                        "text": "CV",
-                        "url": "https://joshspeagle.com/bio-cv/CV_speagle.pdf"
-                    },
-                    {
-                        "emoji": "💻",
-                        "text": "GitHub",
-                        "url": "https://github.com/joshspeagle/"
-                    },
-                    {
-                        "emoji": "🔬",
-                        "text": "Research Group",
-                        "url": "https://astrostatuoft.com/"
-                    }
-                ]
-            }
         }
     },
     "footer": {
-        "copyright": "© 2025 Joshua S. Speagle. This page was last updated on June 25, 2025.",
-        "credit": "Built and designed in collaboration with Claude Sonnet 4."
-    },
-    "images": {
-        "profile": {
-            "src": "NSERC_Speagle_Joshua_thumbnail.jpg",
-            "alt": "Josh Speagle",
-            "credit": "Photo courtesy of Sebastian Gomez",
-            "creditLink": "https://sgomez.org/"
-        },
-        "childhood": {
-            "src": "china_childhood.jpg",
-            "alt": "Childhood picture",
-            "caption": "Photo of my younger brother Gary (left), my mother Wei (center), and me (right). Photo courtesy of Ron Speagle."
-        }
+        "copyright": "© 2025 Joshua S. Speagle. This page was last updated on June 26, 2025.",
+        "credit": "Built and designed in collaboration with Claude Sonnet 4 & Claude Opus 4."
     }
 }

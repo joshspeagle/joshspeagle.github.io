@@ -1,6 +1,5 @@
 // Animations JavaScript - Scroll animations and visual effects
-document.addEventListener('DOMContentLoaded', function () {
-
+function initializeAnimations() {
     // Intersection Observer for fade-in animations
     const observerOptions = {
         threshold: 0.1,
@@ -76,59 +75,43 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 500 + (index * 100));
     });
 
-    // Typing effect for the tagline (optional - only if you want this effect)
-    function addTypingEffect() {
-        const tagline = document.querySelector('.tagline');
-        if (!tagline) return;
-
-        const text = tagline.textContent;
-        tagline.textContent = '';
-        tagline.style.borderRight = '2px solid #64b5f6';
-
-        let i = 0;
-        function typeWriter() {
-            if (i < text.length) {
-                tagline.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeWriter, 50);
-            } else {
-                // Remove cursor after typing is complete
+    // Timeline animation
+    const timelineObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
                 setTimeout(() => {
-                    tagline.style.borderRight = 'none';
-                }, 1000);
+                    entry.target.classList.add('visible');
+                }, index * 100);
             }
-        }
+        });
+    }, { threshold: 0.1 });
 
-        // Start typing after a short delay
-        setTimeout(typeWriter, 1000);
-    }
-
-    // Uncomment the line below if you want the typing effect
-    // addTypingEffect();
-
-    // Add CSS for active navigation state
-    const style = document.createElement('style');
-    style.textContent = `
-        .nav-link.active {
-            background: rgba(100, 181, 246, 0.3) !important;
-            border-color: #64b5f6 !important;
-            color: #ffffff !important;
-        }
-    `;
-    document.head.appendChild(style);
-});
-
-// Timeline animation
-const timelineObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry, index) => {
-        if (entry.isIntersecting) {
-            setTimeout(() => {
-                entry.target.classList.add('visible');
-            }, index * 100);
-        }
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        timelineObserver.observe(item);
     });
-}, { threshold: 0.1 });
 
-document.querySelectorAll('.timeline-item').forEach(item => {
-    timelineObserver.observe(item);
-});
+    // Add CSS for active navigation state (if not already added)
+    if (!document.getElementById('animation-styles')) {
+        const style = document.createElement('style');
+        style.id = 'animation-styles';
+        style.textContent = `
+            .nav-link.active {
+                background: rgba(100, 181, 246, 0.3) !important;
+                border-color: #64b5f6 !important;
+                color: #ffffff !important;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}
+
+// Initialize animations when DOM is ready (fallback for direct page load)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeAnimations);
+} else {
+    // DOM is already loaded, initialize immediately
+    initializeAnimations();
+}
+
+// Export for use by content loader
+window.initializeAnimations = initializeAnimations;

@@ -1,6 +1,5 @@
 // Main JavaScript - Core functionality
-document.addEventListener('DOMContentLoaded', function () {
-
+function initializeMainFunctionality() {
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -53,8 +52,23 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Back to top on logo/name click
-    document.querySelector('.name').addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        this.style.cursor = 'pointer';
-    });
+    const nameElement = document.querySelector('.name');
+    if (nameElement) {
+        nameElement.addEventListener('click', function () {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            this.style.cursor = 'pointer';
+        });
+    }
+}
+
+// Wait for content to be loaded, then initialize
+document.addEventListener('DOMContentLoaded', function () {
+    // The content loader will call initializeMainFunctionality after loading content
+    // This is just a fallback in case the page is loaded directly with content
+    if (document.querySelector('.name')) {
+        initializeMainFunctionality();
+    }
 });
+
+// Export for use by content loader
+window.initializeMainFunctionality = initializeMainFunctionality;

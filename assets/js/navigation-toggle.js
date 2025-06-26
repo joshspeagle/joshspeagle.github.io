@@ -1,5 +1,5 @@
 // Navigation Toggle JavaScript - Collapsible navigation for mobile
-document.addEventListener('DOMContentLoaded', function () {
+function initializeNavigation() {
     const nav = document.querySelector('.nav');
     const navToggle = document.getElementById('navToggle');
     const toggleIcon = document.getElementById('navToggleIcon');
@@ -116,4 +116,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // Also initialize immediately
     updateActiveNavigation();
     applyMobileNavState();
-});
+}
+
+// Initialize navigation when DOM is ready (fallback for direct page load)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeNavigation);
+} else {
+    // DOM is already loaded, initialize immediately
+    initializeNavigation();
+}
+
+// Export for use by content loader
+window.initializeNavigation = initializeNavigation;
