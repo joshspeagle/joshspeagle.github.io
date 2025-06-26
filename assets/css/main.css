@@ -15,6 +15,8 @@ body {
     color: #e8e9ea;
     background: linear-gradient(135deg, #0a0a2c 0%, #1a1a3a 25%, #0d1421 50%, #1a0a2c 75%, #0a0a2c 100%);
     min-height: 100vh;
+    font-size: 18px;
+    /* Base font size */
 }
 
 /* Typography */
