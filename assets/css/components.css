@@ -99,7 +99,7 @@
     border-radius: 50%;
     transform: rotate(-30deg);
     animation: floatUpObject 42s infinite linear;
-    animation-delay: -10s;
+    animation-delay: -3s;
 }
 
 /* Star Cluster - Keep sharp for point sources */
@@ -126,46 +126,27 @@
     bottom: -70px;
     left: 40%;
     animation: floatUpObject 45s infinite linear;
-    animation-delay: -15s;
+    animation-delay: -7s;
+    filter: blur(1px);
+    /* Slightly more blur to hide any remaining artifacts */
 }
 
 .cosmic-element-4::before {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center,
-            #FFD700 0%,
-            #FFD700 5%,
-            #FFA500 10%,
-            #FFA50088 20%,
-            #FFA50044 30%,
-            #FFA50022 40%,
-            transparent 45%);
+    width: 25px;
+    height: 25px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #FFD700;
     border-radius: 50%;
-}
-
-.cosmic-element-4::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: conic-gradient(from 20deg,
-            transparent,
-            #FFD70020 40deg,
-            transparent 80deg,
-            #FFD70020 100deg,
-            transparent 140deg,
-            #FFD70020 160deg,
-            transparent 200deg,
-            #FFD70020 220deg,
-            transparent 260deg,
-            #FFD70020 280deg,
-            transparent 320deg,
-            #FFD70020 340deg,
-            transparent);
-    border-radius: 50%;
-    transform: rotate(120deg) scale(1.2);
+    box-shadow:
+        0 0 8px 4px #FFD700AA,
+        0 0 16px 8px #FFA50088,
+        0 0 24px 12px #FFA50055,
+        0 0 32px 16px #FFA50033,
+        0 0 40px 20px #FFA50011;
 }
 
 /* Elliptical Galaxy 2 - Deep red, smooth elongated */
@@ -185,7 +166,7 @@
     border-radius: 50%;
     transform: rotate(60deg);
     animation: floatUpObject 40s infinite linear;
-    animation-delay: -20s;
+    animation-delay: -11s;
 }
 
 /* Bright Star - Keep sharp and bright */
@@ -198,7 +179,7 @@
     box-shadow: 0 0 15px white;
     border-radius: 50%;
     animation: floatUpObject 33s infinite linear, twinkle 3s infinite;
-    animation-delay: -8s;
+    animation-delay: -13s;
     opacity: 0.9;
     filter: none;
     /* No blur for stars */
@@ -211,7 +192,7 @@
     bottom: -60px;
     right: 30%;
     animation: floatUpObject 48s infinite linear;
-    animation-delay: -25s;
+    animation-delay: -17s;
 }
 
 .cosmic-element-7::before {
@@ -247,7 +228,7 @@
     border-radius: 50%;
     transform: rotate(15deg);
     animation: floatUpObject 50s infinite linear;
-    animation-delay: -30s;
+    animation-delay: -19s;
 }
 
 /* Animations remain the same */
