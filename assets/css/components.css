@@ -592,14 +592,22 @@
     display: grid;
     grid-template-columns: 200px 1fr;
     gap: 3rem;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .art-logo-img {
     width: 100%;
     height: auto;
-    filter: brightness(0) invert(1) sepia(1) saturate(2) hue-rotate(200deg);
-    opacity: 0.9;
+    /* Simple blue tint that matches your primary accent color */
+    filter: brightness(0) invert(1) sepia(1) saturate(2) hue-rotate(180deg);
+    opacity: 0.85;
+    transition: all 0.3s ease;
+}
+
+/* Subtle interaction on hover */
+.art-logo-img:hover {
+    opacity: 1;
+    transform: scale(1.02);
 }
 
 .art-tagline {
