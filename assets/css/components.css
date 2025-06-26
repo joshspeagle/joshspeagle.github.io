@@ -675,3 +675,110 @@
     color: white;
     text-decoration: none;
 }
+
+/* Publication Cards */
+.publication-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.publication-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.publication-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, transparent, rgba(100, 181, 246, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.publication-card:hover {
+    transform: translateY(-3px);
+    border-color: #64b5f6;
+    box-shadow: 0 10px 30px rgba(100, 181, 246, 0.2);
+}
+
+.publication-card:hover::before {
+    opacity: 1;
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(100, 181, 246, 0.1);
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-content h4 {
+    margin: 0 0 0.5rem 0;
+    color: #64b5f6;
+    font-size: 1.2rem;
+}
+
+.card-content p {
+    margin: 0 0 0.5rem 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.card-meta {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    color: #81c784;
+}
+
+.card-arrow {
+    font-size: 1.5rem;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.publication-card:hover .card-arrow {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .publication-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .publication-card {
+        padding: 1rem;
+    }
+
+    .card-icon {
+        width: 50px;
+        height: 50px;
+    }
+}

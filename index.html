@@ -188,23 +188,68 @@
             <div class="highlight-box">
                 <h3>Publications</h3>
                 <p>A mostly complete list of my publications can be found on:</p>
-                <ul class="publication-links">
-                    <li>
-                        📚
-                        <a href="https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0"
-                            aria-label="View publications on SAO/NASA Astrophysics Data System">SAO/NASA
-                            Astrophysics Data System (ADS)</a>
-                    </li>
-                    <li>
-                        🎓 <a href="https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ"
-                            aria-label="View publications on Google Scholar">Google Scholar</a>
-                    </li>
-                    <li>
-                        📄
-                        <a href="https://arxiv.org/search/?query=speagle%2C+j&searchtype=author&abstracts=show&order=-announced_date_first&size=50"
-                            aria-label="View preprints on arXiv">arXiv</a>
-                    </li>
-                </ul>
+                <div class="publication-cards">
+                    <a href="https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0"
+                        class="publication-card" aria-label="View publications on ADS">
+                        <div class="card-icon">
+                            <!-- ADS Logo (magnifying glass with 'a') -->
+                            <svg width="40" height="40" viewBox="0 0 100 100" fill="#64b5f6">
+                                <!-- Magnifying glass circle -->
+                                <circle cx="40" cy="40" r="25" stroke="#64b5f6" stroke-width="4" fill="none" />
+                                <!-- Handle -->
+                                <line x1="57" y1="57" x2="75" y2="75" stroke="#64b5f6" stroke-width="6"
+                                    stroke-linecap="round" />
+                                <!-- Letter 'a' inside -->
+                                <text x="40" y="48" font-family="Arial, sans-serif" font-size="28" font-weight="bold"
+                                    text-anchor="middle" fill="#64b5f6">a</text>
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <h4>SAO/NASA ADS</h4>
+                            <p>Citations and references</p>
+                            <span class="card-meta">10,000+ citations • h-index: 40+</span>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </a>
+
+                    <a href="https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ" class="publication-card"
+                        aria-label="View publications on Google Scholar">
+                        <div class="card-icon">
+                            <!-- Google Scholar Hat -->
+                            <svg width="40" height="40" viewBox="0 0 100 100" fill="#4285f4">
+                                <path d="M50 20 L20 35 L20 45 C20 45 20 70 50 70 C80 70 80 45 80 45 L80 35 Z"
+                                    stroke="#4285f4" stroke-width="3" fill="none" />
+                                <path d="M20 35 L50 20 L80 35" stroke="#4285f4" stroke-width="3" fill="none" />
+                                <path d="M65 30 L65 15 L70 15 L70 33" stroke="#4285f4" stroke-width="3" fill="none" />
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <h4>Google Scholar</h4>
+                            <p>Complete bibliography</p>
+                            <span class="card-meta">100+ peer-reviewed papers</span>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </a>
+
+                    <a href="https://arxiv.org/search/?query=speagle%2C+j&searchtype=author&abstracts=show&order=-announced_date_first&size=50"
+                        class="publication-card" aria-label="View preprints on arXiv">
+                        <div class="card-icon">
+                            <!-- arXiv Logo -->
+                            <svg width="40" height="40" viewBox="0 0 100 100" fill="#b31b1b">
+                                <text x="50" y="65" font-family="Times, serif" font-size="40" font-weight="normal"
+                                    text-anchor="middle" fill="#b31b1b">χ</text>
+                                <text x="32" y="60" font-family="Times, serif" font-size="35" font-weight="normal"
+                                    text-anchor="middle" fill="#b31b1b">ar</text>
+                            </svg>
+                        </div>
+                        <div class="card-content">
+                            <h4>arXiv</h4>
+                            <p>Preprints and early access papers</p>
+                            <span class="card-meta">Open access research</span>
+                        </div>
+                        <div class="card-arrow">→</div>
+                    </a>
+                </div>
             </div>
         </section>
 
