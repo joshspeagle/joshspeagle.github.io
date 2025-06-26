@@ -117,3 +117,18 @@ document.addEventListener('DOMContentLoaded', function () {
     `;
     document.head.appendChild(style);
 });
+
+// Timeline animation
+const timelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry, index) => {
+        if (entry.isIntersecting) {
+            setTimeout(() => {
+                entry.target.classList.add('visible');
+            }, index * 100);
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.timeline-item').forEach(item => {
+    timelineObserver.observe(item);
+});
