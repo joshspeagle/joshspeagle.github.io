@@ -1,0 +1,256 @@
+/* Theme Variables CSS - Dark/Light Mode Support */
+
+:root {
+    /* === COLOR DEFINITIONS === */
+
+    /* Dark Theme Colors (Default) */
+    --color-mode: 'dark';
+
+    /* Background Colors */
+    --bg-primary-1: #0a0a2c;
+    --bg-primary-2: #1a1a3a;
+    --bg-primary-3: #0d1421;
+    --bg-primary-4: #1a0a2c;
+    --bg-nav: rgba(13, 20, 33, 0.9);
+    --bg-nav-solid: #0d1421;
+    --bg-section: rgba(255, 255, 255, 0.02);
+    --bg-section-hover: rgba(255, 255, 255, 0.03);
+    --bg-highlight: rgba(255, 255, 255, 0.05);
+
+    /* Text Colors */
+    --text-primary: #e8e9ea;
+    --text-secondary: rgba(232, 233, 234, 0.9);
+    --text-muted: rgba(232, 233, 234, 0.7);
+    --text-white: #ffffff;
+
+    /* Accent Colors - These remain vibrant in both themes */
+    --accent-blue: #64b5f6;
+    --accent-green: #81c784;
+    --accent-orange: #ffb74d;
+    --accent-red: #DC143C;
+    --accent-yellow: #FFD700;
+
+    /* Brand Colors */
+    --brand-arxiv: #b31b1b;
+    --brand-scholar: #4285f4;
+    --brand-orcid: #A6CE39;
+
+    /* Border & Shadow Colors */
+    --border-primary: rgba(255, 255, 255, 0.1);
+    --border-accent: rgba(100, 181, 246, 0.2);
+    --border-accent-hover: rgba(100, 181, 246, 0.3);
+    --shadow-dark: rgba(0, 0, 0, 0.3);
+    --shadow-accent: rgba(100, 181, 246, 0.2);
+
+    /* Special Effects */
+    --glow-blue: rgba(100, 181, 246, 0.8);
+    --glow-green: rgba(129, 199, 132, 0.6);
+    --circuit-trace: rgba(100, 181, 246, 0.05);
+
+    /* Header Gradient Colors */
+    --header-gradient-1: #1e3a5f;
+    --header-gradient-2: #4a0e4e;
+    --header-gradient-3: #1a237e;
+
+    /* Toggle Button Position */
+    --toggle-button-bg: var(--bg-nav);
+    --toggle-button-border: var(--border-accent);
+    --toggle-icon-color: var(--accent-orange);
+}
+
+/* Light Theme Override */
+[data-theme="light"] {
+    --color-mode: 'light';
+
+    /* Background Colors - Light versions */
+    --bg-primary-1: #f8f9fa;
+    --bg-primary-2: #e9ecef;
+    --bg-primary-3: #f0f2f5;
+    --bg-primary-4: #f8f9fa;
+    --bg-nav: rgba(255, 255, 255, 0.95);
+    --bg-nav-solid: #ffffff;
+    --bg-section: rgba(0, 0, 0, 0.02);
+    --bg-section-hover: rgba(0, 0, 0, 0.03);
+    --bg-highlight: rgba(0, 0, 0, 0.05);
+
+    /* Text Colors - Inverted */
+    --text-primary: #2c3e50;
+    --text-secondary: rgba(44, 62, 80, 0.9);
+    --text-muted: rgba(44, 62, 80, 0.7);
+    --text-white: #2c3e50;
+    /* Maps to primary text in light mode */
+
+    /* Accent Colors - Slightly adjusted for light mode */
+    --accent-blue: #2196F3;
+    --accent-green: #4CAF50;
+    --accent-orange: #FF9800;
+    --accent-red: #DC143C;
+    --accent-yellow: #FFC107;
+
+    /* Border & Shadow Colors - Adjusted */
+    --border-primary: rgba(0, 0, 0, 0.1);
+    --border-accent: rgba(33, 150, 243, 0.3);
+    --border-accent-hover: rgba(33, 150, 243, 0.4);
+    --shadow-dark: rgba(0, 0, 0, 0.1);
+    --shadow-accent: rgba(33, 150, 243, 0.15);
+
+    /* Special Effects - Adjusted */
+    --glow-blue: rgba(33, 150, 243, 0.6);
+    --glow-green: rgba(76, 175, 80, 0.5);
+    --circuit-trace: rgba(33, 150, 243, 0.08);
+
+    /* Header Gradient Colors - Lighter versions */
+    --header-gradient-1: #5b7fa6;
+    --header-gradient-2: #8e5b91;
+    --header-gradient-3: #5c6bc0;
+
+    /* Toggle Button */
+    --toggle-button-bg: var(--bg-nav);
+    --toggle-button-border: var(--border-accent);
+    --toggle-icon-color: var(--accent-blue);
+}
+
+/* === UTILITY CLASSES === */
+
+/* Smooth transitions for theme switching */
+* {
+    transition: background-color 0.3s ease,
+        color 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+}
+
+/* Prevent transition on page load */
+.no-transition * {
+    transition: none !important;
+}
+
+/* === THEME-AWARE IMAGES === */
+
+/* Hide/show images based on theme */
+.dark-only {
+    display: block;
+}
+
+.light-only {
+    display: none;
+}
+
+[data-theme="light"] .dark-only {
+    display: none;
+}
+
+[data-theme="light"] .light-only {
+    display: block;
+}
+
+/* === SPECIAL ELEMENT OVERRIDES === */
+
+/* Invert filter for logos/icons in light mode */
+[data-theme="light"] .theme-invert {
+    filter: invert(1) hue-rotate(180deg);
+}
+
+/* Adjust opacity for better visibility in light mode */
+[data-theme="light"] .theme-dim {
+    opacity: 0.8;
+}
+
+/* === GRADIENT BACKGROUNDS === */
+
+/* Main body gradient */
+.gradient-bg-main {
+    background: linear-gradient(135deg,
+            var(--bg-primary-1) 0%,
+            var(--bg-primary-2) 25%,
+            var(--bg-primary-3) 50%,
+            var(--bg-primary-4) 75%,
+            var(--bg-primary-1) 100%);
+}
+
+/* Header gradient */
+.gradient-bg-header {
+    background: linear-gradient(135deg,
+            var(--header-gradient-1) 0%,
+            var(--header-gradient-2) 50%,
+            var(--header-gradient-3) 100%);
+}
+
+/* === THEME TOGGLE BUTTON === */
+
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    background: var(--toggle-button-bg);
+    border: 2px solid var(--toggle-button-border);
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 20px var(--shadow-accent);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+.theme-toggle svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: var(--toggle-icon-color);
+    transition: all 0.3s ease;
+}
+
+/* Icon rotation animation */
+.theme-toggle.switching svg {
+    animation: rotateIcon 0.5s ease;
+}
+
+@keyframes rotateIcon {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mobile positioning */
+@media (max-width: 768px) {
+    .theme-toggle {
+        width: 2.5rem;
+        height: 2.5rem;
+        top: 0.5rem;
+        right: 0.5rem;
+    }
+
+    .theme-toggle svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+}
+
+/* === CIRCUIT PATTERN ADJUSTMENTS === */
+
+[data-theme="light"] .circuit-bg {
+    opacity: 0.06;
+    /* Slightly more visible in light mode */
+}
+
+[data-theme="light"] .section::after {
+    opacity: 0.08;
+    /* Adjust circuit traces visibility */
+}
