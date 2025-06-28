@@ -32,9 +32,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (typeof initializeNavigation === 'function') {
                 initializeNavigation();
             }
-            if (typeof window.circuitAnimations !== 'undefined' && window.circuitAnimations.init) {
-                window.circuitAnimations.init();
-            }
         }, 100);
 
     } catch (error) {
@@ -322,7 +319,6 @@ function createTimelineItem(item) {
     return `
         <div class="timeline-item ${item.position}">
             <div class="timeline-dot${item.current ? ' current' : ''}"></div>
-            <div class="circuit-connector"></div>
             <div class="timeline-content${item.current ? ' current' : ''}">
                 <h3>${item.title}</h3>
                 <span class="timeline-date">${item.date}</span>

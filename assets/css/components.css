@@ -850,7 +850,7 @@
     }
 }
 
-/* Timeline Styles - Circuit Board Design */
+/* Timeline Styles */
 .timeline-container {
     position: relative;
     max-width: 1000px;
@@ -858,45 +858,19 @@
     padding: 2rem 0;
 }
 
-/* Main circuit trace (vertical) */
 .timeline-line {
     position: absolute;
     left: 50%;
     top: 0;
     bottom: 0;
-    width: 4px;
-    background:
-        /* Main trace */
-        linear-gradient(180deg,
-            var(--accent-blue) 0%,
-            var(--accent-blue) 30%,
-            var(--accent-green) 50%,
-            var(--accent-green) 70%,
-            var(--accent-orange) 100%);
+    width: 2px;
+    background: var(--timeline-gradient);
     transform: translateX(-50%);
-    /* Circuit board effect */
-    box-shadow:
-        0 0 0 1px var(--border-primary),
-        0 0 10px var(--circuit-trace);
-}
-
-/* Add circuit pattern overlay */
-.timeline-line::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(0deg,
-            transparent 0,
-            transparent 40px,
-            var(--border-accent) 40px,
-            var(--border-accent) 42px);
-    opacity: 0.5;
 }
 
 .timeline-item {
     position: relative;
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
     width: 45%;
 }
 
@@ -910,131 +884,48 @@
     text-align: left;
 }
 
-/* Circuit connection branch */
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    top: 15px;
-    height: 2px;
-    background: var(--accent-blue);
-    box-shadow: 0 0 5px var(--circuit-trace);
-}
-
-.timeline-item.left::before {
-    right: -5%;
-    width: 55%;
-    /* Angled connection */
-    background:
-        linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-blue) 60%, transparent 60%),
-        linear-gradient(135deg, transparent 59%, var(--accent-blue) 59%, var(--accent-blue) 61%, transparent 61%);
-    background-size: 100% 100%, 20px 20px;
-    background-position: 0 0, right center;
-}
-
-.timeline-item.right::before {
-    left: -5%;
-    width: 55%;
-    /* Angled connection */
-    background:
-        linear-gradient(-90deg, var(--accent-blue) 0%, var(--accent-blue) 60%, transparent 60%),
-        linear-gradient(-135deg, transparent 59%, var(--accent-blue) 59%, var(--accent-blue) 61%, transparent 61%);
-    background-size: 100% 100%, 20px 20px;
-    background-position: 0 0, left center;
-}
-
-/* Circuit node (enhanced) */
 .timeline-dot {
     position: absolute;
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     background: var(--accent-blue);
-    border: 3px solid var(--bg-primary-2);
-    top: 3px;
-    z-index: 2;
-    /* Hexagonal shape */
-    clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
-    transition: all 0.3s ease;
-}
-
-.timeline-dot::before {
-    content: '';
-    position: absolute;
-    inset: 3px;
-    background: var(--accent-blue);
-    clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
-    opacity: 0.5;
+    border: 4px solid var(--bg-primary-2);
+    border-radius: 50%;
+    top: 0;
+    z-index: 1;
 }
 
 .timeline-item.left .timeline-dot {
-    right: -12px;
+    right: -10%;
 }
 
 .timeline-item.right .timeline-dot {
-    left: -12px;
+    left: -10%;
 }
 
 .timeline-dot.current {
     background: var(--accent-orange);
-    animation: nodePulse 2s ease-in-out infinite;
-    box-shadow: 0 0 20px var(--accent-orange);
+    box-shadow: 0 0 20px rgba(255, 183, 77, 0.6);
 }
 
-.timeline-dot.current::before {
-    background: var(--accent-orange);
-}
-
-.timeline-dot:hover {
-    transform: scale(1.2) rotate(30deg);
-}
-
-/* Circuit board style content box */
 .timeline-content {
     padding: 1.5rem;
-    background:
-        var(--timeline-bg),
-        /* Circuit pattern */
-        repeating-linear-gradient(45deg,
-            transparent 0,
-            transparent 19px,
-            var(--circuit-trace) 19px,
-            var(--circuit-trace) 20px);
-    border: 2px solid var(--border-primary);
+    background: var(--timeline-bg);
+    border: 1px solid var(--border-primary);
+    border-radius: 15px;
     position: relative;
     transition: all 0.3s ease;
-    /* PCB-style corners */
-    clip-path: polygon(0 10px, 10px 0,
-            calc(100% - 10px) 0, 100% 10px,
-            100% calc(100% - 10px), calc(100% - 10px) 100%,
-            10px 100%, 0 calc(100% - 10px));
-}
-
-.timeline-content::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(45deg, var(--accent-blue), var(--accent-green));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    clip-path: inherit;
-    z-index: -1;
 }
 
 .timeline-content:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
     border-color: var(--accent-blue);
-    box-shadow:
-        0 5px 20px var(--shadow-accent),
-        inset 0 0 20px var(--circuit-trace);
-}
-
-.timeline-content:hover::before {
-    opacity: 0.1;
+    box-shadow: 0 5px 20px var(--shadow-accent);
 }
 
 .timeline-content.current {
     border-color: var(--timeline-border-current);
     background: var(--timeline-bg-current);
-    border-width: 2px;
 }
 
 .timeline-content h3 {
@@ -1047,7 +938,6 @@
     color: var(--accent-green);
     font-size: 0.9rem;
     font-weight: 600;
-    font-family: 'Courier New', monospace;
 }
 
 .timeline-content p {
@@ -1060,53 +950,37 @@
     font-size: 0.85rem;
     color: var(--accent-orange);
     margin-top: 0.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
 }
 
-/* Connection indicator (replaces arrow) */
-.timeline-item .circuit-connector {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: var(--accent-blue);
-    border: 2px solid var(--bg-primary-2);
-    transform: rotate(45deg);
-    top: 15px;
-}
-
-.timeline-item.left .circuit-connector {
-    right: -4px;
-}
-
-.timeline-item.right .circuit-connector {
-    left: -4px;
-}
-
-/* Add data flow animation to active items */
-.timeline-item.visible .timeline-content::after {
+/* Arrow indicators */
+.timeline-item.left .timeline-content::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    background: linear-gradient(45deg,
-            transparent 30%,
-            var(--accent-blue) 50%,
-            transparent 70%);
-    background-size: 200% 200%;
-    animation: diagonalFlow 2s ease-in-out;
-    opacity: 0.1;
+    right: -8px;
+    top: 20px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid var(--border-primary);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+}
+
+.timeline-item.right .timeline-content::after {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 20px;
+    width: 0;
+    height: 0;
+    border-right: 8px solid var(--border-primary);
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
     .timeline-line {
         left: 20px;
-        width: 3px;
     }
 
     .timeline-item {
@@ -1115,20 +989,16 @@
         text-align: left !important;
     }
 
-    .timeline-item::before {
-        left: -20px !important;
-        width: 20px !important;
-        background: var(--accent-blue) !important;
-    }
-
     .timeline-item .timeline-dot {
-        left: -32px !important;
+        left: -30px !important;
         right: auto !important;
     }
 
-    .timeline-item .circuit-connector {
-        left: -4px !important;
+    .timeline-item .timeline-content::after {
+        left: -8px !important;
         right: auto !important;
+        border-right: 8px solid var(--border-primary);
+        border-left: none;
     }
 }
 
@@ -1142,33 +1012,4 @@
     opacity: 1;
     transform: translateY(0);
     transition: all 0.6s ease;
-}
-
-/* Stagger animation delay */
-.timeline-item:nth-child(1) {
-    transition-delay: 0.1s;
-}
-
-.timeline-item:nth-child(2) {
-    transition-delay: 0.2s;
-}
-
-.timeline-item:nth-child(3) {
-    transition-delay: 0.3s;
-}
-
-.timeline-item:nth-child(4) {
-    transition-delay: 0.4s;
-}
-
-.timeline-item:nth-child(5) {
-    transition-delay: 0.5s;
-}
-
-.timeline-item:nth-child(6) {
-    transition-delay: 0.6s;
-}
-
-.timeline-item:nth-child(7) {
-    transition-delay: 0.7s;
 }
