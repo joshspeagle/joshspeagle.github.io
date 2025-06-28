@@ -127,36 +127,20 @@
 
     // Handle special elements that need theme-specific treatment
     function handleSpecialElements(theme) {
-        // Handle images that need to be swapped
-        const artLogo = document.querySelector('.art-logo-img');
-        if (artLogo) {
-            if (theme === LIGHT_THEME) {
-                artLogo.classList.add('theme-invert');
-            } else {
-                artLogo.classList.remove('theme-invert');
-            }
-        }
+        // The ART logo is handled by CSS now, no need for JS manipulation
 
-        // Handle cosmic elements in header
-        const cosmicElements = document.querySelectorAll('[class^="cosmic-element"]');
-        cosmicElements.forEach(element => {
-            if (theme === LIGHT_THEME) {
-                element.style.opacity = '0.4'; // Dim in light mode
-            } else {
-                element.style.opacity = '0.7'; // Original opacity
-            }
+        // Handle cosmic elements in header - CSS handles this now
+
+        // Update body background - handled by CSS variables
+
+        // Trigger any theme-dependent animations or effects
+        const circuitElements = document.querySelectorAll('.circuit-bg, .section::before, .section::after');
+        circuitElements.forEach(element => {
+            // Force repaint to ensure smooth transition
+            element.style.display = 'none';
+            element.offsetHeight; // Trigger reflow
+            element.style.display = '';
         });
-
-        // Update gradient backgrounds
-        const body = document.body;
-        if (!body.classList.contains('gradient-bg-main')) {
-            body.classList.add('gradient-bg-main');
-        }
-
-        const header = document.querySelector('.header');
-        if (header && !header.classList.contains('gradient-bg-header')) {
-            header.classList.add('gradient-bg-header');
-        }
     }
 
     // Watch for system theme preference changes

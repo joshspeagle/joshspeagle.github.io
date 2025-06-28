@@ -16,6 +16,9 @@
     --bg-section: rgba(255, 255, 255, 0.02);
     --bg-section-hover: rgba(255, 255, 255, 0.03);
     --bg-highlight: rgba(255, 255, 255, 0.05);
+    --bg-highlight-box: linear-gradient(135deg, rgba(100, 181, 246, 0.1), rgba(129, 199, 132, 0.1));
+    --bg-contact: rgba(129, 199, 132, 0.1);
+    --bg-leave-notice: rgba(255, 193, 7, 0.05);
 
     /* Text Colors */
     --text-primary: #e8e9ea;
@@ -29,6 +32,7 @@
     --accent-orange: #ffb74d;
     --accent-red: #DC143C;
     --accent-yellow: #FFD700;
+    --accent-yellow-border: rgba(255, 193, 7, 0.3);
 
     /* Brand Colors */
     --brand-arxiv: #b31b1b;
@@ -39,18 +43,36 @@
     --border-primary: rgba(255, 255, 255, 0.1);
     --border-accent: rgba(100, 181, 246, 0.2);
     --border-accent-hover: rgba(100, 181, 246, 0.3);
+    --border-green: rgba(129, 199, 132, 0.3);
     --shadow-dark: rgba(0, 0, 0, 0.3);
+    --shadow-light: rgba(0, 0, 0, 0.1);
     --shadow-accent: rgba(100, 181, 246, 0.2);
 
     /* Special Effects */
     --glow-blue: rgba(100, 181, 246, 0.8);
     --glow-green: rgba(129, 199, 132, 0.6);
     --circuit-trace: rgba(100, 181, 246, 0.05);
+    --circuit-opacity: 0.03;
+    --circuit-border-opacity: 0.1;
 
     /* Header Gradient Colors */
     --header-gradient-1: #1e3a5f;
     --header-gradient-2: #4a0e4e;
     --header-gradient-3: #1a237e;
+
+    /* Gradient Text */
+    --gradient-text: linear-gradient(45deg, #ffffff, #64b5f6, #81c784);
+    --gradient-title: linear-gradient(45deg, #64b5f6, #81c784, #ffb74d);
+
+    /* Publication Cards */
+    --pub-card-bg: rgba(255, 255, 255, 0.03);
+    --pub-card-gradient: linear-gradient(135deg, transparent, rgba(100, 181, 246, 0.1));
+
+    /* Timeline */
+    --timeline-gradient: linear-gradient(180deg, #64b5f6, #81c784, #ffb74d);
+    --timeline-bg: rgba(255, 255, 255, 0.03);
+    --timeline-bg-current: rgba(255, 183, 77, 0.05);
+    --timeline-border-current: rgba(255, 183, 77, 0.3);
 
     /* Toggle Button Position */
     --toggle-button-bg: var(--bg-nav);
@@ -63,15 +85,18 @@
     --color-mode: 'light';
 
     /* Background Colors - Light versions */
-    --bg-primary-1: #f8f9fa;
-    --bg-primary-2: #e9ecef;
-    --bg-primary-3: #f0f2f5;
-    --bg-primary-4: #f8f9fa;
+    --bg-primary-1: #f5f7fa;
+    --bg-primary-2: #e3e8ef;
+    --bg-primary-3: #eef2f7;
+    --bg-primary-4: #f5f7fa;
     --bg-nav: rgba(255, 255, 255, 0.95);
     --bg-nav-solid: #ffffff;
     --bg-section: rgba(0, 0, 0, 0.02);
     --bg-section-hover: rgba(0, 0, 0, 0.03);
-    --bg-highlight: rgba(0, 0, 0, 0.05);
+    --bg-highlight: rgba(0, 0, 0, 0.04);
+    --bg-highlight-box: linear-gradient(135deg, rgba(33, 150, 243, 0.08), rgba(76, 175, 80, 0.08));
+    --bg-contact: rgba(76, 175, 80, 0.08);
+    --bg-leave-notice: rgba(255, 152, 0, 0.08);
 
     /* Text Colors - Inverted */
     --text-primary: #2c3e50;
@@ -80,29 +105,53 @@
     --text-white: #2c3e50;
     /* Maps to primary text in light mode */
 
-    /* Accent Colors - Slightly adjusted for light mode */
-    --accent-blue: #2196F3;
-    --accent-green: #4CAF50;
-    --accent-orange: #FF9800;
-    --accent-red: #DC143C;
-    --accent-yellow: #FFC107;
+    /* Accent Colors - Adjusted for light mode contrast */
+    --accent-blue: #1976D2;
+    --accent-green: #388E3C;
+    --accent-orange: #F57C00;
+    --accent-red: #C62828;
+    --accent-yellow: #FFA000;
+    --accent-yellow-border: rgba(255, 152, 0, 0.4);
+
+    /* Brand Colors - Keep original for recognition */
+    --brand-arxiv: #b31b1b;
+    --brand-scholar: #4285f4;
+    --brand-orcid: #A6CE39;
 
     /* Border & Shadow Colors - Adjusted */
     --border-primary: rgba(0, 0, 0, 0.1);
-    --border-accent: rgba(33, 150, 243, 0.3);
-    --border-accent-hover: rgba(33, 150, 243, 0.4);
+    --border-accent: rgba(25, 118, 210, 0.3);
+    --border-accent-hover: rgba(25, 118, 210, 0.4);
+    --border-green: rgba(56, 142, 60, 0.3);
     --shadow-dark: rgba(0, 0, 0, 0.1);
-    --shadow-accent: rgba(33, 150, 243, 0.15);
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-accent: rgba(25, 118, 210, 0.15);
 
     /* Special Effects - Adjusted */
-    --glow-blue: rgba(33, 150, 243, 0.6);
-    --glow-green: rgba(76, 175, 80, 0.5);
-    --circuit-trace: rgba(33, 150, 243, 0.08);
+    --glow-blue: rgba(25, 118, 210, 0.6);
+    --glow-green: rgba(56, 142, 60, 0.5);
+    --circuit-trace: rgba(25, 118, 210, 0.06);
+    --circuit-opacity: 0.04;
+    --circuit-border-opacity: 0.15;
 
-    /* Header Gradient Colors - Lighter versions */
-    --header-gradient-1: #5b7fa6;
-    --header-gradient-2: #8e5b91;
-    --header-gradient-3: #5c6bc0;
+    /* Header Gradient Colors - Lighter, more vibrant */
+    --header-gradient-1: #7e9cc9;
+    --header-gradient-2: #a67ba9;
+    --header-gradient-3: #7986cb;
+
+    /* Gradient Text */
+    --gradient-text: linear-gradient(45deg, #1976D2, #388E3C, #F57C00);
+    --gradient-title: linear-gradient(45deg, #1976D2, #388E3C, #F57C00);
+
+    /* Publication Cards */
+    --pub-card-bg: rgba(0, 0, 0, 0.02);
+    --pub-card-gradient: linear-gradient(135deg, transparent, rgba(25, 118, 210, 0.08));
+
+    /* Timeline */
+    --timeline-gradient: linear-gradient(180deg, #1976D2, #388E3C, #F57C00);
+    --timeline-bg: rgba(0, 0, 0, 0.02);
+    --timeline-bg-current: rgba(245, 124, 0, 0.08);
+    --timeline-border-current: rgba(245, 124, 0, 0.4);
 
     /* Toggle Button */
     --toggle-button-bg: var(--bg-nav);
@@ -144,11 +193,15 @@
     display: block;
 }
 
-/* === SPECIAL ELEMENT OVERRIDES === */
-
 /* Invert filter for logos/icons in light mode */
 [data-theme="light"] .theme-invert {
-    filter: invert(1) hue-rotate(180deg);
+    filter: invert(0.85) hue-rotate(180deg) brightness(1.1);
+}
+
+/* Special filter for ART logo */
+[data-theme="light"] .art-logo-img {
+    filter: brightness(0) invert(0.2);
+    opacity: 0.9;
 }
 
 /* Adjust opacity for better visibility in light mode */
@@ -159,7 +212,7 @@
 /* === GRADIENT BACKGROUNDS === */
 
 /* Main body gradient */
-.gradient-bg-main {
+body {
     background: linear-gradient(135deg,
             var(--bg-primary-1) 0%,
             var(--bg-primary-2) 25%,
@@ -168,19 +221,11 @@
             var(--bg-primary-1) 100%);
 }
 
-/* Header gradient */
-.gradient-bg-header {
-    background: linear-gradient(135deg,
-            var(--header-gradient-1) 0%,
-            var(--header-gradient-2) 50%,
-            var(--header-gradient-3) 100%);
-}
-
 /* === THEME TOGGLE BUTTON === */
 
 .theme-toggle {
     position: fixed;
-    top: 1rem;
+    top: 4.5rem;
     right: 1rem;
     z-index: 1000;
     background: var(--toggle-button-bg);
@@ -210,6 +255,8 @@
     width: 1.5rem;
     height: 1.5rem;
     fill: var(--toggle-icon-color);
+    stroke: var(--toggle-icon-color);
+    stroke-width: 2;
     transition: all 0.3s ease;
 }
 
@@ -233,7 +280,7 @@
     .theme-toggle {
         width: 2.5rem;
         height: 2.5rem;
-        top: 0.5rem;
+        top: 3.5rem;
         right: 0.5rem;
     }
 
@@ -247,10 +294,17 @@
 
 [data-theme="light"] .circuit-bg {
     opacity: 0.06;
-    /* Slightly more visible in light mode */
 }
 
 [data-theme="light"] .section::after {
     opacity: 0.08;
-    /* Adjust circuit traces visibility */
+}
+
+/* === LINK COLORS === */
+a {
+    color: var(--accent-blue);
+}
+
+a:hover {
+    color: var(--accent-green);
 }

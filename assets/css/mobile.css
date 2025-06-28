@@ -84,6 +84,11 @@
     .quick-links-grid {
         grid-template-columns: 1fr;
     }
+
+    /* Adjust theme toggle position on mobile */
+    .theme-toggle {
+        top: 3.5rem;
+    }
 }
 
 /* Small mobile phones */
@@ -190,5 +195,21 @@
     .art-cta {
         flex-direction: column;
         align-items: center;
+    }
+}
+
+/* Light mode specific mobile adjustments */
+[data-theme="light"] {
+
+    /* Ensure good contrast on mobile in light mode */
+    .nav-link {
+        background: var(--bg-highlight);
+        border-color: var(--border-primary);
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+        background: var(--border-accent);
+        border-color: var(--accent-blue);
     }
 }

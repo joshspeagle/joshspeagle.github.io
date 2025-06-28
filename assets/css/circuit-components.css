@@ -27,11 +27,15 @@
     opacity: 0.06;
     background-image:
         /* Vertical connecting traces */
-        linear-gradient(to bottom, transparent 48%, #64b5f6 48%, #64b5f6 48.5%, transparent 48.5%, transparent 51.5%, #64b5f6 51.5%, #64b5f6 52%, transparent 52%),
+        linear-gradient(to bottom, transparent 48%, var(--accent-blue) 48%, var(--accent-blue) 48.5%, transparent 48.5%, transparent 51.5%, var(--accent-blue) 51.5%, var(--accent-blue) 52%, transparent 52%),
         /* Horizontal traces */
-        linear-gradient(to right, transparent 48%, #81c784 48%, #81c784 48.5%, transparent 48.5%, transparent 51.5%, #81c784 51.5%, #81c784 52%, transparent 52%);
+        linear-gradient(to right, transparent 48%, var(--accent-green) 48%, var(--accent-green) 48.5%, transparent 48.5%, transparent 51.5%, var(--accent-green) 51.5%, var(--accent-green) 52%, transparent 52%);
     background-size: 100px 100%, 100% 100px;
     background-position: center;
+}
+
+[data-theme="light"] .container::before {
+    opacity: 0.04;
 }
 
 /* Circuit Board Section Styling */
@@ -40,10 +44,10 @@
     padding: 3rem;
     background:
         /* Gradient background */
-        linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.03) 100%),
+        linear-gradient(135deg, var(--bg-section), var(--bg-section-hover)),
         /* Circuit grid pattern */
-        linear-gradient(0deg, transparent 24%, rgba(100, 181, 246, 0.05) 25%, rgba(100, 181, 246, 0.05) 26%, transparent 27%, transparent 74%, rgba(100, 181, 246, 0.05) 75%, rgba(100, 181, 246, 0.05) 76%, transparent 77%, transparent),
-        linear-gradient(90deg, transparent 24%, rgba(100, 181, 246, 0.05) 25%, rgba(100, 181, 246, 0.05) 26%, transparent 27%, transparent 74%, rgba(100, 181, 246, 0.05) 75%, rgba(100, 181, 246, 0.05) 76%, transparent 77%, transparent);
+        linear-gradient(0deg, transparent 24%, var(--circuit-trace) 25%, var(--circuit-trace) 26%, transparent 27%, transparent 74%, var(--circuit-trace) 75%, var(--circuit-trace) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, var(--circuit-trace) 25%, var(--circuit-trace) 26%, transparent 27%, transparent 74%, var(--circuit-trace) 75%, var(--circuit-trace) 76%, transparent 77%, transparent);
     background-size: 100% 100%, 50px 50px, 50px 50px;
     border: none;
     position: relative;
@@ -77,10 +81,10 @@
     inset: -2px;
     background:
         /* Main border */
-        linear-gradient(to right, #64b5f6 0%, #64b5f6 100%),
+        linear-gradient(to right, var(--accent-blue) 0%, var(--accent-blue) 100%),
         /* Pin connectors pattern */
-        repeating-linear-gradient(to right, transparent 0px, transparent 8px, #64b5f6 8px, #64b5f6 12px, transparent 12px, transparent 20px),
-        repeating-linear-gradient(to bottom, transparent 0px, transparent 8px, #64b5f6 8px, #64b5f6 12px, transparent 12px, transparent 20px);
+        repeating-linear-gradient(to right, transparent 0px, transparent 8px, var(--accent-blue) 8px, var(--accent-blue) 12px, transparent 12px, transparent 20px),
+        repeating-linear-gradient(to bottom, transparent 0px, transparent 8px, var(--accent-blue) 8px, var(--accent-blue) 12px, transparent 12px, transparent 20px);
     background-size: 100% 100%, 100% 4px, 4px 100%;
     background-position: center, top, left;
     background-repeat: no-repeat, repeat-x, repeat-y;
@@ -93,7 +97,7 @@
             calc(50% + 30px) 100%, calc(50% + 30px) calc(100% - 8px), calc(50% - 30px) calc(100% - 8px), calc(50% - 30px) 100%,
             20px 100%, 20px calc(100% - 20px), 0 calc(100% - 20px),
             0 calc(50% + 20px), 8px calc(50% + 20px), 8px calc(50% - 20px), 0 calc(50% - 20px));
-    opacity: 0.1;
+    opacity: var(--circuit-border-opacity);
     pointer-events: none;
 }
 
@@ -112,33 +116,21 @@
     opacity: 0.05;
     background-image:
         /* Corner connection nodes */
-        radial-gradient(circle at 0% 0%, #64b5f6 0%, #64b5f6 8px, transparent 8px),
-        radial-gradient(circle at 100% 0%, #64b5f6 0%, #64b5f6 8px, transparent 8px),
-        radial-gradient(circle at 0% 100%, #64b5f6 0%, #64b5f6 8px, transparent 8px),
-        radial-gradient(circle at 100% 100%, #64b5f6 0%, #64b5f6 8px, transparent 8px),
+        radial-gradient(circle at 0% 0%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
+        radial-gradient(circle at 100% 0%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
+        radial-gradient(circle at 0% 100%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
+        radial-gradient(circle at 100% 100%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
         /* Circuit traces */
-        linear-gradient(to right, #64b5f6 0%, #64b5f6 2px, transparent 2px),
-        linear-gradient(to bottom, #64b5f6 0%, #64b5f6 2px, transparent 2px);
+        linear-gradient(to right, var(--accent-blue) 0%, var(--accent-blue) 2px, transparent 2px),
+        linear-gradient(to bottom, var(--accent-blue) 0%, var(--accent-blue) 2px, transparent 2px);
     background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50px 100%, 100% 50px;
     background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
     background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, repeat-y;
 }
 
-/* Animated circuit flow on hover
-@keyframes circuitFlow {
-    0% {
-        background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
-    }
-
-    100% {
-        background-position: 0 0, 0 0, 0 0, 0 0, 50px 0, 0 50px;
-    }
+[data-theme="light"] .section::after {
+    opacity: 0.08;
 }
-
-.section:hover::after {
-    animation: circuitFlow 2s linear infinite;
-    opacity: 0.2;
-} */
 
 /* Enhanced circuit background pattern */
 .circuit-bg {
@@ -147,11 +139,15 @@
     left: 0;
     right: 0;
     bottom: 0;
-    opacity: 0.03;
+    opacity: var(--circuit-opacity);
     pointer-events: none;
     z-index: 0;
     background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='circuit' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3C!-- Main traces --%3E%3Cpath d='M0 50h40l5-5h10l5 5h40M50 0v40l-5 5v10l5 5v40' stroke='%2364b5f6' stroke-width='1' fill='none' opacity='0.6'/%3E%3C!-- Connection nodes --%3E%3Ccircle cx='50' cy='50' r='4' fill='%2381c784'/%3E%3Ccircle cx='25' cy='50' r='2' fill='%2364b5f6'/%3E%3Ccircle cx='75' cy='50' r='2' fill='%2364b5f6'/%3E%3Ccircle cx='50' cy='25' r='2' fill='%2364b5f6'/%3E%3Ccircle cx='50' cy='75' r='2' fill='%2364b5f6'/%3E%3C!-- Diagonal traces --%3E%3Cpath d='M0 0l25 25M75 75l25 25M0 100l25-25M75 25l25-25' stroke='%2364b5f6' stroke-width='0.5' fill='none' opacity='0.4'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23circuit)'/%3E%3C/svg%3E");
     background-size: 400px 400px;
+}
+
+[data-theme="light"] .circuit-bg {
+    opacity: 0.06;
 }
 
 /* Special styling for ART section */
@@ -163,6 +159,14 @@
     background-size: 100% 100%, 50px 50px, 50px 50px;
 }
 
+[data-theme="light"] .art-section {
+    background:
+        linear-gradient(135deg, rgba(25, 118, 210, 0.04), rgba(56, 142, 60, 0.04)),
+        linear-gradient(0deg, transparent 24%, rgba(56, 142, 60, 0.04) 25%, rgba(56, 142, 60, 0.04) 26%, transparent 27%, transparent 74%, rgba(56, 142, 60, 0.04) 75%, rgba(56, 142, 60, 0.04) 76%, transparent 77%, transparent),
+        linear-gradient(90deg, transparent 24%, rgba(56, 142, 60, 0.04) 25%, rgba(56, 142, 60, 0.04) 26%, transparent 27%, transparent 74%, rgba(56, 142, 60, 0.04) 75%, rgba(56, 142, 60, 0.04) 76%, transparent 77%, transparent);
+    background-size: 100% 100%, 50px 50px, 50px 50px;
+}
+
 /* Circuit-style publication cards */
 .publication-card {
     display: flex;
@@ -170,12 +174,12 @@
     gap: 1rem;
     padding: 1.5rem;
     background:
-        rgba(255, 255, 255, 0.03),
+        var(--pub-card-bg),
         /* Circuit pattern overlay */
-        linear-gradient(45deg, transparent 48%, rgba(100, 181, 246, 0.05) 49%, rgba(100, 181, 246, 0.05) 51%, transparent 52%),
-        linear-gradient(-45deg, transparent 48%, rgba(100, 181, 246, 0.05) 49%, rgba(100, 181, 246, 0.05) 51%, transparent 52%);
+        linear-gradient(45deg, transparent 48%, var(--circuit-trace) 49%, var(--circuit-trace) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, var(--circuit-trace) 49%, var(--circuit-trace) 51%, transparent 52%);
     background-size: 100% 100%, 20px 20px, 20px 20px;
-    border: 1px solid rgba(100, 181, 246, 0.2);
+    border: 1px solid var(--border-accent);
     /* Chip-style shape */
     clip-path: polygon(0 8px, 8px 0,
             /* top-left bevel */
@@ -200,7 +204,7 @@
     inset: -4px;
     background:
         /* Connection pins on edges */
-        repeating-linear-gradient(to right, transparent 0, transparent 12px, #64b5f6 12px, #64b5f6 16px, transparent 16px, transparent 24px);
+        repeating-linear-gradient(to right, transparent 0, transparent 12px, var(--accent-blue) 12px, var(--accent-blue) 16px, transparent 16px, transparent 24px);
     background-size: 100% 2px;
     background-position: center top;
     background-repeat: repeat-x;
@@ -215,14 +219,22 @@
 
 .publication-card:hover {
     transform: translateY(-3px);
-    border-color: #64b5f6;
+    border-color: var(--accent-blue);
     box-shadow:
-        0 10px 30px rgba(100, 181, 246, 0.2),
-        inset 0 0 20px rgba(100, 181, 246, 0.05);
+        0 10px 30px var(--shadow-accent),
+        inset 0 0 20px var(--circuit-trace);
     background:
         rgba(100, 181, 246, 0.05),
         linear-gradient(45deg, transparent 48%, rgba(100, 181, 246, 0.1) 49%, rgba(100, 181, 246, 0.1) 51%, transparent 52%),
         linear-gradient(-45deg, transparent 48%, rgba(100, 181, 246, 0.1) 49%, rgba(100, 181, 246, 0.1) 51%, transparent 52%);
+    background-size: 100% 100%, 20px 20px, 20px 20px;
+}
+
+[data-theme="light"] .publication-card:hover {
+    background:
+        rgba(25, 118, 210, 0.04),
+        linear-gradient(45deg, transparent 48%, rgba(25, 118, 210, 0.08) 49%, rgba(25, 118, 210, 0.08) 51%, transparent 52%),
+        linear-gradient(-45deg, transparent 48%, rgba(25, 118, 210, 0.08) 49%, rgba(25, 118, 210, 0.08) 51%, transparent 52%);
     background-size: 100% 100%, 20px 20px, 20px 20px;
 }
 
@@ -245,22 +257,29 @@
             4px 100%, 0 calc(100% - 4px));
     flex-shrink: 0;
     position: relative;
-    border: 1px solid rgba(100, 181, 246, 0.2);
+    border: 1px solid var(--border-accent);
     transition: all 0.3s ease;
+}
+
+[data-theme="light"] .card-icon {
+    background:
+        rgba(25, 118, 210, 0.08),
+        repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(25, 118, 210, 0.08) 4px, rgba(25, 118, 210, 0.08) 5px),
+        repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(25, 118, 210, 0.08) 4px, rgba(25, 118, 210, 0.08) 5px);
 }
 
 /* Highlight boxes with circuit styling */
 .highlight-box {
     background:
-        linear-gradient(135deg, rgba(100, 181, 246, 0.1), rgba(129, 199, 132, 0.1)),
+        var(--bg-highlight-box),
         /* Grid dots pattern */
-        radial-gradient(circle at 10% 10%, rgba(100, 181, 246, 0.2) 1px, transparent 1px),
-        radial-gradient(circle at 90% 10%, rgba(100, 181, 246, 0.2) 1px, transparent 1px),
-        radial-gradient(circle at 10% 90%, rgba(100, 181, 246, 0.2) 1px, transparent 1px),
-        radial-gradient(circle at 90% 90%, rgba(100, 181, 246, 0.2) 1px, transparent 1px);
+        radial-gradient(circle at 10% 10%, var(--border-accent) 1px, transparent 1px),
+        radial-gradient(circle at 90% 10%, var(--border-accent) 1px, transparent 1px),
+        radial-gradient(circle at 10% 90%, var(--border-accent) 1px, transparent 1px),
+        radial-gradient(circle at 90% 90%, var(--border-accent) 1px, transparent 1px);
     background-size: 100% 100%, 40px 40px, 40px 40px, 40px 40px, 40px 40px;
     background-position: center, 0 0, 100% 0, 0 100%, 100% 100%;
-    border: 1px solid rgba(100, 181, 246, 0.3);
+    border: 1px solid var(--border-accent-hover);
     border-radius: 0;
     clip-path: polygon(0 12px, 12px 0,
             calc(100% - 12px) 0, 100% 12px,
@@ -274,12 +293,12 @@
 /* Contact info with circuit design */
 .contact-info {
     background:
-        rgba(129, 199, 132, 0.1),
+        var(--bg-contact),
         /* Circuit grid */
         linear-gradient(to right, transparent 49%, rgba(129, 199, 132, 0.1) 49%, rgba(129, 199, 132, 0.1) 51%, transparent 51%),
         linear-gradient(to bottom, transparent 49%, rgba(129, 199, 132, 0.1) 49%, rgba(129, 199, 132, 0.1) 51%, transparent 51%);
     background-size: 100% 100%, 30px 30px, 30px 30px;
-    border: 1px solid rgba(129, 199, 132, 0.3);
+    border: 1px solid var(--border-green);
     border-radius: 0;
     clip-path: polygon(0 10px, 10px 0,
             calc(100% - 10px) 0, 100% 10px,
@@ -288,6 +307,14 @@
     padding: 1.5rem;
     margin: 2rem 0;
     position: relative;
+}
+
+[data-theme="light"] .contact-info {
+    background:
+        var(--bg-contact),
+        linear-gradient(to right, transparent 49%, rgba(56, 142, 60, 0.08) 49%, rgba(56, 142, 60, 0.08) 51%, transparent 51%),
+        linear-gradient(to bottom, transparent 49%, rgba(56, 142, 60, 0.08) 49%, rgba(56, 142, 60, 0.08) 51%, transparent 51%);
+    background-size: 100% 100%, 30px 30px, 30px 30px;
 }
 
 /* Quick links with circuit styling */
@@ -307,25 +334,25 @@
 
 /* Navigation and footer enhancements */
 .nav {
-    background: rgba(13, 20, 33, 0.9);
+    background: var(--bg-nav);
     backdrop-filter: blur(10px);
     padding: 0.5rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
-    border-bottom: 2px solid rgba(100, 181, 246, 0.2);
+    border-bottom: 2px solid var(--border-accent);
     /* Add circuit trace pattern */
     background-image:
-        linear-gradient(to right, transparent 20%, rgba(100, 181, 246, 0.05) 20%, rgba(100, 181, 246, 0.05) 21%, transparent 21%, transparent 79%, rgba(100, 181, 246, 0.05) 79%, rgba(100, 181, 246, 0.05) 80%, transparent 80%);
+        linear-gradient(to right, transparent 20%, var(--circuit-trace) 20%, var(--circuit-trace) 21%, transparent 21%, transparent 79%, var(--circuit-trace) 79%, var(--circuit-trace) 80%, transparent 80%);
     background-size: 200px 100%;
 }
 
 /* Quick Links Bar circuit enhancement */
 .quick-links-bar {
     position: relative;
-    background: rgba(13, 20, 33, 0.95);
+    background: var(--bg-nav);
     padding: 0.75rem 0;
-    border-bottom: 2px solid rgba(100, 181, 246, 0.2);
+    border-bottom: 2px solid var(--border-accent);
     overflow: hidden;
 }
 
@@ -338,11 +365,11 @@
     height: 2px;
     background: linear-gradient(90deg,
             transparent,
-            #64b5f6 10%,
+            var(--accent-blue) 10%,
             transparent 20%,
-            #81c784 45%,
+            var(--accent-green) 45%,
             transparent 55%,
-            #ffb74d 80%,
+            var(--accent-orange) 80%,
             transparent);
     background-size: 200% 100%;
     animation: dataFlow 15s linear infinite;
@@ -350,7 +377,7 @@
 
 /* Enhanced quick link inline with circuit style */
 .quick-link-inline {
-    border: 1px solid rgba(100, 181, 246, 0.2);
+    border: 1px solid var(--border-accent);
     clip-path: polygon(0 6px, 6px 0,
             calc(100% - 6px) 0, 100% 6px,
             100% calc(100% - 6px), calc(100% - 6px) 100%,
@@ -360,11 +387,11 @@
 /* Footer circuit enhancement */
 .footer {
     position: relative;
-    background: rgba(13, 20, 33, 0.9);
+    background: var(--bg-nav);
     padding: 2rem 0;
     text-align: center;
     margin-top: 4rem;
-    border-top: 2px solid rgba(100, 181, 246, 0.2);
+    border-top: 2px solid var(--border-accent);
     overflow: hidden;
 }
 
@@ -377,9 +404,9 @@
     height: 2px;
     background: linear-gradient(90deg,
             transparent,
-            #64b5f6 20%,
+            var(--accent-blue) 20%,
             transparent 40%,
-            #81c784 60%,
+            var(--accent-green) 60%,
             transparent 80%);
     background-size: 200% 100%;
     animation: dataFlow 20s linear infinite reverse;
@@ -409,7 +436,7 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(100, 181, 246, 0.3), transparent);
+    background: linear-gradient(90deg, transparent, var(--shadow-accent), transparent);
     transition: left 0.5s ease;
     pointer-events: none;
 }

@@ -12,8 +12,13 @@ html {
 body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
-    color: #e8e9ea;
-    background: linear-gradient(135deg, #0a0a2c 0%, #1a1a3a 25%, #0d1421 50%, #1a0a2c 75%, #0a0a2c 100%);
+    color: var(--text-primary);
+    background: linear-gradient(135deg,
+            var(--bg-primary-1) 0%,
+            var(--bg-primary-2) 25%,
+            var(--bg-primary-3) 50%,
+            var(--bg-primary-4) 75%,
+            var(--bg-primary-1) 100%);
     min-height: 100vh;
     font-size: 18px;
     /* Base font size */
@@ -27,21 +32,23 @@ h4,
 h5,
 h6 {
     font-weight: 600;
+    color: var(--text-primary);
 }
 
 p {
     margin-bottom: 1rem;
+    color: var(--text-primary);
 }
 
 /* Links */
 a {
-    color: #64b5f6;
+    color: var(--accent-blue);
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 a:hover {
-    color: #81c784;
+    color: var(--accent-green);
     text-decoration: underline;
 }
 
@@ -70,7 +77,7 @@ a:hover {
 .profile-image {
     width: 100%;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px var(--shadow-dark);
 }
 
 .dog-photos {
@@ -88,13 +95,14 @@ a:hover {
     width: 100%;
     max-width: 300px;
     border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px var(--shadow-dark);
 }
 
 .dog-photo p {
     font-size: 0.8rem;
     margin-top: 0.5rem;
     opacity: 0.8;
+    color: var(--text-muted);
 }
 
 /* Animations */
@@ -118,4 +126,10 @@ a:hover {
 .section.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Strong text should use primary color */
+strong {
+    color: var(--text-primary);
+    font-weight: 600;
 }
