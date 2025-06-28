@@ -1,8 +1,8 @@
-/* Circuit Animations CSS - Subtle circuit patterns and minimal animations */
+/* Circuit Animations CSS - Enhanced circuit patterns and data flow effects */
 
-/* === SUBTLE CIRCUIT BACKGROUND PATTERNS === */
+/* === CIRCUIT BACKGROUND PATTERNS === */
 
-/* Main circuit grid pattern for body */
+/* Subtle circuit pattern overlay for body */
 body::before {
     content: '';
     position: fixed;
@@ -11,112 +11,99 @@ body::before {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: -1;
+    z-index: 0;
     opacity: 0.02;
     background-image:
-        /* Vertical lines */
-        repeating-linear-gradient(90deg,
-            transparent,
-            transparent 199px,
-            var(--accent-blue) 199px,
-            var(--accent-blue) 200px),
-        /* Horizontal lines */
-        repeating-linear-gradient(0deg,
-            transparent,
-            transparent 199px,
-            var(--accent-blue) 199px,
-            var(--accent-blue) 200px);
-    background-size: 200px 200px;
+        /* Vertical traces */
+        linear-gradient(90deg, transparent 49.5%, var(--accent-blue) 49.5%, var(--accent-blue) 50.5%, transparent 50.5%),
+        /* Horizontal traces */
+        linear-gradient(0deg, transparent 49.5%, var(--accent-blue) 49.5%, var(--accent-blue) 50.5%, transparent 50.5%),
+        /* Connection nodes */
+        radial-gradient(circle at 25% 25%, var(--accent-green) 2px, transparent 2px),
+        radial-gradient(circle at 75% 25%, var(--accent-green) 2px, transparent 2px),
+        radial-gradient(circle at 25% 75%, var(--accent-green) 2px, transparent 2px),
+        radial-gradient(circle at 75% 75%, var(--accent-green) 2px, transparent 2px);
+    background-size: 200px 200px, 200px 200px, 200px 200px, 200px 200px, 200px 200px, 200px 200px;
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
 }
 
-/* Circuit nodes at grid intersections */
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: -1;
-    opacity: 0.03;
-    background-image:
-        repeating-radial-gradient(circle at 0 0,
-            var(--accent-blue) 0,
-            var(--accent-blue) 2px,
-            transparent 2px,
-            transparent 200px);
-    background-size: 200px 200px;
-}
-
-[data-theme="light"] body::before,
-[data-theme="light"] body::after {
+[data-theme="light"] body::before {
     opacity: 0.015;
 }
 
-/* Side circuit traces for wide screens */
+/* Side circuit traces for desktop */
 @media (min-width: 1400px) {
-    .container {
-        position: relative;
-    }
-
-    .container::before,
-    .container::after {
+    body::after {
         content: '';
-        position: absolute;
+        position: fixed;
         top: 0;
-        width: 80px;
+        width: 100px;
         height: 100%;
         pointer-events: none;
-        opacity: 0.02;
+        z-index: 0;
+        opacity: 0.03;
         background:
             /* Main vertical trace */
-            linear-gradient(90deg,
-                transparent 39px,
-                var(--accent-blue) 39px,
-                var(--accent-blue) 41px,
-                transparent 41px),
-            /* Branch lines */
-            repeating-linear-gradient(0deg,
-                transparent 0,
-                transparent 180px,
-                var(--accent-blue) 180px,
-                var(--accent-blue) 220px,
-                transparent 220px),
-            /* Connection nodes */
-            repeating-radial-gradient(circle at 40px 200px,
-                var(--accent-blue) 0,
-                var(--accent-blue) 3px,
-                transparent 3px,
-                transparent 400px);
-        background-size: 100% 100%, 100% 400px, 100% 400px;
+            linear-gradient(90deg, transparent 48%, var(--accent-blue) 48%, var(--accent-blue) 52%, transparent 52%),
+            /* Branch connections */
+            repeating-linear-gradient(0deg, transparent 0, transparent 95px, var(--accent-blue) 95px, var(--accent-blue) 105px),
+            /* Nodes */
+            repeating-radial-gradient(circle at 50% 100px, var(--accent-green) 3px, transparent 3px);
+        background-size: 100% 100%, 100% 200px, 100% 200px;
+        left: 0;
     }
 
-    .container::before {
-        left: -100px;
-    }
-
+    /* Mirror for right side */
     .container::after {
-        right: -100px;
+        content: '';
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0.03;
+        background:
+            linear-gradient(90deg, transparent 48%, var(--accent-blue) 48%, var(--accent-blue) 52%, transparent 52%),
+            repeating-linear-gradient(0deg, transparent 0, transparent 95px, var(--accent-blue) 95px, var(--accent-blue) 105px),
+            repeating-radial-gradient(circle at 50% 100px, var(--accent-green) 3px, transparent 3px);
+        background-size: 100% 100%, 100% 200px, 100% 200px;
+    }
+
+    [data-theme="light"] body::after,
+    [data-theme="light"] .container::after {
+        opacity: 0.02;
     }
 }
 
-/* === ENHANCED SECTION BORDERS === */
+/* === DATA FLOW ANIMATIONS === */
 
-/* Remove the old flashy animations and add subtle circuit borders */
+/* Enhanced section borders with data flow */
 .section {
     position: relative;
-    overflow: visible;
+    overflow: hidden;
 }
 
-/* Subtle circuit trace border that appears on hover/scroll */
 .section::before {
     content: '';
     position: absolute;
     inset: -2px;
-    background: var(--accent-blue);
+    background:
+        /* Animated data flow gradient */
+        conic-gradient(from 0deg at 50% 50%,
+            transparent 0deg,
+            var(--accent-blue) 10deg,
+            transparent 20deg,
+            transparent 170deg,
+            var(--accent-green) 180deg,
+            transparent 190deg,
+            transparent 340deg,
+            var(--accent-orange) 350deg,
+            transparent 360deg);
+    animation: dataFlowRotate 20s linear infinite;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.5s ease;
     clip-path: polygon(0 20px, 20px 20px, 20px 0,
             calc(50% - 30px) 0, calc(50% - 30px) 8px, calc(50% + 30px) 8px, calc(50% + 30px) 0,
             calc(100% - 20px) 0, calc(100% - 20px) 20px, 100% 20px,
@@ -127,77 +114,173 @@ body::after {
             0 calc(50% + 20px), 8px calc(50% + 20px), 8px calc(50% - 20px), 0 calc(50% - 20px));
 }
 
-/* Show border on hover */
-.section:hover::before {
+/* Activate data flow on scroll */
+.section.data-flow-active::before {
+    opacity: 0.2;
+}
+
+[data-theme="light"] .section.data-flow-active::before {
+    opacity: 0.3;
+}
+
+@keyframes dataFlowRotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Connection node pulses */
+.section.data-flow-active::after {
+    animation: nodePulse 2s ease-in-out infinite;
+}
+
+@keyframes nodePulse {
+
+    0%,
+    100% {
+        opacity: 0.05;
+    }
+
+    50% {
+        opacity: 0.1;
+    }
+}
+
+/* === ENHANCED CIRCUIT BORDERS === */
+
+/* Navigation data flow enhancement */
+.nav::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            var(--accent-blue) 25%,
+            transparent 50%,
+            var(--accent-green) 75%,
+            transparent 100%);
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.nav.scrolled::after {
+    opacity: 1;
+    animation: horizontalFlow 10s linear infinite;
+}
+
+/* Quick links bar data flow enhancement */
+.quick-links-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background:
+        /* Circuit nodes at corners */
+        radial-gradient(circle at 5% 50%, var(--accent-blue) 3px, transparent 3px),
+        radial-gradient(circle at 95% 50%, var(--accent-green) 3px, transparent 3px);
+    background-size: 100% 100%;
+    opacity: 0.5;
+}
+
+/* Publication cards enhanced data flow */
+.publication-card {
+    position: relative;
+}
+
+.publication-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    background:
+        linear-gradient(45deg, transparent 40%, var(--accent-blue) 50%, transparent 60%);
+    background-size: 200% 200%;
+    background-position: -100% -100%;
+    transition: opacity 0.3s ease;
+}
+
+.publication-card:hover::after {
     opacity: 0.1;
+    animation: diagonalFlow 1.5s ease-in-out;
+}
+
+@keyframes diagonalFlow {
+    0% {
+        background-position: -100% -100%;
+    }
+
+    100% {
+        background-position: 100% 100%;
+    }
 }
 
 /* === CIRCUIT CONNECTION NODES === */
 
-/* Small nodes at section corners */
-.section .circuit-node {
-    position: absolute;
-    width: 6px;
-    height: 6px;
-    background: var(--accent-blue);
-    border-radius: 50%;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-    z-index: 2;
-}
-
-.section:hover .circuit-node {
-    opacity: 0.3;
-}
-
-.section .circuit-node.top-left {
-    top: -3px;
-    left: 17px;
-}
-
-.section .circuit-node.top-right {
-    top: -3px;
-    right: 17px;
-}
-
-.section .circuit-node.bottom-left {
-    bottom: -3px;
-    left: 17px;
-}
-
-.section .circuit-node.bottom-right {
-    bottom: -3px;
-    right: 17px;
-}
-
-/* === NAVIGATION CIRCUIT TRACE === */
-
-.nav {
+/* Add connection nodes to section corners */
+.section {
     position: relative;
 }
 
-.nav::after {
-    content: '';
+.section .circuit-node {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
+    width: 12px;
+    height: 12px;
     background: var(--accent-blue);
-    opacity: 0.2;
+    border: 2px solid var(--bg-primary-2);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.3s ease;
+    z-index: 10;
 }
 
-/* Subtle data flow on scroll */
-.nav.scrolled::after {
-    background: linear-gradient(90deg,
-            transparent 0%,
-            var(--accent-blue) 50%,
-            transparent 100%);
-    background-size: 200% 100%;
-    animation: subtleFlow 8s linear infinite;
+.section.data-flow-active .circuit-node {
+    opacity: 0.8;
 }
 
-@keyframes subtleFlow {
+.section .circuit-node:hover {
+    transform: scale(1.5);
+    background: var(--accent-green);
+}
+
+.section .circuit-node.top-left {
+    top: -6px;
+    left: 14px;
+}
+
+.section .circuit-node.top-right {
+    top: -6px;
+    right: 14px;
+}
+
+.section .circuit-node.bottom-left {
+    bottom: -6px;
+    left: 14px;
+}
+
+.section .circuit-node.bottom-right {
+    bottom: -6px;
+    right: 14px;
+}
+
+/* === ANIMATED CIRCUIT TRACES === */
+
+/* Floating circuit traces animation */
+@keyframes horizontalFlow {
     0% {
         background-position: -200% 0;
     }
@@ -207,188 +290,140 @@ body::after {
     }
 }
 
-/* === PUBLICATION CARD CIRCUIT EFFECT === */
+/* Pulse animation for active elements */
+@keyframes circuitPulse {
 
-.publication-card {
-    position: relative;
-    transition: all 0.3s ease;
+    0%,
+    100% {
+        opacity: 0.3;
+        filter: brightness(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        filter: brightness(1.2);
+    }
 }
 
-/* Subtle trace on hover */
-.publication-card::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 2px;
-    height: 100%;
-    background: var(--accent-blue);
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.publication-card:hover::after {
-    opacity: 0.3;
-}
-
-/* === FOOTER CIRCUIT LINE === */
-
+/* Enhanced footer circuit animation */
 .footer {
     position: relative;
 }
 
-.footer::before {
+.footer::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 1px;
-    background: var(--accent-blue);
-    opacity: 0.2;
-}
-
-/* Quick links subtle hover effect */
-.quick-links-bar {
-    position: relative;
-}
-
-.quick-links-bar::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg,
-            transparent 0%,
-            var(--accent-green) 50%,
-            transparent 100%);
-    background-size: 200% 100%;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.quick-links-bar:hover::after {
-    opacity: 0.3;
-    animation: subtleFlow 6s linear infinite;
-}
-
-/* === ANGULAR TIMELINE ENHANCEMENTS === */
-
-/* Ensure timeline items have proper z-index */
-.timeline-item {
-    z-index: 1;
-}
-
-/* Fix branch line rendering */
-.timeline-item::before {
-    content: '';
-    position: absolute;
-    top: 10px;
     height: 2px;
-    background: var(--accent-blue);
-    z-index: 0;
-}
-
-.timeline-item.left::before {
-    right: -6%;
-    width: 56%;
-    transform-origin: right center;
-    transform: skewY(-10deg);
-}
-
-.timeline-item.right::before {
-    left: -6%;
-    width: 56%;
-    transform-origin: left center;
-    transform: skewY(10deg);
-}
-
-/* Angular connector at branch point */
-.timeline-item::after {
-    content: '';
-    position: absolute;
-    width: 20px;
-    height: 20px;
-    top: 0;
-    border: 2px solid var(--accent-blue);
-    border-left: none;
-    border-bottom: none;
-    z-index: 1;
-}
-
-.timeline-item.left::after {
-    right: calc(50% - 10px);
-    transform: rotate(45deg);
-}
-
-.timeline-item.right::after {
-    left: calc(50% - 10px);
-    transform: rotate(-135deg);
+    background:
+        repeating-linear-gradient(90deg,
+            var(--accent-blue) 0px,
+            var(--accent-blue) 10px,
+            transparent 10px,
+            transparent 20px,
+            var(--accent-green) 20px,
+            var(--accent-green) 30px,
+            transparent 30px,
+            transparent 40px);
+    background-size: 80px 100%;
+    opacity: 0.6;
+    animation: horizontalFlow 5s linear infinite;
 }
 
 /* === SCROLL-TRIGGERED EFFECTS === */
 
-/* Simple fade in for sections */
-.section {
+/* Add these classes via JavaScript on scroll */
+.fade-in-circuit {
     opacity: 0;
     transform: translateY(20px);
+}
+
+.fade-in-circuit.visible {
+    opacity: 1;
+    transform: translateY(0);
     transition: all 0.6s ease;
 }
 
-.section.visible {
-    opacity: 1;
-    transform: translateY(0);
+/* Circuit glow effect for interactive elements */
+.circuit-glow {
+    position: relative;
 }
 
-/* Subtle pulse for timeline dots on scroll */
-@keyframes subtlePulse {
+.circuit-glow::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(45deg,
+            var(--accent-blue),
+            var(--accent-green),
+            var(--accent-orange),
+            var(--accent-blue));
+    background-size: 400% 400%;
+    border-radius: inherit;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    animation: circuitGlowRotate 3s linear infinite;
+    z-index: -1;
+}
 
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 1;
+.circuit-glow:hover::before {
+    opacity: 0.3;
+}
+
+@keyframes circuitGlowRotate {
+    0% {
+        background-position: 0% 50%;
     }
 
     50% {
-        transform: scale(1.1);
-        opacity: 0.8;
+        background-position: 100% 50%;
     }
-}
 
-.timeline-dot.current {
-    animation: subtlePulse 3s ease-in-out infinite;
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 /* === MOBILE OPTIMIZATIONS === */
 
 @media (max-width: 768px) {
 
-    /* Hide complex patterns on mobile */
+    /* Disable complex animations on mobile */
     body::before,
     body::after,
-    .container::before,
     .container::after {
         display: none;
     }
 
-    /* Simplify section effects */
-    .section .circuit-node {
-        display: none;
+    /* Simplify data flow animations */
+    .section.data-flow-active::before {
+        animation-duration: 30s;
     }
 
-    /* Simplify timeline branches */
-    .timeline-item::before {
-        transform: none !important;
+    /* Reduce node sizes */
+    .section .circuit-node {
+        width: 8px;
+        height: 8px;
     }
 }
 
-/* === REDUCED MOTION === */
+/* === PERFORMANCE OPTIMIZATIONS === */
 
+/* Use will-change for animated elements */
+.section::before,
+.nav::after,
+.footer::after,
+.publication-card::after {
+    will-change: transform, opacity;
+}
+
+/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
     * {
-        animation: none !important;
-        transition: none !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
 }
