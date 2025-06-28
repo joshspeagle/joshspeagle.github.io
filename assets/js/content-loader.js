@@ -322,6 +322,7 @@ function createTimelineItem(item) {
     return `
         <div class="timeline-item ${item.position}">
             <div class="timeline-dot${item.current ? ' current' : ''}"></div>
+            <div class="timeline-branch"></div>
             <div class="circuit-connector"></div>
             <div class="timeline-content${item.current ? ' current' : ''}">
                 <h3>${item.title}</h3>

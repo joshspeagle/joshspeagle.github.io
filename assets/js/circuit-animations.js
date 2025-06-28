@@ -1,4 +1,4 @@
-// Circuit Animations JavaScript - Scroll-triggered effects and data flow animations
+// Circuit Animations JavaScript - Simple scroll effects and node management
 
 (function () {
     // Initialize circuit animations
@@ -6,212 +6,141 @@
         // Add circuit nodes to sections
         addCircuitNodes();
 
-        // Set up scroll observers
+        // Set up simple scroll observers
         setupScrollObservers();
 
-        // Initialize navigation scroll effects
-        setupNavigationEffects();
+        // Add navigation scroll detection
+        setupNavigationScroll();
 
-        // Add subtle parallax to circuit patterns
-        setupParallaxEffects();
+        // Fix timeline rendering
+        fixTimelineRendering();
     }
 
-    // Add circuit connection nodes to sections
-    function addCircuitNodes() {
-        const sections = document.querySelectorAll('.section');
-
-        sections.forEach(section => {
-            // Create four corner nodes
-            const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
-
-            positions.forEach(position => {
-                const node = document.createElement('div');
-                node.className = `circuit-node ${position}`;
-                section.appendChild(node);
-            });
-        });
-    }
-
-    // Set up intersection observers for scroll-triggered animations
-    function setupScrollObservers() {
-        // Observer for data flow activation
-        const dataFlowObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('data-flow-active');
-
-                    // Stagger node animations
-                    const nodes = entry.target.querySelectorAll('.circuit-node');
-                    nodes.forEach((node, index) => {
-                        setTimeout(() => {
-                            node.style.animation = 'circuitPulse 2s ease-in-out infinite';
-                            node.style.animationDelay = `${index * 0.2}s`;
-                        }, index * 100);
-                    });
-                } else {
-                    // Optional: remove class when out of view to restart animation
-                    // entry.target.classList.remove('data-flow-active');
-                }
-            });
-        }, {
-            threshold: 0.3,
-            rootMargin: '-50px'
-        });
-
-        // Observe all sections
-        document.querySelectorAll('.section').forEach(section => {
-            dataFlowObserver.observe(section);
-        });
-
-        // Observer for fade-in circuit elements
-        const fadeInObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, {
-            threshold: 0.1
-        });
-
-        // Observe fade-in elements
-        document.querySelectorAll('.fade-in-circuit').forEach(element => {
-            fadeInObserver.observe(element);
-        });
-    }
-
-    // Navigation scroll effects
-    function setupNavigationEffects() {
+    // Add navigation scroll detection
+    function setupNavigationScroll() {
         const nav = document.querySelector('.nav');
-        let lastScrollY = window.scrollY;
+        if (!nav) return;
+
+        let lastScrollY = 0;
         let ticking = false;
 
-        function updateNavigation() {
-            const currentScrollY = window.scrollY;
+        function updateNav() {
+            const scrollY = window.scrollY;
 
-            // Add scrolled class for data flow animation
-            if (currentScrollY > 100) {
+            if (scrollY > 100) {
                 nav.classList.add('scrolled');
             } else {
                 nav.classList.remove('scrolled');
             }
 
-            lastScrollY = currentScrollY;
+            lastScrollY = scrollY;
             ticking = false;
         }
 
-        function requestUpdate() {
+        function requestTick() {
             if (!ticking) {
-                requestAnimationFrame(updateNavigation);
+                requestAnimationFrame(updateNav);
                 ticking = true;
             }
         }
 
-        window.addEventListener('scroll', requestUpdate);
+        window.addEventListener('scroll', requestTick);
+
+        // Initial check
+        updateNav();
     }
 
-    // Subtle parallax for circuit background patterns
-    function setupParallaxEffects() {
-        if (window.innerWidth <= 768) return; // Skip on mobile
+    // Add subtle circuit connection nodes to sections
+    function addCircuitNodes() {
+        const sections = document.querySelectorAll('.section');
 
-        let ticking = false;
-        const parallaxElements = [];
+        sections.forEach(section => {
+            // Only add nodes if they don't exist
+            if (!section.querySelector('.circuit-node')) {
+                const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
-        // Create parallax data for body pseudo-elements
-        const bodyBefore = { element: document.body, speed: 0.1, property: 'before' };
-        parallaxElements.push(bodyBefore);
-
-        function updateParallax() {
-            const scrolled = window.pageYOffset;
-
-            parallaxElements.forEach(item => {
-                const yPos = -(scrolled * item.speed);
-
-                // Update CSS custom property for pseudo-element positioning
-                document.documentElement.style.setProperty(
-                    `--circuit-parallax-${item.property}`,
-                    `${yPos}px`
-                );
-            });
-
-            ticking = false;
-        }
-
-        function requestParallaxUpdate() {
-            if (!ticking) {
-                requestAnimationFrame(updateParallax);
-                ticking = true;
+                positions.forEach(position => {
+                    const node = document.createElement('div');
+                    node.className = `circuit-node ${position}`;
+                    section.appendChild(node);
+                });
             }
-        }
-
-        window.addEventListener('scroll', requestParallaxUpdate);
-    }
-
-    // Enhanced hover effects for publication cards
-    function enhancePublicationCards() {
-        const cards = document.querySelectorAll('.publication-card');
-
-        cards.forEach(card => {
-            card.addEventListener('mouseenter', function (e) {
-                // Add circuit glow effect
-                this.classList.add('circuit-glow');
-
-                // Create ripple effect from mouse position
-                const rect = this.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-                this.style.setProperty('--mouse-x', `${x}%`);
-                this.style.setProperty('--mouse-y', `${y}%`);
-            });
-
-            card.addEventListener('mouseleave', function () {
-                this.classList.remove('circuit-glow');
-            });
         });
     }
 
-    // Initialize animations based on user preference
-    function respectMotionPreference() {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Simple scroll observer for fade-in effect
+    function setupScrollObservers() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-        if (prefersReducedMotion) {
-            document.documentElement.classList.add('reduce-motion');
-        }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Observe timeline items
+        document.querySelectorAll('.timeline-item').forEach(item => {
+            observer.observe(item);
+        });
+    }
+
+    // Ensure timeline renders properly
+    function fixTimelineRendering() {
+        const timelineItems = document.querySelectorAll('.timeline-item');
+
+        timelineItems.forEach((item, index) => {
+            // Force reflow to ensure pseudo-elements render
+            item.style.display = 'none';
+            item.offsetHeight; // Trigger reflow
+            item.style.display = '';
+
+            // Add slight delay to stagger appearance
+            item.style.transitionDelay = `${index * 0.1}s`;
+        });
     }
 
     // Public API
     window.circuitAnimations = {
         init: initCircuitAnimations,
         refresh: function () {
-            // Refresh animations after dynamic content load
             addCircuitNodes();
             setupScrollObservers();
-            enhancePublicationCards();
+            fixTimelineRendering();
         }
     };
 
     // Initialize when DOM is ready
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            respectMotionPreference();
-            initCircuitAnimations();
-            enhancePublicationCards();
-        });
+        document.addEventListener('DOMContentLoaded', initCircuitAnimations);
     } else {
-        respectMotionPreference();
         initCircuitAnimations();
-        enhancePublicationCards();
     }
 
-    // Reinitialize after theme change
-    window.addEventListener('themeChanged', () => {
-        // Force reflow for smooth transitions
-        const sections = document.querySelectorAll('.section');
-        sections.forEach(section => {
-            section.style.display = 'none';
-            section.offsetHeight;
-            section.style.display = '';
-        });
+    // Handle dynamic content changes
+    const mutationObserver = new MutationObserver(() => {
+        // Debounce to avoid excessive calls
+        clearTimeout(window.circuitRefreshTimeout);
+        window.circuitRefreshTimeout = setTimeout(() => {
+            window.circuitAnimations.refresh();
+        }, 100);
     });
+
+    // Observe changes to main container
+    const container = document.querySelector('.container');
+    if (container) {
+        mutationObserver.observe(container, {
+            childList: true,
+            subtree: true
+        });
+    }
 })();
