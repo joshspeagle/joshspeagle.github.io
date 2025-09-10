@@ -29,7 +29,7 @@ function initializeNavigation() {
     // Update active navigation link based on current section or page
     function updateActiveNavigation() {
         const currentPage = getCurrentPage();
-        
+
         // Clear all active states
         navLinks.forEach(link => link.classList.remove('active'));
         document.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
@@ -76,7 +76,7 @@ function initializeNavigation() {
         if (shouldCollapseNav() && !userExpanded) {
             nav.classList.add('nav-collapsed');
             toggleIcon.textContent = '+';
-            
+
             // Also close any open dropdowns
             document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
                 dropdown.classList.remove('open');
@@ -130,7 +130,7 @@ function initializeNavigation() {
                 nav.classList.add('nav-collapsed');
                 nav.classList.remove('nav-expanded'); // Clear manual expansion
                 toggleIcon.textContent = '+';
-                
+
                 // Also close any open dropdowns
                 document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
                     dropdown.classList.remove('open');
@@ -148,7 +148,7 @@ function initializeNavigation() {
             dropdown.classList.remove('open');
             dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
         }
-        
+
         // Handle mobile collapse
         handleNavLinkClick();
     }

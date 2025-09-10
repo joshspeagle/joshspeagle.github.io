@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (typeof initializeNavigation === 'function') {
                 initializeNavigation();
             }
-            
+
             // Listen for theme changes to update publication icons
             window.addEventListener('themeChanged', () => {
                 updatePublicationIcons();
@@ -110,7 +110,7 @@ function populateQuickLinks(quickLinks) {
                 const dropdownItems = link.items.map(subItem =>
                     `<a href="${subItem.href}" class="dropdown-item">${subItem.text}</a>`
                 ).join('');
-                
+
                 return `
                     <div class="quick-link-dropdown">
                         <button class="quick-link-inline dropdown-toggle" aria-expanded="false" aria-haspopup="true" aria-label="${link.ariaLabel}">
@@ -135,7 +135,7 @@ function populateQuickLinks(quickLinks) {
                 return `<a href="${link.url}" class="quick-link-inline" aria-label="${link.ariaLabel}">${link.icon} ${link.text}</a>`;
             }
         }).join('');
-        
+
         // Initialize dropdowns for quick links if they exist
         initializeQuickLinkDropdowns();
     }
@@ -146,7 +146,7 @@ function populateNavigation(navigation) {
     if (navContainer && navigation) {
         // Check if we're on an individual page (not home)
         const currentPage = window.currentPage || 'home';
-        
+
         if (currentPage === 'home') {
             // Home page: show full navigation
             const navLinks = navigation.map(item =>
@@ -174,18 +174,18 @@ function populateNavigation(navigation) {
 
 function initializeQuickLinkDropdowns() {
     const quickLinkDropdowns = document.querySelectorAll('.quick-link-dropdown');
-    
+
     quickLinkDropdowns.forEach(dropdown => {
         const toggle = dropdown.querySelector('.dropdown-toggle');
         const menu = dropdown.querySelector('.dropdown-menu');
-        
+
         if (toggle && menu) {
-            toggle.addEventListener('click', function(e) {
+            toggle.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                
+
                 const isOpen = dropdown.classList.contains('open');
-                
+
                 // Close all other dropdowns
                 document.querySelectorAll('.quick-link-dropdown.open').forEach(openDropdown => {
                     if (openDropdown !== dropdown) {
@@ -193,7 +193,7 @@ function initializeQuickLinkDropdowns() {
                         openDropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
                     }
                 });
-                
+
                 // Toggle current dropdown
                 if (isOpen) {
                     dropdown.classList.remove('open');
@@ -205,9 +205,9 @@ function initializeQuickLinkDropdowns() {
             });
         }
     });
-    
+
     // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!e.target.closest('.quick-link-dropdown')) {
             document.querySelectorAll('.quick-link-dropdown.open').forEach(dropdown => {
                 dropdown.classList.remove('open');
@@ -219,16 +219,16 @@ function initializeQuickLinkDropdowns() {
 
 function initializeDropdowns() {
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-    
+
     dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function(e) {
+        toggle.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            
+
             const dropdown = this.parentNode;
             const menu = dropdown.querySelector('.dropdown-menu');
             const isOpen = dropdown.classList.contains('open');
-            
+
             // Close all other dropdowns
             document.querySelectorAll('.nav-dropdown.open').forEach(openDropdown => {
                 if (openDropdown !== dropdown) {
@@ -236,7 +236,7 @@ function initializeDropdowns() {
                     openDropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
                 }
             });
-            
+
             // Toggle current dropdown
             if (isOpen) {
                 dropdown.classList.remove('open');
@@ -247,9 +247,9 @@ function initializeDropdowns() {
             }
         });
     });
-    
+
     // Close dropdowns when clicking outside
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
         if (!e.target.closest('.nav-dropdown')) {
             document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
                 dropdown.classList.remove('open');
@@ -257,10 +257,10 @@ function initializeDropdowns() {
             });
         }
     });
-    
+
     // Keyboard navigation for accessibility
     dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('keydown', function(e) {
+        toggle.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 this.click();
@@ -441,7 +441,7 @@ function createPublicationCard(pub) {
 function getPublicationIcon(iconType) {
     // Check current theme
     const isLightMode = document.documentElement.getAttribute('data-theme') === 'light';
-    
+
     const icons = {
         'ads': `<svg width="40" height="40" viewBox="0 0 100 100">
             <circle cx="40" cy="40" r="25" stroke="${isLightMode ? '#1976D2' : '#64b5f6'}" stroke-width="4" fill="none"/>
@@ -522,7 +522,7 @@ function populatePageContent(pageType, data) {
     if (data.pages && data.pages[pageType]) {
         const pageInfo = data.pages[pageType];
         document.title = `${pageInfo.title} | Joshua S. Speagle`;
-        
+
         const metaDescription = document.querySelector('meta[name="description"]');
         if (metaDescription) {
             metaDescription.setAttribute('content', pageInfo.description);
@@ -532,14 +532,14 @@ function populatePageContent(pageType, data) {
     // Populate page header
     const pageTitle = document.getElementById('page-title');
     const pageTagline = document.getElementById('page-tagline');
-    
+
     if (data.sections && data.sections[pageType]) {
         const sectionData = data.sections[pageType];
-        
+
         if (pageTitle && sectionData.title) {
             pageTitle.textContent = sectionData.title;
         }
-        
+
         // Show page-specific tagline, fallback to main tagline if not available
         if (pageTagline) {
             if (sectionData && sectionData.tagline) {
@@ -548,7 +548,7 @@ function populatePageContent(pageType, data) {
                 pageTagline.textContent = data.header.tagline;
             }
         }
-        
+
         // Populate specific page content
         switch (pageType) {
             case 'mentorship':
@@ -584,25 +584,25 @@ function populatePageContent(pageType, data) {
 function populateMentorshipSections(data) {
     // Calculate dynamic statistics from mentee data
     const stats = calculateMentorshipStats(data.menteesByStage);
-    
+
     // Populate introduction section
     const introSection = document.getElementById('mentorship-intro');
     if (introSection) {
         introSection.innerHTML = createMentorshipIntro(data);
     }
-    
+
     // Populate overview section
     const overviewSection = document.getElementById('mentorship-overview');
     if (overviewSection) {
         overviewSection.innerHTML = createMentorshipOverview(data, stats);
     }
-    
+
     // Populate current mentees section
     const currentSection = document.getElementById('mentorship-current');
     if (currentSection) {
         currentSection.innerHTML = createCurrentMentees(data);
     }
-    
+
     // Populate former mentees section (if there are any)
     const formerSection = document.getElementById('mentorship-former');
     if (formerSection && data.menteesByStage.completed && (
@@ -654,13 +654,13 @@ function createMentorshipOverview(data, stats) {
                     <div class="chart-section">
                         <h4>Current</h4>
                         <div class="chart-container">
-                            ${createInteractiveBarChart(calculateCurrentStats(data.menteesByStage))}
+                            ${createInteractiveBarChart(countCurrentMentees(data.menteesByStage))}
                         </div>
                     </div>
                     <div class="chart-section">
                         <h4>Former</h4>
                         <div class="chart-container">
-                            ${createInteractiveBarChart(calculateCompletedStats(data.menteesByStage.completed))}
+                            ${createInteractiveBarChart(countFormerMentees(data.menteesByStage.completed))}
                         </div>
                     </div>
                 </div>
@@ -705,7 +705,7 @@ function createFormerMentees(data) {
 
 function createMenteeSection(title, mentees, type, isCompleted = false) {
     if (!mentees || mentees.length === 0) return '';
-    
+
     // Filter out placeholder entries
     const realMentees = mentees.filter(mentee => mentee.privacy !== 'placeholder');
     if (realMentees.length === 0 && mentees.length > 0) {
@@ -716,9 +716,9 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
             </div>
         `;
     }
-    
+
     if (realMentees.length === 0) return '';
-    
+
     return `
         <div class="mentee-section">
             <h4>${title}</h4>
@@ -731,25 +731,26 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
 
 function createMenteeCard(mentee, type, isCompleted = false) {
     // Generate supervision badge with career stage context
-    const supervisionLevel = mentee.supervisionType === 'Primary Supervisor' ? 'primary' : 
-                           mentee.supervisionType === 'Co-Supervisor' ? 'co' : 'secondary';
+    const supervisionLevel = mentee.supervisionType === 'Primary Supervisor' ? 'primary' :
+        mentee.supervisionType === 'Co-Supervisor' ? 'co' : 'secondary';
     const supervisionBadge = `<span class="supervision-badge ${supervisionLevel} ${type}-context">${mentee.supervisionType}</span>`;
-    
-    const coSupervisorsText = mentee.coSupervisors && mentee.coSupervisors.length > 0 
+
+    const coSupervisorsText = mentee.coSupervisors && mentee.coSupervisors.length > 0
         ? `<p class="co-supervisors">Co-supervisors: ${mentee.coSupervisors.join(', ')}</p>`
         : '';
-    
+
     // Combine fellowships/positions into a single inline block
-    const awards = mentee.fellowships || mentee.scholarships || [mentee.program];
+    const awards = mentee.fellowships || mentee.scholarships || [];
     const awardsText = awards && awards.length > 0
         ? `<div class="position-info">${awards.map(award => `<span class="position-badge">${award}</span>`).join('')}</div>`
         : '';
-    
+
     // Remove redundant "Status:" label for current mentees, keep "Outcome:" for former
-    const statusText = isCompleted 
-        ? `<p class="outcome"><strong>Outcome:</strong> ${mentee.outcome || mentee.currentStatus}</p>`
+    const statusText = isCompleted
+        ? `<p class="outcome"><strong>Outcome:</strong> ${mentee.outcome}</p>` +
+        (mentee.currentStatus && mentee.currentStatus.trim() !== '' ? `<p class="current-status">${mentee.currentStatus}</p>` : '')
         : (mentee.currentStatus && mentee.currentStatus.trim() !== '' ? `<p class="current-status">${mentee.currentStatus}</p>` : '');
-    
+
     return `
         <div class="mentee-card ${type}">
             <div class="mentee-header">
@@ -774,120 +775,100 @@ function createMenteeCard(mentee, type, isCompleted = false) {
 
 // Dynamic statistics calculation function
 function calculateMentorshipStats(menteesByStage) {
-    const current = menteesByStage;
-    const completed = menteesByStage.completed || {};
-    
-    // Count current mentees
-    const currentPostdoc = (current.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const currentDoctoral = (current.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const currentBachelors = (current.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
-    
-    // Count completed mentees
-    const completedPostdoc = (completed.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const completedDoctoral = (completed.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const completedBachelors = (completed.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
-    
-    const totalCurrent = currentPostdoc + currentDoctoral + currentBachelors;
-    const totalCompleted = completedPostdoc + completedDoctoral + completedBachelors;
+    // Use our new counting functions
+    const currentCounts = countCurrentMentees(menteesByStage);
+    const formerCounts = countFormerMentees(menteesByStage.completed || {});
+
+    const totalCurrent = currentCounts.postdoctoral + currentCounts.doctoral + currentCounts.bachelors;
+    const totalCompleted = formerCounts.postdoctoral + formerCounts.doctoral + formerCounts.bachelors;
     const totalOverall = totalCurrent + totalCompleted;
-    
+
     return {
         total: totalOverall,
         current: totalCurrent,
         completed: totalCompleted,
         breakdown: {
-            postdoctoral: currentPostdoc + completedPostdoc,
-            doctoral: currentDoctoral + completedDoctoral,
-            bachelors: currentBachelors + completedBachelors
+            postdoctoral: currentCounts.postdoctoral + formerCounts.postdoctoral,
+            doctoral: currentCounts.doctoral + formerCounts.doctoral,
+            bachelors: currentCounts.bachelors + formerCounts.bachelors
         }
     };
 }
 
-// Calculate statistics for current mentees only
-function calculateCurrentStats(menteesByStage) {
+// Simple counting function for current mentees
+function countCurrentMentees(menteesByStage) {
+    console.log('countCurrentMentees called with:', menteesByStage);
     if (!menteesByStage) {
+        console.log('No menteesByStage data');
         return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
     }
-    
-    const currentPostdoc = (menteesByStage.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const currentDoctoral = (menteesByStage.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const currentBachelors = (menteesByStage.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
-    
-    return {
-        postdoctoral: currentPostdoc,
-        doctoral: currentDoctoral,
-        bachelors: currentBachelors
-    };
+
+    const postdoctoral = (menteesByStage.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const doctoral = (menteesByStage.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const bachelors = (menteesByStage.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
+
+    const result = { postdoctoral, doctoral, bachelors };
+    console.log('countCurrentMentees result:', result);
+    return result;
 }
 
-// Calculate statistics for completed mentees only
-function calculateCompletedStats(completedMentees) {
+// Simple counting function for former mentees
+function countFormerMentees(completedMentees) {
+    console.log('countFormerMentees called with:', completedMentees);
     if (!completedMentees) {
+        console.log('No completedMentees data');
         return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
     }
-    
-    const completedPostdoc = (completedMentees.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const completedDoctoral = (completedMentees.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
-    const completedBachelors = (completedMentees.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
-    
-    return {
-        postdoctoral: completedPostdoc,
-        doctoral: completedDoctoral,
-        bachelors: completedBachelors
-    };
+
+    const postdoctoral = (completedMentees.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const doctoral = (completedMentees.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const bachelors = (completedMentees.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
+
+    const result = { postdoctoral, doctoral, bachelors };
+    console.log('countFormerMentees result:', result);
+    return result;
 }
 
-// Interactive vertical bar chart creation function
-function createInteractiveBarChart(breakdown) {
-    const total = breakdown.postdoctoral + breakdown.doctoral + breakdown.bachelors;
-    if (total === 0) return '<p class="no-data">No mentee data available</p>';
+// Simple bar chart function
+function createInteractiveBarChart(counts) {
+    console.log('createInteractiveBarChart called with counts:', counts);
     
-    const maxValue = Math.max(breakdown.postdoctoral, breakdown.doctoral, breakdown.bachelors);
-    const maxHeight = 120; // pixels
+    // Handle empty data
+    const total = counts.postdoctoral + counts.doctoral + counts.bachelors;
+    console.log('Total count:', total);
+    if (total === 0) {
+        console.log('Returning no-data message');
+        return '<p class="no-data">No mentee data available</p>';
+    }
+
+    // Calculate heights - use 150px max height for good visibility
+    const maxCount = Math.max(counts.postdoctoral, counts.doctoral, counts.bachelors);
+    const maxHeight = 150;
+    console.log('Max count:', maxCount, 'Max height:', maxHeight);
+
+    // Calculate individual bar heights with minimum 15px for visibility
+    const postdocHeight = maxCount > 0 ? Math.max((counts.postdoctoral / maxCount) * maxHeight, 15) : 0;
+    const doctoralHeight = maxCount > 0 ? Math.max((counts.doctoral / maxCount) * maxHeight, 15) : 0;
+    const bachelorsHeight = maxCount > 0 ? Math.max((counts.bachelors / maxCount) * maxHeight, 15) : 0;
     
-    const postdocHeight = maxValue > 0 ? Math.max((breakdown.postdoctoral / maxValue) * maxHeight, 8) : 0;
-    const doctoralHeight = maxValue > 0 ? Math.max((breakdown.doctoral / maxValue) * maxHeight, 8) : 0;
-    const bachelorsHeight = maxValue > 0 ? Math.max((breakdown.bachelors / maxValue) * maxHeight, 8) : 0;
-    
-    const postdocPercent = total > 0 ? Math.round((breakdown.postdoctoral / total) * 100) : 0;
-    const doctoralPercent = total > 0 ? Math.round((breakdown.doctoral / total) * 100) : 0;
-    const bachelorsPercent = total > 0 ? Math.round((breakdown.bachelors / total) * 100) : 0;
-    
+    console.log('Calculated heights:', {postdocHeight, doctoralHeight, bachelorsHeight});
+
     return `
         <div class="vertical-bar-chart">
             <div class="bars-container">
                 <div class="bar-column">
-                    <div class="bar-segment postdoc" 
-                         style="height: ${postdocHeight}px" 
-                         data-tooltip="Postdoctoral: ${breakdown.postdoctoral} (${postdocPercent}%)">
-                    </div>
-                    <div class="bar-label-container">
-                        <span class="bar-value">${breakdown.postdoctoral}</span>
-                        <span class="bar-category">Postdoc</span>
-                    </div>
+                    <div class="bar-segment postdoc" style="height: ${postdocHeight}px;"></div>
+                    <div class="count">${counts.postdoctoral}</div>
                 </div>
                 <div class="bar-column">
-                    <div class="bar-segment doctoral" 
-                         style="height: ${doctoralHeight}px" 
-                         data-tooltip="Doctoral/Masters: ${breakdown.doctoral} (${doctoralPercent}%)">
-                    </div>
-                    <div class="bar-label-container">
-                        <span class="bar-value">${breakdown.doctoral}</span>
-                        <span class="bar-category">Doctoral</span>
-                    </div>
+                    <div class="bar-segment doctoral" style="height: ${doctoralHeight}px;"></div>
+                    <div class="count">${counts.doctoral}</div>
                 </div>
                 <div class="bar-column">
-                    <div class="bar-segment bachelors" 
-                         style="height: ${bachelorsHeight}px" 
-                         data-tooltip="Bachelors/Other: ${breakdown.bachelors} (${bachelorsPercent}%)">
-                    </div>
-                    <div class="bar-label-container">
-                        <span class="bar-value">${breakdown.bachelors}</span>
-                        <span class="bar-category">Bachelors</span>
-                    </div>
+                    <div class="bar-segment bachelors" style="height: ${bachelorsHeight}px;"></div>
+                    <div class="count">${counts.bachelors}</div>
                 </div>
             </div>
-            <div class="tooltip"></div>
         </div>
     `;
 }
@@ -1097,97 +1078,5 @@ function updatePublicationIcons() {
 
 // Initialize mentorship page interactive features
 function initializeMentorshipInteractivity() {
-    // Add hover effects and tooltips for bar chart segments
-    const barSegments = document.querySelectorAll('.bar-segment');
-    const tooltip = document.querySelector('.tooltip');
-    
-    barSegments.forEach(segment => {
-        const tooltipText = segment.getAttribute('data-tooltip');
-        
-        if (tooltipText && tooltip) {
-            segment.addEventListener('mouseenter', function(e) {
-                tooltip.textContent = tooltipText;
-                tooltip.style.opacity = '1';
-                positionTooltip(e, tooltip);
-            });
-            
-            segment.addEventListener('mousemove', function(e) {
-                positionTooltip(e, tooltip);
-            });
-            
-            segment.addEventListener('mouseleave', function() {
-                tooltip.style.opacity = '0';
-            });
-        }
-        
-        // Add click event for accessibility
-        segment.addEventListener('click', function() {
-            if (tooltipText) {
-                // Create a temporary announcement for screen readers
-                const announcement = document.createElement('div');
-                announcement.setAttribute('aria-live', 'polite');
-                announcement.setAttribute('aria-atomic', 'true');
-                announcement.style.position = 'absolute';
-                announcement.style.left = '-10000px';
-                announcement.textContent = tooltipText;
-                document.body.appendChild(announcement);
-                
-                setTimeout(() => {
-                    document.body.removeChild(announcement);
-                }, 1000);
-            }
-        });
-        
-        // Add keyboard navigation support
-        segment.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-    });
-    
-    // Add focus styles for keyboard navigation
-    barSegments.forEach(segment => {
-        segment.setAttribute('tabindex', '0');
-        segment.setAttribute('role', 'button');
-        segment.setAttribute('aria-label', segment.getAttribute('data-tooltip') || 'Chart segment');
-    });
-}
-
-// Helper function to position tooltip near mouse cursor
-function positionTooltip(event, tooltip) {
-    // Get mouse position relative to the page
-    const mouseX = event.pageX;
-    const mouseY = event.pageY;
-    
-    // Get tooltip dimensions
-    tooltip.style.visibility = 'hidden';
-    tooltip.style.opacity = '1';
-    const tooltipRect = tooltip.getBoundingClientRect();
-    tooltip.style.visibility = 'visible';
-    
-    // Calculate position - offset from cursor to avoid covering it
-    let left = mouseX + 10;
-    let top = mouseY - tooltipRect.height - 10;
-    
-    // Adjust if tooltip would go off screen horizontally
-    if (left + tooltipRect.width > window.innerWidth) {
-        left = mouseX - tooltipRect.width - 10;
-    }
-    if (left < 0) {
-        left = 10;
-    }
-    
-    // Adjust if tooltip would go off screen vertically
-    if (top < window.scrollY) {
-        top = mouseY + 10;
-    }
-    if (top + tooltipRect.height > window.scrollY + window.innerHeight) {
-        top = window.scrollY + window.innerHeight - tooltipRect.height - 10;
-    }
-    
-    tooltip.style.position = 'absolute';
-    tooltip.style.left = left + 'px';
-    tooltip.style.top = top + 'px';
+    // No interactive features needed for now
 }

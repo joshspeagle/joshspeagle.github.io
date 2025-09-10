@@ -415,7 +415,9 @@
                     {
                         "name": "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a>",
                         "timelinePeriod": "Fall 2024-Present",
-                        "fellowships": ["<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"],
+                        "fellowships": [
+                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"
+                        ],
                         "supervisionType": "Primary Supervisor",
                         "project": "Reconstructing recent star formation history using Gaia and SDSS-V data of young stars",
                         "currentStatus": "",
@@ -424,9 +426,14 @@
                     {
                         "name": "<a href=\"https://sites.google.com/view/xuduo\">Duo Xu</a>",
                         "timelinePeriod": "Fall 2024-Present",
-                        "fellowships": ["<a href=\"https://schmidtfellows.utoronto.ca\">Schmidt AI in Science Fellow</a>", "<a href=\"https://www.cita.utoronto.ca/opportunities/post-docs/\">CITA Fellow</a>"],
+                        "fellowships": [
+                            "<a href=\"https://schmidtfellows.utoronto.ca\">Schmidt AI in Science Fellow</a>",
+                            "<a href=\"https://www.cita.utoronto.ca/opportunities/post-docs/\">CITA Fellow</a>"
+                        ],
                         "supervisionType": "Co-Supervisor",
-                        "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/people/faculty/name/peter-martin/\">Peter Martin</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/peter-martin/\">Peter Martin</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
+                        ],
                         "project": "Using AI to understand star formation, stellar feedback, and turbulence",
                         "currentStatus": "",
                         "myCareerStage": "Assistant Professor"
@@ -434,7 +441,11 @@
                     {
                         "name": "<a href=\"https://biprateep.de\">Biprateep Dey</a>",
                         "timelinePeriod": "Fall 2024-Present",
-                        "fellowships": ["<a href=\"https://schmidtfellows.utoronto.ca\">Schmidt AI in Science Fellow</a>", "<a href=\"https://www.cita.utoronto.ca/opportunities/post-docs/\">CITA Fellow</a>", "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"],
+                        "fellowships": [
+                            "<a href=\"https://schmidtfellows.utoronto.ca\">Schmidt AI in Science Fellow</a>",
+                            "<a href=\"https://www.cita.utoronto.ca/opportunities/post-docs/\">CITA Fellow</a>",
+                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"
+                        ],
                         "supervisionType": "Primary Supervisor",
                         "project": "Developing novel statistical machine learning tools to study formation and evolution of galaxies",
                         "currentStatus": "",
@@ -443,9 +454,14 @@
                     {
                         "name": "<a href=\"https://tanveerkarim.com\">Tanveer Karim</a>",
                         "timelinePeriod": "Fall 2023-Present",
-                        "fellowships": ["<a href=\"https://www.artsci.utoronto.ca/faculty-staff/research-supports-services/find-funding/past-recipients-postdoctoral-fellowships\">Arts & Science Fellow</a> (2023-2025)", "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a> (Fall 2025-Present)"],
+                        "fellowships": [
+                            "<a href=\"https://www.artsci.utoronto.ca/faculty-staff/research-supports-services/find-funding/past-recipients-postdoctoral-fellowships\">Arts & Science Fellow</a> (2023-2025)",
+                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a> (Fall 2025-Present)"
+                        ],
                         "supervisionType": "Co-Supervisor",
-                        "coSupervisors": ["<a href=\"https://www.dunlap.utoronto.ca/dunlap-people/prof-renee-hlozek/\">Renée Hložek</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-people/prof-renee-hlozek/\">Renée Hložek</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                        ],
                         "project": "Developing frameworks to constrain cosmological models by cross-correlating multiple surveys (DESI and DESC collaborations)",
                         "currentStatus": "",
                         "myCareerStage": "Assistant Professor"
@@ -453,9 +469,14 @@
                     {
                         "name": "<a href=\"https://antwi-danso.carrd.co\">Jacqueline Antwi-Danso</a>",
                         "timelinePeriod": "Fall 2023-Present",
-                        "fellowships": ["<a href=\"https://banting.fellowships-bourses.gc.ca\">Banting Fellow</a> (2023-2025)", "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a> (Fall 2025-Present)"],
+                        "fellowships": [
+                            "<a href=\"https://banting.fellowships-bourses.gc.ca\">Banting Fellow</a> (2023-2025)",
+                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a> (Fall 2025-Present)"
+                        ],
                         "supervisionType": "Co-Supervisor",
-                        "coSupervisors": ["<a href=\"https://www.yorku.ca/professor/muzzin/\">Adam Muzzin</a> (<a href=\"https://www.yorku.ca\">York University</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://www.yorku.ca/professor/muzzin/\">Adam Muzzin</a> (<a href=\"https://www.yorku.ca\">York University</a>)"
+                        ],
                         "project": "Searching for the most massive galaxies in the distant Universe",
                         "currentStatus": "",
                         "myCareerStage": "Assistant Professor"
@@ -465,9 +486,13 @@
                     {
                         "name": "Leo Watson",
                         "timelinePeriod": "Fall 2024-Present",
-                        "scholarships": ["<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"],
+                        "scholarships": [
+                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
+                        ],
                         "supervisionType": "Co-Supervisor",
-                        "coSupervisors": ["<a href=\"https://raducraiu.com/\">Radu Craiu</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://raducraiu.com/\">Radu Craiu</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                        ],
                         "project": "Statistical learning, quantum computing, and MCMC methods for astronomical Bayesian inference",
                         "myCareerStage": "Assistant Professor",
                         "currentStatus": "PhD student"
@@ -475,9 +500,14 @@
                     {
                         "name": "<a href=\"https://alexlaroche7.github.io\">Alex Laroche</a>",
                         "timelinePeriod": "Fall 2022-Present",
-                        "scholarships": ["<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC CGS-D</a>", "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"],
+                        "scholarships": [
+                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC CGS-D</a>",
+                            "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
+                        ],
                         "supervisionType": "Co-Supervisor",
-                        "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/~drout/\">Maria Drout</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://www.astro.utoronto.ca/~drout/\">Maria Drout</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                        ],
                         "project": "Machine learning and stellar evolution to discover rare stellar populations in large-scale surveys",
                         "myCareerStage": "Assistant Professor",
                         "currentStatus": "PhD candidate"
@@ -485,9 +515,14 @@
                     {
                         "name": "Phil Van-Lane",
                         "timelinePeriod": "Fall 2022-Present",
-                        "scholarships": ["<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"],
+                        "scholarships": [
+                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
+                        ],
                         "supervisionType": "Co-Supervisor",
-                        "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)", "<a href=\"https://r-cloutier.github.io/\">Ryan Cloutier</a> (<a href=\"https://www.mcmaster.ca/\">McMaster University</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                            "<a href=\"https://r-cloutier.github.io/\">Ryan Cloutier</a> (<a href=\"https://www.mcmaster.ca/\">McMaster University</a>)"
+                        ],
                         "project": "Machine learning stellar dating methods using rotation and magnetic activity for M-dwarf exoplanet demographics",
                         "myCareerStage": "Assistant Professor",
                         "currentStatus": "PhD candidate"
@@ -495,9 +530,14 @@
                     {
                         "name": "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>",
                         "timelinePeriod": "Fall 2022-Present",
-                        "scholarships": ["<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"],
+                        "scholarships": [
+                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
+                        ],
                         "supervisionType": "Secondary Supervisor",
-                        "coSupervisors": ["<a href=\"https://bartripperda.com/\">Bart Ripperda</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)", "<a href=\"https://www.cita.utoronto.ca/~murray/\">Norm Murray</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://bartripperda.com/\">Bart Ripperda</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                            "<a href=\"https://www.cita.utoronto.ca/~murray/\">Norm Murray</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
+                        ],
                         "project": "Hot plasma simulations in AGN accretion disks and Milky Way analogues in cosmological simulations",
                         "myCareerStage": "Assistant Professor",
                         "currentStatus": "PhD candidate"
@@ -505,9 +545,13 @@
                     {
                         "name": "Mairead Heiger",
                         "timelinePeriod": "Fall 2022-Present",
-                        "scholarships": ["<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"],
+                        "scholarships": [
+                            "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
+                        ],
                         "supervisionType": "Co-Supervisor",
-                        "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"],
+                        "coSupervisors": [
+                            "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                        ],
                         "project": "Galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling",
                         "myCareerStage": "Assistant Professor",
                         "currentStatus": "PhD candidate"
@@ -515,15 +559,29 @@
                 ],
                 "bachelors": [
                     {
-                        "name": "Example Undergraduate",
-                        "timelinePeriod": "Summer 2024",
-                        "program": "SURP (Summer Undergraduate Research Program)",
-                        "supervisionType": "Primary Supervisor",
-                        "coSupervisors": [],
-                        "project": "Uncertainty quantification in photometric surveys using nested sampling",
+                        "name": "Alejandro Ortega Cruz Prieto",
+                        "timelinePeriod": "Summer 2024-Present",
+                        "program": "SURP",
+                        "supervisionType": "Co-Supervisor",
+                        "coSupervisors": [
+                            "Alex Laroche"
+                        ],
+                        "project": "Building a Multi-Modal Model for Variable Star Spectra and Light Curves",
                         "myCareerStage": "Assistant Professor",
-                        "currentStatus": "Undergraduate researcher",
-                        "privacy": "placeholder"
+                        "currentStatus": "Undergraduate researcher"
+                    },
+                    {
+                        "name": "Isabelle Laing",
+                        "timelinePeriod": "Summer 2024-Present",
+                        "program": "SURP",
+                        "supervisionType": "Co-Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                            "Mairead Heiger"
+                        ],
+                        "project": "Estimating Stellar Abundances from DESI Spectra with Deep Learning",
+                        "myCareerStage": "Assistant Professor",
+                        "currentStatus": "Undergraduate researcher"
                     }
                 ],
                 "completed": {
@@ -531,7 +589,9 @@
                         {
                             "name": "<a href=\"https://walmsley.dev/pages/about\">Mike Walmsley</a>",
                             "timelinePeriod": "Fall 2023-Fall 2025",
-                            "fellowships": ["<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"],
+                            "fellowships": [
+                                "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"
+                            ],
                             "supervisionType": "Primary Supervisor",
                             "project": "Building AI foundation models to interpret astronomical images",
                             "currentStatus": "AI Researcher",
@@ -541,56 +601,628 @@
                     ],
                     "doctoral": [
                         {
-                            "name": "<a href=\"https://samberek.github.io/samberek/index.html\">Dr. Sam Berek</a>",
+                            "name": "<a href=\"https://samberek.github.io/samberek/index.html\">Sam Berek</a>",
                             "timelinePeriod": "Spring 2022-2025",
-                            "scholarships": ["<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"],
+                            "scholarships": [
+                                "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
+                            ],
                             "supervisionType": "Co-Supervisor",
-                            "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)", "<a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/monica-alexander\">Monica Alexander</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"],
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                                "<a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/monica-alexander\">Monica Alexander</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
                             "project": "Galaxy formation and evolution using globular cluster populations with Bayesian hierarchical modeling",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
+                            "currentStatus": "PhD candidate",
                             "outcome": "<a href=\"https://www.nsf.gov/funding/opportunities/aapf-nsf-astronomy-astrophysics-postdoctoral-fellowships\">NSF Astronomy and Astrophysics Postdoctoral Fellow</a> at <a href=\"https://www.umass.edu\">UMass Amherst</a> working with <a href=\"https://www.astrowhit.com/\">Kate Whitaker</a>"
                         },
                         {
-                            "name": "<a href=\"https://www.astro.utoronto.ca/~steffani.grondin/\">Dr. Steffani Grondin</a>",
+                            "name": "<a href=\"https://www.astro.utoronto.ca/~steffani.grondin/\">Steffani Grondin</a>",
                             "timelinePeriod": "Spring 2021-2025",
-                            "scholarships": ["<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"],
+                            "scholarships": [
+                                "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
+                            ],
                             "supervisionType": "Secondary Supervisor",
-                            "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/~drout/\">Maria Drout</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)", "<a href=\"https://www.yorku.ca/professor/jeremywebb/\">Jeremy Webb</a> (<a href=\"https://www.yorku.ca/\">York University</a>)"],
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~drout/\">Maria Drout</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://www.yorku.ca/professor/jeremywebb/\">Jeremy Webb</a> (<a href=\"https://www.yorku.ca/\">York University</a>)"
+                            ],
                             "project": "Evolution of massive stars in groups including post-common envelope binaries and dynamical interactions",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
+                            "currentStatus": "PhD candidate",
                             "outcome": "<a href=\"https://www.nserc-crsng.gc.ca/Students-Etudiants/PD-NP/PostDoc-PostDoc_eng.asp\">NSERC Postdoctoral Fellow</a> at <a href=\"https://ucsd.edu\">UC San Diego</a> working with <a href=\"http://www.broekgaarden.nl/floor/wordpress/\">Floor Broekgaarden</a> and <a href=\"http://www.kylekremer.com/\">Kyle Kremer</a>"
                         },
                         {
-                            "name": "<a href=\"https://henrysky.github.io/\">Dr. Henry Leung</a>",
+                            "name": "Maggie Zhai",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
+                            "project": "Image analysis and machine learning applications in astrostatistics",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "PhD student",
+                            "outcome": "Joined <a href=\"https://www.uhn.ca/\">University Health Network (UHN)</a> as Data Analyst"
+                        },
+                        {
+                            "name": "<a href=\"https://henrysky.github.io/\">Henry Leung</a>",
                             "timelinePeriod": "Fall 2023-Summer 2024",
-                            "scholarships": ["<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"],
+                            "scholarships": [
+                                "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
+                            ],
                             "supervisionType": "Secondary Supervisor",
-                            "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"],
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                            ],
                             "project": "Deep learning applications to stellar spectra and foundation models for astronomical data",
                             "myCareerStage": "Assistant Professor",
+                            "currentStatus": "PhD candidate",
                             "outcome": "Senior AI Scientist at CIBC"
                         },
                         {
-                            "name": "<a href=\"https://aaryapatil.github.io/\">Dr. Aarya Patil</a>",
+                            "name": "<a href=\"https://aaryapatil.github.io/\">Aarya Patil</a>",
                             "timelinePeriod": "Winter 2021-Spring 2023",
-                            "scholarships": ["<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"],
+                            "scholarships": [
+                                "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
+                            ],
                             "supervisionType": "Secondary Supervisor",
-                            "coSupervisors": ["<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)", "<a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)", "<a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/sebastian-jaimungal\">Sebastian Jaimungal</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"],
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                                "<a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/sebastian-jaimungal\">Sebastian Jaimungal</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
                             "project": "Data-driven mathematical models of the Milky Way Galaxy using asteroseismology with multitaper methods",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
+                            "currentStatus": "PhD candidate",
                             "outcome": "<a href=\"https://lsstdiscoveryalliance.org/programs/catalyst-fellowship/\">LSST Discovery Alliance Catalyst Postdoctoral Fellow</a> at <a href=\"https://www.mpia.de\">Max Planck Institute for Astronomy</a>; Incoming Assistant Professor at <a href=\"https://www.psu.edu\">Penn State University</a>"
                         }
                     ],
                     "bachelors": [
                         {
-                            "name": "Example Former Student",
+                            "name": "<a href=\"https://yunyishen.github.io/\">Yunyi Shen</a>",
+                            "timelinePeriod": "Summer 2021-Summer 2022",
+                            "supervisionType": "Secondary Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.vleosbarajas.com/\">Vianey Leos Barajas</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a> / School of the Environment)",
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
+                            "project": "Modelling Stellar Flares with Hidden Markov Models",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "MSc student (<a href=\"https://www.wisc.edu/\">UW-Madison</a>)",
+                            "outcome": "Joined <a href=\"https://www.mit.edu/\">MIT</a> PhD program (EECS/LIDS with <a href=\"https://www.tamarabroderick.com/\">Tamara Broderick</a>)"
+                        },
+                        {
+                            "name": "<a href=\"https://www.linkedin.com/in/liam-pilarski/\">Liam Pilarski</a>",
+                            "timelinePeriod": "Fall 2021-Spring 2022",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Estimating Galaxy Properties from Images with Probabilistic Deep Learning",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "HS student (<a href=\"https://mhs.millburn.org/\">Millburn HS</a>, NJ)",
+                            "outcome": "Joined <a href=\"https://www.gatech.edu/\">Georgia Institute of Technology</a> for Computer Science undergraduate studies"
+                        },
+                        {
+                            "name": "Matthew Kustec",
+                            "timelinePeriod": "Fall 2023-2024",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>"
+                            ],
+                            "project": "Exploring Galaxy Assembly Histories Across Cosmological Simulations",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Zack Steine",
+                            "timelinePeriod": "Summer 2024-Fall 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Andrew Saydjari"
+                            ],
+                            "project": "Estimating Abundances from Stellar Spectra with Probabilistic Machine Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Michelle Denny",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://antwi-danso.carrd.co\">Jacqueline Antwi-Danso</a>",
+                                "Sam Berek"
+                            ],
+                            "project": "Counting Massive Galaxies in the Early Universe with JWST",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Zehao \"Harry\" Peng",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>"
+                            ],
+                            "project": "Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Cissy Kuang",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>"
+                            ],
+                            "project": "Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Weizhi \"Luke\" Shen",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Galactic Paleontology with Probabilistic Machine Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Khalid Edris",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://walmsley.dev/pages/about\">Mike Walmsley</a>"
+                            ],
+                            "project": "Identifying Strong Lenses in Euclid Data with Active Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Junbo \"Felix\" Li",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://walmsley.dev/pages/about\">Mike Walmsley</a>"
+                            ],
+                            "project": "Identifying Strong Lenses in Euclid Data with Active Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Seo Won \"Sean\" Yi",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://antwi-danso.carrd.co\">Tanveer Karim</a>"
+                            ],
+                            "project": "Assessing the Robustness of Bayesian Model Comparison in Cosmological Analysis",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Semoore Tijani",
+                            "timelinePeriod": "Summer 2024",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Ioana Zelko"
+                            ],
+                            "project": "Making the next generation of 3D Interstellar Medium Dust Temperature Maps",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Patrice Yee",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Population Demographics of Exoplanets and their Host Stars",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Jimmy Yang",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Population Demographics of Exoplanets and their Host Stars",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Xinpeng Xing",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Population Demographics of Exoplanets and their Host Stars",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Wanshi Liang",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Population Demographics of Exoplanets and their Host Stars",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Yonatan Eyob",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Population Demographics of Exoplanets and their Host Stars",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Maximilian Zabrodski",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Steffani Grondin"
+                            ],
+                            "project": "Multiple Stellar Populations: Observations, Origins, and Onetime Solutions",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Qianyu \"Rita\" Fan",
+                            "timelinePeriod": "Fall 2023-Winter 2024",
+                            "program": "Course supervision",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Latent Parameter Inference with Probabilistic Dimensionality Reduction",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Yihan \"Christine\" Wang",
+                            "timelinePeriod": "Summer 2023-Winter 2024",
+                            "program": "Course supervision",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Stellar Parameter Estimation with Likelihood-Free Frequentist Inference (LF2I)",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Belle Pensamiento",
+                            "timelinePeriod": "Summer 2023-Fall 2023",
+                            "program": "SURP/DATA SCIENCE",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Brian Nord (Fermilab)"
+                            ],
+                            "project": "Classifying PLAsTiCC Transient Simulations with Recurrent Neural Networks",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher (George Brown College)"
+                        },
+                        {
+                            "name": "Guiping Zhao",
                             "timelinePeriod": "Summer 2023",
                             "program": "SURP",
                             "supervisionType": "Primary Supervisor",
-                            "project": "Stellar parameter estimation using hierarchical Bayesian models",
+                            "project": "Deriving Stellar Properties with Spectrophotometric Modelling",
                             "myCareerStage": "Assistant Professor",
-                            "outcome": "Continued to graduate studies in astrophysics",
-                            "privacy": "placeholder"
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Shu Yan \"Alice\" Wang",
+                            "timelinePeriod": "Summer 2023",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Sam Berek",
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
+                            "project": "Applications of Bayesian Predictive Model Comparison in Astronomy",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Stephanie Lee",
+                            "timelinePeriod": "Summer 2023",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "Mairead Heiger"
+                            ],
+                            "project": "Deriving Stellar Abundances in DESI using Machine Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Eshal Arshad",
+                            "timelinePeriod": "Summer 2023",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>"
+                            ],
+                            "project": "Exploring Galaxy Assembly Histories Across Cosmological Simulations",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Ishika Bangari",
+                            "timelinePeriod": "Spring 2023",
+                            "program": "AST430Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>"
+                            ],
+                            "project": "Exploring Definitions of Milky Way Analogues with Cosmological Simulations",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Ryan Wang",
+                            "timelinePeriod": "Fall 2022-Summer 2023",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Jeremy Webb (now <a href=\"https://www.yorku.ca/\">York University</a>)",
+                                "Steffani Grondin"
+                            ],
+                            "project": "Identifying Extra-Tidal Stars in APOGEE Globular Clusters",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Rosalind Liang",
+                            "timelinePeriod": "Fall 2022-Summer 2023",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Jeremy Webb (now <a href=\"https://www.yorku.ca/\">York University</a>)",
+                                "Steffani Grondin"
+                            ],
+                            "project": "Identifying Extra-Tidal Stars in APOGEE Globular Clusters",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Milica Ivetic",
+                            "timelinePeriod": "Fall 2022-Summer 2023",
+                            "program": "AST430H1Y",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Jeremy Webb (now <a href=\"https://www.yorku.ca/\">York University</a>)",
+                                "Steffani Grondin"
+                            ],
+                            "project": "Probabilistic Dimensionality Reduction Methods for Stellar Chemodynamics",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Ian Chow",
+                            "timelinePeriod": "Fall 2022-Summer 2023",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Probabilistic Dimensionality Reduction Methods for Stellar Chemodynamics",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Now at <a href=\"https://www.uwo.ca/\">Western University</a>"
+                        },
+                        {
+                            "name": "Shahmeer Athar",
+                            "timelinePeriod": "Fall 2022-Spring 2023",
+                            "program": "AST431Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~abraham/web/Welcome.html\">Bob Abraham</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                            ],
+                            "project": "Rapid Focusing Algorithms for the Dragonfly Telephoto Array",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Fengqing \"Grace\" Yu",
+                            "timelinePeriod": "Summer 2022-Summer 2023",
+                            "program": "SURP/AST430H1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                            ],
+                            "project": "Mapping the Milky Way with Blue Horizontal Branch Stars",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Jinoo Kim",
+                            "timelinePeriod": "Summer 2022-Summer 2023",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Lamiya Mowla (now <a href=\"https://www.wellesley.edu/\">Wellesley College</a>)",
+                                "Kartheik Iyer (now <a href=\"https://www.columbia.edu/\">Columbia University</a>)"
+                            ],
+                            "project": "Estimating Galaxy Sizes from Panchromatic Images",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Now at <a href=\"https://www.mcmaster.ca/\">McMaster University</a>"
+                        },
+                        {
+                            "name": "Robin Wen",
+                            "timelinePeriod": "Summer 2022-Summer 2023",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Jeremy Webb (<a href=\"https://www.yorku.ca/\">York University</a>)",
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
+                            "project": "Hierarchical Modelling of Globular Cluster Properties",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher (<a href=\"https://uwaterloo.ca/\">University of Waterloo</a>)",
+                            "outcome": "Now at <a href=\"https://www.caltech.edu/\">Caltech</a>"
+                        },
+                        {
+                            "name": "Feiyu Quan",
+                            "timelinePeriod": "Summer 2022-Spring 2023",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Neige Frankel"
+                            ],
+                            "project": "Investigating Warped Disk Galaxies in IllustrisTNG",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher (UTSC)",
+                            "outcome": "Now at <a href=\"https://www.cam.ac.uk/\">University of Cambridge</a>"
+                        },
+                        {
+                            "name": "Charlie Hughes",
+                            "timelinePeriod": "Fall 2021-Spring 2022",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                            ],
+                            "project": "Estimating Photometric Metallicities with DECam and S5",
+                            "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Eric Conenna",
+                            "timelinePeriod": "Fall 2021-Spring 2022",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Jeremy Webb (now <a href=\"https://www.yorku.ca/\">York University</a>)"
+                            ],
+                            "project": "High-Dimensional Analysis of APOGEE Data",
+                            "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Now at Kate Spade New York"
+                        },
+                        {
+                            "name": "Daniel Ding",
+                            "timelinePeriod": "Fall 2021-Spring 2022",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                            ],
+                            "project": "Latent Space Decompositions of APOGEE Spectra",
+                            "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Now at <a href=\"https://www.amazon.com/\">Amazon</a>"
+                        },
+                        {
+                            "name": "Ava Oveisi",
+                            "timelinePeriod": "Summer 2021-Fall 2022",
+                            "program": "AST430H1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Kristen Menou"
+                            ],
+                            "project": "Imaging Cosmic Dust with Machine Learning",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher (UTSC)"
+                        },
+                        {
+                            "name": "Alicia Savelli",
+                            "timelinePeriod": "Summer 2021-Summer 2022",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "J. Ted Mackereth (now Defined Benefit Solutions)"
+                            ],
+                            "project": "Milky Way Analogues in Cosmological Simulations",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher (<a href=\"https://brocku.ca/\">Brock University</a>)",
+                            "outcome": "Now PhD student at <a href=\"https://www.utoronto.ca/\">University of Toronto</a>"
+                        },
+                        {
+                            "name": "Jeff Shen",
+                            "timelinePeriod": "Winter 2020-Summer 2022",
+                            "program": "AST424H1/AST425Y1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Neige Frankel",
+                                "J. Ted Mackereth (now Defined Benefit Solutions)",
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                                "<a href=\"https://www.cita.utoronto.ca/~murray/\">Norm Murray</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)",
+                                "Dennis Zaritsky (<a href=\"https://www.arizona.edu/\">University of Arizona</a>)"
+                            ],
+                            "project": "Multiple projects: Estimating Stellar Parameters using 220M Gaia DR3 BP/RP Spectra; Disentangling Stellar Age Estimates from Galactic Chemodynamical Evolution; Estimating the Mass of the Milky Way with the H3 Survey",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Now at <a href=\"https://www.princeton.edu/\">Princeton University</a>"
+                        },
+                        {
+                            "name": "Mingxuan Teng",
+                            "timelinePeriod": "Fall 2020-Summer 2022",
+                            "program": "AST430H1",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.dunlap.utoronto.ca/dunlap-people/prof-renee-hlozek/\">Renée Hložek</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                            ],
+                            "project": "Detecting and Characterizing Outliers in Machine Learning Applications",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Now at <a href=\"https://www.huawei.com/\">Huawei</a>"
+                        },
+                        {
+                            "name": "Zhiya Lou",
+                            "timelinePeriod": "Fall 2020-Fall 2022",
+                            "program": "Course supervision",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                                "Jeremy Webb (now <a href=\"https://www.yorku.ca/\">York University</a>)"
+                            ],
+                            "project": "Bayesian Model Selection with Globular Clusters",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Now at <a href=\"https://www.bytedance.com/\">ByteDance</a>"
+                        },
+                        {
+                            "name": "Sina Babaei Zadeh",
+                            "timelinePeriod": "Summer 2021",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "J. Ted Mackereth (now Defined Benefit Solutions)",
+                                "Lamiya Mowla (now <a href=\"https://www.wellesley.edu/\">Wellesley College</a>)"
+                            ],
+                            "project": "Studying Galaxy Assembly Histories in Cosmological Simulations",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher (<a href=\"https://www.uwo.ca/\">Western University</a>)"
+                        },
+                        {
+                            "name": "Alan Tu",
+                            "timelinePeriod": "Summer 2020-Summer 2021",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Catherine Zucker (now <a href=\"https://www.cfa.harvard.edu/\">SAO</a>)",
+                                "Gus Beane (<a href=\"https://www.harvard.edu/\">Harvard University</a>)"
+                            ],
+                            "project": "Kinematics of Young Stars in the Radcliffe Wave",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher (<a href=\"https://www.harvard.edu/\">Harvard University</a>)"
+                        },
+                        {
+                            "name": "Kaustav Das",
+                            "timelinePeriod": "Summer 2019-Fall 2020",
+                            "program": "SURP",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "Catherine Zucker (now <a href=\"https://www.cfa.harvard.edu/\">SAO</a>)"
+                            ],
+                            "project": "Constraining the Distance to the North Polar Spur",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "Undergraduate researcher (<a href=\"https://www.iitk.ac.in/\">IIT Kanpur</a>)",
+                            "outcome": "Now at <a href=\"https://www.caltech.edu/\">Caltech</a>"
                         }
                     ]
                 }

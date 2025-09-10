@@ -1043,7 +1043,8 @@
 .quick-link-dropdown {
     position: relative;
     display: inline-block;
-    z-index: 1000; /* Ensure the dropdown container has proper stacking context */
+    z-index: 1000;
+    /* Ensure the dropdown container has proper stacking context */
 }
 
 .quick-link-dropdown .dropdown-toggle {
@@ -1090,7 +1091,8 @@
 .quick-link-dropdown .dropdown-menu {
     position: absolute;
     top: 100%;
-    right: 0; /* Align to the right to match other quick links */
+    right: 0;
+    /* Align to the right to match other quick links */
     min-width: 180px;
     background: var(--bg-nav);
     border: 2px solid var(--border-accent);
@@ -1101,7 +1103,8 @@
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    z-index: 9999; /* Increased z-index to ensure it appears above all content */
+    z-index: 9999;
+    /* Increased z-index to ensure it appears above all content */
     overflow: hidden;
     margin-top: 0.5rem;
 }
@@ -1117,12 +1120,11 @@
     content: '';
     position: absolute;
     inset: -1px;
-    background: linear-gradient(45deg, 
-        var(--accent-blue), 
-        var(--accent-green), 
-        var(--accent-orange), 
-        var(--accent-blue)
-    );
+    background: linear-gradient(45deg,
+            var(--accent-blue),
+            var(--accent-green),
+            var(--accent-orange),
+            var(--accent-blue));
     border-radius: 13px;
     opacity: 0.3;
     pointer-events: none;
@@ -1244,12 +1246,11 @@
     content: '';
     position: absolute;
     inset: -1px;
-    background: linear-gradient(45deg, 
-        var(--accent-blue), 
-        var(--accent-green), 
-        var(--accent-orange), 
-        var(--accent-blue)
-    );
+    background: linear-gradient(45deg,
+            var(--accent-blue),
+            var(--accent-green),
+            var(--accent-orange),
+            var(--accent-blue));
     border-radius: 13px;
     opacity: 0.3;
     pointer-events: none;
@@ -1497,19 +1498,22 @@
 }
 
 /* Talk and course items */
-.talk-item, .course-item {
+.talk-item,
+.course-item {
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
     border-bottom: 1px solid var(--border-primary);
 }
 
-.talk-item:last-child, .course-item:last-child {
+.talk-item:last-child,
+.course-item:last-child {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
 }
 
-.talk-item h4, .course-item h5 {
+.talk-item h4,
+.course-item h5 {
     color: var(--accent-blue);
     margin-bottom: 0.5rem;
 }
@@ -1524,6 +1528,7 @@
 
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
+
     /* Quick link dropdown adjustments for mobile */
     .quick-link-dropdown .dropdown-menu {
         position: fixed;
@@ -1534,11 +1539,11 @@
         min-width: auto;
         transform: translateY(10px);
     }
-    
+
     .quick-link-dropdown.open .dropdown-menu {
         transform: translateY(0);
     }
-    
+
     /* Regular nav dropdown adjustments for mobile */
     .dropdown-menu {
         position: fixed;
@@ -1549,31 +1554,31 @@
         min-width: auto;
         transform: translateY(10px);
     }
-    
+
     .nav-dropdown.open .dropdown-menu {
         transform: translateY(0);
     }
-    
+
     /* Page header adjustments */
     .page-header h1 {
         font-size: 2.5rem;
     }
-    
+
     .header-minimal .name {
         font-size: 2rem;
     }
-    
+
     /* Metrics grid responsive */
     .metrics-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     /* Paper links stack on mobile */
     .paper-links {
         flex-direction: column;
     }
-    
+
     /* Publication links responsive */
     .publication-links {
         gap: 0.75rem;
@@ -1657,9 +1662,7 @@
 }
 
 /* Major mentorship sections - single backgrounds like index.html */
-#mentorship-intro {
-    /* Clean introduction section with no background - lets main gradient show through */
-}
+/* Clean introduction section with no background - lets main gradient show through */
 
 #mentorship-overview.mentorship-overview-section {
     background: linear-gradient(135deg, rgba(100, 181, 246, 0.03), rgba(129, 199, 132, 0.03));
@@ -2009,35 +2012,35 @@
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .mentee-cards {
         grid-template-columns: 1fr;
         gap: 0.75rem;
     }
-    
+
     .mentee-card {
         padding: 1rem;
     }
-    
+
     .mentee-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.5rem;
     }
-    
+
     .timeline {
         align-self: flex-end;
     }
-    
+
     .badge-row {
         gap: 0.25rem;
     }
-    
+
     .position-badge {
         font-size: 0.7rem;
         padding: 0.15rem 0.4rem;
     }
-    
+
     .supervision-badge {
         font-size: 0.75rem;
         padding: 0.2rem 0.6rem;
@@ -2153,7 +2156,7 @@
     display: flex;
     justify-content: space-around;
     align-items: flex-end;
-    height: 160px;
+    height: 180px;
     padding: 0 10px;
     position: relative;
 }
@@ -2165,7 +2168,8 @@
     align-items: center;
     gap: 0.5rem;
     flex: 1;
-    max-width: 80px;
+    max-width: 120px;
+    min-width: 60px;
 }
 
 /* Vertical bar segments */
@@ -2316,69 +2320,71 @@
 
 /* Mobile responsive adjustments for charts */
 @media (max-width: 768px) {
+
     /* Three-column layout becomes single column on mobile */
     .supervision-overview-container {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     /* Dual chart container becomes single column */
     .dual-chart-container {
         grid-template-columns: 1fr;
         gap: 1.5rem;
         padding: 0 0.5rem;
     }
-    
+
     /* Vertical bar charts on mobile */
     .vertical-bar-chart {
         max-width: 280px;
         padding: 0.75rem 0;
     }
-    
+
     .bars-container {
         height: 120px;
         padding: 0 5px;
     }
-    
+
     .bar-column {
-        max-width: 70px;
+        max-width: 100px;
+        min-width: 50px;
     }
-    
+
     .bar-value {
         font-size: 1rem;
     }
-    
+
     .bar-category {
         font-size: 0.75rem;
     }
-    
+
     /* Legacy support for former mentees header */
     .former-mentees-header {
         grid-template-columns: 1fr;
         gap: 1.5rem;
     }
-    
+
     .former-mentees-title h3 {
         text-align: center;
     }
-    
+
     .chart-legend {
         gap: 1rem;
         justify-content: space-around;
     }
-    
+
     .legend-item {
         font-size: 0.8rem;
     }
-    
+
     .bar-container {
         height: 50px;
     }
-    
+
     .bar-label {
         font-size: 0.8rem;
     }
-    
+
     .mentorship-breakdown,
     .former-mentees-breakdown,
     .career-stage-breakdowns {
@@ -2387,44 +2393,46 @@
 }
 
 @media (max-width: 480px) {
+
     /* Very small mobile screens */
     .vertical-bar-chart {
         max-width: 260px;
         padding: 0.5rem 0;
     }
-    
+
     .bars-container {
         height: 100px;
         padding: 0 3px;
     }
-    
+
     .bar-column {
-        max-width: 60px;
+        max-width: 80px;
+        min-width: 40px;
         gap: 0.25rem;
     }
-    
+
     .bar-value {
         font-size: 0.9rem;
     }
-    
+
     .bar-category {
         font-size: 0.7rem;
     }
-    
+
     .chart-legend {
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
     }
-    
+
     .bar-container {
         height: 40px;
     }
-    
+
     .bar-label {
         font-size: 0.7rem;
     }
-    
+
     /* Hide very small segment labels on mobile */
     .bar-segment[style*="width: 5%"] .bar-label,
     .bar-segment[style*="width: 6%"] .bar-label,
