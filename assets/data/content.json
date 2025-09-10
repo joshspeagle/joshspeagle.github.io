@@ -22,6 +22,30 @@
             "text": "GitHub",
             "url": "https://github.com/joshspeagle/",
             "ariaLabel": "Visit GitHub profile"
+        },
+        {
+            "icon": "📋",
+            "text": "Academic",
+            "dropdown": true,
+            "ariaLabel": "Academic pages and resources",
+            "items": [
+                {
+                    "text": "Mentorship",
+                    "href": "mentorship.html"
+                },
+                {
+                    "text": "Publications",
+                    "href": "publications.html"
+                },
+                {
+                    "text": "Talks",
+                    "href": "talks.html"
+                },
+                {
+                    "text": "Teaching",
+                    "href": "teaching.html"
+                }
+            ]
         }
     ],
     "navigation": [
@@ -379,10 +403,162 @@
                     "caption": "Photo of Aki courtesy of me!"
                 }
             ]
+        },
+        "mentorship": {
+            "title": "Mentorship & Supervision",
+            "tagline": "Guiding the next generation of astrostatisticians",
+            "content": "I believe strongly in fostering an inclusive, collaborative research environment where students can thrive and develop their unique research interests at the intersection of statistics and astrophysics.",
+            "currentStudents": {
+                "title": "Current Students & Researchers",
+                "phd": [],
+                "masters": [],
+                "undergraduate": [],
+                "note": "Student information will be populated as privacy permissions are obtained."
+            },
+            "opportunities": {
+                "title": "Research Opportunities",
+                "content": "I regularly supervise students at all levels on projects spanning theoretical statistics, computational astrophysics, and observational astronomy. Current research areas include:",
+                "areas": [
+                    "Bayesian methods for astronomical surveys",
+                    "Machine learning applications in stellar astrophysics",
+                    "Statistical inference for galactic structure",
+                    "Survey optimization and design",
+                    "Uncertainty quantification in astrophysical models"
+                ]
+            },
+            "philosophy": {
+                "title": "Mentorship Philosophy",
+                "content": "My approach to mentorship emphasizes collaborative learning, open communication, and supporting students in developing both technical skills and professional confidence. I believe in meeting students where they are and helping them reach their goals."
+            }
+        },
+        "publications": {
+            "title": "Publications & Research Output",
+            "tagline": "Peer-reviewed research and scholarly contributions",
+            "metrics": {
+                "totalPapers": "50+",
+                "hIndex": "25+",
+                "citations": "2000+",
+                "note": "Metrics updated regularly from ADS and Google Scholar"
+            },
+            "featured": {
+                "title": "Featured Publications",
+                "papers": [
+                    {
+                        "title": "dynesty: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
+                        "authors": "Speagle, J. S.",
+                        "journal": "Monthly Notices of the Royal Astronomical Society",
+                        "year": "2020",
+                        "doi": "10.1093/mnras/staa278",
+                        "arxiv": "1904.02180",
+                        "description": "A flexible Python package for Bayesian inference using dynamic nested sampling"
+                    }
+                ]
+            },
+            "categories": {
+                "title": "Research Categories",
+                "stats": "Statistical methodology and computational inference",
+                "astro": "Stellar astrophysics and galactic structure",
+                "surveys": "Large astronomical surveys and data analysis",
+                "software": "Open-source scientific software development"
+            },
+            "links": {
+                "ads": "https://ui.adsabs.harvard.edu/search/q=author%3A%22Speagle%2C%20Joshua%20S%22&sort=date%20desc%2C%20bibcode%20desc",
+                "scholar": "https://scholar.google.com/citations?user=EFP_w6MAAAAJ",
+                "orcid": "https://orcid.org/0000-0003-4025-5765"
+            }
+        },
+        "talks": {
+            "title": "Conference Talks & Presentations",
+            "tagline": "Sharing research with the broader scientific community",
+            "upcoming": {
+                "title": "Upcoming Presentations",
+                "events": []
+            },
+            "recent": {
+                "title": "Recent Talks",
+                "talks": [
+                    {
+                        "title": "Statistical Challenges in Next-Generation Astronomical Surveys",
+                        "event": "Joint Statistical Meetings",
+                        "location": "Virtual",
+                        "date": "2023",
+                        "type": "Invited"
+                    }
+                ]
+            },
+            "categories": {
+                "title": "Talk Categories",
+                "invited": "Invited conference presentations and colloquia",
+                "contributed": "Contributed talks at conferences and workshops",
+                "seminars": "Department seminars and research group presentations",
+                "public": "Public outreach and educational talks"
+            },
+            "note": "Complete presentation list available upon request. Slides and recordings may be available for recent talks."
+        },
+        "teaching": {
+            "title": "Teaching & Education",
+            "tagline": "Bridging statistics and astronomy through education",
+            "courses": {
+                "title": "Current Courses",
+                "undergraduate": [
+                    {
+                        "code": "STA237",
+                        "title": "Probability, Statistics and Data Analysis I",
+                        "description": "Introduction to statistical thinking and data analysis"
+                    },
+                    {
+                        "code": "AST221",
+                        "title": "Stars and Planets",
+                        "description": "Introduction to stellar astrophysics and planetary science"
+                    }
+                ],
+                "graduate": [
+                    {
+                        "code": "STA2102",
+                        "title": "Computational Statistics",
+                        "description": "Advanced statistical computing and simulation methods"
+                    },
+                    {
+                        "code": "AST1501",
+                        "title": "Astrostatistics",
+                        "description": "Statistical methods for astronomical research"
+                    }
+                ]
+            },
+            "philosophy": {
+                "title": "Teaching Philosophy",
+                "content": "I believe in hands-on learning that connects theoretical concepts to real-world applications. My courses emphasize computational skills, critical thinking, and the ability to communicate complex ideas clearly."
+            },
+            "resources": {
+                "title": "Educational Resources",
+                "content": "I develop and maintain several open educational resources including course materials, tutorials, and software packages designed to make astrostatistics more accessible to students and researchers."
+            },
+            "workshops": {
+                "title": "Workshops & Training",
+                "content": "I regularly conduct workshops on Bayesian methods, Python for astronomy, and statistical computing for various audiences including graduate students, postdocs, and faculty."
+            }
+        }
+    },
+    "pages": {
+        "mentorship": {
+            "title": "Mentorship",
+            "description": "Student supervision and research opportunities in astrostatistics"
+        },
+        "publications": {
+            "title": "Publications",
+            "description": "Peer-reviewed research and scholarly contributions"
+        },
+        "talks": {
+            "title": "Talks",
+            "description": "Conference presentations and public speaking engagements"
+        },
+        "teaching": {
+            "title": "Teaching",
+            "description": "Courses, workshops, and educational resources"
         }
     },
     "footer": {
-        "copyright": "© 2025 Joshua S. Speagle. This page was last updated on June 26, 2025.",
-        "credit": "Built and designed in collaboration with Claude Sonnet 4 & Claude Opus 4."
+        "copyright": "© 2025 Joshua S. Speagle. This page was last updated on September 9, 2025.",
+        "credit": "Built and designed in collaboration with Claude Sonnet 4 & Claude Opus 4.1."
     }
 }

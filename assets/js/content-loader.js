@@ -1,8 +1,11 @@
-// Optimized Content Loader - Dynamically loads content from JSON with error handling
+// Enhanced Content Loader - Dynamically loads content from JSON with dropdown and page support
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         // Add loading indicator
         document.body.classList.add('loading');
+
+        // Determine current page type
+        const currentPage = window.currentPage || 'home';
 
         // Load the content JSON with error handling
         const response = await fetch('assets/data/content.json');
@@ -18,17 +21,25 @@ document.addEventListener('DOMContentLoaded', async function () {
             throw new Error('Invalid content data structure');
         }
 
-        // Populate header
-        populateHeader(data.header);
+        // Populate header (minimal for non-home pages)
+        if (currentPage === 'home') {
+            populateHeader(data.header);
+        }
 
-        // Populate quick links
+        // Populate quick links (always shown for navigation)
         populateQuickLinks(data.quickLinks);
 
-        // Populate navigation
+        // Populate navigation (always shown)
         populateNavigation(data.navigation);
 
-        // Populate sections
-        populateSections(data.sections);
+        // Populate content based on page type
+        if (currentPage === 'home') {
+            // Populate all sections for home page
+            populateSections(data.sections);
+        } else {
+            // Populate specific page content
+            populatePageContent(currentPage, data);
+        }
 
         // Populate footer
         populateFooter(data.footer);
@@ -96,7 +107,24 @@ function populateQuickLinks(quickLinks) {
     const quickLinksContainer = document.querySelector('.quick-links-inline');
     if (quickLinksContainer && quickLinks) {
         quickLinksContainer.innerHTML = quickLinks.map(link => {
-            if (link.icon === 'github') {
+            if (link.dropdown && link.items) {
+                // Create dropdown for quick links
+                const dropdownItems = link.items.map(subItem =>
+                    `<a href="${subItem.href}" class="dropdown-item">${subItem.text}</a>`
+                ).join('');
+                
+                return `
+                    <div class="quick-link-dropdown">
+                        <button class="quick-link-inline dropdown-toggle" aria-expanded="false" aria-haspopup="true" aria-label="${link.ariaLabel}">
+                            ${link.icon} ${link.text}
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            ${dropdownItems}
+                        </div>
+                    </div>
+                `;
+            } else if (link.icon === 'github') {
                 return `
                     <a href="${link.url}" class="quick-link-inline" aria-label="${link.ariaLabel}">
                         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="vertical-align: middle; margin-right: 4px;">
@@ -109,13 +137,16 @@ function populateQuickLinks(quickLinks) {
                 return `<a href="${link.url}" class="quick-link-inline" aria-label="${link.ariaLabel}">${link.icon} ${link.text}</a>`;
             }
         }).join('');
+        
+        // Initialize dropdowns for quick links if they exist
+        initializeQuickLinkDropdowns();
     }
 }
 
 function populateNavigation(navigation) {
     const navContainer = document.querySelector('.nav-container');
     if (navContainer && navigation) {
-        // Keep the existing navigation links but update them
+        // Simple navigation links (no dropdown functionality here)
         const navLinks = navigation.map(item =>
             `<a href="${item.href}" class="nav-link">${item.text}</a>`
         ).join('');
@@ -127,6 +158,108 @@ function populateNavigation(navigation) {
             </button>
         `;
     }
+}
+
+function initializeQuickLinkDropdowns() {
+    const quickLinkDropdowns = document.querySelectorAll('.quick-link-dropdown');
+    
+    quickLinkDropdowns.forEach(dropdown => {
+        const toggle = dropdown.querySelector('.dropdown-toggle');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        
+        if (toggle && menu) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const isOpen = dropdown.classList.contains('open');
+                
+                // Close all other dropdowns
+                document.querySelectorAll('.quick-link-dropdown.open').forEach(openDropdown => {
+                    if (openDropdown !== dropdown) {
+                        openDropdown.classList.remove('open');
+                        openDropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                    }
+                });
+                
+                // Toggle current dropdown
+                if (isOpen) {
+                    dropdown.classList.remove('open');
+                    this.setAttribute('aria-expanded', 'false');
+                } else {
+                    dropdown.classList.add('open');
+                    this.setAttribute('aria-expanded', 'true');
+                }
+            });
+        }
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.quick-link-dropdown')) {
+            document.querySelectorAll('.quick-link-dropdown.open').forEach(dropdown => {
+                dropdown.classList.remove('open');
+                dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+}
+
+function initializeDropdowns() {
+    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const dropdown = this.parentNode;
+            const menu = dropdown.querySelector('.dropdown-menu');
+            const isOpen = dropdown.classList.contains('open');
+            
+            // Close all other dropdowns
+            document.querySelectorAll('.nav-dropdown.open').forEach(openDropdown => {
+                if (openDropdown !== dropdown) {
+                    openDropdown.classList.remove('open');
+                    openDropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                }
+            });
+            
+            // Toggle current dropdown
+            if (isOpen) {
+                dropdown.classList.remove('open');
+                this.setAttribute('aria-expanded', 'false');
+            } else {
+                dropdown.classList.add('open');
+                this.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.nav-dropdown')) {
+            document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
+                dropdown.classList.remove('open');
+                dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+    
+    // Keyboard navigation for accessibility
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            } else if (e.key === 'Escape') {
+                const dropdown = this.parentNode;
+                dropdown.classList.remove('open');
+                this.setAttribute('aria-expanded', 'false');
+                this.focus();
+            }
+        });
+    });
 }
 
 function populateSections(sections) {
@@ -367,6 +500,273 @@ function createTimelineItem(item) {
                 <span class="timeline-date">${item.date}</span>
                 <p>${item.content}</p>
                 <div class="timeline-location">📍 ${item.location}</div>
+            </div>
+        </div>
+    `;
+}
+
+function populatePageContent(pageType, data) {
+    // Set page title and description
+    if (data.pages && data.pages[pageType]) {
+        const pageInfo = data.pages[pageType];
+        document.title = `${pageInfo.title} | Joshua S. Speagle`;
+        
+        const metaDescription = document.querySelector('meta[name="description"]');
+        if (metaDescription) {
+            metaDescription.setAttribute('content', pageInfo.description);
+        }
+    }
+
+    // Populate page header
+    const pageTitle = document.getElementById('page-title');
+    const pageTagline = document.getElementById('page-tagline');
+    
+    if (data.sections && data.sections[pageType]) {
+        const sectionData = data.sections[pageType];
+        
+        if (pageTitle && sectionData.title) {
+            pageTitle.textContent = sectionData.title;
+        }
+        
+        if (pageTagline && sectionData.tagline) {
+            pageTagline.textContent = sectionData.tagline;
+        }
+        
+        // Populate specific page content
+        const contentSection = document.getElementById(`${pageType}-content`);
+        if (contentSection) {
+            switch (pageType) {
+                case 'mentorship':
+                    contentSection.innerHTML = createMentorshipContent(sectionData);
+                    break;
+                case 'publications':
+                    contentSection.innerHTML = createPublicationsContent(sectionData);
+                    break;
+                case 'talks':
+                    contentSection.innerHTML = createTalksContent(sectionData);
+                    break;
+                case 'teaching':
+                    contentSection.innerHTML = createTeachingContent(sectionData);
+                    break;
+            }
+        }
+    }
+}
+
+function createMentorshipContent(data) {
+    return `
+        <div class="page-intro">
+            <p>${data.content}</p>
+        </div>
+        
+        <div class="highlight-box">
+            <h3>${data.philosophy.title}</h3>
+            <p>${data.philosophy.content}</p>
+        </div>
+        
+        <div class="content-grid">
+            <div class="highlight-box">
+                <h3>${data.opportunities.title}</h3>
+                <p>${data.opportunities.content}</p>
+                <ul class="research-areas">
+                    ${data.opportunities.areas.map(area => `<li>${area}</li>`).join('')}
+                </ul>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>${data.currentStudents.title}</h3>
+                <p><em>${data.currentStudents.note}</em></p>
+                ${data.currentStudents.phd.length > 0 ? `
+                    <h4>PhD Students</h4>
+                    <ul>${data.currentStudents.phd.map(student => `<li>${student}</li>`).join('')}</ul>
+                ` : ''}
+                ${data.currentStudents.masters.length > 0 ? `
+                    <h4>Master's Students</h4>
+                    <ul>${data.currentStudents.masters.map(student => `<li>${student}</li>`).join('')}</ul>
+                ` : ''}
+                ${data.currentStudents.undergraduate.length > 0 ? `
+                    <h4>Undergraduate Students</h4>
+                    <ul>${data.currentStudents.undergraduate.map(student => `<li>${student}</li>`).join('')}</ul>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function createPublicationsContent(data) {
+    return `
+        <div class="page-intro">
+            <div class="content-grid">
+                <div>
+                    <h3>Research Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <strong>${data.metrics.totalPapers}</strong>
+                            <span>Publications</span>
+                        </div>
+                        <div class="metric">
+                            <strong>${data.metrics.hIndex}</strong>
+                            <span>h-index</span>
+                        </div>
+                        <div class="metric">
+                            <strong>${data.metrics.citations}</strong>
+                            <span>Citations</span>
+                        </div>
+                    </div>
+                    <p><em>${data.metrics.note}</em></p>
+                </div>
+                
+                <div>
+                    <h3>Publication Links</h3>
+                    <div class="publication-links">
+                        <a href="${data.links.ads}" class="pub-link">ADS Library</a>
+                        <a href="${data.links.scholar}" class="pub-link">Google Scholar</a>
+                        <a href="${data.links.orcid}" class="pub-link">ORCID Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="highlight-box">
+            <h3>${data.featured.title}</h3>
+            ${data.featured.papers.map(paper => `
+                <div class="featured-paper">
+                    <h4>${paper.title}</h4>
+                    <p><strong>Authors:</strong> ${paper.authors}</p>
+                    <p><strong>Journal:</strong> ${paper.journal} (${paper.year})</p>
+                    <p>${paper.description}</p>
+                    <div class="paper-links">
+                        <a href="https://doi.org/${paper.doi}">DOI</a>
+                        <a href="https://arxiv.org/abs/${paper.arxiv}">arXiv</a>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        
+        <div class="highlight-box">
+            <h3>${data.categories.title}</h3>
+            <div class="content-grid">
+                <div>
+                    <h4>Statistical Methods</h4>
+                    <p>${data.categories.stats}</p>
+                </div>
+                <div>
+                    <h4>Astrophysics</h4>
+                    <p>${data.categories.astro}</p>
+                </div>
+                <div>
+                    <h4>Survey Science</h4>
+                    <p>${data.categories.surveys}</p>
+                </div>
+                <div>
+                    <h4>Software</h4>
+                    <p>${data.categories.software}</p>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function createTalksContent(data) {
+    return `
+        <div class="page-intro">
+            <p>Here you'll find information about conference presentations, seminars, and public talks.</p>
+        </div>
+        
+        ${data.upcoming.events.length > 0 ? `
+            <div class="highlight-box">
+                <h3>${data.upcoming.title}</h3>
+                ${data.upcoming.events.map(event => `
+                    <div class="talk-item">
+                        <h4>${event.title}</h4>
+                        <p><strong>${event.event}</strong> - ${event.location} (${event.date})</p>
+                        <p><em>${event.type}</em></p>
+                    </div>
+                `).join('')}
+            </div>
+        ` : ''}
+        
+        <div class="highlight-box">
+            <h3>${data.recent.title}</h3>
+            ${data.recent.talks.map(talk => `
+                <div class="talk-item">
+                    <h4>${talk.title}</h4>
+                    <p><strong>${talk.event}</strong> - ${talk.location} (${talk.date})</p>
+                    <p><em>${talk.type}</em></p>
+                </div>
+            `).join('')}
+        </div>
+        
+        <div class="highlight-box">
+            <h3>${data.categories.title}</h3>
+            <div class="content-grid">
+                <div>
+                    <h4>Invited Talks</h4>
+                    <p>${data.categories.invited}</p>
+                </div>
+                <div>
+                    <h4>Contributed Talks</h4>
+                    <p>${data.categories.contributed}</p>
+                </div>
+                <div>
+                    <h4>Seminars</h4>
+                    <p>${data.categories.seminars}</p>
+                </div>
+                <div>
+                    <h4>Public Outreach</h4>
+                    <p>${data.categories.public}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-info">
+            <p><em>${data.note}</em></p>
+        </div>
+    `;
+}
+
+function createTeachingContent(data) {
+    return `
+        <div class="page-intro">
+            <div class="highlight-box">
+                <h3>${data.philosophy.title}</h3>
+                <p>${data.philosophy.content}</p>
+            </div>
+        </div>
+        
+        <div class="highlight-box">
+            <h3>${data.courses.title}</h3>
+            <div class="content-grid">
+                <div>
+                    <h4>Undergraduate Courses</h4>
+                    ${data.courses.undergraduate.map(course => `
+                        <div class="course-item">
+                            <h5>${course.code}: ${course.title}</h5>
+                            <p>${course.description}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                <div>
+                    <h4>Graduate Courses</h4>
+                    ${data.courses.graduate.map(course => `
+                        <div class="course-item">
+                            <h5>${course.code}: ${course.title}</h5>
+                            <p>${course.description}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-grid">
+            <div class="highlight-box">
+                <h3>${data.resources.title}</h3>
+                <p>${data.resources.content}</p>
+            </div>
+            
+            <div class="highlight-box">
+                <h3>${data.workshops.title}</h3>
+                <p>${data.workshops.content}</p>
             </div>
         </div>
     `;

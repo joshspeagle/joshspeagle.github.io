@@ -1013,3 +1013,546 @@
     transform: translateY(0);
     transition: all 0.6s ease;
 }
+
+/* === DROPDOWN NAVIGATION STYLES === */
+
+/* Quick Link Dropdown Styles (for the non-sticky header bar) */
+.quick-link-dropdown {
+    position: relative;
+    display: inline-block;
+    z-index: 1000; /* Ensure the dropdown container has proper stacking context */
+}
+
+.quick-link-dropdown .dropdown-toggle {
+    /* Inherit the existing quick-link-inline styling */
+    background: none;
+    border: 1px solid var(--border-accent);
+    color: var(--text-primary);
+    font: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: inherit;
+}
+
+.quick-link-dropdown .dropdown-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-accent);
+    border-color: var(--accent-blue);
+    background: var(--bg-highlight);
+}
+
+.quick-link-dropdown .dropdown-toggle:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.quick-link-dropdown .dropdown-arrow {
+    font-size: 0.7rem;
+    margin-left: 0.25rem;
+    transition: transform 0.3s ease;
+    color: var(--text-muted);
+}
+
+.quick-link-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+    color: var(--accent-blue);
+}
+
+.quick-link-dropdown .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0; /* Align to the right to match other quick links */
+    min-width: 180px;
+    background: var(--bg-nav);
+    border: 2px solid var(--border-accent);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px var(--shadow-dark);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 9999; /* Increased z-index to ensure it appears above all content */
+    overflow: hidden;
+    margin-top: 0.5rem;
+}
+
+.quick-link-dropdown.open .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Circuit board styling for quick link dropdown */
+.quick-link-dropdown .dropdown-menu::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, 
+        var(--accent-blue), 
+        var(--accent-green), 
+        var(--accent-orange), 
+        var(--accent-blue)
+    );
+    border-radius: 13px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Quick link dropdown items */
+.quick-link-dropdown .dropdown-item {
+    display: block;
+    padding: 0.875rem 1.25rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--border-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-link-dropdown .dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.quick-link-dropdown .dropdown-item:hover {
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+    padding-left: 1.5rem;
+}
+
+.quick-link-dropdown .dropdown-item:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: -2px;
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+}
+
+/* Circuit trace animation on hover for quick link dropdown items */
+.quick-link-dropdown .dropdown-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--shadow-accent), transparent);
+    transition: left 0.5s ease;
+    pointer-events: none;
+}
+
+.quick-link-dropdown .dropdown-item:hover::before {
+    left: 100%;
+}
+
+/* Regular Nav Dropdown Styles (for the sticky navigation bar) */
+.nav-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown toggle button styling */
+.dropdown-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.dropdown-toggle:hover {
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+}
+
+.dropdown-toggle:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+/* Dropdown arrow */
+.dropdown-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+    color: var(--text-muted);
+}
+
+.nav-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+    color: var(--accent-blue);
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 180px;
+    background: var(--bg-nav);
+    border: 2px solid var(--border-accent);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px var(--shadow-dark);
+    backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+/* Circuit board styling for dropdown */
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(45deg, 
+        var(--accent-blue), 
+        var(--accent-green), 
+        var(--accent-orange), 
+        var(--accent-blue)
+    );
+    border-radius: 13px;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.nav-dropdown.open .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Dropdown items */
+.dropdown-item {
+    display: block;
+    padding: 0.875rem 1.25rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid var(--border-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+    padding-left: 1.5rem;
+}
+
+.dropdown-item:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: -2px;
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+}
+
+/* Circuit trace animation on hover */
+.dropdown-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--shadow-accent), transparent);
+    transition: left 0.5s ease;
+    pointer-events: none;
+}
+
+.dropdown-item:hover::before {
+    left: 100%;
+}
+
+/* Active states for dropdown elements */
+.dropdown-toggle.active {
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+}
+
+.dropdown-toggle.active .dropdown-arrow {
+    color: var(--accent-blue);
+}
+
+.dropdown-item.active {
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+    border-left: 3px solid var(--accent-blue);
+    padding-left: 1.4rem;
+}
+
+/* === PAGE-SPECIFIC STYLES === */
+
+/* Minimal header for sub-pages */
+.header-minimal {
+    padding: 2rem 0;
+    text-align: center;
+    background: linear-gradient(135deg, var(--header-gradient-1), var(--header-gradient-2));
+    position: relative;
+}
+
+.header-home-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.header-home-link:hover {
+    transform: scale(1.05);
+}
+
+.header-minimal .name {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.header-minimal .chinese-name {
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+
+/* Page header section */
+.page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 3rem;
+    background: var(--gradient-title);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+}
+
+.page-header .tagline {
+    font-size: 1.3rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+}
+
+/* Content grids for page layouts */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
+/* Page-specific content styles */
+.page-intro {
+    margin-bottom: 3rem;
+}
+
+.page-intro p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+}
+
+/* Metrics display for publications page */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.metric {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg-highlight);
+    border-radius: 12px;
+    border: 1px solid var(--border-accent);
+}
+
+.metric strong {
+    display: block;
+    font-size: 2rem;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+}
+
+.metric span {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Publication links */
+.publication-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.pub-link {
+    display: block;
+    padding: 1rem;
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-accent);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.pub-link:hover {
+    background: var(--bg-section-hover);
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+}
+
+/* Featured paper styles */
+.featured-paper {
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.featured-paper:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.featured-paper h4 {
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.paper-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.paper-links a {
+    padding: 0.5rem 1rem;
+    background: var(--accent-blue);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.paper-links a:hover {
+    background: var(--accent-green);
+    transform: translateY(-2px);
+}
+
+/* Talk and course items */
+.talk-item, .course-item {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-primary);
+}
+
+.talk-item:last-child, .course-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.talk-item h4, .course-item h5 {
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+}
+
+.course-item {
+    padding: 1.5rem;
+    background: var(--bg-highlight);
+    border-radius: 12px;
+    border: 1px solid var(--border-accent);
+    margin-bottom: 1.5rem;
+}
+
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
+    /* Quick link dropdown adjustments for mobile */
+    .quick-link-dropdown .dropdown-menu {
+        position: fixed;
+        top: auto;
+        left: 1rem;
+        right: 1rem;
+        width: auto;
+        min-width: auto;
+        transform: translateY(10px);
+    }
+    
+    .quick-link-dropdown.open .dropdown-menu {
+        transform: translateY(0);
+    }
+    
+    /* Regular nav dropdown adjustments for mobile */
+    .dropdown-menu {
+        position: fixed;
+        top: auto;
+        left: 1rem;
+        right: 1rem;
+        width: auto;
+        min-width: auto;
+        transform: translateY(10px);
+    }
+    
+    .nav-dropdown.open .dropdown-menu {
+        transform: translateY(0);
+    }
+    
+    /* Page header adjustments */
+    .page-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .header-minimal .name {
+        font-size: 2rem;
+    }
+    
+    /* Metrics grid responsive */
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Paper links stack on mobile */
+    .paper-links {
+        flex-direction: column;
+    }
+    
+    /* Publication links responsive */
+    .publication-links {
+        gap: 0.75rem;
+    }
+}

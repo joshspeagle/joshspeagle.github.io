@@ -282,7 +282,8 @@
     background: var(--bg-nav);
     padding: 0.75rem 0;
     border-bottom: 2px solid var(--border-accent);
-    overflow: hidden;
+    overflow: visible; /* Changed from hidden to visible to allow dropdown to extend */
+    z-index: 200; /* Higher than nav (100) to ensure dropdown appears above content */
 }
 
 .quick-links-bar::before {
