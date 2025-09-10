@@ -21,10 +21,8 @@ document.addEventListener('DOMContentLoaded', async function () {
             throw new Error('Invalid content data structure');
         }
 
-        // Populate header (minimal for non-home pages)
-        if (currentPage === 'home') {
-            populateHeader(data.header);
-        }
+        // Populate header for all pages
+        populateHeader(data.header);
 
         // Populate quick links (always shown for navigation)
         populateQuickLinks(data.quickLinks);
@@ -146,17 +144,31 @@ function populateQuickLinks(quickLinks) {
 function populateNavigation(navigation) {
     const navContainer = document.querySelector('.nav-container');
     if (navContainer && navigation) {
-        // Simple navigation links (no dropdown functionality here)
-        const navLinks = navigation.map(item =>
-            `<a href="${item.href}" class="nav-link">${item.text}</a>`
-        ).join('');
+        // Check if we're on an individual page (not home)
+        const currentPage = window.currentPage || 'home';
+        
+        if (currentPage === 'home') {
+            // Home page: show full navigation
+            const navLinks = navigation.map(item =>
+                `<a href="${item.href}" class="nav-link">${item.text}</a>`
+            ).join('');
 
-        // Preserve the toggle button
-        navContainer.innerHTML = navLinks + `
-            <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation">
-                <span id="navToggleIcon">+</span>
-            </button>
-        `;
+            navContainer.innerHTML = navLinks + `
+                <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation">
+                    <span id="navToggleIcon">+</span>
+                </button>
+            `;
+        } else {
+            // Individual pages: show only "Back to Home" button
+            navContainer.innerHTML = `
+                <a href="index.html" class="nav-link home-button">
+                    <span class="home-icon">←</span> Back to Home
+                </a>
+                <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation">
+                    <span id="navToggleIcon">+</span>
+                </button>
+            `;
+        }
     }
 }
 
@@ -528,67 +540,354 @@ function populatePageContent(pageType, data) {
             pageTitle.textContent = sectionData.title;
         }
         
-        if (pageTagline && sectionData.tagline) {
-            pageTagline.textContent = sectionData.tagline;
+        // Show page-specific tagline, fallback to main tagline if not available
+        if (pageTagline) {
+            if (sectionData && sectionData.tagline) {
+                pageTagline.textContent = sectionData.tagline;
+            } else if (data.header && data.header.tagline) {
+                pageTagline.textContent = data.header.tagline;
+            }
         }
         
         // Populate specific page content
-        const contentSection = document.getElementById(`${pageType}-content`);
-        if (contentSection) {
-            switch (pageType) {
-                case 'mentorship':
-                    contentSection.innerHTML = createMentorshipContent(sectionData);
-                    break;
-                case 'publications':
-                    contentSection.innerHTML = createPublicationsContent(sectionData);
-                    break;
-                case 'talks':
-                    contentSection.innerHTML = createTalksContent(sectionData);
-                    break;
-                case 'teaching':
-                    contentSection.innerHTML = createTeachingContent(sectionData);
-                    break;
-            }
+        switch (pageType) {
+            case 'mentorship':
+                populateMentorshipSections(sectionData);
+                // Initialize interactive features for mentorship page
+                requestAnimationFrame(() => {
+                    initializeMentorshipInteractivity();
+                });
+                break;
+            case 'publications':
+                const publicationsSection = document.getElementById(`${pageType}-content`);
+                if (publicationsSection) {
+                    publicationsSection.innerHTML = createPublicationsContent(sectionData);
+                }
+                break;
+            case 'talks':
+                const talksSection = document.getElementById(`${pageType}-content`);
+                if (talksSection) {
+                    talksSection.innerHTML = createTalksContent(sectionData);
+                }
+                break;
+            case 'teaching':
+                const teachingSection = document.getElementById(`${pageType}-content`);
+                if (teachingSection) {
+                    teachingSection.innerHTML = createTeachingContent(sectionData);
+                }
+                break;
         }
     }
 }
 
-function createMentorshipContent(data) {
+// New function to populate individual mentorship sections
+function populateMentorshipSections(data) {
+    // Calculate dynamic statistics from mentee data
+    const stats = calculateMentorshipStats(data.menteesByStage);
+    
+    // Populate introduction section
+    const introSection = document.getElementById('mentorship-intro');
+    if (introSection) {
+        introSection.innerHTML = createMentorshipIntro(data);
+    }
+    
+    // Populate overview section
+    const overviewSection = document.getElementById('mentorship-overview');
+    if (overviewSection) {
+        overviewSection.innerHTML = createMentorshipOverview(data, stats);
+    }
+    
+    // Populate current mentees section
+    const currentSection = document.getElementById('mentorship-current');
+    if (currentSection) {
+        currentSection.innerHTML = createCurrentMentees(data);
+    }
+    
+    // Populate former mentees section (if there are any)
+    const formerSection = document.getElementById('mentorship-former');
+    if (formerSection && data.menteesByStage.completed && (
+        (data.menteesByStage.completed.postdoctoral && data.menteesByStage.completed.postdoctoral.length > 0) ||
+        (data.menteesByStage.completed.doctoral && data.menteesByStage.completed.doctoral.length > 0) ||
+        (data.menteesByStage.completed.bachelors && data.menteesByStage.completed.bachelors.length > 0)
+    )) {
+        formerSection.innerHTML = createFormerMentees(data);
+    }
+}
+
+// Create mentorship introduction content
+function createMentorshipIntro(data) {
     return `
-        <div class="page-intro">
-            <p>${data.content}</p>
+        <h1 class="section-title">Mentorship & Supervision</h1>
+        <p class="tagline">${data.tagline}</p>
+        <div class="intro-text">
+            <p>${data.introduction.content}</p>
         </div>
-        
-        <div class="highlight-box">
-            <h3>${data.philosophy.title}</h3>
-            <p>${data.philosophy.content}</p>
-        </div>
-        
-        <div class="content-grid">
-            <div class="highlight-box">
-                <h3>${data.opportunities.title}</h3>
-                <p>${data.opportunities.content}</p>
-                <ul class="research-areas">
-                    ${data.opportunities.areas.map(area => `<li>${area}</li>`).join('')}
-                </ul>
+    `;
+}
+
+// Create mentorship overview content
+function createMentorshipOverview(data, stats) {
+    return `
+        <h2 class="section-title">Overview</h2>
+        <div class="supervision-overview-container">
+            <div class="supervision-stats">
+                <h3>Supervision Overview</h3>
+                <div class="stats-column">
+                    <div class="stat">
+                        <strong>${stats.total}</strong>
+                        <span>Total</span>
+                    </div>
+                    <div class="stat">
+                        <strong>${stats.current}</strong>
+                        <span>Current</span>
+                    </div>
+                    <div class="stat">
+                        <strong>${stats.completed}</strong>
+                        <span>Former</span>
+                    </div>
+                </div>
             </div>
             
-            <div class="highlight-box">
-                <h3>${data.currentStudents.title}</h3>
-                <p><em>${data.currentStudents.note}</em></p>
-                ${data.currentStudents.phd.length > 0 ? `
-                    <h4>PhD Students</h4>
-                    <ul>${data.currentStudents.phd.map(student => `<li>${student}</li>`).join('')}</ul>
-                ` : ''}
-                ${data.currentStudents.masters.length > 0 ? `
-                    <h4>Master's Students</h4>
-                    <ul>${data.currentStudents.masters.map(student => `<li>${student}</li>`).join('')}</ul>
-                ` : ''}
-                ${data.currentStudents.undergraduate.length > 0 ? `
-                    <h4>Undergraduate Students</h4>
-                    <ul>${data.currentStudents.undergraduate.map(student => `<li>${student}</li>`).join('')}</ul>
-                ` : ''}
+            <div class="career-stage-breakdowns">
+                <h3>Career Stage Breakdown</h3>
+                <div class="dual-chart-container">
+                    <div class="chart-section">
+                        <h4>Current</h4>
+                        <div class="chart-container">
+                            ${createInteractiveBarChart(calculateCurrentStats(data.menteesByStage))}
+                        </div>
+                    </div>
+                    <div class="chart-section">
+                        <h4>Former</h4>
+                        <div class="chart-container">
+                            ${createInteractiveBarChart(calculateCompletedStats(data.menteesByStage.completed))}
+                        </div>
+                    </div>
+                </div>
+                <div class="shared-legend">
+                    <div class="legend-item">
+                        <span class="legend-color postdoc"></span>
+                        <span>Postdoctoral</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color doctoral"></span>
+                        <span>Doctoral/Masters</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-color bachelors"></span>
+                        <span>Bachelors/Other</span>
+                    </div>
+                </div>
             </div>
+        </div>
+    `;
+}
+
+// Create current mentees content
+function createCurrentMentees(data) {
+    return `
+        <h2 class="section-title">Current Mentees</h2>
+        ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.postdoctoral, 'postdoc')}
+        ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.doctoral, 'doctoral')}
+        ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.bachelors, 'bachelors')}
+    `;
+}
+
+// Create former mentees content
+function createFormerMentees(data) {
+    return `
+        <h2 class="section-title">Former Mentees</h2>
+        ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.completed.postdoctoral, 'postdoc', true)}
+        ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.completed.doctoral, 'doctoral', true)}
+        ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.completed.bachelors, 'bachelors', true)}
+    `;
+}
+
+function createMenteeSection(title, mentees, type, isCompleted = false) {
+    if (!mentees || mentees.length === 0) return '';
+    
+    // Filter out placeholder entries
+    const realMentees = mentees.filter(mentee => mentee.privacy !== 'placeholder');
+    if (realMentees.length === 0 && mentees.length > 0) {
+        return `
+            <div class="mentee-section">
+                <h4>${title}</h4>
+                <p class="privacy-note"><em>Mentee information will be displayed with appropriate permissions.</em></p>
+            </div>
+        `;
+    }
+    
+    if (realMentees.length === 0) return '';
+    
+    return `
+        <div class="mentee-section">
+            <h4>${title}</h4>
+            <div class="mentee-cards">
+                ${realMentees.map(mentee => createMenteeCard(mentee, type, isCompleted)).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function createMenteeCard(mentee, type, isCompleted = false) {
+    // Generate supervision badge with career stage context
+    const supervisionLevel = mentee.supervisionType === 'Primary Supervisor' ? 'primary' : 
+                           mentee.supervisionType === 'Co-Supervisor' ? 'co' : 'secondary';
+    const supervisionBadge = `<span class="supervision-badge ${supervisionLevel} ${type}-context">${mentee.supervisionType}</span>`;
+    
+    const coSupervisorsText = mentee.coSupervisors && mentee.coSupervisors.length > 0 
+        ? `<p class="co-supervisors">Co-supervisors: ${mentee.coSupervisors.join(', ')}</p>`
+        : '';
+    
+    // Combine fellowships/positions into a single inline block
+    const awards = mentee.fellowships || mentee.scholarships || [mentee.program];
+    const awardsText = awards && awards.length > 0
+        ? `<div class="position-info">${awards.map(award => `<span class="position-badge">${award}</span>`).join('')}</div>`
+        : '';
+    
+    // Remove redundant "Status:" label for current mentees, keep "Outcome:" for former
+    const statusText = isCompleted 
+        ? `<p class="outcome"><strong>Outcome:</strong> ${mentee.outcome || mentee.currentStatus}</p>`
+        : (mentee.currentStatus && mentee.currentStatus.trim() !== '' ? `<p class="current-status">${mentee.currentStatus}</p>` : '');
+    
+    return `
+        <div class="mentee-card ${type}">
+            <div class="mentee-header">
+                <h5 class="mentee-name">${mentee.name}</h5>
+                <span class="timeline">${mentee.timelinePeriod}</span>
+            </div>
+            
+            <div class="badge-row">
+                ${supervisionBadge}
+                ${awardsText}
+            </div>
+            
+            <div class="mentee-content">
+                <p class="project"><strong>${type === 'bachelors' ? 'Project' : 'Research Interests'}:</strong> ${mentee.project}</p>
+                ${coSupervisorsText}
+                ${statusText}
+                <p class="career-context"><em>My role: ${mentee.myCareerStage}</em></p>
+            </div>
+        </div>
+    `;
+}
+
+// Dynamic statistics calculation function
+function calculateMentorshipStats(menteesByStage) {
+    const current = menteesByStage;
+    const completed = menteesByStage.completed || {};
+    
+    // Count current mentees
+    const currentPostdoc = (current.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const currentDoctoral = (current.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const currentBachelors = (current.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
+    
+    // Count completed mentees
+    const completedPostdoc = (completed.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const completedDoctoral = (completed.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const completedBachelors = (completed.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
+    
+    const totalCurrent = currentPostdoc + currentDoctoral + currentBachelors;
+    const totalCompleted = completedPostdoc + completedDoctoral + completedBachelors;
+    const totalOverall = totalCurrent + totalCompleted;
+    
+    return {
+        total: totalOverall,
+        current: totalCurrent,
+        completed: totalCompleted,
+        breakdown: {
+            postdoctoral: currentPostdoc + completedPostdoc,
+            doctoral: currentDoctoral + completedDoctoral,
+            bachelors: currentBachelors + completedBachelors
+        }
+    };
+}
+
+// Calculate statistics for current mentees only
+function calculateCurrentStats(menteesByStage) {
+    if (!menteesByStage) {
+        return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
+    }
+    
+    const currentPostdoc = (menteesByStage.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const currentDoctoral = (menteesByStage.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const currentBachelors = (menteesByStage.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
+    
+    return {
+        postdoctoral: currentPostdoc,
+        doctoral: currentDoctoral,
+        bachelors: currentBachelors
+    };
+}
+
+// Calculate statistics for completed mentees only
+function calculateCompletedStats(completedMentees) {
+    if (!completedMentees) {
+        return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
+    }
+    
+    const completedPostdoc = (completedMentees.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const completedDoctoral = (completedMentees.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const completedBachelors = (completedMentees.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
+    
+    return {
+        postdoctoral: completedPostdoc,
+        doctoral: completedDoctoral,
+        bachelors: completedBachelors
+    };
+}
+
+// Interactive vertical bar chart creation function
+function createInteractiveBarChart(breakdown) {
+    const total = breakdown.postdoctoral + breakdown.doctoral + breakdown.bachelors;
+    if (total === 0) return '<p class="no-data">No mentee data available</p>';
+    
+    const maxValue = Math.max(breakdown.postdoctoral, breakdown.doctoral, breakdown.bachelors);
+    const maxHeight = 120; // pixels
+    
+    const postdocHeight = maxValue > 0 ? Math.max((breakdown.postdoctoral / maxValue) * maxHeight, 8) : 0;
+    const doctoralHeight = maxValue > 0 ? Math.max((breakdown.doctoral / maxValue) * maxHeight, 8) : 0;
+    const bachelorsHeight = maxValue > 0 ? Math.max((breakdown.bachelors / maxValue) * maxHeight, 8) : 0;
+    
+    const postdocPercent = total > 0 ? Math.round((breakdown.postdoctoral / total) * 100) : 0;
+    const doctoralPercent = total > 0 ? Math.round((breakdown.doctoral / total) * 100) : 0;
+    const bachelorsPercent = total > 0 ? Math.round((breakdown.bachelors / total) * 100) : 0;
+    
+    return `
+        <div class="vertical-bar-chart">
+            <div class="bars-container">
+                <div class="bar-column">
+                    <div class="bar-segment postdoc" 
+                         style="height: ${postdocHeight}px" 
+                         data-tooltip="Postdoctoral: ${breakdown.postdoctoral} (${postdocPercent}%)">
+                    </div>
+                    <div class="bar-label-container">
+                        <span class="bar-value">${breakdown.postdoctoral}</span>
+                        <span class="bar-category">Postdoc</span>
+                    </div>
+                </div>
+                <div class="bar-column">
+                    <div class="bar-segment doctoral" 
+                         style="height: ${doctoralHeight}px" 
+                         data-tooltip="Doctoral/Masters: ${breakdown.doctoral} (${doctoralPercent}%)">
+                    </div>
+                    <div class="bar-label-container">
+                        <span class="bar-value">${breakdown.doctoral}</span>
+                        <span class="bar-category">Doctoral</span>
+                    </div>
+                </div>
+                <div class="bar-column">
+                    <div class="bar-segment bachelors" 
+                         style="height: ${bachelorsHeight}px" 
+                         data-tooltip="Bachelors/Other: ${breakdown.bachelors} (${bachelorsPercent}%)">
+                    </div>
+                    <div class="bar-label-container">
+                        <span class="bar-value">${breakdown.bachelors}</span>
+                        <span class="bar-category">Bachelors</span>
+                    </div>
+                </div>
+            </div>
+            <div class="tooltip"></div>
         </div>
     `;
 }
@@ -794,4 +1093,101 @@ function updatePublicationIcons() {
             iconElement.innerHTML = getPublicationIcon(iconTypes[index]);
         }
     });
+}
+
+// Initialize mentorship page interactive features
+function initializeMentorshipInteractivity() {
+    // Add hover effects and tooltips for bar chart segments
+    const barSegments = document.querySelectorAll('.bar-segment');
+    const tooltip = document.querySelector('.tooltip');
+    
+    barSegments.forEach(segment => {
+        const tooltipText = segment.getAttribute('data-tooltip');
+        
+        if (tooltipText && tooltip) {
+            segment.addEventListener('mouseenter', function(e) {
+                tooltip.textContent = tooltipText;
+                tooltip.style.opacity = '1';
+                positionTooltip(e, tooltip);
+            });
+            
+            segment.addEventListener('mousemove', function(e) {
+                positionTooltip(e, tooltip);
+            });
+            
+            segment.addEventListener('mouseleave', function() {
+                tooltip.style.opacity = '0';
+            });
+        }
+        
+        // Add click event for accessibility
+        segment.addEventListener('click', function() {
+            if (tooltipText) {
+                // Create a temporary announcement for screen readers
+                const announcement = document.createElement('div');
+                announcement.setAttribute('aria-live', 'polite');
+                announcement.setAttribute('aria-atomic', 'true');
+                announcement.style.position = 'absolute';
+                announcement.style.left = '-10000px';
+                announcement.textContent = tooltipText;
+                document.body.appendChild(announcement);
+                
+                setTimeout(() => {
+                    document.body.removeChild(announcement);
+                }, 1000);
+            }
+        });
+        
+        // Add keyboard navigation support
+        segment.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    });
+    
+    // Add focus styles for keyboard navigation
+    barSegments.forEach(segment => {
+        segment.setAttribute('tabindex', '0');
+        segment.setAttribute('role', 'button');
+        segment.setAttribute('aria-label', segment.getAttribute('data-tooltip') || 'Chart segment');
+    });
+}
+
+// Helper function to position tooltip near mouse cursor
+function positionTooltip(event, tooltip) {
+    // Get mouse position relative to the page
+    const mouseX = event.pageX;
+    const mouseY = event.pageY;
+    
+    // Get tooltip dimensions
+    tooltip.style.visibility = 'hidden';
+    tooltip.style.opacity = '1';
+    const tooltipRect = tooltip.getBoundingClientRect();
+    tooltip.style.visibility = 'visible';
+    
+    // Calculate position - offset from cursor to avoid covering it
+    let left = mouseX + 10;
+    let top = mouseY - tooltipRect.height - 10;
+    
+    // Adjust if tooltip would go off screen horizontally
+    if (left + tooltipRect.width > window.innerWidth) {
+        left = mouseX - tooltipRect.width - 10;
+    }
+    if (left < 0) {
+        left = 10;
+    }
+    
+    // Adjust if tooltip would go off screen vertically
+    if (top < window.scrollY) {
+        top = mouseY + 10;
+    }
+    if (top + tooltipRect.height > window.scrollY + window.innerHeight) {
+        top = window.scrollY + window.innerHeight - tooltipRect.height - 10;
+    }
+    
+    tooltip.style.position = 'absolute';
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
 }

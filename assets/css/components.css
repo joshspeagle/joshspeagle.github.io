@@ -424,6 +424,29 @@
     border-color: var(--accent-blue);
 }
 
+/* Home button styling for individual pages */
+.home-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-accent);
+    transition: all 0.3s ease;
+}
+
+.home-button:hover {
+    background: var(--bg-section-hover);
+    border-color: var(--accent-blue);
+    transform: translateX(-2px);
+}
+
+.home-icon {
+    font-size: 1.2rem;
+    color: var(--accent-blue);
+}
+
 .nav-link.active {
     background: var(--border-accent-hover);
     border-color: var(--accent-blue);
@@ -1554,5 +1577,861 @@
     /* Publication links responsive */
     .publication-links {
         gap: 0.75rem;
+    }
+}
+
+/* === MENTORSHIP PAGE STYLES === */
+
+/* Page introduction styling */
+.intro-text {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.intro-text p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+/* Three-column supervision overview container: optimized proportions */
+.supervision-overview-container {
+    display: grid;
+    grid-template-columns: minmax(280px, 1fr) minmax(400px, 2fr);
+    gap: 2rem;
+    margin: 2rem 0;
+    align-items: stretch;
+}
+
+/* Supervision statistics */
+.supervision-stats {
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+/* Stats column for vertical layout in new design */
+.stats-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+
+.stat {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-section);
+    border-radius: 8px;
+    border: 1px solid var(--border-primary);
+}
+
+.stat strong {
+    display: block;
+    font-size: 2rem;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+}
+
+.stat span {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.stats-note {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* Major mentorship sections - single backgrounds like index.html */
+#mentorship-intro {
+    /* Clean introduction section with no background - lets main gradient show through */
+}
+
+#mentorship-overview.mentorship-overview-section {
+    background: linear-gradient(135deg, rgba(100, 181, 246, 0.03), rgba(129, 199, 132, 0.03));
+    border: 1px solid var(--border-accent);
+}
+
+#mentorship-current.mentorship-current-section {
+    background: rgba(74, 144, 226, 0.02);
+    border: 1px solid rgba(74, 144, 226, 0.15);
+}
+
+#mentorship-former.mentorship-former-section {
+    background: rgba(76, 175, 80, 0.02);
+    border: 1px solid rgba(76, 175, 80, 0.15);
+}
+
+/* Light mode adjustments for major sections */
+[data-theme="light"] #mentorship-overview.mentorship-overview-section {
+    background: linear-gradient(135deg, rgba(25, 118, 210, 0.02), rgba(56, 142, 60, 0.02));
+    border-color: var(--border-accent);
+}
+
+[data-theme="light"] #mentorship-current.mentorship-current-section {
+    background: rgba(25, 118, 210, 0.01);
+    border-color: rgba(25, 118, 210, 0.1);
+}
+
+[data-theme="light"] #mentorship-former.mentorship-former-section {
+    background: rgba(56, 142, 60, 0.01);
+    border-color: rgba(56, 142, 60, 0.1);
+}
+
+/* Mentee sections - remove individual backgrounds */
+.mentee-section {
+    margin-bottom: 2.5rem;
+}
+
+.mentee-section:last-child {
+    margin-bottom: 0;
+}
+
+.mentee-section h4 {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-accent);
+    font-weight: 600;
+    color: var(--accent-blue);
+}
+
+
+/* Light mode adjustments for supervision badge gradients */
+[data-theme="light"] .supervision-badge.postdoc-context.primary {
+    background: linear-gradient(135deg, #1565c0, #1976d2);
+}
+
+[data-theme="light"] .supervision-badge.postdoc-context.co {
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+}
+
+[data-theme="light"] .supervision-badge.postdoc-context.secondary {
+    background: linear-gradient(135deg, #64b5f6, #90caf9);
+    color: #0d47a1;
+}
+
+[data-theme="light"] .supervision-badge.doctoral-context.primary {
+    background: linear-gradient(135deg, #2e7d32, #388e3c);
+}
+
+[data-theme="light"] .supervision-badge.doctoral-context.co {
+    background: linear-gradient(135deg, #388e3c, #4caf50);
+}
+
+[data-theme="light"] .supervision-badge.doctoral-context.secondary {
+    background: linear-gradient(135deg, #81c784, #a5d6a7);
+    color: #1b5e20;
+}
+
+[data-theme="light"] .supervision-badge.bachelors-context.primary {
+    background: linear-gradient(135deg, #e65100, #f57c00);
+}
+
+[data-theme="light"] .supervision-badge.bachelors-context.co {
+    background: linear-gradient(135deg, #f57c00, #ff9800);
+}
+
+[data-theme="light"] .supervision-badge.bachelors-context.secondary {
+    background: linear-gradient(135deg, #ffab40, #ffc947);
+    color: #bf360c;
+}
+
+.privacy-note {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 1rem;
+    background: var(--bg-section);
+    border-radius: 8px;
+    border: 1px solid var(--border-primary);
+}
+
+/* Mentee cards */
+.mentee-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1rem;
+}
+
+.mentee-card {
+    background: var(--bg-section);
+    border: 1px solid var(--border-accent);
+    border-radius: 10px;
+    padding: 1.25rem;
+    position: relative;
+    transition: all 0.3s ease;
+    border-left: 3px solid var(--border-accent);
+}
+
+.mentee-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--shadow-accent);
+    border-color: var(--accent-blue);
+    background: var(--bg-section-hover);
+}
+
+/* Career stage color coding - Updated for 3-category system */
+.mentee-card.postdoc {
+    border-left-color: var(--accent-blue);
+}
+
+.mentee-card.doctoral {
+    border-left-color: var(--accent-green);
+}
+
+.mentee-card.bachelors {
+    border-left-color: var(--accent-orange);
+}
+
+/* Legacy support for old categories */
+.mentee-card.phd {
+    border-left-color: var(--accent-green);
+}
+
+.mentee-card.masters {
+    border-left-color: var(--accent-orange);
+}
+
+.mentee-card.undergraduate {
+    border-left-color: var(--accent-orange);
+}
+
+/* Mentee card header - name and duration on same line */
+.mentee-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+}
+
+.mentee-name {
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.timeline {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Badge row layout - horizontal badges */
+.badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.position-info {
+    display: contents;
+}
+
+/* Supervision badges with career stage gradients */
+.supervision-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+    color: white;
+    border: 1px solid transparent;
+}
+
+/* Postdoc context supervision badges (blue gradients) */
+.supervision-badge.postdoc-context.primary {
+    background: linear-gradient(135deg, #1976d2, #42a5f5);
+    border-color: rgba(25, 118, 210, 0.3);
+}
+
+.supervision-badge.postdoc-context.co {
+    background: linear-gradient(135deg, #5e92cf, #81c3f7);
+    border-color: rgba(94, 146, 207, 0.3);
+}
+
+.supervision-badge.postdoc-context.secondary {
+    background: linear-gradient(135deg, #64b5f6, #90caf9);
+    color: #1565c0;
+    border-color: rgba(100, 181, 246, 0.3);
+}
+
+/* Doctoral context supervision badges (green gradients) */
+.supervision-badge.doctoral-context.primary {
+    background: linear-gradient(135deg, #388e3c, #66bb6a);
+    border-color: rgba(56, 142, 60, 0.3);
+}
+
+.supervision-badge.doctoral-context.co {
+    background: linear-gradient(135deg, #689f38, #9ccc65);
+    border-color: rgba(104, 159, 56, 0.3);
+}
+
+.supervision-badge.doctoral-context.secondary {
+    background: linear-gradient(135deg, #81c784, #a5d6a7);
+    color: #2e7d32;
+    border-color: rgba(129, 199, 132, 0.3);
+}
+
+/* Bachelors context supervision badges (orange gradients) */
+.supervision-badge.bachelors-context.primary {
+    background: linear-gradient(135deg, #f57c00, #ff9800);
+    border-color: rgba(245, 124, 0, 0.3);
+}
+
+.supervision-badge.bachelors-context.co {
+    background: linear-gradient(135deg, #ff8f00, #ffb74d);
+    border-color: rgba(255, 143, 0, 0.3);
+}
+
+.supervision-badge.bachelors-context.secondary {
+    background: linear-gradient(135deg, #ffab40, #ffc947);
+    color: #e65100;
+    border-color: rgba(255, 171, 64, 0.3);
+}
+
+/* Position badges with neutral purple theme for better readability and hyperlink visibility */
+.position-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 400;
+    border: 1px solid;
+    color: white;
+    background: rgba(103, 58, 183, 0.8);
+    border-color: rgba(103, 58, 183, 0.5);
+    transition: all 0.2s ease;
+}
+
+.position-badge:hover {
+    background: rgba(103, 58, 183, 0.9);
+    border-color: rgba(103, 58, 183, 0.7);
+    transform: translateY(-1px);
+}
+
+/* Hyperlink styling within position badges */
+.position-badge a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.position-badge a:hover {
+    text-decoration: underline;
+}
+
+/* Light mode adjustments for position badges */
+[data-theme="light"] .position-badge {
+    background: rgba(81, 45, 168, 0.9);
+    border-color: rgba(81, 45, 168, 0.6);
+    color: white;
+}
+
+[data-theme="light"] .position-badge:hover {
+    background: rgba(81, 45, 168, 1);
+    border-color: rgba(81, 45, 168, 0.8);
+}
+
+/* Mentee content */
+.mentee-content p {
+    margin: 0.6rem 0;
+    line-height: 1.5;
+}
+
+.mentee-content .project {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.mentee-content .co-supervisors {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.mentee-content .current-status {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.mentee-content .outcome {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.mentee-content .career-context {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--border-primary);
+}
+
+/* Values list styling */
+.values-list {
+    list-style: none;
+    padding: 0;
+}
+
+.values-list li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.values-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+/* Mobile responsive adjustments for mentorship */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .mentee-cards {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .mentee-card {
+        padding: 1rem;
+    }
+    
+    .mentee-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .timeline {
+        align-self: flex-end;
+    }
+    
+    .badge-row {
+        gap: 0.25rem;
+    }
+    
+    .position-badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.4rem;
+    }
+    
+    .supervision-badge {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+    }
+}
+
+/* === MENTORSHIP BREAKDOWN & BAR CHART STYLES === */
+
+/* Career stage breakdowns container */
+.career-stage-breakdowns {
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Legacy mentorship breakdown container (kept for compatibility) */
+.mentorship-breakdown {
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    padding: 2rem;
+}
+
+/* Dual chart container for side-by-side Current/Former charts */
+.dual-chart-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    padding: 0 1rem;
+}
+
+.chart-section {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.chart-section h4 {
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Shared legend for both charts */
+.shared-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.mentorship-breakdown h3,
+.mentorship-breakdown h4 {
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Former mentees header styling */
+.former-mentees-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    align-items: center;
+}
+
+.former-mentees-title h3 {
+    margin: 0;
+    text-align: left;
+}
+
+.former-mentees-breakdown {
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-accent);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+.former-mentees-breakdown h4 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Chart container */
+.chart-container {
+    margin: 1rem 0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Vertical bar chart styles */
+.vertical-bar-chart {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    padding: 1rem 0;
+}
+
+.bars-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 160px;
+    padding: 0 10px;
+    position: relative;
+}
+
+/* Individual bar columns */
+.bar-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    max-width: 80px;
+}
+
+/* Vertical bar segments */
+.bar-segment {
+    width: 100%;
+    min-height: 8px;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.bar-segment:hover {
+    transform: scale(1.05);
+    z-index: 2;
+    filter: brightness(1.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Bar segment colors */
+.bar-segment.postdoc {
+    background: linear-gradient(180deg, var(--accent-blue), #4a90e2);
+}
+
+.bar-segment.doctoral {
+    background: linear-gradient(180deg, var(--accent-green), #4caf50);
+}
+
+.bar-segment.bachelors {
+    background: linear-gradient(180deg, var(--accent-orange), #ff9800);
+}
+
+/* Bar labels container */
+.bar-label-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
+}
+
+/* Bar value labels */
+.bar-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+/* Bar category labels */
+.bar-category {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+/* Legacy horizontal bar chart support (for compatibility) */
+.bar-chart {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.bar-container {
+    display: flex;
+    height: 60px;
+    background: var(--bg-section);
+    border-radius: 30px;
+    overflow: hidden;
+    border: 2px solid var(--border-accent);
+    position: relative;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Legacy bar labels for horizontal charts */
+.bar-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+}
+
+/* Chart legend */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-accent);
+}
+
+.legend-color.postdoc {
+    background: linear-gradient(135deg, var(--accent-blue), #5a9fd4);
+}
+
+.legend-color.doctoral {
+    background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+}
+
+.legend-color.bachelors {
+    background: linear-gradient(135deg, var(--accent-orange), #ffb74d);
+}
+
+/* Tooltip (for future enhancement) */
+.tooltip {
+    position: absolute;
+    background: var(--bg-tooltip);
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 10;
+    border: 1px solid var(--border-accent);
+    box-shadow: 0 4px 12px var(--shadow-dark);
+}
+
+/* No data state */
+.no-data {
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 2rem;
+    background: var(--bg-section);
+    border-radius: 8px;
+    border: 1px solid var(--border-primary);
+}
+
+/* Mobile responsive adjustments for charts */
+@media (max-width: 768px) {
+    /* Three-column layout becomes single column on mobile */
+    .supervision-overview-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    /* Dual chart container becomes single column */
+    .dual-chart-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 0.5rem;
+    }
+    
+    /* Vertical bar charts on mobile */
+    .vertical-bar-chart {
+        max-width: 280px;
+        padding: 0.75rem 0;
+    }
+    
+    .bars-container {
+        height: 120px;
+        padding: 0 5px;
+    }
+    
+    .bar-column {
+        max-width: 70px;
+    }
+    
+    .bar-value {
+        font-size: 1rem;
+    }
+    
+    .bar-category {
+        font-size: 0.75rem;
+    }
+    
+    /* Legacy support for former mentees header */
+    .former-mentees-header {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .former-mentees-title h3 {
+        text-align: center;
+    }
+    
+    .chart-legend {
+        gap: 1rem;
+        justify-content: space-around;
+    }
+    
+    .legend-item {
+        font-size: 0.8rem;
+    }
+    
+    .bar-container {
+        height: 50px;
+    }
+    
+    .bar-label {
+        font-size: 0.8rem;
+    }
+    
+    .mentorship-breakdown,
+    .former-mentees-breakdown,
+    .career-stage-breakdowns {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Very small mobile screens */
+    .vertical-bar-chart {
+        max-width: 260px;
+        padding: 0.5rem 0;
+    }
+    
+    .bars-container {
+        height: 100px;
+        padding: 0 3px;
+    }
+    
+    .bar-column {
+        max-width: 60px;
+        gap: 0.25rem;
+    }
+    
+    .bar-value {
+        font-size: 0.9rem;
+    }
+    
+    .bar-category {
+        font-size: 0.7rem;
+    }
+    
+    .chart-legend {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .bar-container {
+        height: 40px;
+    }
+    
+    .bar-label {
+        font-size: 0.7rem;
+    }
+    
+    /* Hide very small segment labels on mobile */
+    .bar-segment[style*="width: 5%"] .bar-label,
+    .bar-segment[style*="width: 6%"] .bar-label,
+    .bar-segment[style*="width: 7%"] .bar-label,
+    .bar-segment[style*="width: 8%"] .bar-label,
+    .bar-segment[style*="width: 9%"] .bar-label,
+    .bar-segment[style*="width: 10%"] .bar-label {
+        display: none;
     }
 }
