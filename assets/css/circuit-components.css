@@ -14,7 +14,7 @@
     position: relative;
 }
 
-/* Add circuit traces between sections */
+/* PCB-style inter-section bus routing */
 .container::before {
     content: '';
     position: absolute;
@@ -24,81 +24,86 @@
     bottom: 0;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.06;
+    opacity: 0.15;
     background-image:
-        /* Vertical connecting traces */
-        linear-gradient(to bottom, transparent 48%, var(--accent-blue) 48%, var(--accent-blue) 48.5%, transparent 48.5%, transparent 51.5%, var(--accent-blue) 51.5%, var(--accent-blue) 52%, transparent 52%),
-        /* Horizontal traces */
-        linear-gradient(to right, transparent 48%, var(--accent-green) 48%, var(--accent-green) 48.5%, transparent 48.5%, transparent 51.5%, var(--accent-green) 51.5%, var(--accent-green) 52%, transparent 52%);
-    background-size: 100px 100%, 100% 100px;
-    background-position: center;
+        /* Main vertical bus line */
+        linear-gradient(90deg, 
+            transparent calc(50% - 1px), 
+            var(--accent-blue) calc(50% - 1px), 
+            var(--accent-blue) calc(50% + 1px), 
+            transparent calc(50% + 1px)
+        ),
+        /* Branch connections (T-junctions) */
+        linear-gradient(0deg,
+            transparent calc(20% - 1px),
+            var(--accent-green) calc(20% - 1px),
+            var(--accent-green) calc(20% + 1px),
+            transparent calc(20% + 1px),
+            transparent calc(80% - 1px),
+            var(--accent-green) calc(80% - 1px),
+            var(--accent-green) calc(80% + 1px),
+            transparent calc(80% + 1px)
+        ),
+        /* Junction connection pads */
+        radial-gradient(circle at 50% 20%, var(--accent-green) 0%, var(--accent-green) 2px, transparent 2px),
+        radial-gradient(circle at 50% 80%, var(--accent-green) 0%, var(--accent-green) 2px, transparent 2px);
+    background-size: 
+        100% 100%,  /* Main bus */
+        100% 100%,  /* Branches */
+        4px 4px,    /* Top junction pad */
+        4px 4px;    /* Bottom junction pad */
+    background-position:
+        center,
+        center,
+        50% 20%,
+        50% 80%;
+    background-repeat: no-repeat;
 }
 
 [data-theme="light"] .container::before {
-    opacity: 0.04;
+    opacity: 0.08;
 }
 
-/* Circuit Board Section Styling */
+/* Clean Circuit Board Section Styling */
 .section {
     margin: 4rem 0;
     padding: 3rem;
-    background:
-        /* Gradient background */
-        linear-gradient(135deg, var(--bg-section), var(--bg-section-hover)),
-        /* Circuit grid pattern */
-        linear-gradient(0deg, transparent 24%, var(--circuit-trace) 25%, var(--circuit-trace) 26%, transparent 27%, transparent 74%, var(--circuit-trace) 75%, var(--circuit-trace) 76%, transparent 77%, transparent),
-        linear-gradient(90deg, transparent 24%, var(--circuit-trace) 25%, var(--circuit-trace) 26%, transparent 27%, transparent 74%, var(--circuit-trace) 75%, var(--circuit-trace) 76%, transparent 77%, transparent);
-    background-size: 100% 100%, 50px 50px, 50px 50px;
-    border: none;
+    background: linear-gradient(135deg, var(--bg-section), var(--bg-section-hover));
+    border: 2px solid var(--border-primary);
+    border-radius: 12px;
     position: relative;
     backdrop-filter: blur(10px);
     overflow: visible;
     isolation: isolate;
-    /* PCB-style shape with notches */
-    clip-path: polygon(0 20px, 20px 20px, 20px 0,
-            /* top-left notch */
-            calc(50% - 30px) 0, calc(50% - 30px) 8px, calc(50% + 30px) 8px, calc(50% + 30px) 0,
-            /* top center notch */
-            calc(100% - 20px) 0, calc(100% - 20px) 20px, 100% 20px,
-            /* top-right corner */
-            100% calc(50% - 20px), calc(100% - 8px) calc(50% - 20px), calc(100% - 8px) calc(50% + 20px), 100% calc(50% + 20px),
-            /* right notch */
-            100% calc(100% - 20px), calc(100% - 20px) calc(100% - 20px), calc(100% - 20px) 100%,
-            /* bottom-right corner */
-            calc(50% + 30px) 100%, calc(50% + 30px) calc(100% - 8px), calc(50% - 30px) calc(100% - 8px), calc(50% - 30px) 100%,
-            /* bottom center notch */
-            20px 100%, 20px calc(100% - 20px), 0 calc(100% - 20px),
-            /* bottom-left corner */
-            0 calc(50% + 20px), 8px calc(50% + 20px), 8px calc(50% - 20px), 0 calc(50% - 20px)
-            /* left notch */
-        );
+    box-shadow: 
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 4px 20px var(--shadow-dark);
 }
 
-/* Main circuit border with connection pins */
+/* PCB border outline and central component area */
 .section::before {
     content: '';
     position: absolute;
-    inset: -2px;
-    background:
-        /* Main border */
-        linear-gradient(to right, var(--accent-blue) 0%, var(--accent-blue) 100%),
-        /* Pin connectors pattern */
-        repeating-linear-gradient(to right, transparent 0px, transparent 8px, var(--accent-blue) 8px, var(--accent-blue) 12px, transparent 12px, transparent 20px),
-        repeating-linear-gradient(to bottom, transparent 0px, transparent 8px, var(--accent-blue) 8px, var(--accent-blue) 12px, transparent 12px, transparent 20px);
-    background-size: 100% 100%, 100% 4px, 4px 100%;
-    background-position: center, top, left;
-    background-repeat: no-repeat, repeat-x, repeat-y;
-    /* Match parent clip-path with slight offset */
-    clip-path: polygon(0 20px, 20px 20px, 20px 0,
-            calc(50% - 30px) 0, calc(50% - 30px) 8px, calc(50% + 30px) 8px, calc(50% + 30px) 0,
-            calc(100% - 20px) 0, calc(100% - 20px) 20px, 100% 20px,
-            100% calc(50% - 20px), calc(100% - 8px) calc(50% - 20px), calc(100% - 8px) calc(50% + 20px), 100% calc(50% + 20px),
-            100% calc(100% - 20px), calc(100% - 20px) calc(100% - 20px), calc(100% - 20px) 100%,
-            calc(50% + 30px) 100%, calc(50% + 30px) calc(100% - 8px), calc(50% - 30px) calc(100% - 8px), calc(50% - 30px) 100%,
-            20px 100%, 20px calc(100% - 20px), 0 calc(100% - 20px),
-            0 calc(50% + 20px), 8px calc(50% + 20px), 8px calc(50% - 20px), 0 calc(50% - 20px));
-    opacity: var(--circuit-border-opacity);
+    inset: -1px;
+    background: 
+        /* Outer PCB border */
+        linear-gradient(45deg, 
+            var(--accent-blue), 
+            var(--accent-green), 
+            var(--accent-orange), 
+            var(--accent-blue)
+        ),
+        /* Central component area outline */
+        linear-gradient(0deg, transparent calc(50% - 30px), var(--circuit-trace) calc(50% - 30px), var(--circuit-trace) calc(50% - 28px), transparent calc(50% - 28px), transparent calc(50% + 28px), var(--circuit-trace) calc(50% + 28px), var(--circuit-trace) calc(50% + 30px), transparent calc(50% + 30px)),
+        linear-gradient(90deg, transparent calc(50% - 40px), var(--circuit-trace) calc(50% - 40px), var(--circuit-trace) calc(50% - 38px), transparent calc(50% - 38px), transparent calc(50% + 38px), var(--circuit-trace) calc(50% + 38px), var(--circuit-trace) calc(50% + 40px), transparent calc(50% + 40px));
+    background-size: 
+        100% 100%,     /* Full border */
+        100% 100%,     /* Central horizontal lines */
+        100% 100%;     /* Central vertical lines */
+    border-radius: 13px;
+    opacity: 0.3;
     pointer-events: none;
+    z-index: -1;
 }
 
 /* Inner content area with proper spacing */
@@ -107,32 +112,40 @@
     z-index: 1;
 }
 
-/* Circuit trace decorations */
+/* Clean corner connection pads and minimal via holes */
 .section::after {
     content: '';
     position: absolute;
-    inset: 20px;
+    inset: 16px;
     pointer-events: none;
-    opacity: 0.05;
+    opacity: 0.4;
     background-image:
-        /* Corner connection nodes */
-        radial-gradient(circle at 0% 0%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
-        radial-gradient(circle at 100% 0%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
-        radial-gradient(circle at 0% 100%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
-        radial-gradient(circle at 100% 100%, var(--accent-blue) 0%, var(--accent-blue) 8px, transparent 8px),
-        /* Circuit traces */
-        linear-gradient(to right, var(--accent-blue) 0%, var(--accent-blue) 2px, transparent 2px),
-        linear-gradient(to bottom, var(--accent-blue) 0%, var(--accent-blue) 2px, transparent 2px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 50px 100%, 100% 50px;
-    background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, repeat-y;
+        /* Corner connection pads */
+        radial-gradient(circle at 0% 0%, var(--accent-blue) 0%, var(--accent-blue) 4px, transparent 4px),
+        radial-gradient(circle at 100% 0%, var(--accent-green) 0%, var(--accent-green) 4px, transparent 4px),
+        radial-gradient(circle at 100% 100%, var(--accent-orange) 0%, var(--accent-orange) 4px, transparent 4px),
+        radial-gradient(circle at 0% 100%, var(--accent-blue) 0%, var(--accent-blue) 4px, transparent 4px),
+        
+        /* Minimal via holes */
+        radial-gradient(circle at 30% 30%, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 1px, transparent 1px),
+        radial-gradient(circle at 70% 70%, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: top left, top right, bottom right, bottom left, center, center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
 }
 
 [data-theme="light"] .section::after {
-    opacity: 0.08;
+    opacity: 0.5;
+    /* Slightly more visible in light mode */
 }
 
-/* Enhanced circuit background pattern */
+/* Light mode adjustments for PCB border */
+[data-theme="light"] .section::before {
+    opacity: 0.4;
+}
+
+/* Simplified circuit background pattern using CSS */
 .circuit-bg {
     position: absolute;
     top: 0;
@@ -142,12 +155,17 @@
     opacity: var(--circuit-opacity);
     pointer-events: none;
     z-index: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='circuit' x='0' y='0' width='100' height='100' patternUnits='userSpaceOnUse'%3E%3C!-- Main traces --%3E%3Cpath d='M0 50h40l5-5h10l5 5h40M50 0v40l-5 5v10l5 5v40' stroke='%2364b5f6' stroke-width='1' fill='none' opacity='0.6'/%3E%3C!-- Connection nodes --%3E%3Ccircle cx='50' cy='50' r='4' fill='%2381c784'/%3E%3Ccircle cx='25' cy='50' r='2' fill='%2364b5f6'/%3E%3Ccircle cx='75' cy='50' r='2' fill='%2364b5f6'/%3E%3Ccircle cx='50' cy='25' r='2' fill='%2364b5f6'/%3E%3Ccircle cx='50' cy='75' r='2' fill='%2364b5f6'/%3E%3C!-- Diagonal traces --%3E%3Cpath d='M0 0l25 25M75 75l25 25M0 100l25-25M75 25l25-25' stroke='%2364b5f6' stroke-width='0.5' fill='none' opacity='0.4'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='400' height='400' fill='url(%23circuit)'/%3E%3C/svg%3E");
-    background-size: 400px 400px;
+    background-image:
+        /* Connection nodes */
+        radial-gradient(circle at 50% 50%, var(--accent-green) 0%, var(--accent-green) 2px, transparent 2px),
+        radial-gradient(circle at 25% 25%, var(--accent-blue) 0%, var(--accent-blue) 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, var(--accent-blue) 0%, var(--accent-blue) 1px, transparent 1px);
+    background-size: 100px 100px;
+    background-position: 0 0, 25px 25px, 75px 75px;
 }
 
 [data-theme="light"] .circuit-bg {
-    opacity: 0.06;
+    opacity: 0.04;
 }
 
 /* Special styling for ART section */
@@ -167,29 +185,15 @@
     background-size: 100% 100%, 50px 50px, 50px 50px;
 }
 
-/* Circuit-style publication cards */
+/* Simplified publication cards */
 .publication-card {
     display: flex;
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-    background:
-        var(--pub-card-bg),
-        /* Circuit pattern overlay */
-        linear-gradient(45deg, transparent 48%, var(--circuit-trace) 49%, var(--circuit-trace) 51%, transparent 52%),
-        linear-gradient(-45deg, transparent 48%, var(--circuit-trace) 49%, var(--circuit-trace) 51%, transparent 52%);
-    background-size: 100% 100%, 20px 20px, 20px 20px;
+    background: var(--pub-card-bg);
     border: 1px solid var(--border-accent);
-    /* Chip-style shape */
-    clip-path: polygon(0 8px, 8px 0,
-            /* top-left bevel */
-            calc(100% - 8px) 0, 100% 8px,
-            /* top-right bevel */
-            100% calc(100% - 8px), calc(100% - 8px) 100%,
-            /* bottom-right bevel */
-            8px 100%, 0 calc(100% - 8px)
-            /* bottom-left bevel */
-        );
+    border-radius: 12px;
     text-decoration: none;
     color: inherit;
     transition: all 0.3s ease;
@@ -197,48 +201,15 @@
     overflow: visible;
 }
 
-/* Circuit traces on cards */
-.publication-card::before {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    background:
-        /* Connection pins on edges */
-        repeating-linear-gradient(to right, transparent 0, transparent 12px, var(--accent-blue) 12px, var(--accent-blue) 16px, transparent 16px, transparent 24px);
-    background-size: 100% 2px;
-    background-position: center top;
-    background-repeat: repeat-x;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.publication-card:hover::before {
-    opacity: 0.3;
-}
-
+/* Simplified card hover effects */
 .publication-card:hover {
     transform: translateY(-3px);
     border-color: var(--accent-blue);
-    box-shadow:
-        0 10px 30px var(--shadow-accent),
-        inset 0 0 20px var(--circuit-trace);
-    background:
-        rgba(100, 181, 246, 0.05),
-        linear-gradient(45deg, transparent 48%, rgba(100, 181, 246, 0.1) 49%, rgba(100, 181, 246, 0.1) 51%, transparent 52%),
-        linear-gradient(-45deg, transparent 48%, rgba(100, 181, 246, 0.1) 49%, rgba(100, 181, 246, 0.1) 51%, transparent 52%);
-    background-size: 100% 100%, 20px 20px, 20px 20px;
+    box-shadow: 0 10px 30px var(--shadow-accent);
+    background: var(--pub-card-gradient);
 }
 
-[data-theme="light"] .publication-card:hover {
-    background:
-        rgba(25, 118, 210, 0.04),
-        linear-gradient(45deg, transparent 48%, rgba(25, 118, 210, 0.08) 49%, rgba(25, 118, 210, 0.08) 51%, transparent 52%),
-        linear-gradient(-45deg, transparent 48%, rgba(25, 118, 210, 0.08) 49%, rgba(25, 118, 210, 0.08) 51%, transparent 52%);
-    background-size: 100% 100%, 20px 20px, 20px 20px;
-}
-
-/* Circuit node indicator on card icon */
+/* Simplified card icon */
 .card-icon {
     font-size: 2.5rem;
     width: 60px;
@@ -246,15 +217,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background:
-        rgba(100, 181, 246, 0.1),
-        /* CPU die pattern */
-        repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(100, 181, 246, 0.1) 4px, rgba(100, 181, 246, 0.1) 5px),
-        repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(100, 181, 246, 0.1) 4px, rgba(100, 181, 246, 0.1) 5px);
-    clip-path: polygon(0 4px, 4px 0,
-            calc(100% - 4px) 0, 100% 4px,
-            100% calc(100% - 4px), calc(100% - 4px) 100%,
-            4px 100%, 0 calc(100% - 4px));
+    background: rgba(100, 181, 246, 0.1);
+    border-radius: 10px;
     flex-shrink: 0;
     position: relative;
     border: 1px solid var(--border-accent);
@@ -262,70 +226,35 @@
 }
 
 [data-theme="light"] .card-icon {
-    background:
-        rgba(25, 118, 210, 0.08),
-        repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(25, 118, 210, 0.08) 4px, rgba(25, 118, 210, 0.08) 5px),
-        repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(25, 118, 210, 0.08) 4px, rgba(25, 118, 210, 0.08) 5px);
+    background: rgba(25, 118, 210, 0.15);
+    border-color: rgba(25, 118, 210, 0.3);
 }
 
-/* Highlight boxes with circuit styling */
+/* Simplified highlight boxes */
 .highlight-box {
-    background:
-        var(--bg-highlight-box),
-        /* Grid dots pattern */
-        radial-gradient(circle at 10% 10%, var(--border-accent) 1px, transparent 1px),
-        radial-gradient(circle at 90% 10%, var(--border-accent) 1px, transparent 1px),
-        radial-gradient(circle at 10% 90%, var(--border-accent) 1px, transparent 1px),
-        radial-gradient(circle at 90% 90%, var(--border-accent) 1px, transparent 1px);
-    background-size: 100% 100%, 40px 40px, 40px 40px, 40px 40px, 40px 40px;
-    background-position: center, 0 0, 100% 0, 0 100%, 100% 100%;
+    background: var(--bg-highlight-box);
     border: 1px solid var(--border-accent-hover);
-    border-radius: 0;
-    clip-path: polygon(0 12px, 12px 0,
-            calc(100% - 12px) 0, 100% 12px,
-            100% calc(100% - 12px), calc(100% - 12px) 100%,
-            12px 100%, 0 calc(100% - 12px));
+    border-radius: 15px;
     padding: 2rem;
     margin: 2rem 0;
     position: relative;
 }
 
-/* Contact info with circuit design */
+/* Simplified contact info */
 .contact-info {
-    background:
-        var(--bg-contact),
-        /* Circuit grid */
-        linear-gradient(to right, transparent 49%, rgba(129, 199, 132, 0.1) 49%, rgba(129, 199, 132, 0.1) 51%, transparent 51%),
-        linear-gradient(to bottom, transparent 49%, rgba(129, 199, 132, 0.1) 49%, rgba(129, 199, 132, 0.1) 51%, transparent 51%);
-    background-size: 100% 100%, 30px 30px, 30px 30px;
+    background: var(--bg-contact);
     border: 1px solid var(--border-green);
-    border-radius: 0;
-    clip-path: polygon(0 10px, 10px 0,
-            calc(100% - 10px) 0, 100% 10px,
-            100% calc(100% - 10px), calc(100% - 10px) 100%,
-            10px 100%, 0 calc(100% - 10px));
+    border-radius: 15px;
     padding: 1.5rem;
     margin: 2rem 0;
     position: relative;
 }
 
-[data-theme="light"] .contact-info {
-    background:
-        var(--bg-contact),
-        linear-gradient(to right, transparent 49%, rgba(56, 142, 60, 0.08) 49%, rgba(56, 142, 60, 0.08) 51%, transparent 51%),
-        linear-gradient(to bottom, transparent 49%, rgba(56, 142, 60, 0.08) 49%, rgba(56, 142, 60, 0.08) 51%, transparent 51%);
-    background-size: 100% 100%, 30px 30px, 30px 30px;
-}
-
-/* Quick links with circuit styling */
+/* Simplified quick links */
 .quick-link {
     display: block;
     padding: 1rem;
-    border-radius: 0;
-    clip-path: polygon(0 6px, 6px 0,
-            calc(100% - 6px) 0, 100% 6px,
-            100% calc(100% - 6px), calc(100% - 6px) 100%,
-            6px 100%, 0 calc(100% - 6px));
+    border-radius: 10px;
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     text-decoration: none;
@@ -375,13 +304,10 @@
     animation: dataFlow 15s linear infinite;
 }
 
-/* Enhanced quick link inline with circuit style */
+/* Simplified quick link inline */
 .quick-link-inline {
     border: 1px solid var(--border-accent);
-    clip-path: polygon(0 6px, 6px 0,
-            calc(100% - 6px) 0, 100% 6px,
-            100% calc(100% - 6px), calc(100% - 6px) 100%,
-            6px 100%, 0 calc(100% - 6px));
+    border-radius: 10px;
 }
 
 /* Footer circuit enhancement */
@@ -450,19 +376,12 @@
     .section {
         padding: 1.5rem;
         margin: 1.5rem 0;
-        /* Simplified clip-path for mobile */
-        clip-path: polygon(0 10px, 10px 0,
-                calc(100% - 10px) 0, 100% 10px,
-                100% calc(100% - 10px), calc(100% - 10px) 100%,
-                10px 100%, 0 calc(100% - 10px));
+        border-radius: 12px;
     }
 
     .publication-card {
         padding: 1rem;
-        clip-path: polygon(0 4px, 4px 0,
-                calc(100% - 4px) 0, 100% 4px,
-                100% calc(100% - 4px), calc(100% - 4px) 100%,
-                4px 100%, 0 calc(100% - 4px));
+        border-radius: 8px;
     }
 
     .card-icon {
@@ -470,10 +389,13 @@
         height: 50px;
     }
 
-    /* Reduce pattern complexity on mobile */
-    .circuit-bg,
-    .container::before {
+    /* Reduce pattern complexity on mobile for performance */
+    .circuit-bg {
         display: none;
+    }
+
+    .container::before {
+        opacity: 0.01;
     }
 }
 

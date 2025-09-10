@@ -1,6 +1,17 @@
-// Animations JavaScript - Scroll animations and visual effects
+// Optimized Animations JavaScript - Scroll animations and visual effects
 function initializeAnimations() {
-    // Intersection Observer for fade-in animations
+    // Check if user prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (prefersReducedMotion) {
+        // Skip animations for users who prefer reduced motion
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.add('visible');
+        });
+        return;
+    }
+
+    // Intersection Observer for fade-in animations with optimized settings
     const observerOptions = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
@@ -10,14 +21,18 @@ function initializeAnimations() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
+                // Disconnect observer for this element to improve performance
+                observer.unobserve(entry.target);
 
-                // Add staggered animation for elements within sections
+                // Optimized staggered animation using requestAnimationFrame
                 const animatedElements = entry.target.querySelectorAll('.highlight-box, .contact-info, .dog-photo');
                 animatedElements.forEach((element, index) => {
-                    setTimeout(() => {
-                        element.style.opacity = '1';
-                        element.style.transform = 'translateY(0)';
-                    }, index * 100);
+                    requestAnimationFrame(() => {
+                        setTimeout(() => {
+                            element.style.opacity = '1';
+                            element.style.transform = 'translateY(0)';
+                        }, index * 50); // Reduced from 100ms to 50ms for snappier feel
+                    });
                 });
             }
         });
@@ -35,18 +50,16 @@ function initializeAnimations() {
         element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
     });
 
-    // Parallax effect for header background
+    // Optimized parallax effect with better performance
     let ticking = false;
+    const header = document.querySelector('.header'); // Cache DOM query
 
     function updateParallax() {
-        const scrolled = window.pageYOffset;
-        const header = document.querySelector('.header');
-
         if (header) {
-            const rate = scrolled * -0.5;
-            header.style.transform = `translateY(${rate}px)`;
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.3; // Reduced intensity for subtler effect
+            header.style.transform = `translate3d(0, ${rate}px, 0)`; // Use translate3d for hardware acceleration
         }
-
         ticking = false;
     }
 
@@ -57,9 +70,9 @@ function initializeAnimations() {
         }
     }
 
-    // Enable parallax on larger screens only
-    if (window.innerWidth > 768) {
-        window.addEventListener('scroll', requestParallaxUpdate);
+    // Enable parallax on larger screens only and respect motion preferences
+    if (window.innerWidth > 768 && !prefersReducedMotion) {
+        window.addEventListener('scroll', requestParallaxUpdate, { passive: true }); // Passive listener for better performance
     }
 
     // Smooth reveal animation for publication links
@@ -75,20 +88,27 @@ function initializeAnimations() {
         }, 500 + (index * 100));
     });
 
-    // Timeline animation
-    const timelineObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.classList.add('visible');
-                }, index * 100);
-            }
-        });
-    }, { threshold: 0.1 });
+    // Optimized timeline animation with observer reuse
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    if (timelineItems.length > 0) {
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    requestAnimationFrame(() => {
+                        setTimeout(() => {
+                            entry.target.classList.add('visible');
+                        }, index * 50); // Reduced delay for snappier animations
+                    });
+                    // Disconnect after animating to improve performance
+                    timelineObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
 
-    document.querySelectorAll('.timeline-item').forEach(item => {
-        timelineObserver.observe(item);
-    });
+        timelineItems.forEach(item => {
+            timelineObserver.observe(item);
+        });
+    }
 
     // Add CSS for active navigation state (if not already added)
     if (!document.getElementById('animation-styles')) {

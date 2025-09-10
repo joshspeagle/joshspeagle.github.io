@@ -133,3 +133,76 @@ strong {
     color: var(--text-primary);
     font-weight: 600;
 }
+
+/* === ACCESSIBILITY IMPROVEMENTS === */
+
+/* Skip link for keyboard users */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--accent-blue);
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    z-index: 1000;
+    font-weight: 600;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Enhanced focus styles for better accessibility */
+a:focus,
+button:focus,
+[tabindex]:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Ensure good contrast for focus states */
+[data-theme="light"] a:focus,
+[data-theme="light"] button:focus,
+[data-theme="light"] [tabindex]:focus {
+    outline-color: var(--accent-blue);
+}
+
+/* Improved button and interactive element styling */
+button,
+.button,
+[role="button"] {
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Loading state */
+.loading {
+    cursor: wait;
+}
+
+.loading::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-green), var(--accent-orange));
+    background-size: 200% 100%;
+    animation: loading-bar 2s ease-in-out infinite;
+    z-index: 9999;
+}
+
+@keyframes loading-bar {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: -100% 0;
+    }
+}

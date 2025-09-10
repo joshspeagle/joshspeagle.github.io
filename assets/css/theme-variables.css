@@ -84,25 +84,25 @@
 [data-theme="light"] {
     --color-mode: 'light';
 
-    /* Background Colors - Light versions */
-    --bg-primary-1: #f5f7fa;
-    --bg-primary-2: #e3e8ef;
-    --bg-primary-3: #eef2f7;
-    --bg-primary-4: #f5f7fa;
-    --bg-nav: rgba(255, 255, 255, 0.95);
+    /* Background Colors - Enhanced contrast for better readability */
+    --bg-primary-1: #f8fafc;
+    --bg-primary-2: #e2e8f0;
+    --bg-primary-3: #f1f5f9;
+    --bg-primary-4: #f0f4f8;
+    --bg-nav: rgba(255, 255, 255, 0.98);
     --bg-nav-solid: #ffffff;
-    --bg-section: rgba(0, 0, 0, 0.02);
-    --bg-section-hover: rgba(0, 0, 0, 0.03);
-    --bg-highlight: rgba(0, 0, 0, 0.04);
-    --bg-highlight-box: linear-gradient(135deg, rgba(33, 150, 243, 0.08), rgba(76, 175, 80, 0.08));
-    --bg-contact: rgba(76, 175, 80, 0.08);
-    --bg-leave-notice: rgba(255, 152, 0, 0.08);
+    --bg-section: rgba(0, 0, 0, 0.03);
+    --bg-section-hover: rgba(0, 0, 0, 0.05);
+    --bg-highlight: rgba(0, 0, 0, 0.06);
+    --bg-highlight-box: linear-gradient(135deg, rgba(33, 150, 243, 0.12), rgba(76, 175, 80, 0.12));
+    --bg-contact: rgba(76, 175, 80, 0.12);
+    --bg-leave-notice: rgba(255, 152, 0, 0.12);
 
-    /* Text Colors - Inverted */
-    --text-primary: #2c3e50;
-    --text-secondary: rgba(44, 62, 80, 0.9);
-    --text-muted: rgba(44, 62, 80, 0.7);
-    --text-white: #2c3e50;
+    /* Text Colors - Enhanced contrast for accessibility */
+    --text-primary: #1a202c;
+    --text-secondary: rgba(26, 32, 44, 0.9);
+    --text-muted: rgba(26, 32, 44, 0.7);
+    --text-white: #1a202c;
     /* Maps to primary text in light mode */
 
     /* Accent Colors - Adjusted for light mode contrast */
@@ -134,14 +134,14 @@
     --circuit-opacity: 0.04;
     --circuit-border-opacity: 0.15;
 
-    /* Header Gradient Colors - Lighter, more vibrant */
-    --header-gradient-1: #7e9cc9;
-    --header-gradient-2: #a67ba9;
-    --header-gradient-3: #7986cb;
+    /* Header Gradient Colors - More vibrant and impactful */
+    --header-gradient-1: #4a90e2;
+    --header-gradient-2: #8e44ad;
+    --header-gradient-3: #3498db;
 
-    /* Gradient Text */
-    --gradient-text: linear-gradient(45deg, #1976D2, #388E3C, #F57C00);
-    --gradient-title: linear-gradient(45deg, #1976D2, #388E3C, #F57C00);
+    /* Gradient Text - Better contrast for light mode */
+    --gradient-text: linear-gradient(45deg, #1565C0, #2E7D32, #E65100);
+    --gradient-title: linear-gradient(45deg, #1565C0, #2E7D32, #E65100);
 
     /* Publication Cards */
     --pub-card-bg: rgba(0, 0, 0, 0.02);
@@ -161,12 +161,30 @@
 
 /* === UTILITY CLASSES === */
 
-/* Smooth transitions for theme switching */
+/* Smooth transitions for theme switching - respect motion preferences */
 * {
     transition: background-color 0.3s ease,
         color 0.3s ease,
         border-color 0.3s ease,
         box-shadow 0.3s ease;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+
+    /* Remove parallax effects */
+    .header {
+        transform: none !important;
+    }
 }
 
 /* Prevent transition on page load */

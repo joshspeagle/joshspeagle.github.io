@@ -1,9 +1,22 @@
-// Content Loader - Dynamically loads content from JSON
+// Optimized Content Loader - Dynamically loads content from JSON with error handling
 document.addEventListener('DOMContentLoaded', async function () {
     try {
-        // Load the content JSON
+        // Add loading indicator
+        document.body.classList.add('loading');
+
+        // Load the content JSON with error handling
         const response = await fetch('assets/data/content.json');
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const data = await response.json();
+
+        // Validate data structure
+        if (!data || typeof data !== 'object') {
+            throw new Error('Invalid content data structure');
+        }
 
         // Populate header
         populateHeader(data.header);
@@ -20,9 +33,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         // Populate footer
         populateFooter(data.footer);
 
+        // Remove loading indicator
+        document.body.classList.remove('loading');
+
         // Re-initialize all functionality after content is loaded
-        // Small delay to ensure DOM is fully updated
-        setTimeout(() => {
+        // Use requestAnimationFrame for better performance
+        requestAnimationFrame(() => {
             if (typeof initializeMainFunctionality === 'function') {
                 initializeMainFunctionality();
             }
@@ -32,12 +48,36 @@ document.addEventListener('DOMContentLoaded', async function () {
             if (typeof initializeNavigation === 'function') {
                 initializeNavigation();
             }
-        }, 100);
+            
+            // Listen for theme changes to update publication icons
+            window.addEventListener('themeChanged', () => {
+                updatePublicationIcons();
+            });
+        });
 
     } catch (error) {
         console.error('Error loading content:', error);
-        // Fallback: show error message
-        document.body.innerHTML = '<div style="text-align: center; padding: 50px;">Error loading content. Please refresh the page.</div>';
+
+        // Remove loading indicator
+        document.body.classList.remove('loading');
+
+        // User-friendly error handling
+        const errorContainer = document.createElement('div');
+        errorContainer.innerHTML = `
+            <div style="text-align: center; padding: 50px; color: var(--text-primary);">
+                <h2>Content Loading Error</h2>
+                <p>We're having trouble loading the page content. Please try:</p>
+                <ul style="text-align: left; display: inline-block;">
+                    <li>Refreshing the page</li>
+                    <li>Checking your internet connection</li>
+                    <li>Trying again in a few moments</li>
+                </ul>
+                <button onclick="window.location.reload()" style="background: var(--accent-blue); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px;">
+                    Refresh Page
+                </button>
+            </div>
+        `;
+        document.body.appendChild(errorContainer);
     }
 });
 
@@ -254,16 +294,19 @@ function createPublicationCard(pub) {
 }
 
 function getPublicationIcon(iconType) {
+    // Check current theme
+    const isLightMode = document.documentElement.getAttribute('data-theme') === 'light';
+    
     const icons = {
-        'ads': `<svg width="40" height="40" viewBox="0 0 100 100" fill="#64b5f6">
-            <circle cx="40" cy="40" r="25" stroke="#64b5f6" stroke-width="4" fill="none"/>
-            <line x1="57" y1="57" x2="75" y2="75" stroke="#64b5f6" stroke-width="6" stroke-linecap="round"/>
-            <text x="40" y="48" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="#64b5f6">a</text>
+        'ads': `<svg width="40" height="40" viewBox="0 0 100 100">
+            <circle cx="40" cy="40" r="25" stroke="${isLightMode ? '#1976D2' : '#64b5f6'}" stroke-width="4" fill="none"/>
+            <line x1="57" y1="57" x2="75" y2="75" stroke="${isLightMode ? '#1976D2' : '#64b5f6'}" stroke-width="6" stroke-linecap="round"/>
+            <text x="40" y="48" font-family="Arial, sans-serif" font-size="28" font-weight="bold" text-anchor="middle" fill="${isLightMode ? '#1976D2' : '#64b5f6'}">a</text>
         </svg>`,
-        'scholar': `<svg width="40" height="40" viewBox="0 0 100 100" fill="#4285f4">
-            <path d="M50 20 L20 35 L20 45 C20 45 20 70 50 70 C80 70 80 45 80 45 L80 35 Z" stroke="#4285f4" stroke-width="3" fill="none"/>
-            <path d="M20 35 L50 20 L80 35" stroke="#4285f4" stroke-width="3" fill="none"/>
-            <path d="M65 30 L65 15 L70 15 L70 33" stroke="#4285f4" stroke-width="3" fill="none"/>
+        'scholar': `<svg width="40" height="40" viewBox="0 0 100 100">
+            <path d="M50 20 L20 35 L20 45 C20 45 20 70 50 70 C80 70 80 45 80 45 L80 35 Z" stroke="${isLightMode ? '#1976D2' : '#4285f4'}" stroke-width="3" fill="none"/>
+            <path d="M20 35 L50 20 L80 35" stroke="${isLightMode ? '#1976D2' : '#4285f4'}" stroke-width="3" fill="none"/>
+            <path d="M65 30 L65 15 L70 15 L70 33" stroke="${isLightMode ? '#1976D2' : '#4285f4'}" stroke-width="3" fill="none"/>
         </svg>`,
         'arxiv': `<svg width="40" height="40" viewBox="0 0 100 100">
             <text x="50" y="58" font-family="Georgia, serif" font-size="26" text-anchor="middle" fill="#b31b1b" font-weight="500">arXiv</text>
@@ -339,4 +382,16 @@ function populateFooter(footer) {
             </p>
         `;
     }
+}
+
+// Function to update publication icons when theme changes
+function updatePublicationIcons() {
+    const publicationCards = document.querySelectorAll('.publication-card .card-icon');
+    publicationCards.forEach((iconElement, index) => {
+        // Get the icon type from the card's data or rebuild from known types
+        const iconTypes = ['ads', 'scholar', 'arxiv', 'orcid'];
+        if (iconTypes[index]) {
+            iconElement.innerHTML = getPublicationIcon(iconTypes[index]);
+        }
+    });
 }

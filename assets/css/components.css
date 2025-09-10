@@ -307,6 +307,16 @@
     cursor: pointer;
 }
 
+/* Fix name visibility in light mode */
+[data-theme="light"] .name {
+    /* Use solid color for better contrast against light header */
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: #1a1a2e;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+    font-weight: 800;
+}
+
 .name:hover {
     filter: drop-shadow(0 0 20px var(--glow-blue)) drop-shadow(0 0 40px var(--glow-green));
     transform: scale(1.02);
@@ -324,6 +334,16 @@
     background-clip: text;
     transition: all 0.3s ease;
     cursor: pointer;
+}
+
+/* Fix Chinese name visibility in light mode */
+[data-theme="light"] .chinese-name {
+    /* Use solid color for better contrast against light header */
+    background: none;
+    -webkit-text-fill-color: initial;
+    color: #1a1a2e;
+    text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
+    font-weight: 800;
 }
 
 .chinese-name:hover {
@@ -399,7 +419,9 @@
 }
 
 [data-theme="light"] .nav-link:hover {
-    color: var(--text-primary);
+    background: var(--accent-blue);
+    color: #ffffff;
+    border-color: var(--accent-blue);
 }
 
 .nav-link.active {
@@ -409,7 +431,10 @@
 }
 
 [data-theme="light"] .nav-link.active {
-    color: var(--text-primary);
+    background: var(--accent-blue);
+    color: #ffffff;
+    border-color: var(--accent-blue);
+    font-weight: 600;
 }
 
 /* Navigation toggle button */
@@ -439,15 +464,7 @@
     transform: scale(0.95);
 }
 
-/* Sections */
-.section {
-    margin: 4rem 0;
-    padding: 3rem;
-    background: var(--bg-section);
-    border-radius: 20px;
-    border: 1px solid var(--border-primary);
-    backdrop-filter: blur(10px);
-}
+/* Section titles (specific to components) */
 
 .section-title {
     font-size: 2.5rem;
@@ -459,15 +476,7 @@
     background-clip: text;
 }
 
-/* Highlight Boxes */
-.highlight-box {
-    background: var(--bg-highlight-box);
-    border: 1px solid var(--border-accent-hover);
-    border-radius: 15px;
-    padding: 2rem;
-    margin: 2rem 0;
-}
-
+/* Highlight box and contact info content styles (layout handled by circuit-components.css) */
 .highlight-box h3 {
     color: var(--accent-blue);
     margin-bottom: 1rem;
@@ -477,15 +486,6 @@
     color: var(--accent-green);
     margin-bottom: 0.5rem;
     margin-top: 1rem;
-}
-
-/* Contact Info */
-.contact-info {
-    background: var(--bg-contact);
-    border: 1px solid var(--border-green);
-    border-radius: 15px;
-    padding: 1.5rem;
-    margin: 2rem 0;
 }
 
 .contact-info h3 {
