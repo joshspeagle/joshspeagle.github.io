@@ -35,9 +35,7 @@
                 },
                 {
                     "text": "Publications",
-                    "href": "#",
-                    "disabled": true,
-                    "disabledReason": "Coming soon"
+                    "href": "publications.html"
                 },
                 {
                     "text": "Talks",
@@ -183,7 +181,7 @@
                     },
                     {
                         "name": "ORCID",
-                        "url": "https://orcid.org/my-orcid?orcid=0000-0003-2573-9832",
+                        "url": "https://orcid.org/0000-0003-2573-9832",
                         "icon": "orcid",
                         "description": "Persistent digital identifier",
                         "meta": "0000-0003-2573-9832"
@@ -1459,9 +1457,9 @@
             "title": "Publications & Research Output",
             "tagline": "Peer-reviewed research and scholarly contributions",
             "metrics": {
-                "totalPapers": "50+",
-                "hIndex": "25+",
-                "citations": "2000+",
+                "totalPapers": "100+",
+                "hIndex": "40",
+                "citations": "11,000+",
                 "note": "Metrics updated regularly from ADS and Google Scholar"
             },
             "featured": {
@@ -1479,16 +1477,34 @@
                 ]
             },
             "categories": {
-                "title": "Research Categories",
-                "stats": "Statistical methodology and computational inference",
-                "astro": "Stellar astrophysics and galactic structure",
-                "surveys": "Large astronomical surveys and data analysis",
-                "software": "Open-source scientific software development"
+                "title": "Research Areas",
+                "areas": [
+                    {
+                        "icon": "🤖",
+                        "title": "Statistical Learning & AI",
+                        "description": "Developing novel methods to discover patterns from large, messy datasets."
+                    },
+                    {
+                        "icon": "🔍",
+                        "title": "Interpretability & Insight",
+                        "description": "Understanding how statistical methods work to extract scientific insights."
+                    },
+                    {
+                        "icon": "⚡",
+                        "title": "Inference & Computation",
+                        "description": "Designing robust algorithms to quantify how much we can learn from data."
+                    },
+                    {
+                        "icon": "🌌",
+                        "title": "Discovery & Understanding",
+                        "description": "Applying these methods to astronomical surveys to understand galaxy formation and evolution."
+                    }
+                ]
             },
             "links": {
-                "ads": "https://ui.adsabs.harvard.edu/search/q=author%3A%22Speagle%2C%20Joshua%20S%22&sort=date%20desc%2C%20bibcode%20desc",
-                "scholar": "https://scholar.google.com/citations?user=EFP_w6MAAAAJ",
-                "orcid": "https://orcid.org/0000-0003-4025-5765"
+                "ads": "https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0",
+                "scholar": "https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ",
+                "orcid": "https://orcid.org/0000-0003-2573-9832"
             }
         },
         "talks": {

@@ -564,7 +564,8 @@ function populatePageContent(pageType, data) {
             case 'publications':
                 const publicationsSection = document.getElementById(`${pageType}-content`);
                 if (publicationsSection) {
-                    publicationsSection.innerHTML = createPublicationsContent(sectionData);
+                    // Try to load dynamic publication data first
+                    loadPublicationsContent(publicationsSection, sectionData);
                 }
                 break;
             case 'talks':
@@ -735,13 +736,13 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
 function createMenteeCard(mentee, type, isCompleted = false) {
     // Determine if this mentee uses the new multiple projects format
     const hasMultipleProjects = mentee.projects && Array.isArray(mentee.projects);
-    
+
     // Generate supervision badge with career stage context
     // For multiple projects, use the first project's supervision type or fall back to legacy field
-    const primarySupervisionType = hasMultipleProjects ? 
-        (mentee.projects[0]?.supervisionType || mentee.supervisionType) : 
+    const primarySupervisionType = hasMultipleProjects ?
+        (mentee.projects[0]?.supervisionType || mentee.supervisionType) :
         mentee.supervisionType;
-    
+
     const supervisionLevel = primarySupervisionType === 'Primary Supervisor' ? 'primary' :
         primarySupervisionType === 'Co-Supervisor' ? 'co' : 'secondary';
     const supervisionBadge = `<span class="supervision-badge ${supervisionLevel} ${type}-context">${primarySupervisionType}</span>`;
@@ -752,11 +753,11 @@ function createMenteeCard(mentee, type, isCompleted = false) {
         // Multiple projects format - keep same styling as single projects
         const projectLabel = type === 'bachelors' ? 'Project' : 'Research Interests';
         projectsContent = '';
-        
+
         mentee.projects.forEach((project, index) => {
             // Each project gets the same format as single projects
             projectsContent += `<p class="project"><strong>${projectLabel}:</strong> ${project.title}</p>`;
-            
+
             // Co-supervisors on separate line, matching single-project format
             if (project.coSupervisors && project.coSupervisors.length > 0) {
                 projectsContent += `<p class="co-supervisors">Co-supervisors: ${project.coSupervisors.join(', ')}</p>`;
@@ -766,7 +767,7 @@ function createMenteeCard(mentee, type, isCompleted = false) {
         // Legacy single project format
         const projectLabel = type === 'bachelors' ? 'Project' : 'Research Interests';
         projectsContent = `<p class="project"><strong>${projectLabel}:</strong> ${mentee.project}</p>`;
-        
+
         // Legacy co-supervisors (separate from project)
         const coSupervisorsText = mentee.coSupervisors && mentee.coSupervisors.length > 0
             ? `<p class="co-supervisors">Co-supervisors: ${mentee.coSupervisors.join(', ')}</p>`
@@ -866,7 +867,7 @@ function countFormerMentees(completedMentees) {
 // Simple bar chart function
 function createInteractiveBarChart(counts) {
     console.log('createInteractiveBarChart called with counts:', counts);
-    
+
     // Handle empty data
     const total = counts.postdoctoral + counts.doctoral + counts.bachelors;
     console.log('Total count:', total);
@@ -885,8 +886,8 @@ function createInteractiveBarChart(counts) {
     const postdocHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.postdoctoral) / maxSqrt) * maxHeight, 15) : 0;
     const doctoralHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.doctoral) / maxSqrt) * maxHeight, 15) : 0;
     const bachelorsHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.bachelors) / maxSqrt) * maxHeight, 15) : 0;
-    
-    console.log('Calculated heights:', {postdocHeight, doctoralHeight, bachelorsHeight});
+
+    console.log('Calculated heights:', { postdocHeight, doctoralHeight, bachelorsHeight });
 
     return `
         <div class="vertical-bar-chart">
@@ -908,8 +909,278 @@ function createInteractiveBarChart(counts) {
     `;
 }
 
+function formatDataSources(sources) {
+    const sourceMapping = {
+        'google_scholar': 'Google Scholar',
+        'ads': 'ADS'
+    };
+
+    return sources.map(source => sourceMapping[source] || source).join(' & ');
+}
+
+async function loadPublicationsContent(publicationsSection, staticData) {
+    try {
+        // Show loading state
+        publicationsSection.innerHTML = '<div class="loading-indicator">Loading publication data...</div>';
+
+        // Try to fetch dynamic publication data
+        const response = await fetch('assets/data/publications_data.json');
+
+        if (response.ok) {
+            const dynamicData = await response.json();
+
+            // Create enhanced content with dynamic data
+            publicationsSection.innerHTML = createDynamicPublicationsContent(dynamicData, staticData);
+
+            console.log('Loaded dynamic publication data:', {
+                papers: dynamicData.metrics?.totalPapers,
+                lastUpdated: dynamicData.lastUpdated
+            });
+        } else {
+            // Fall back to static data
+            console.log('Dynamic data not available, using static content');
+            publicationsSection.innerHTML = createPublicationsContent(staticData);
+        }
+    } catch (error) {
+        // Fall back to static data on error
+        console.warn('Failed to load dynamic publication data:', error);
+        publicationsSection.innerHTML = createPublicationsContent(staticData);
+    }
+}
+
+function createDynamicPublicationsContent(dynamicData, staticData) {
+    const metrics = dynamicData.metrics || {};
+    const lastUpdated = dynamicData.lastUpdated ?
+        new Date(dynamicData.lastUpdated).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }) : 'Unknown';
+
+    return `
+        <div class="highlight-box">
+            <h3>${staticData.categories.title}</h3>
+            <div class="content-grid">
+                ${staticData.categories.areas.map(area => `
+                    <div>
+                        <h4>${area.icon} ${area.title}</h4>
+                        <p>${area.description}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <div class="page-intro">
+            <div class="content-grid">
+                <div>
+                    <h3>Research Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <strong>${metrics.totalPapers || staticData.metrics.totalPapers}</strong>
+                            <span>Publications</span>
+                        </div>
+                        <div class="metric">
+                            <strong>${metrics.totalCitations || staticData.metrics.citations}</strong>
+                            <span>Citations</span>
+                        </div>
+                        <div class="metric">
+                            <strong>${metrics.hIndex || staticData.metrics.hIndex}</strong>
+                            <span>h-index</span>
+                        </div>
+                        <div class="metric">
+                            <strong>${metrics.i10Index || 'N/A'}</strong>
+                            <span>i10-index</span>
+                        </div>
+                    </div>
+                    <p><em>Last updated: ${lastUpdated}</em></p>
+                    ${metrics.sources ? `<p><small>Data sources: ${formatDataSources(metrics.sources)}</small></p>` : ''}
+                </div>
+                
+                <div>
+                    <h3>Publication Links</h3>
+                    <div class="publication-links">
+                        <a href="${staticData.links.ads}" class="pub-link pub-link-horizontal" aria-label="View publications on ADS">
+                            <div class="link-icon">${getPublicationIcon('ads')}</div>
+                            <span>Astrophysics Data System</span>
+                        </a>
+                        <a href="${staticData.links.scholar}" class="pub-link pub-link-horizontal" aria-label="View publications on Google Scholar">
+                            <div class="link-icon">${getPublicationIcon('scholar')}</div>
+                            <span>Google Scholar</span>
+                        </a>
+                        <a href="${staticData.links.orcid}" class="pub-link pub-link-horizontal" aria-label="View ORCID profile">
+                            <div class="link-icon">${getPublicationIcon('orcid')}</div>
+                            <span>ORCID Profile</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        ${createFeaturedPublications(dynamicData, staticData)}
+        
+        ${createRecentPublications(dynamicData)}
+    `;
+}
+
+function createFeaturedPublications(dynamicData, staticData) {
+    const publications = dynamicData.publications || [];
+
+    // Find publications marked as featured (no limit)
+    const featuredPapers = publications
+        .filter(pub => pub.featured === true)
+        .sort((a, b) => {
+            // Sort featured papers by year descending, then by title
+            if (b.year !== a.year) return b.year - a.year;
+            return a.title.localeCompare(b.title);
+        });
+
+    // Fallback to static data if no featured papers in dynamic data
+    if (featuredPapers.length === 0 && staticData.featured && staticData.featured.papers) {
+        return createStaticFeaturedPublications(staticData);
+    }
+
+    if (featuredPapers.length === 0) {
+        return '';
+    }
+
+    return `
+        <div class="highlight-box">
+            <h3>Featured Publications</h3>
+            <div class="featured-publications">
+                ${featuredPapers.map(paper => {
+        // Shorten author list if too long
+        const authors = paper.authors || [];
+        let authorString = '';
+        if (authors.length === 0) {
+            authorString = 'Authors not available';
+        } else if (authors.length <= 4) {
+            authorString = authors.join(', ');
+        } else {
+            authorString = authors.slice(0, 3).join(', ') + `, et al. (${authors.length} authors)`;
+        }
+
+        // Find arXiv link
+        let arxivLink = '';
+        if (paper.arxivId) {
+            arxivLink = `https://arxiv.org/abs/${paper.arxivId}`;
+        } else if (paper.scholarUrl && paper.scholarUrl.includes('arxiv')) {
+            arxivLink = paper.scholarUrl;
+        } else if (paper.adsUrl) {
+            arxivLink = paper.adsUrl;
+        }
+
+        return `
+                        <div class="featured-paper">
+                            <h4><a href="${arxivLink}" target="_blank" rel="noopener noreferrer">${paper.title}</a></h4>
+                            <p class="authors">${authorString}</p>
+                            <p class="paper-details">${paper.year}${paper.journal ? ` • ${paper.journal}` : ''}${paper.citations ? ` • ${paper.citations} citations` : ''}</p>
+                            ${paper.abstract ? `<p class="abstract">${paper.abstract}</p>` : ''}
+                        </div>
+                    `;
+    }).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function createStaticFeaturedPublications(staticData) {
+    // Fallback for static data format
+    const featuredPapers = staticData.featured.papers;
+
+    return `
+        <div class="highlight-box">
+            <h3>Featured Publications</h3>
+            <div class="featured-publications">
+                ${featuredPapers.map(paper => `
+                    <div class="featured-paper">
+                        <h4>${paper.title}</h4>
+                        <p class="authors">${paper.authors}</p>
+                        <p class="paper-details">${paper.journal} (${paper.year})</p>
+                        ${paper.description ? `<p class="abstract">${paper.description}</p>` : ''}
+                        <div class="paper-links">
+                            ${paper.doi ? `<a href="https://doi.org/${paper.doi}" target="_blank">DOI</a>` : ''}
+                            ${paper.arxiv ? `<a href="https://arxiv.org/abs/${paper.arxiv}" target="_blank">arXiv</a>` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function createRecentPublications(dynamicData) {
+    const publications = dynamicData.publications || [];
+    if (publications.length === 0) {
+        return '';
+    }
+
+    // Get the 5 most recent publications, excluding featured ones
+    const recentPubs = publications
+        .filter(pub => pub.year && pub.year >= 2020 && !pub.featured) // Exclude featured papers
+        .sort((a, b) => {
+            if (b.year !== a.year) return b.year - a.year; // Sort by year descending
+            return a.title.localeCompare(b.title); // Then by title for consistency
+        })
+        .slice(0, 5);
+
+    if (recentPubs.length === 0) {
+        return '';
+    }
+
+    return `
+        <div class="highlight-box">
+            <h3>Recent Publications</h3>
+            <div class="recent-publications">
+                ${recentPubs.map(pub => {
+        // Shorten author list if too long
+        const authors = pub.authors || [];
+        let authorString = '';
+        if (authors.length === 0) {
+            authorString = 'Authors not available';
+        } else if (authors.length <= 4) {
+            authorString = authors.join(', ');
+        } else {
+            authorString = authors.slice(0, 3).join(', ') + `, et al. (${authors.length} authors)`;
+        }
+
+        // Find arXiv link
+        let arxivLink = '';
+        if (pub.arxivId) {
+            arxivLink = `https://arxiv.org/abs/${pub.arxivId}`;
+        } else if (pub.scholarUrl && pub.scholarUrl.includes('arxiv')) {
+            arxivLink = pub.scholarUrl;
+        } else if (pub.adsUrl) {
+            // Use ADS link as fallback
+            arxivLink = pub.adsUrl;
+        }
+
+        return `
+                        <div class="recent-paper">
+                            <h4><a href="${arxivLink}" target="_blank" rel="noopener noreferrer">${pub.title}</a></h4>
+                            <p class="authors">${authorString}</p>
+                            <p class="paper-details">${pub.year}${pub.journal ? ` • ${pub.journal}` : ''}${pub.citations ? ` • ${pub.citations} citations` : ''}</p>
+                        </div>
+                    `;
+    }).join('')}
+            </div>
+        </div>
+    `;
+}
+
 function createPublicationsContent(data) {
     return `
+        <div class="highlight-box">
+            <h3>${data.categories.title}</h3>
+            <div class="content-grid">
+                ${data.categories.areas.map(area => `
+                    <div>
+                        <h4>${area.icon} ${area.title}</h4>
+                        <p>${area.description}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
         <div class="page-intro">
             <div class="content-grid">
                 <div>
@@ -934,9 +1205,18 @@ function createPublicationsContent(data) {
                 <div>
                     <h3>Publication Links</h3>
                     <div class="publication-links">
-                        <a href="${data.links.ads}" class="pub-link">ADS Library</a>
-                        <a href="${data.links.scholar}" class="pub-link">Google Scholar</a>
-                        <a href="${data.links.orcid}" class="pub-link">ORCID Profile</a>
+                        <a href="${data.links.ads}" class="pub-link pub-link-horizontal" aria-label="View publications on ADS">
+                            <div class="link-icon">${getPublicationIcon('ads')}</div>
+                            <span>Astrophysics Data System</span>
+                        </a>
+                        <a href="${data.links.scholar}" class="pub-link pub-link-horizontal" aria-label="View publications on Google Scholar">
+                            <div class="link-icon">${getPublicationIcon('scholar')}</div>
+                            <span>Google Scholar</span>
+                        </a>
+                        <a href="${data.links.orcid}" class="pub-link pub-link-horizontal" aria-label="View ORCID profile">
+                            <div class="link-icon">${getPublicationIcon('orcid')}</div>
+                            <span>ORCID Profile</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -956,28 +1236,6 @@ function createPublicationsContent(data) {
                     </div>
                 </div>
             `).join('')}
-        </div>
-        
-        <div class="highlight-box">
-            <h3>${data.categories.title}</h3>
-            <div class="content-grid">
-                <div>
-                    <h4>Statistical Methods</h4>
-                    <p>${data.categories.stats}</p>
-                </div>
-                <div>
-                    <h4>Astrophysics</h4>
-                    <p>${data.categories.astro}</p>
-                </div>
-                <div>
-                    <h4>Survey Science</h4>
-                    <p>${data.categories.surveys}</p>
-                </div>
-                <div>
-                    <h4>Software</h4>
-                    <p>${data.categories.software}</p>
-                </div>
-            </div>
         </div>
     `;
 }

@@ -1,0 +1,318 @@
+"""
+Data consolidation and merging logic for publication data from multiple sources.
+"""
+
+import json
+import logging
+import os
+import time
+from datetime import datetime
+from typing import Dict, List
+from difflib import SequenceMatcher
+from config import CONFIG
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
+class DataMerger:
+    """Merges and consolidates publication data from multiple sources."""
+
+    def __init__(self):
+        self.config = CONFIG
+        self.validation = CONFIG["validation"]
+
+    def merge_publications(
+        self, scholar_data: List[Dict], ads_data: List[Dict]
+    ) -> List[Dict]:
+        """Merge publication lists from Google Scholar and ADS."""
+        logger.info(
+            f"Merging {len(scholar_data)} Scholar papers with {len(ads_data)} ADS papers"
+        )
+
+        merged_publications = []
+        scholar_used = set()
+
+        # First pass: match ADS papers with Scholar papers
+        for ads_pub in ads_data:
+            best_match = None
+            best_score = 0
+            best_scholar_idx = -1
+
+            for i, scholar_pub in enumerate(scholar_data):
+                if i in scholar_used:
+                    continue
+
+                score = self._calculate_similarity(ads_pub, scholar_pub)
+                if score > best_score and score > 0.8:  # Threshold for matching
+                    best_score = score
+                    best_match = scholar_pub
+                    best_scholar_idx = i
+
+            if best_match:
+                # Merge the two publications
+                merged_pub = self._merge_publications(ads_pub, best_match)
+                merged_publications.append(merged_pub)
+                scholar_used.add(best_scholar_idx)
+                logger.debug(
+                    f"Merged: {merged_pub['title'][:50]}... (score: {best_score:.2f})"
+                )
+            else:
+                # Add ADS-only publication
+                merged_publications.append(ads_pub)
+
+        # Second pass: add remaining Scholar-only publications
+        for i, scholar_pub in enumerate(scholar_data):
+            if i not in scholar_used:
+                merged_publications.append(scholar_pub)
+
+        logger.info(f"Merged into {len(merged_publications)} unique publications")
+        return sorted(merged_publications, key=lambda x: x.get("year", 0), reverse=True)
+
+    def _calculate_similarity(self, pub1: Dict, pub2: Dict) -> float:
+        """Calculate similarity score between two publications."""
+        title1 = self._normalize_title(pub1.get("title", ""))
+        title2 = self._normalize_title(pub2.get("title", ""))
+
+        # Title similarity (most important)
+        title_score = SequenceMatcher(None, title1, title2).ratio()
+
+        # Year similarity
+        year1 = pub1.get("year")
+        year2 = pub2.get("year")
+        year_score = 1.0 if year1 == year2 else 0.0
+
+        # DOI/arXiv matching (if available)
+        identifier_score = 0.0
+        doi1 = pub1.get("doi", "").lower()
+        doi2 = pub2.get("doi", "").lower()
+        arxiv1 = pub1.get("arxivId", "").lower()
+        arxiv2 = pub2.get("arxivId", "").lower()
+
+        if doi1 and doi2 and doi1 == doi2:
+            identifier_score = 1.0
+        elif arxiv1 and arxiv2 and arxiv1 == arxiv2:
+            identifier_score = 1.0
+
+        # Weighted combination
+        if identifier_score > 0:
+            return identifier_score  # Perfect match via identifier
+        else:
+            return 0.7 * title_score + 0.3 * year_score
+
+    def _normalize_title(self, title: str) -> str:
+        """Normalize title for comparison."""
+        import re
+
+        # Remove common formatting and convert to lowercase
+        title = re.sub(r"[^\w\s]", "", title.lower())
+        title = re.sub(r"\s+", " ", title).strip()
+        return title
+
+    def _merge_publications(self, ads_pub: Dict, scholar_pub: Dict) -> Dict:
+        """Merge two publication records, preferring the most complete data."""
+        merged = {}
+
+        # Use ADS as base (usually more complete metadata)
+        merged.update(ads_pub)
+
+        # Update with Scholar data where appropriate
+        # Prefer higher citation count
+        ads_citations = ads_pub.get("citations", 0)
+        scholar_citations = scholar_pub.get("citations", 0)
+        merged["citations"] = max(ads_citations, scholar_citations)
+
+        # Keep both URLs if different
+        if "scholarUrl" in scholar_pub:
+            merged["scholarUrl"] = scholar_pub["scholarUrl"]
+
+        # Merge identifiers
+        if "doi" not in merged and "doi" in scholar_pub:
+            merged["doi"] = scholar_pub["doi"]
+        if "arxivId" not in merged and "arxivId" in scholar_pub:
+            merged["arxivId"] = scholar_pub["arxivId"]
+
+        # Use the more complete abstract
+        if len(scholar_pub.get("abstract", "")) > len(merged.get("abstract", "")):
+            merged["abstract"] = scholar_pub["abstract"]
+
+        # Combine sources
+        merged["sources"] = ["ads", "google_scholar"]
+
+        return merged
+
+    def merge_metrics(self, scholar_metrics: Dict, ads_metrics: Dict) -> Dict:
+        """Merge author metrics from different sources."""
+        logger.info("Merging author metrics")
+
+        merged_metrics = {
+            "lastUpdated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+
+        # Take the maximum values (usually most accurate)
+        for metric in ["totalPapers", "hIndex", "i10Index", "totalCitations"]:
+            scholar_val = scholar_metrics.get(metric, 0)
+            ads_val = ads_metrics.get(metric, 0)
+            merged_metrics[metric] = max(scholar_val, ads_val)
+
+        # Merge citations per year
+        scholar_cpy = scholar_metrics.get("citationsPerYear", {})
+        ads_cpy = ads_metrics.get("citationsPerYear", {})
+
+        merged_cpy = {}
+        all_years = set(scholar_cpy.keys()) | set(ads_cpy.keys())
+        for year in all_years:
+            merged_cpy[year] = max(scholar_cpy.get(year, 0), ads_cpy.get(year, 0))
+
+        merged_metrics["citationsPerYear"] = merged_cpy
+
+        # Add source information
+        merged_metrics["sources"] = []
+        if scholar_metrics:
+            merged_metrics["sources"].append("google_scholar")
+        if ads_metrics:
+            merged_metrics["sources"].append("ads")
+
+        return merged_metrics
+
+    def generate_summary_data(self, full_data: Dict) -> Dict:
+        """Generate lightweight summary data for quick loading."""
+        summary = {
+            "lastUpdated": full_data.get("lastUpdated"),
+            "metrics": full_data.get("metrics", {}),
+            "featuredPublications": [],
+            "recentPublications": [],
+        }
+
+        publications = full_data.get("publications", [])
+
+        # Get top cited papers for featured
+        by_citations = sorted(
+            publications, key=lambda x: x.get("citations", 0), reverse=True
+        )
+        summary["featuredPublications"] = [
+            {
+                "title": pub["title"],
+                "year": pub.get("year"),
+                "citations": pub.get("citations", 0),
+                "journal": pub.get("journal", ""),
+                "url": pub.get("adsUrl") or pub.get("scholarUrl", ""),
+            }
+            for pub in by_citations[:5]
+        ]
+
+        # Get recent papers
+        by_year = sorted(publications, key=lambda x: x.get("year", 0), reverse=True)
+        summary["recentPublications"] = [
+            {
+                "title": pub["title"],
+                "year": pub.get("year"),
+                "citations": pub.get("citations", 0),
+                "journal": pub.get("journal", ""),
+                "url": pub.get("adsUrl") or pub.get("scholarUrl", ""),
+            }
+            for pub in by_year[:5]
+        ]
+
+        return summary
+
+    def validate_data(self, data: Dict) -> bool:
+        """Validate merged data against expected ranges."""
+        logger.info("Validating merged data")
+
+        metrics = data.get("metrics", {})
+
+        # Check minimum papers
+        total_papers = metrics.get("totalPapers", 0)
+        if total_papers < self.validation["min_papers"]:
+            logger.warning(
+                f"Total papers ({total_papers}) below expected minimum ({self.validation['min_papers']})"
+            )
+
+        # Check h-index sanity
+        h_index = metrics.get("hIndex", 0)
+        if h_index > self.validation["max_h_index"]:
+            logger.warning(
+                f"H-index ({h_index}) seems unusually high (max: {self.validation['max_h_index']})"
+            )
+
+        # Check total citations
+        total_citations = metrics.get("totalCitations", 0)
+        if total_citations > self.validation["max_citations"]:
+            logger.warning(
+                f"Total citations ({total_citations}) seems unusually high (max: {self.validation['max_citations']})"
+            )
+
+        # Check publications data
+        publications = data.get("publications", [])
+        if len(publications) == 0:
+            logger.error("No publications found in merged data")
+            return False
+
+        # Check for required fields
+        required_fields = ["title", "year"]
+        missing_fields = []
+        for pub in publications[:10]:  # Check first 10
+            for field in required_fields:
+                if not pub.get(field):
+                    missing_fields.append(field)
+
+        if missing_fields:
+            logger.warning(
+                f"Some publications missing required fields: {set(missing_fields)}"
+            )
+
+        logger.info(
+            f"Validation complete: {total_papers} papers, h-index: {h_index}, citations: {total_citations}"
+        )
+        return True
+
+    def create_backup(self, data: Dict, backup_dir: str):
+        """Create a backup of the data."""
+        os.makedirs(backup_dir, exist_ok=True)
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_file = os.path.join(backup_dir, f"publications_backup_{timestamp}.json")
+
+        try:
+            with open(backup_file, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+            logger.info(f"Backup created: {backup_file}")
+        except Exception as e:
+            logger.error(f"Failed to create backup: {e}")
+
+
+def main():
+    """Test the data merger."""
+    # This would typically be called from the main orchestrator
+    # Here we can test with dummy data
+
+    merger = DataMerger()
+
+    # Example data structures
+    scholar_data = [
+        {
+            "title": "Test Paper One",
+            "year": 2023,
+            "citations": 10,
+            "source": "google_scholar",
+        }
+    ]
+
+    ads_data = [
+        {
+            "title": "Test Paper One",
+            "year": 2023,
+            "citations": 12,
+            "bibcode": "2023test.1..T",
+            "source": "ads",
+        }
+    ]
+
+    merged = merger.merge_publications(scholar_data, ads_data)
+    print("Merged publications:", json.dumps(merged, indent=2))
+
+
+if __name__ == "__main__":
+    main()

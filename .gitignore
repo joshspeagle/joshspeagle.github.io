@@ -59,6 +59,19 @@ notes.txt
 TODO.txt
 drafts/
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.venv/
+venv/
+ENV/
+env/
+
 # Claude-specific files
 CLAUDE.md
 .claude/

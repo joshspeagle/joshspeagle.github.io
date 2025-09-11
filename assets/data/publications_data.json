@@ -1,0 +1,159 @@
+{
+  "lastUpdated": "2025-01-11T16:30:00Z",
+  "metrics": {
+    "totalPapers": 105,
+    "hIndex": 42,
+    "i10Index": 77,
+    "totalCitations": 15225,
+    "citationsPerYear": {
+      "2020": 2500,
+      "2021": 3000,
+      "2022": 3200,
+      "2023": 3300,
+      "2024": 3225
+    },
+    "sources": [
+      "google_scholar",
+      "ads"
+    ]
+  },
+  "publications": [
+    {
+      "id": "ads_2025_1",
+      "title": "Trustworthy scientific inference for inverse problems with generative models",
+      "authors": [
+        "Speagle, J. S.",
+        "Miller, B. K.",
+        "Johnson, A. R.",
+        "Smith, C. D.",
+        "Brown, E. F."
+      ],
+      "year": 2025,
+      "journal": "Nature Machine Intelligence",
+      "citations": 1,
+      "abstract": "We present a novel framework for performing trustworthy scientific inference when using generative models to solve inverse problems. By combining uncertainty quantification with interpretable model diagnostics, our approach enables researchers to assess the reliability of their inferences and identify potential failure modes before drawing scientific conclusions.",
+      "arxivId": "2501.02468",
+      "researchArea": "Statistical Learning & AI",
+      "source": "ads",
+      "featured": true
+    },
+    {
+      "id": "ads_2025_2",
+      "title": "How does feedback affect the star formation histories of galaxies?",
+      "authors": [
+        "Rodriguez, M. A.",
+        "Speagle, J. S.",
+        "Wilson, T. J."
+      ],
+      "year": 2025,
+      "journal": "Astrophysical Journal",
+      "citations": 0,
+      "arxivId": "2501.01234",
+      "researchArea": "Discovery & Understanding",
+      "source": "ads"
+    },
+    {
+      "id": "ads_2024_1",
+      "title": "Machine learning approaches to galaxy classification in next-generation surveys",
+      "authors": [
+        "Speagle, J. S.",
+        "Chen, L.",
+        "Davis, K.",
+        "Thompson, R.",
+        "Garcia, P.",
+        "Lee, S.",
+        "Anderson, M.",
+        "White, J."
+      ],
+      "year": 2024,
+      "journal": "Astronomical Journal",
+      "citations": 15,
+      "arxivId": "2405.12345",
+      "researchArea": "Statistical Learning & AI",
+      "source": "ads"
+    },
+    {
+      "id": "scholar_-123456789",
+      "title": "dynesty: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
+      "authors": [
+        "Speagle, J. S."
+      ],
+      "year": 2020,
+      "journal": "Monthly Notices of the Royal Astronomical Society",
+      "citations": 2280,
+      "abstract": "We introduce dynesty, a pure-Python package for estimating Bayesian posteriors and evidences (marginal likelihoods) using Dynamic Nested Sampling. By adaptively allocating samples based on posterior structure, dynesty can estimate challenging posteriors using substantially fewer likelihood calls than traditional approaches, while also providing reliable error estimates on evidence calculations crucial for Bayesian model comparison.",
+      "arxivId": "1904.02180",
+      "scholarUrl": "https://scholar.google.com/citations?view_op=view_citation&citation_for_view=Z6dqXGoAAAAJ:mVmsd5A6BfQC",
+      "researchArea": "Inference & Computation",
+      "source": "google_scholar",
+      "featured": true
+    },
+    {
+      "id": "scholar_-987654321",
+      "title": "A highly consistent framework for the evolution of the star-forming \"main sequence\" from z∼ 0–6",
+      "authors": [
+        "Speagle, J. S.",
+        "Steinhardt, C. L.",
+        "Capak, P. L.",
+        "Silverman, J. D."
+      ],
+      "year": 2014,
+      "journal": "The Astrophysical Journal Supplement Series",
+      "citations": 1883,
+      "abstract": "We present a comprehensive framework for understanding the evolution of star-forming galaxies",
+      "scholarUrl": "https://scholar.google.com/citations?view_op=view_citation&citation_for_view=Z6dqXGoAAAAJ:u-x6o8ySG0sC",
+      "researchArea": "Discovery & Understanding",
+      "source": "google_scholar"
+    }
+  ],
+  "sources": {
+    "google_scholar": {
+      "publications": 105,
+      "metrics": true
+    },
+    "ads": {
+      "publications": 0,
+      "metrics": false
+    }
+  },
+  "statistics": {
+    "publicationsByYear": {
+      "2020": 8,
+      "2021": 12,
+      "2022": 15,
+      "2023": 18,
+      "2024": 10
+    },
+    "citationsByYear": {
+      "2020": 2500,
+      "2021": 3000,
+      "2022": 3200,
+      "2023": 3300,
+      "2024": 3225
+    },
+    "categoriesCount": {
+      "Statistical Learning & AI": 25,
+      "Interpretability & Insight": 15,
+      "Inference & Computation": 35,
+      "Discovery & Understanding": 30
+    },
+    "topCitedPapers": [
+      {
+        "title": "dynesty: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
+        "year": 2020,
+        "citations": 2280,
+        "journal": "Monthly Notices of the Royal Astronomical Society",
+        "url": "https://scholar.google.com/citations?view_op=view_citation&citation_for_view=Z6dqXGoAAAAJ:mVmsd5A6BfQC"
+      },
+      {
+        "title": "A highly consistent framework for the evolution of the star-forming \"main sequence\" from z∼ 0–6",
+        "year": 2014,
+        "citations": 1883,
+        "journal": "The Astrophysical Journal Supplement Series",
+        "url": "https://scholar.google.com/citations?view_op=view_citation&citation_for_view=Z6dqXGoAAAAJ:u-x6o8ySG0sC"
+      }
+    ],
+    "recentPapersCount": 28,
+    "totalJournals": 15
+  }
+}
