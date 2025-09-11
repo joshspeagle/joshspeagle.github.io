@@ -1003,17 +1003,18 @@
 /* Mobile responsive */
 @media (max-width: 768px) {
     .timeline-line {
-        left: 20px;
+        left: 30px;
     }
 
     .timeline-item {
-        width: calc(100% - 40px);
-        left: 40px !important;
+        width: calc(100% - 50px);
+        left: 50px !important;
         text-align: left !important;
+        margin-bottom: 2rem;
     }
 
     .timeline-item .timeline-dot {
-        left: -30px !important;
+        left: -10px !important;
         right: auto !important;
     }
 
@@ -1022,6 +1023,11 @@
         right: auto !important;
         border-right: 8px solid var(--border-primary);
         border-left: none;
+    }
+
+    .timeline-container {
+        margin: 2rem auto 1rem auto;
+        padding: 1rem 0;
     }
 }
 
@@ -2362,8 +2368,13 @@
     /* Dual chart container becomes single column */
     .dual-chart-container {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 2.5rem;
         padding: 0 0.5rem;
+    }
+
+    /* Chart section titles need extra bottom margin on mobile */
+    .chart-section h4 {
+        margin-bottom: 1.5rem;
     }
 
     /* Vertical bar charts on mobile */
@@ -2375,6 +2386,12 @@
     .bars-container {
         height: 120px;
         padding: 0 5px;
+    }
+
+    /* Ensure chart container has adequate spacing */
+    .chart-container {
+        margin: 1.5rem 0;
+        padding: 0.5rem;
     }
 
     .bar-column {
