@@ -337,8 +337,7 @@
       "sources": [
         "google_scholar",
         "ads"
-      ],
-      "featured": true
+      ]
     },
     {
       "title": "ChronoFlow: A Data-driven Model for Gyrochronology",
@@ -497,8 +496,7 @@
       "sources": [
         "google_scholar",
         "ads"
-      ],
-      "featured": true
+      ]
     },
     {
       "title": "Deriving Stellar Properties, Distances, and Reddenings using Photometry and Astrometry with BRUTUS",

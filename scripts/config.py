@@ -24,6 +24,7 @@ CONFIG = {
             "keyword",
             "bibcode",
             "pub",
+            "doctype",
         ],
         "rows": 1000,
         "sort": "date desc",

@@ -55,10 +55,13 @@ class DataMerger:
             if merged_paper:
                 merged_publications.append(merged_paper)
 
+        # Check for duplicates before returning
+        deduplicated_publications = self._check_for_duplicates(merged_publications)
+        
         logger.info(
-            f"Merged into {len(merged_publications)} publications with multi-source data"
+            f"Merged into {len(deduplicated_publications)} publications with multi-source data"
         )
-        return sorted(merged_publications, key=lambda x: x.get("year", 0), reverse=True)
+        return sorted(deduplicated_publications, key=lambda x: x.get("year", 0), reverse=True)
 
     def _find_best_match(
         self, target_paper: Dict, source_data: List[Dict]
@@ -251,6 +254,81 @@ class DataMerger:
         title = re.sub(r"[^\w\s]", "", title.lower())
         title = re.sub(r"\s+", " ", title).strip()
         return title
+
+    def _check_for_duplicates(self, publications: List[Dict]) -> List[Dict]:
+        """Check for duplicate publications and warn user, return deduplicated list."""
+        from collections import defaultdict
+        from rich.console import Console
+        
+        console = Console()
+        
+        if not publications:
+            return publications
+        
+        # Group publications by normalized title
+        title_groups = defaultdict(list)
+        for i, pub in enumerate(publications):
+            normalized_title = self._normalize_title(pub.get('title', ''))
+            title_groups[normalized_title].append((i, pub))
+        
+        # Find duplicates
+        duplicates_found = []
+        deduplicated_list = []
+        processed_indices = set()
+        
+        for normalized_title, pubs in title_groups.items():
+            if len(pubs) > 1:
+                duplicates_found.append(pubs)
+                
+                # For duplicates, prefer the one with more complete data
+                best_pub = None
+                best_score = -1
+                best_idx = -1
+                
+                for idx, pub in pubs:
+                    # Score based on completeness (more sources = better)
+                    score = len(pub.get('sources', []))
+                    # Tie-breaker: higher citation count
+                    score += pub.get('citations', 0) / 10000.0  # Small weight for citations
+                    
+                    if score > best_score:
+                        best_score = score
+                        best_pub = pub
+                        best_idx = idx
+                
+                # Keep the best one
+                if best_pub:
+                    deduplicated_list.append(best_pub)
+                    processed_indices.update(idx for idx, _ in pubs)
+                    
+                # Report the duplicates
+                console.print(f"\n⚠️  [yellow]DUPLICATE DETECTED:[/yellow]")
+                console.print(f"   Title: {pubs[0][1].get('title', 'N/A')[:80]}...")
+                console.print(f"   Found {len(pubs)} identical publications:")
+                
+                for idx, pub in pubs:
+                    is_kept = idx == best_idx
+                    status = "✅ KEPT" if is_kept else "❌ REMOVED"
+                    scholar_id = pub.get('scholar_id', 'N/A')
+                    sources = ', '.join(pub.get('sources', []))
+                    citations = pub.get('citations', 0)
+                    console.print(f"   {status}: Scholar ID: {scholar_id}, Sources: [{sources}], Citations: {citations}")
+                
+                console.print(f"   [dim]Please check Google Scholar for duplicate entries[/dim]")
+            else:
+                # No duplicates, add to deduplicated list
+                deduplicated_list.append(pubs[0][1])
+                processed_indices.add(pubs[0][0])
+        
+        if duplicates_found:
+            total_duplicates = sum(len(group) for group in duplicates_found) - len(duplicates_found)
+            console.print(f"\n📊 [yellow]Duplicate Summary:[/yellow]")
+            console.print(f"   Found {len(duplicates_found)} duplicate groups affecting {total_duplicates} publications")
+            console.print(f"   Automatically kept the most complete version of each")
+            console.print(f"   Deduplicated: {len(publications)} → {len(deduplicated_list)} publications")
+            console.print(f"   [bold]Action needed:[/bold] Check Google Scholar profile for duplicate entries")
+        
+        return deduplicated_list
 
     def _merge_publications(self, ads_pub: Dict, scholar_pub: Dict) -> Dict:
         """Merge two publication records, preferring the most complete data."""

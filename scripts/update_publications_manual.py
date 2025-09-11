@@ -805,6 +805,35 @@ def main():
     success = updater.run()
 
     if success:
+        # Post-process and deploy data for website
+        console.print("\n📤 Processing data for website deployment...")
+        try:
+            import subprocess
+
+            result = subprocess.run(
+                [sys.executable, "process_publications.py"],
+                capture_output=True,
+                text=True,
+                cwd=os.path.dirname(os.path.abspath(__file__)),
+            )
+
+            if result.returncode == 0:
+                console.print(
+                    "✅ [green]Data processed and deployed successfully![/green]"
+                )
+            else:
+                console.print(
+                    f"⚠️ [yellow]Post-processing completed with warnings:[/yellow]"
+                )
+                if result.stderr:
+                    console.print(f"   {result.stderr.strip()}", style="yellow")
+        except Exception as e:
+            console.print(f"❌ [red]Post-processing failed: {e}[/red]")
+            console.print(
+                "   Data collection succeeded but deployment may be incomplete",
+                style="yellow",
+            )
+
         console.print(
             "\n🎉 [bold green]Publication data update completed successfully![/bold green]"
         )

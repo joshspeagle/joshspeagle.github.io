@@ -912,7 +912,8 @@ function createInteractiveBarChart(counts) {
 function formatDataSources(sources) {
     const sourceMapping = {
         'google_scholar': 'Google Scholar',
-        'ads': 'ADS'
+        'ads': 'ADS',
+        'openalex': 'OpenAlex'
     };
 
     return sources.map(source => sourceMapping[source] || source).join(' & ');
@@ -1114,14 +1115,14 @@ function createRecentPublications(dynamicData) {
         return '';
     }
 
-    // Get the 5 most recent publications, excluding featured ones
+    // Get the 20 most recent publications, excluding featured ones
     const recentPubs = publications
         .filter(pub => pub.year && pub.year >= 2020 && !pub.featured) // Exclude featured papers
         .sort((a, b) => {
             if (b.year !== a.year) return b.year - a.year; // Sort by year descending
             return a.title.localeCompare(b.title); // Then by title for consistency
         })
-        .slice(0, 5);
+        .slice(0, 20);
 
     if (recentPubs.length === 0) {
         return '';

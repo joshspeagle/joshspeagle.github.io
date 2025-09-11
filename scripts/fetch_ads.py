@@ -161,9 +161,10 @@ class ADSFetcher:
                 if not papers:
                     return None
 
-                # Find best match by title similarity
+                # Find best match by title similarity with publication type preference
                 best_match = None
                 best_score = 0
+                best_priority = 0
 
                 for paper in papers:
                     paper_title = (
@@ -175,11 +176,16 @@ class ADSFetcher:
                         continue
 
                     score = self._calculate_title_similarity(title, paper_title)
-                    if (
-                        score > best_score and score >= 0.67
-                    ):  # Minimum similarity threshold
-                        best_score = score
-                        best_match = paper
+                    priority = self._get_publication_priority(paper)
+                    
+                    # Accept if similarity is above threshold
+                    if score >= 0.67:
+                        # Prefer based on: 1) higher similarity, 2) higher priority if similar scores
+                        if (score > best_score or 
+                            (abs(score - best_score) < 0.05 and priority > best_priority)):
+                            best_score = score
+                            best_match = paper
+                            best_priority = priority
 
                 if best_match:
                     return self._extract_publication_info(best_match)
@@ -421,6 +427,29 @@ class ADSFetcher:
             logger.warning(f"Failed to extract publication info: {e}")
             return None
 
+    def _get_publication_priority(self, paper) -> int:
+        """Assign priority to publication types, preferring journal articles over ASCL entries."""
+        try:
+            # Get document type and bibcode for priority assessment
+            doctype = getattr(paper, "doctype", "")
+            bibcode = getattr(paper, "bibcode", "")
+            
+            # Check if it's an ASCL entry (bibcode contains 'ascl' or doctype indicates software)
+            is_ascl = "ascl" in bibcode.lower() if bibcode else False
+            is_software = "software" in doctype.lower() if doctype else False
+            
+            if is_ascl or is_software:
+                return 1  # Low priority for ASCL/software entries
+            elif "eprint" in doctype.lower() or "arXiv" in bibcode:
+                return 3  # High priority for preprints
+            elif any(journal_type in doctype.lower() for journal_type in ["article", "inproceedings", "proceedings"]):
+                return 4  # Highest priority for journal articles and conference papers
+            else:
+                return 2  # Medium priority for other types
+                
+        except Exception:
+            return 2  # Default medium priority
+    
     def _classify_research_area(
         self, title: str, abstract: str, keywords: List[str]
     ) -> str:
