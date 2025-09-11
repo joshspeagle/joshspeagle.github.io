@@ -1622,7 +1622,7 @@
 /* Page introduction styling */
 .intro-text {
     margin-bottom: 2rem;
-    text-align: center;
+    text-align: left;
 }
 
 .intro-text p {
