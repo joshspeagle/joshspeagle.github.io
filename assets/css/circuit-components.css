@@ -32,24 +32,12 @@
             var(--accent-blue) calc(50% - 1px),
             var(--accent-blue) calc(50% + 1px),
             transparent calc(50% + 1px)),
-        /* Branch connections (T-junctions) */
-        linear-gradient(0deg,
-            transparent calc(20% - 1px),
-            var(--accent-green) calc(20% - 1px),
-            var(--accent-green) calc(20% + 1px),
-            transparent calc(20% + 1px),
-            transparent calc(80% - 1px),
-            var(--accent-green) calc(80% - 1px),
-            var(--accent-green) calc(80% + 1px),
-            transparent calc(80% + 1px)),
         /* Junction connection pads */
         radial-gradient(circle at 50% 20%, var(--accent-green) 0%, var(--accent-green) 2px, transparent 2px),
         radial-gradient(circle at 50% 80%, var(--accent-green) 0%, var(--accent-green) 2px, transparent 2px);
     background-size:
         100% 100%,
         /* Main bus */
-        100% 100%,
-        /* Branches */
         4px 4px,
         /* Top junction pad */
         4px 4px;
@@ -274,10 +262,6 @@
     top: 0;
     z-index: 100;
     border-bottom: 2px solid var(--border-accent);
-    /* Add circuit trace pattern */
-    background-image:
-        linear-gradient(to right, transparent 20%, var(--circuit-trace) 20%, var(--circuit-trace) 21%, transparent 21%, transparent 79%, var(--circuit-trace) 79%, var(--circuit-trace) 80%, transparent 80%);
-    background-size: 200px 100%;
 }
 
 /* Quick Links Bar circuit enhancement */
@@ -310,6 +294,7 @@
     background-size: 200% 100%;
     animation: dataFlow 15s linear infinite;
 }
+
 
 /* Simplified quick link inline */
 .quick-link-inline {

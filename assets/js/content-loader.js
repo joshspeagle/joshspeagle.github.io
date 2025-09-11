@@ -730,14 +730,46 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
 }
 
 function createMenteeCard(mentee, type, isCompleted = false) {
+    // Determine if this mentee uses the new multiple projects format
+    const hasMultipleProjects = mentee.projects && Array.isArray(mentee.projects);
+    
     // Generate supervision badge with career stage context
-    const supervisionLevel = mentee.supervisionType === 'Primary Supervisor' ? 'primary' :
-        mentee.supervisionType === 'Co-Supervisor' ? 'co' : 'secondary';
-    const supervisionBadge = `<span class="supervision-badge ${supervisionLevel} ${type}-context">${mentee.supervisionType}</span>`;
+    // For multiple projects, use the first project's supervision type or fall back to legacy field
+    const primarySupervisionType = hasMultipleProjects ? 
+        (mentee.projects[0]?.supervisionType || mentee.supervisionType) : 
+        mentee.supervisionType;
+    
+    const supervisionLevel = primarySupervisionType === 'Primary Supervisor' ? 'primary' :
+        primarySupervisionType === 'Co-Supervisor' ? 'co' : 'secondary';
+    const supervisionBadge = `<span class="supervision-badge ${supervisionLevel} ${type}-context">${primarySupervisionType}</span>`;
 
-    const coSupervisorsText = mentee.coSupervisors && mentee.coSupervisors.length > 0
-        ? `<p class="co-supervisors">Co-supervisors: ${mentee.coSupervisors.join(', ')}</p>`
-        : '';
+    // Generate projects content
+    let projectsContent;
+    if (hasMultipleProjects) {
+        // Multiple projects format - keep same styling as single projects
+        const projectLabel = type === 'bachelors' ? 'Project' : 'Research Interests';
+        projectsContent = '';
+        
+        mentee.projects.forEach((project, index) => {
+            // Each project gets the same format as single projects
+            projectsContent += `<p class="project"><strong>${projectLabel}:</strong> ${project.title}</p>`;
+            
+            // Co-supervisors on separate line, matching single-project format
+            if (project.coSupervisors && project.coSupervisors.length > 0) {
+                projectsContent += `<p class="co-supervisors">Co-supervisors: ${project.coSupervisors.join(', ')}</p>`;
+            }
+        });
+    } else {
+        // Legacy single project format
+        const projectLabel = type === 'bachelors' ? 'Project' : 'Research Interests';
+        projectsContent = `<p class="project"><strong>${projectLabel}:</strong> ${mentee.project}</p>`;
+        
+        // Legacy co-supervisors (separate from project)
+        const coSupervisorsText = mentee.coSupervisors && mentee.coSupervisors.length > 0
+            ? `<p class="co-supervisors">Co-supervisors: ${mentee.coSupervisors.join(', ')}</p>`
+            : '';
+        projectsContent += coSupervisorsText;
+    }
 
     // Combine fellowships/positions into a single inline block
     const awards = mentee.fellowships || mentee.scholarships || [];
@@ -747,7 +779,7 @@ function createMenteeCard(mentee, type, isCompleted = false) {
 
     // Remove redundant "Status:" label for current mentees, keep "Outcome:" for former
     const statusText = isCompleted
-        ? `<p class="outcome"><strong>Outcome:</strong> ${mentee.outcome}</p>` +
+        ? (mentee.outcome && mentee.outcome.trim() !== '' ? `<p class="outcome"><strong>Outcome:</strong> ${mentee.outcome}</p>` : '') +
         (mentee.currentStatus && mentee.currentStatus.trim() !== '' ? `<p class="current-status">${mentee.currentStatus}</p>` : '')
         : (mentee.currentStatus && mentee.currentStatus.trim() !== '' ? `<p class="current-status">${mentee.currentStatus}</p>` : '');
 
@@ -764,8 +796,7 @@ function createMenteeCard(mentee, type, isCompleted = false) {
             </div>
             
             <div class="mentee-content">
-                <p class="project"><strong>${type === 'bachelors' ? 'Project' : 'Research Interests'}:</strong> ${mentee.project}</p>
-                ${coSupervisorsText}
+                ${projectsContent}
                 ${statusText}
                 <p class="career-context"><em>My role: ${mentee.myCareerStage}</em></p>
             </div>
@@ -846,10 +877,11 @@ function createInteractiveBarChart(counts) {
     const maxHeight = 150;
     console.log('Max count:', maxCount, 'Max height:', maxHeight);
 
-    // Calculate individual bar heights with minimum 15px for visibility
-    const postdocHeight = maxCount > 0 ? Math.max((counts.postdoctoral / maxCount) * maxHeight, 15) : 0;
-    const doctoralHeight = maxCount > 0 ? Math.max((counts.doctoral / maxCount) * maxHeight, 15) : 0;
-    const bachelorsHeight = maxCount > 0 ? Math.max((counts.bachelors / maxCount) * maxHeight, 15) : 0;
+    // Calculate individual bar heights with square root scaling for better visual comparison
+    const maxSqrt = Math.sqrt(maxCount);
+    const postdocHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.postdoctoral) / maxSqrt) * maxHeight, 15) : 0;
+    const doctoralHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.doctoral) / maxSqrt) * maxHeight, 15) : 0;
+    const bachelorsHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.bachelors) / maxSqrt) * maxHeight, 15) : 0;
     
     console.log('Calculated heights:', {postdocHeight, doctoralHeight, bachelorsHeight});
 
