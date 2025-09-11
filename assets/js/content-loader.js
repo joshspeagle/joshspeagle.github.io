@@ -107,9 +107,13 @@ function populateQuickLinks(quickLinks) {
         quickLinksContainer.innerHTML = quickLinks.map(link => {
             if (link.dropdown && link.items) {
                 // Create dropdown for quick links
-                const dropdownItems = link.items.map(subItem =>
-                    `<a href="${subItem.href}" class="dropdown-item">${subItem.text}</a>`
-                ).join('');
+                const dropdownItems = link.items.map(subItem => {
+                    if (subItem.disabled) {
+                        return `<span class="dropdown-item disabled" title="${subItem.disabledReason || 'Coming soon'}">${subItem.text}</span>`;
+                    } else {
+                        return `<a href="${subItem.href}" class="dropdown-item">${subItem.text}</a>`;
+                    }
+                }).join('');
 
                 return `
                     <div class="quick-link-dropdown">
@@ -431,7 +435,6 @@ function createPublicationCard(pub) {
             <div class="card-content">
                 <h4>${pub.name}</h4>
                 <p>${pub.description}</p>
-                <span class="card-meta">${pub.meta}</span>
             </div>
             <div class="card-arrow">→</div>
         </a>

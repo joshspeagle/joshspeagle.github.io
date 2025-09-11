@@ -35,15 +35,21 @@
                 },
                 {
                     "text": "Publications",
-                    "href": "publications.html"
+                    "href": "#",
+                    "disabled": true,
+                    "disabledReason": "Coming soon"
                 },
                 {
                     "text": "Talks",
-                    "href": "talks.html"
+                    "href": "#",
+                    "disabled": true,
+                    "disabledReason": "Coming soon"
                 },
                 {
                     "text": "Teaching",
-                    "href": "teaching.html"
+                    "href": "#",
+                    "disabled": true,
+                    "disabledReason": "Coming soon"
                 }
             ]
         }
