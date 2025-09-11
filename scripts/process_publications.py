@@ -11,7 +11,10 @@ This script:
 import json
 import shutil
 import os
+import subprocess
+import sys
 from datetime import datetime
+from pathlib import Path
 import logging
 
 # Configure logging
@@ -96,12 +99,35 @@ def main():
     # Deploy to website
     success = deploy_to_website(data)
 
-    if success:
-        logger.info("✅ Publication data post-processing completed successfully")
-        return True
-    else:
+    if not success:
         logger.error("❌ Publication data post-processing failed")
         return False
+
+    # Run featured publications flagging script
+    logger.info("Running featured publications flagging...")
+    try:
+        featured_script = Path(__file__).parent / "flag_featured_publications.py"
+        result = subprocess.run(
+            [sys.executable, str(featured_script)], capture_output=True, text=True
+        )
+
+        if result.returncode == 0:
+            logger.info("✅ Featured publications flagged successfully")
+            # Print the output from the featured script
+            if result.stdout.strip():
+                print(result.stdout)
+        else:
+            logger.warning(
+                f"⚠️ Featured publications script returned error code {result.returncode}"
+            )
+            if result.stderr:
+                logger.warning(f"Error: {result.stderr}")
+
+    except Exception as e:
+        logger.warning(f"⚠️ Could not run featured publications script: {e}")
+
+    logger.info("✅ Publication data post-processing completed successfully")
+    return True
 
 
 if __name__ == "__main__":

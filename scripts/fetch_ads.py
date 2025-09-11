@@ -177,12 +177,13 @@ class ADSFetcher:
 
                     score = self._calculate_title_similarity(title, paper_title)
                     priority = self._get_publication_priority(paper)
-                    
+
                     # Accept if similarity is above threshold
                     if score >= 0.67:
                         # Prefer based on: 1) higher similarity, 2) higher priority if similar scores
-                        if (score > best_score or 
-                            (abs(score - best_score) < 0.05 and priority > best_priority)):
+                        if score > best_score or (
+                            abs(score - best_score) < 0.05 and priority > best_priority
+                        ):
                             best_score = score
                             best_match = paper
                             best_priority = priority
@@ -433,23 +434,26 @@ class ADSFetcher:
             # Get document type and bibcode for priority assessment
             doctype = getattr(paper, "doctype", "")
             bibcode = getattr(paper, "bibcode", "")
-            
+
             # Check if it's an ASCL entry (bibcode contains 'ascl' or doctype indicates software)
             is_ascl = "ascl" in bibcode.lower() if bibcode else False
             is_software = "software" in doctype.lower() if doctype else False
-            
+
             if is_ascl or is_software:
                 return 1  # Low priority for ASCL/software entries
             elif "eprint" in doctype.lower() or "arXiv" in bibcode:
                 return 3  # High priority for preprints
-            elif any(journal_type in doctype.lower() for journal_type in ["article", "inproceedings", "proceedings"]):
+            elif any(
+                journal_type in doctype.lower()
+                for journal_type in ["article", "inproceedings", "proceedings"]
+            ):
                 return 4  # Highest priority for journal articles and conference papers
             else:
                 return 2  # Medium priority for other types
-                
+
         except Exception:
             return 2  # Default medium priority
-    
+
     def _classify_research_area(
         self, title: str, abstract: str, keywords: List[str]
     ) -> str:

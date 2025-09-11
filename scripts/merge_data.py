@@ -57,11 +57,13 @@ class DataMerger:
 
         # Check for duplicates before returning
         deduplicated_publications = self._check_for_duplicates(merged_publications)
-        
+
         logger.info(
             f"Merged into {len(deduplicated_publications)} publications with multi-source data"
         )
-        return sorted(deduplicated_publications, key=lambda x: x.get("year", 0), reverse=True)
+        return sorted(
+            deduplicated_publications, key=lambda x: x.get("year", 0), reverse=True
+        )
 
     def _find_best_match(
         self, target_paper: Dict, source_data: List[Dict]
@@ -259,75 +261,98 @@ class DataMerger:
         """Check for duplicate publications and warn user, return deduplicated list."""
         from collections import defaultdict
         from rich.console import Console
-        
+
         console = Console()
-        
+
         if not publications:
             return publications
-        
+
         # Group publications by normalized title
         title_groups = defaultdict(list)
         for i, pub in enumerate(publications):
-            normalized_title = self._normalize_title(pub.get('title', ''))
+            normalized_title = self._normalize_title(pub.get("title", ""))
             title_groups[normalized_title].append((i, pub))
-        
+
         # Find duplicates
         duplicates_found = []
         deduplicated_list = []
         processed_indices = set()
-        
+
         for normalized_title, pubs in title_groups.items():
             if len(pubs) > 1:
                 duplicates_found.append(pubs)
-                
+
                 # For duplicates, prefer the one with more complete data
                 best_pub = None
                 best_score = -1
                 best_idx = -1
-                
+
                 for idx, pub in pubs:
-                    # Score based on completeness (more sources = better)
-                    score = len(pub.get('sources', []))
+                    # Primary factor: publication type priority (journal > preprint > ASCL)
+                    priority = self._get_publication_priority(pub)
+                    score = priority * 100  # Weight publication type heavily
+
+                    # Secondary factor: completeness (more sources = better)
+                    score += len(pub.get("sources", [])) * 10
+
                     # Tie-breaker: higher citation count
-                    score += pub.get('citations', 0) / 10000.0  # Small weight for citations
-                    
+                    score += (
+                        pub.get("citations", 0) / 10000.0
+                    )  # Small weight for citations
+
                     if score > best_score:
                         best_score = score
                         best_pub = pub
                         best_idx = idx
-                
+
                 # Keep the best one
                 if best_pub:
                     deduplicated_list.append(best_pub)
                     processed_indices.update(idx for idx, _ in pubs)
-                    
+
                 # Report the duplicates
                 console.print(f"\n⚠️  [yellow]DUPLICATE DETECTED:[/yellow]")
                 console.print(f"   Title: {pubs[0][1].get('title', 'N/A')[:80]}...")
                 console.print(f"   Found {len(pubs)} identical publications:")
-                
+
                 for idx, pub in pubs:
                     is_kept = idx == best_idx
                     status = "✅ KEPT" if is_kept else "❌ REMOVED"
-                    scholar_id = pub.get('scholar_id', 'N/A')
-                    sources = ', '.join(pub.get('sources', []))
-                    citations = pub.get('citations', 0)
-                    console.print(f"   {status}: Scholar ID: {scholar_id}, Sources: [{sources}], Citations: {citations}")
-                
-                console.print(f"   [dim]Please check Google Scholar for duplicate entries[/dim]")
+                    scholar_id = pub.get("scholar_id", "N/A")
+                    sources = ", ".join(pub.get("sources", []))
+                    citations = pub.get("citations", 0)
+                    priority = self._get_publication_priority(pub)
+                    journal = pub.get("journal", "N/A")[:30] + (
+                        "..." if len(pub.get("journal", "")) > 30 else ""
+                    )
+                    console.print(
+                        f"   {status}: Scholar ID: {scholar_id}, Sources: [{sources}], Citations: {citations}, Priority: {priority}, Journal: {journal}"
+                    )
+
+                console.print(
+                    f"   [dim]Please check Google Scholar for duplicate entries[/dim]"
+                )
             else:
                 # No duplicates, add to deduplicated list
                 deduplicated_list.append(pubs[0][1])
                 processed_indices.add(pubs[0][0])
-        
+
         if duplicates_found:
-            total_duplicates = sum(len(group) for group in duplicates_found) - len(duplicates_found)
+            total_duplicates = sum(len(group) for group in duplicates_found) - len(
+                duplicates_found
+            )
             console.print(f"\n📊 [yellow]Duplicate Summary:[/yellow]")
-            console.print(f"   Found {len(duplicates_found)} duplicate groups affecting {total_duplicates} publications")
+            console.print(
+                f"   Found {len(duplicates_found)} duplicate groups affecting {total_duplicates} publications"
+            )
             console.print(f"   Automatically kept the most complete version of each")
-            console.print(f"   Deduplicated: {len(publications)} → {len(deduplicated_list)} publications")
-            console.print(f"   [bold]Action needed:[/bold] Check Google Scholar profile for duplicate entries")
-        
+            console.print(
+                f"   Deduplicated: {len(publications)} → {len(deduplicated_list)} publications"
+            )
+            console.print(
+                f"   [bold]Action needed:[/bold] Check Google Scholar profile for duplicate entries"
+            )
+
         return deduplicated_list
 
     def _merge_publications(self, ads_pub: Dict, scholar_pub: Dict) -> Dict:
@@ -441,6 +466,52 @@ class DataMerger:
             merged_metrics["sources"].append("ads")
 
         return merged_metrics
+
+    def _get_publication_priority(self, pub: Dict) -> int:
+        """Assign priority to publication types, preferring journal articles over ASCL entries."""
+        try:
+            # Get identifiers and URLs to determine publication type
+            bibcode = pub.get("bibcode", "").lower()
+            journal = pub.get("journal", "").lower()
+            title = pub.get("title", "").lower()
+            scholar_url = pub.get("scholarUrl", "").lower()
+            ads_url = pub.get("adsUrl", "").lower()
+
+            # Check for ASCL entries (software/code repositories)
+            is_ascl = (
+                "ascl" in bibcode
+                or "ascl" in ads_url
+                or "astrophysics source code library" in journal
+                or "ascl.net" in scholar_url
+            )
+
+            # Check for software-related indicators
+            is_software = "software" in journal.lower() or "code" in journal.lower()
+
+            if is_ascl or is_software:
+                return 1  # Low priority for ASCL/software entries
+            elif "arxiv" in journal or "eprint" in bibcode or "preprint" in journal:
+                return 3  # High priority for preprints
+            elif any(
+                journal_type in journal
+                for journal_type in [
+                    "astrophysical journal",
+                    "mnras",
+                    "monthly notices",
+                    "astronomy astrophysics",
+                    "astronomical journal",
+                    "journal",
+                    "proceedings",
+                    "letters",
+                ]
+            ):
+                return 4  # Highest priority for journal articles
+            else:
+                return 2  # Medium priority for other types
+
+        except Exception as e:
+            logger.debug(f"Error determining publication priority: {e}")
+            return 2  # Default medium priority
 
     def generate_summary_data(self, full_data: Dict) -> Dict:
         """Generate lightweight summary data for quick loading."""
