@@ -29,6 +29,200 @@ class ADSFetcher:
         else:
             logger.warning("No ADS API key found. Some features may be limited.")
 
+    def search_papers_by_title(self, paper_list: List[Dict]) -> List[Dict]:
+        """Search for papers in ADS by title matching."""
+        logger.info(f"Searching ADS for {len(paper_list)} papers")
+        matched_papers = []
+
+        for i, paper in enumerate(paper_list):
+            try:
+                title = paper.get("title", "").strip()
+                year = paper.get("year")
+
+                if not title:
+                    continue
+
+                # Search ADS for this paper
+                ads_paper = self._search_single_paper_by_title(title, year)
+                if ads_paper:
+                    matched_papers.append(ads_paper)
+                    logger.debug(f"Found ADS match for: {title[:50]}...")
+                else:
+                    logger.debug(f"No ADS match for: {title[:50]}...")
+
+                # Rate limiting
+                time.sleep(0.1)
+
+                if (i + 1) % 10 == 0:
+                    logger.info(f"Searched {i + 1}/{len(paper_list)} papers in ADS")
+
+            except Exception as e:
+                logger.warning(f"Error searching for paper '{title[:50]}...': {e}")
+                continue
+
+        logger.info(f"Found {len(matched_papers)} matches in ADS")
+        return matched_papers
+
+    def _search_single_paper_by_title(
+        self, title: str, year: Optional[int] = None
+    ) -> Optional[Dict]:
+        """Search for a single paper in ADS by title."""
+        for attempt in range(self.retry_attempts):
+            try:
+                # Build search query - search in title field
+                search_terms = []
+
+                # Add title search - use multiple strategies for better matching
+                # Clean title for search - remove ALL quotes to avoid nested quote issues
+                clean_title = (
+                    title.replace('"', "").replace('"', "").replace('"', "").strip()
+                )
+                # Also remove other problematic characters
+                clean_title = clean_title.replace("∼", "~")  # Replace unicode tilde
+
+                # Strategy: Use all meaningful words with AND (not arbitrary truncation)
+                # This approach is more logical and comprehensive than first-N-words
+
+                words = clean_title.split()
+
+                # Remove stop words to focus on meaningful content
+                stop_words = {
+                    "the",
+                    "a",
+                    "an",
+                    "of",
+                    "for",
+                    "with",
+                    "in",
+                    "on",
+                    "at",
+                    "to",
+                    "by",
+                    "and",
+                    "or",
+                    "from",
+                }
+                meaningful_words = []
+                for w in words:
+                    if w.lower() not in stop_words and len(w) > 2:
+                        # Clean word of problematic characters that break ADS queries
+                        clean_word = w.replace(":", "").replace(";", "").strip()
+                        if clean_word:  # Only add if something remains after cleaning
+                            meaningful_words.append(clean_word)
+
+                # Limit to 7 words to avoid ADS query depth errors, but use most meaningful ones
+                if len(meaningful_words) > 7:
+                    meaningful_words = meaningful_words[:7]
+
+                if meaningful_words:
+                    # Strategy 1: Try exact phrase first
+                    meaningful_phrase = " ".join(meaningful_words)
+                    title_query = f'title:"{meaningful_phrase}"'
+                else:
+                    # Fallback for very short titles
+                    title_query = f'title:"{clean_title}"'
+
+                search_terms.append(title_query)
+
+                # Add author search - use broader match to catch all variations
+                search_terms.append("author:Speagle")
+
+                # Skip year filter - it's causing too many missed matches
+                # Year differences between Scholar/ADS are common (preprint vs journal dates)
+
+                query_string = " AND ".join(search_terms)
+
+                # Query ADS
+                query = ads.SearchQuery(
+                    q=query_string,
+                    fl=self.config["fields"],
+                    rows=5,  # Get top 5 results
+                    sort="score desc",  # Sort by relevance
+                )
+
+                papers = list(query)
+
+                # If exact phrase fails, try a broader search with individual keywords
+                if not papers and meaningful_words:
+                    # Fallback: Use most distinctive words in a broader search
+                    distinctive_words = meaningful_words[
+                        :3
+                    ]  # Use first 3 meaningful words
+                    fallback_query = " ".join(distinctive_words) + " author:Speagle"
+
+                    fallback_search = ads.SearchQuery(
+                        q=fallback_query,
+                        fl=self.config["fields"],
+                        rows=10,  # Get more results for fallback
+                        sort="score desc",
+                    )
+                    papers = list(fallback_search)
+
+                if not papers:
+                    return None
+
+                # Find best match by title similarity
+                best_match = None
+                best_score = 0
+
+                for paper in papers:
+                    paper_title = (
+                        getattr(paper, "title", [""])[0]
+                        if hasattr(paper, "title") and paper.title
+                        else ""
+                    )
+                    if not paper_title:
+                        continue
+
+                    score = self._calculate_title_similarity(title, paper_title)
+                    if (
+                        score > best_score and score >= 0.67
+                    ):  # Minimum similarity threshold
+                        best_score = score
+                        best_match = paper
+
+                if best_match:
+                    return self._extract_publication_info(best_match)
+
+                return None
+
+            except Exception as e:
+                logger.warning(f"Attempt {attempt + 1} failed for title search: {e}")
+                if attempt < self.retry_attempts - 1:
+                    time.sleep(self.retry_delay * (attempt + 1))
+                else:
+                    return None
+
+    def _calculate_title_similarity(self, title1: str, title2: str) -> float:
+        """Calculate similarity between two titles."""
+        from difflib import SequenceMatcher
+
+        # Normalize titles
+        title1 = self._normalize_title(title1)
+        title2 = self._normalize_title(title2)
+
+        return SequenceMatcher(None, title1, title2).ratio()
+
+    def _normalize_title(self, title: str) -> str:
+        """Normalize title for comparison."""
+        import re
+        import html
+
+        # Step 1: Handle double-encoded HTML entities (&amp;lt; → &lt; → <)
+        # Decode multiple times to handle nested encoding
+        prev_title = ""
+        while prev_title != title:
+            prev_title = title
+            title = html.unescape(title)
+
+        # Step 2: Strip HTML tags (<i>z</i> → z)
+        title = re.sub(r"<[^>]+>", "", title)
+
+        # Step 3: Standard normalization - remove punctuation and convert to lowercase
+        title = re.sub(r"[^\w\s]", "", title.lower())
+        title = re.sub(r"\s+", " ", title).strip()
+        return title
+
     def fetch_publications(self) -> List[Dict]:
         """Fetch publication list from ADS."""
         publications = []

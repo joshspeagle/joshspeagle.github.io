@@ -7,7 +7,7 @@ import logging
 import os
 import time
 from datetime import datetime
-from typing import Dict, List
+from typing import Dict, List, Optional
 from difflib import SequenceMatcher
 from config import CONFIG
 
@@ -23,10 +23,141 @@ class DataMerger:
         self.config = CONFIG
         self.validation = CONFIG["validation"]
 
+    def merge_publications_multisource(
+        self,
+        paper_list: List[Dict],
+        scholar_data: List[Dict],
+        ads_data: List[Dict],
+        openalex_data: List[Dict],
+    ) -> List[Dict]:
+        """Merge publication data from multiple sources."""
+        logger.info(
+            f"Merging data from {len(scholar_data)} Scholar, {len(ads_data)} ADS, and {len(openalex_data)} OpenAlex papers"
+        )
+
+        merged_publications = []
+
+        # Process each paper from the original list
+        for paper in paper_list:
+            title = paper.get("title", "").strip()
+            if not title:
+                continue
+
+            # Find matches in each source
+            scholar_match = self._find_best_match(paper, scholar_data)
+            ads_match = self._find_best_match(paper, ads_data)
+            openalex_match = self._find_best_match(paper, openalex_data)
+
+            # Merge data from all available sources
+            merged_paper = self._merge_multisource(
+                paper, scholar_match, ads_match, openalex_match
+            )
+            if merged_paper:
+                merged_publications.append(merged_paper)
+
+        logger.info(
+            f"Merged into {len(merged_publications)} publications with multi-source data"
+        )
+        return sorted(merged_publications, key=lambda x: x.get("year", 0), reverse=True)
+
+    def _find_best_match(
+        self, target_paper: Dict, source_data: List[Dict]
+    ) -> Optional[Dict]:
+        """Find the best matching paper in a source dataset."""
+        target_title = target_paper.get("title", "").strip()
+        if not target_title:
+            return None
+
+        best_match = None
+        best_score = 0
+
+        for paper in source_data:
+            score = self._calculate_similarity(target_paper, paper)
+            if score > best_score and score >= 0.67:  # Minimum threshold (2/3rds)
+                best_score = score
+                best_match = paper
+
+        return best_match
+
+    def _merge_multisource(
+        self,
+        base_paper: Dict,
+        scholar_data: Optional[Dict],
+        ads_data: Optional[Dict],
+        openalex_data: Optional[Dict],
+    ) -> Dict:
+        """Merge a paper's data from multiple sources."""
+        merged = {}
+
+        # Start with base paper data
+        merged.update(base_paper)
+
+        # Track sources that provided data
+        sources_found = [base_paper.get("source", "base")]
+        citations_by_source = {}
+
+        # Merge ADS data (usually most complete metadata)
+        if ads_data:
+            merged.update(ads_data)
+            sources_found.append("ads")
+            citations_by_source["ads"] = ads_data.get("citations", 0)
+
+        # Merge OpenAlex data
+        if openalex_data:
+            # Take longer abstract if available
+            if len(openalex_data.get("abstract", "")) > len(merged.get("abstract", "")):
+                merged["abstract"] = openalex_data["abstract"]
+
+            # Add OpenAlex identifiers
+            if "openalexUrl" in openalex_data:
+                merged["openalexUrl"] = openalex_data["openalexUrl"]
+
+            # Merge keywords
+            existing_keywords = set(merged.get("keywords", []))
+            openalex_keywords = set(openalex_data.get("keywords", []))
+            merged["keywords"] = list(existing_keywords | openalex_keywords)
+
+            sources_found.append("openalex")
+            citations_by_source["openalex"] = openalex_data.get("citations", 0)
+
+        # Merge Google Scholar data
+        if scholar_data:
+            # Take longer abstract if available
+            if len(scholar_data.get("abstract", "")) > len(merged.get("abstract", "")):
+                merged["abstract"] = scholar_data["abstract"]
+
+            # Add Scholar URLs
+            if "scholarUrl" in scholar_data:
+                merged["scholarUrl"] = scholar_data["scholarUrl"]
+
+            # Merge identifiers if not already present
+            for field in ["doi", "arxivId"]:
+                if field not in merged and field in scholar_data:
+                    merged[field] = scholar_data[field]
+
+            sources_found.append("google_scholar")
+            citations_by_source["google_scholar"] = scholar_data.get("citations", 0)
+
+        # Set maximum citation count across all sources
+        if citations_by_source:
+            merged["citations"] = max(citations_by_source.values())
+            merged["citations_by_source"] = citations_by_source
+        else:
+            merged["citations"] = merged.get("citations", 0)
+
+        # Remove duplicates from sources
+        merged["sources"] = list(set(sources_found))
+
+        # Ensure we have essential fields
+        if not merged.get("title"):
+            return None
+
+        return merged
+
     def merge_publications(
         self, scholar_data: List[Dict], ads_data: List[Dict]
     ) -> List[Dict]:
-        """Merge publication lists from Google Scholar and ADS."""
+        """Legacy merge function for backward compatibility."""
         logger.info(
             f"Merging {len(scholar_data)} Scholar papers with {len(ads_data)} ADS papers"
         )
@@ -104,8 +235,19 @@ class DataMerger:
     def _normalize_title(self, title: str) -> str:
         """Normalize title for comparison."""
         import re
+        import html
 
-        # Remove common formatting and convert to lowercase
+        # Step 1: Handle double-encoded HTML entities (&amp;lt; → &lt; → <)
+        # Decode multiple times to handle nested encoding
+        prev_title = ""
+        while prev_title != title:
+            prev_title = title
+            title = html.unescape(title)
+
+        # Step 2: Strip HTML tags (<i>z</i> → z)
+        title = re.sub(r"<[^>]+>", "", title)
+
+        # Step 3: Standard normalization - remove punctuation and convert to lowercase
         title = re.sub(r"[^\w\s]", "", title.lower())
         title = re.sub(r"\s+", " ", title).strip()
         return title
@@ -142,8 +284,54 @@ class DataMerger:
 
         return merged
 
+    def merge_metrics_multisource(
+        self, scholar_metrics: Dict, ads_metrics: Dict, openalex_metrics: Dict
+    ) -> Dict:
+        """Merge author metrics from multiple sources."""
+        logger.info("Merging author metrics from multiple sources")
+
+        merged_metrics = {
+            "lastUpdated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        }
+
+        # Take the maximum values (usually most accurate)
+        for metric in ["totalPapers", "hIndex", "i10Index", "totalCitations"]:
+            scholar_val = scholar_metrics.get(metric, 0)
+            ads_val = ads_metrics.get(metric, 0)
+            openalex_val = openalex_metrics.get(metric, 0)
+            merged_metrics[metric] = max(scholar_val, ads_val, openalex_val)
+
+        # Merge citations per year
+        scholar_cpy = scholar_metrics.get("citationsPerYear", {})
+        ads_cpy = ads_metrics.get("citationsPerYear", {})
+        openalex_cpy = openalex_metrics.get("citationsPerYear", {})
+
+        merged_cpy = {}
+        all_years = (
+            set(scholar_cpy.keys()) | set(ads_cpy.keys()) | set(openalex_cpy.keys())
+        )
+        for year in all_years:
+            merged_cpy[year] = max(
+                scholar_cpy.get(year, 0),
+                ads_cpy.get(year, 0),
+                openalex_cpy.get(year, 0),
+            )
+
+        merged_metrics["citationsPerYear"] = merged_cpy
+
+        # Add source information
+        merged_metrics["sources"] = []
+        if scholar_metrics:
+            merged_metrics["sources"].append("google_scholar")
+        if ads_metrics:
+            merged_metrics["sources"].append("ads")
+        if openalex_metrics:
+            merged_metrics["sources"].append("openalex")
+
+        return merged_metrics
+
     def merge_metrics(self, scholar_metrics: Dict, ads_metrics: Dict) -> Dict:
-        """Merge author metrics from different sources."""
+        """Legacy merge function for backward compatibility."""
         logger.info("Merging author metrics")
 
         merged_metrics = {

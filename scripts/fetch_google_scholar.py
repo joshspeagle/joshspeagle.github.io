@@ -12,6 +12,11 @@ from config import CONFIG
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Suppress verbose external library logging
+logging.getLogger("scholarly").setLevel(logging.WARNING)
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 
 class GoogleScholarFetcher:
     """Fetches publication data from Google Scholar."""
@@ -25,12 +30,124 @@ class GoogleScholarFetcher:
 
         # Set up proxy if needed (helps with rate limiting)
         try:
+            from scholarly import ProxyGenerator
+
             pg = ProxyGenerator()
-            pg.FreeProxies()
-            scholarly.use_proxy(pg)
-            logger.info("Using proxy for Google Scholar requests")
+            success = pg.FreeProxies()
+            if success:
+                scholarly.use_proxy(pg)
+                logger.info("Using proxy for Google Scholar requests")
+            else:
+                logger.info("No free proxies available, using direct connection")
         except Exception as e:
-            logger.warning(f"Could not set up proxy: {e}. Using direct connection.")
+            logger.debug(f"Proxy setup failed: {e}. Using direct connection.")
+
+    def fetch_paper_list_quick(self) -> List[Dict]:
+        """Quickly fetch just the list of paper titles and years from Google Scholar."""
+        for attempt in range(self.retry_attempts):
+            try:
+                logger.info(
+                    f"Fetching paper list from Google Scholar (attempt {attempt + 1})"
+                )
+
+                # Get author information with publications list
+                author = scholarly.search_author_id(self.author_id)
+                author = scholarly.fill(author, sections=["publications"])
+
+                paper_list = []
+                publications = author.get("publications", [])
+
+                for pub in publications:
+                    try:
+                        bib = pub.get("bib", {})
+                        title = bib.get("title", "").strip()
+                        year = self._parse_year(bib.get("pub_year"))
+
+                        if title:
+                            paper_list.append(
+                                {
+                                    "title": title,
+                                    "year": year,
+                                    "scholar_id": pub.get("author_pub_id", ""),
+                                    "source": "google_scholar",
+                                }
+                            )
+
+                    except Exception as e:
+                        logger.warning(
+                            f"Failed to extract basic info for publication: {e}"
+                        )
+                        continue
+
+                logger.info(f"Retrieved {len(paper_list)} papers from Google Scholar")
+                return paper_list
+
+            except Exception as e:
+                logger.error(f"Attempt {attempt + 1} failed: {e}")
+                if attempt < self.retry_attempts - 1:
+                    time.sleep(self.retry_delay)
+                else:
+                    logger.error(
+                        f"Failed to fetch paper list after {self.retry_attempts} attempts"
+                    )
+                    return []
+
+    def fetch_papers_detailed(self, paper_list: List[Dict]) -> List[Dict]:
+        """Fetch detailed information for specific papers."""
+        logger.info(
+            f"Fetching detailed data for {len(paper_list)} papers from Google Scholar"
+        )
+        detailed_papers = []
+
+        # Get author publications again for detailed fetching
+        try:
+            author = scholarly.search_author_id(self.author_id)
+            author = scholarly.fill(author, sections=["publications"])
+            publications = author.get("publications", [])
+
+            # Create lookup by title
+            pub_lookup = {}
+            for pub in publications:
+                bib = pub.get("bib", {})
+                title = bib.get("title", "").strip()
+                if title:
+                    pub_lookup[self._normalize_title(title)] = pub
+
+            # Process each paper in the input list
+            for i, paper_info in enumerate(paper_list):
+                try:
+                    title = paper_info.get("title", "").strip()
+                    normalized_title = self._normalize_title(title)
+
+                    if normalized_title in pub_lookup:
+                        pub = pub_lookup[normalized_title]
+
+                        # Fetch detailed information
+                        pub_detail = scholarly.fill(pub)
+
+                        # Extract detailed information
+                        detailed_paper = self._extract_publication_info(pub_detail)
+                        if detailed_paper:
+                            detailed_papers.append(detailed_paper)
+
+                        # Add delay to avoid rate limiting
+                        time.sleep(2)  # More conservative for detailed fetching
+
+                        if (i + 1) % 5 == 0:
+                            logger.info(
+                                f"Processed {i + 1}/{len(paper_list)} papers in detail..."
+                            )
+
+                except Exception as e:
+                    logger.warning(f"Failed to fetch details for paper '{title}': {e}")
+                    continue
+
+            logger.info(f"Retrieved detailed data for {len(detailed_papers)} papers")
+            return detailed_papers
+
+        except Exception as e:
+            logger.error(f"Failed to fetch detailed papers: {e}")
+            return []
 
     def fetch_author_metrics(self) -> Dict:
         """Fetch author-level metrics from Google Scholar."""
@@ -208,6 +325,15 @@ class GoogleScholarFetcher:
         # Store original URL
         if url:
             publication["scholarUrl"] = url
+
+    def _normalize_title(self, title: str) -> str:
+        """Normalize title for comparison."""
+        import re
+
+        # Remove common formatting and convert to lowercase
+        title = re.sub(r"[^\w\s]", "", title.lower())
+        title = re.sub(r"\s+", " ", title).strip()
+        return title
 
     def _classify_research_area(self, title: str, abstract: str) -> str:
         """Classify publication into research area based on keywords."""
