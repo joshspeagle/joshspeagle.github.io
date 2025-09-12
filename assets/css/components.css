@@ -2894,8 +2894,9 @@
 /* Student-led paper highlighting */
 .student-led-paper {
     background: linear-gradient(135deg, 
-        var(--bg-primary) 0%, 
-        var(--bg-highlight) 100%);
+        rgba(255, 107, 53, 0.04) 0%, 
+        rgba(255, 107, 53, 0.08) 50%,
+        rgba(247, 147, 30, 0.12) 100%);
     border-left: 4px solid #FF6B35;
     position: relative;
 }
@@ -2990,10 +2991,44 @@
 /* Student-led featured papers get enhanced highlighting */
 .featured-paper.student-led-paper {
     border-left-width: 6px;
+    border-left-color: #FF6B35 !important;
+    background: linear-gradient(135deg, 
+        rgba(255, 107, 53, 0.06) 0%, 
+        rgba(255, 107, 53, 0.12) 50%,
+        rgba(247, 147, 30, 0.18) 100%) !important;
+    position: relative;
 }
 
 .featured-paper.student-led-paper::before {
-    opacity: 0.08;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.15;
+    background: linear-gradient(135deg, 
+        rgba(255, 107, 53, 0.08) 0%, 
+        rgba(247, 147, 30, 0.12) 100%);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.featured-paper.student-led-paper:hover {
+    border-left-color: #FF6B35 !important;
+    box-shadow: 0 6px 25px rgba(255, 107, 53, 0.25) !important;
+    transform: translateY(-3px);
+}
+
+/* Add a subtle orange tint to the title for student-led featured papers */
+.featured-paper.student-led-paper h4 a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.featured-paper.student-led-paper h4 a:hover {
+    color: #FF6B35 !important;
 }
 
 /* Responsive adjustments */

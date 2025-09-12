@@ -1220,13 +1220,12 @@ function createFeaturedPublications(dynamicData, staticData) {
         // Check if this is a student-led publication
         const isStudentPaper = isStudentLed(paper);
         
-        // Get publication category and create badges
-        const category = getPublicationCategory(paper);
-        const categoryBadge = createCategoryBadge(category);
+        // Get publication categories and create badges
+        const categoryBadges = createCategoryBadges(paper);
         const studentBadge = isStudentPaper ? 
             `<span class="student-led-badge" title="Student-Led Research">🎓 Student-Led</span>` : '';
         
-        // Apply student-led class if applicable
+        // Apply student-led highlighting class if this featured paper is also student-led
         const paperClass = isStudentPaper ? 'featured-paper student-led-paper' : 'featured-paper';
 
         return `
@@ -1234,7 +1233,7 @@ function createFeaturedPublications(dynamicData, staticData) {
                             <div class="paper-header">
                                 <h4><a href="${arxivLink}" target="_blank" rel="noopener noreferrer">${paper.title}</a></h4>
                                 <div class="paper-badges">
-                                    ${categoryBadge}
+                                    ${categoryBadges}
                                     ${studentBadge}
                                 </div>
                             </div>
@@ -1328,6 +1327,13 @@ function createRecentPublications(dynamicData) {
  * Determine research category for a publication
  */
 function getPublicationCategory(pub) {
+    // First check if we have probabilistic categorization data
+    if (pub.categoryProbabilities && typeof pub.categoryProbabilities === 'object') {
+        // Use the primary category from researchArea field
+        return pub.researchArea || 'Discovery & Understanding';
+    }
+    
+    // Fallback to old keyword-based system for compatibility
     const keywordsMapping = {
         // Statistical Learning & AI
         "machine learning": "Statistical Learning & AI",
@@ -1374,6 +1380,33 @@ function getPublicationCategory(pub) {
 }
 
 /**
+ * Get all significant categories for a publication (for multi-category badges)
+ */
+function getPublicationCategories(pub, threshold = 0.2) {
+    if (pub.categoryProbabilities && typeof pub.categoryProbabilities === 'object') {
+        // Return categories with probabilities above threshold, sorted by probability
+        const categories = Object.entries(pub.categoryProbabilities)
+            .filter(([category, prob]) => prob >= threshold)
+            .sort(([, a], [, b]) => b - a)
+            .map(([category, prob]) => ({ category, probability: prob }));
+        
+        // Always include at least the primary category
+        if (categories.length === 0 && pub.researchArea) {
+            categories.push({ 
+                category: pub.researchArea, 
+                probability: pub.categoryProbabilities[pub.researchArea] || 1.0 
+            });
+        }
+        
+        return categories;
+    }
+    
+    // Fallback: single category from old system
+    const primaryCategory = getPublicationCategory(pub);
+    return [{ category: primaryCategory, probability: 1.0 }];
+}
+
+/**
  * Get category badge color scheme
  */
 function getCategoryColors(category) {
@@ -1407,9 +1440,9 @@ function getCategoryColors(category) {
 }
 
 /**
- * Create category badge HTML
+ * Create category badge HTML for a single category
  */
-function createCategoryBadge(category) {
+function createSingleCategoryBadge(category, probability = null, showProbability = false) {
     const colors = getCategoryColors(category);
     const shortLabels = {
         'Statistical Learning & AI': 'ML & AI',
@@ -1419,14 +1452,34 @@ function createCategoryBadge(category) {
     };
     
     const shortLabel = shortLabels[category] || category;
+    const probabilityText = (showProbability && probability !== null) ? ` (${Math.round(probability * 100)}%)` : '';
+    const title = `${category}${probabilityText}`;
     
     return `
         <span class="category-badge" 
               style="background-color: ${colors.bg}; color: ${colors.text};"
-              title="${category}">
+              title="${title}">
             ${shortLabel}
         </span>
     `;
+}
+
+/**
+ * Create category badges HTML for multiple categories
+ */
+function createCategoryBadges(pub, showProbabilities = false) {
+    const categories = getPublicationCategories(pub);
+    
+    return categories.map(({ category, probability }) => 
+        createSingleCategoryBadge(category, probability, showProbabilities)
+    ).join('');
+}
+
+/**
+ * Create category badge HTML (legacy single-category version for compatibility)
+ */
+function createCategoryBadge(category) {
+    return createSingleCategoryBadge(category);
 }
 
 /**
@@ -1484,9 +1537,8 @@ function createPublicationHTML(pub) {
         arxivLink = pub.adsUrl;
     }
 
-    // Get publication category and create badge
-    const category = getPublicationCategory(pub);
-    const categoryBadge = createCategoryBadge(category);
+    // Get publication categories and create badges
+    const categoryBadges = createCategoryBadges(pub);
     
     // Create student-led indicator if applicable
     const studentBadge = isStudentPaper ? 
@@ -1508,7 +1560,7 @@ function createPublicationHTML(pub) {
                     </a>
                 </h4>
                 <div class="paper-badges" role="group" aria-label="Publication categories and attributes">
-                    ${categoryBadge}
+                    ${categoryBadges}
                     ${studentBadge}
                 </div>
             </div>

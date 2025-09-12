@@ -129,7 +129,7 @@ def main():
     # Run publication categorization script
     logger.info("Running publication categorization...")
     try:
-        categorization_script = Path(__file__).parent / "categorize_publications.py"
+        categorization_script = Path(__file__).parent / "apply_binary_priority_scoring.py"
         result = subprocess.run(
             [sys.executable, str(categorization_script)],
             capture_output=True,

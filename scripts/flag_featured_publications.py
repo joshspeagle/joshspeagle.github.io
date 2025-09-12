@@ -13,8 +13,12 @@ console = Console()
 def flag_featured_publications():
     """Flag specific publications as featured in the website data."""
 
-    # Path to the website publications data
-    website_data_path = Path("../assets/data/publications_data.json")
+    # Path to the website publications data (relative to project root)
+    website_data_path = Path("assets/data/publications_data.json")
+    
+    # If running from scripts directory, adjust path
+    if not website_data_path.exists():
+        website_data_path = Path("../assets/data/publications_data.json")
 
     if not website_data_path.exists():
         console.print(f"❌ Website data file not found: {website_data_path}")
@@ -40,8 +44,8 @@ def flag_featured_publications():
             "description": "Zucker, Saydjari and Speagle et al.",
         },
         {
-            "title_pattern": "Stochastic Modeling of Star Formation Histories. III",
-            "description": "Iyer and Speagle et al.",
+            "title_pattern": "ChronoFlow: A Data-driven Model for Gyrochronology",
+            "description": "Van-Lane et al.",
         },
     ]
 

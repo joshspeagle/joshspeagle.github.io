@@ -106,13 +106,18 @@ class PublicationsStats {
             const year = paper.year || 'Unknown';
             const area = paper.researchArea || 'Uncategorized';
             
-            // Initialize year and area counters
+            // Initialize year counters
             if (!this.categories.byYear[year]) {
                 this.categories.byYear[year] = { primary: 0, student: 0, nonStudentSignificant: 0, other: 0, total: 0 };
             }
-            if (!this.categories.byArea[area]) {
-                this.categories.byArea[area] = { allTime: 0, lastFiveYears: 0 };
-            }
+            
+            // Initialize area counters for probabilistic system
+            const allAreas = ['Statistical Learning & AI', 'Interpretability & Insight', 'Inference & Computation', 'Discovery & Understanding'];
+            allAreas.forEach(areaName => {
+                if (!this.categories.byArea[areaName]) {
+                    this.categories.byArea[areaName] = { allTime: 0, lastFiveYears: 0 };
+                }
+            });
             
             // Use ADS library-based categorization if available
             const authorshipCategories = paper.authorshipCategories || [];
@@ -160,15 +165,34 @@ class PublicationsStats {
             this.categories[primaryCategory].push(paper);
             this.categories.byYear[year][primaryCategory]++;
             
-            // Count by area and year
-            this.categories.byArea[area].allTime++;
-            this.categories.byYear[year].total++;
-            
-            // Count last 5 years (current year - 4 to current year)
-            const currentYear = new Date().getFullYear();
-            if (year >= currentYear - 4) {
-                this.categories.byArea[area].lastFiveYears++;
+            // Count by area using probabilities if available, otherwise use primary category
+            if (paper.categoryProbabilities && typeof paper.categoryProbabilities === 'object') {
+                // Use probabilistic counts - each paper contributes fractionally to each category
+                Object.entries(paper.categoryProbabilities).forEach(([categoryName, probability]) => {
+                    if (this.categories.byArea[categoryName]) {
+                        this.categories.byArea[categoryName].allTime += probability;
+                        
+                        // Count last 5 years (current year - 4 to current year)
+                        const currentYear = new Date().getFullYear();
+                        if (year >= currentYear - 4) {
+                            this.categories.byArea[categoryName].lastFiveYears += probability;
+                        }
+                    }
+                });
+            } else {
+                // Fallback: count as 1.0 for primary category only
+                if (this.categories.byArea[area]) {
+                    this.categories.byArea[area].allTime++;
+                    
+                    const currentYear = new Date().getFullYear();
+                    if (year >= currentYear - 4) {
+                        this.categories.byArea[area].lastFiveYears++;
+                    }
+                }
             }
+            
+            // Count total papers for year
+            this.categories.byYear[year].total++;
         });
         
         console.log('Publication categories:', this.categories);
@@ -820,12 +844,12 @@ class PublicationsStats {
             'Discovery & Understanding'
         ];
         
-        // Ensure all categories exist with default values
+        // Ensure all categories exist with default values, round to 1 decimal place
         const allTimeData = mainCategories.map(area => {
-            return this.categories.byArea[area]?.allTime || 0;
+            return Math.round((this.categories.byArea[area]?.allTime || 0) * 10) / 10;
         });
         const recentData = mainCategories.map(area => {
-            return this.categories.byArea[area]?.lastFiveYears || 0;
+            return Math.round((this.categories.byArea[area]?.lastFiveYears || 0) * 10) / 10;
         });
         
         // Create shortened labels
