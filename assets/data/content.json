@@ -39,9 +39,7 @@
                 },
                 {
                     "text": "Talks",
-                    "href": "#",
-                    "disabled": true,
-                    "disabledReason": "Coming soon"
+                    "href": "talks.html"
                 },
                 {
                     "text": "Teaching",
@@ -1509,31 +1507,713 @@
         },
         "talks": {
             "title": "Conference Talks & Presentations",
-            "tagline": "Sharing research with the broader scientific community",
-            "upcoming": {
-                "title": "Upcoming Presentations",
-                "events": []
-            },
-            "recent": {
-                "title": "Recent Talks",
-                "talks": [
-                    {
-                        "title": "Statistical Challenges in Next-Generation Astronomical Surveys",
-                        "event": "Joint Statistical Meetings",
-                        "location": "Virtual",
-                        "date": "2023",
-                        "type": "Invited"
-                    }
-                ]
-            },
-            "categories": {
-                "title": "Talk Categories",
-                "invited": "Invited conference presentations and colloquia",
-                "contributed": "Contributed talks at conferences and workshops",
-                "seminars": "Department seminars and research group presentations",
-                "public": "Public outreach and educational talks"
-            },
-            "note": "Complete presentation list available upon request. Slides and recordings may be available for recent talks."
+            "categories": [
+                {
+                    "id": "invited",
+                    "name": "Invited Talks",
+                    "description": "Keynotes and invited presentations at major conferences",
+                    "badge": "invited",
+                    "color": "amber",
+                    "talks": [
+                        {
+                            "title": "AI SpAI with My (Little?) AI: Applications of Statistical Learning in Modern Astrophysics",
+                            "event": "AstroAI Summer Workshop",
+                            "location": "Cambridge, MA",
+                            "date": "Jun 2024",
+                            "year": 2024,
+                            "type": "Invited Talk"
+                        },
+                        {
+                            "title": "Uncertainty and Interpretability in Machine Learning Models",
+                            "event": "NSF IAIFI Summer Workshop",
+                            "location": "Boston, MA",
+                            "date": "Aug 2023",
+                            "year": 2023,
+                            "type": "Invited Talk"
+                        },
+                        {
+                            "title": "Musings on Nested Sampling from Interactions with Everyday Users",
+                            "event": "MaxEnt 2023 Workshop: Frontiers of Nested Sampling Meeting-within-a-Meeting",
+                            "location": "Virtual",
+                            "date": "Jul 2023",
+                            "year": 2023,
+                            "type": "Invited Talk"
+                        },
+                        {
+                            "title": "Extending Bayesian Modeling Approaches to ML Applications",
+                            "event": "Statistical Challenges in Modern Astronomy VIII",
+                            "location": "State College, PA",
+                            "date": "Jun 2023",
+                            "year": 2023,
+                            "type": "Invited Talk"
+                        },
+                        {
+                            "title": "Machine Learning in Astronomy: Possibilities and Pitfall: Incorporating Errors into Machine Learning Methods",
+                            "event": "IAU General Assembly 2022",
+                            "location": "Virtual",
+                            "date": "Aug 2022",
+                            "year": 2022,
+                            "type": "Invited Talk"
+                        },
+                        {
+                            "title": "An Introduction to (Dynamic) Nested Sampling",
+                            "event": "UCLA IPAM: Mathematical and Computational Challenges in the Era of Gravitational Wave Astronomy",
+                            "location": "Virtual",
+                            "date": "Nov 2021",
+                            "year": 2021,
+                            "type": "Invited Talk"
+                        },
+                        {
+                            "title": "An Introduction to Nested Sampling",
+                            "event": "University of Surrey: Towards a Cross-Research Platform for Hosting Bayesian Data-Fitting Tools",
+                            "location": "Virtual",
+                            "date": "Jul 2021",
+                            "year": 2021,
+                            "type": "Keynote Address"
+                        },
+                        {
+                            "title": "Revealing the Milky Way's Dust-iny",
+                            "event": "Harvard University: CMSA Big Data Conference",
+                            "location": "Cambridge, MA",
+                            "date": "Aug 2018",
+                            "year": 2018,
+                            "type": "Invited Talk"
+                        }
+                    ]
+                },
+                {
+                    "id": "colloquia",
+                    "name": "Colloquia & Seminars",
+                    "description": "Department colloquia and research seminars",
+                    "badge": "academic",
+                    "color": "blue",
+                    "talks": [
+                        {
+                            "title": "A Conceptual Introduction to Deep Learning",
+                            "event": "Penn State University: Department of Astronomy and Astrophysics Seminar",
+                            "location": "State College, PA",
+                            "date": "May 2025",
+                            "year": 2025,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "\"Why should I believe you?\" \"Because I am an Astrophysics Foundation Model.\"",
+                            "event": "KIPAC Stanford: Astrophysics Colloquium",
+                            "location": "Stanford, CA",
+                            "date": "Apr 2025",
+                            "year": 2025,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Q: Why should I believe you? A: Because I am an Astrophysics Foundation Model",
+                            "event": "CCA Flatiron Institute: Colloquium",
+                            "location": "New York, NY",
+                            "date": "Mar 2025",
+                            "year": 2025,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Trust Me, I am an Astrophysics Foundation Model",
+                            "event": "Tsinghua University",
+                            "location": "Beijing, China",
+                            "date": "Dec 2024",
+                            "year": 2024,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "I Spy with my (Little?) AI: Applications of Statistical Learning in Modern Astrophysics",
+                            "event": "Ohio State University: CCAPP Seminar",
+                            "location": "Columbus, OH",
+                            "date": "Mar 2024",
+                            "year": 2024,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Nested Sampling: Past, Present, & Future",
+                            "event": "University of Guelph: Math & Stats Seminar",
+                            "location": "Guelph, ON",
+                            "date": "Oct 2023",
+                            "year": 2023,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Astrostatistical Thinking in Machine Learning Applications",
+                            "event": "Université de Montréal: Astrophysics Seminar",
+                            "location": "Montreal, QC",
+                            "date": "Oct 2023",
+                            "year": 2023,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Nested Sampling: Past, Present, and Future",
+                            "event": "Carnegie Mellon University: STAMPS Seminar",
+                            "location": "Pittsburgh, PA",
+                            "date": "Sep 2023",
+                            "year": 2023,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "From Panchromatic Images to Stellar Ages and Beyond",
+                            "event": "University of Pittsburgh: Astronomy Seminar",
+                            "location": "Pittsburgh, PA",
+                            "date": "Sep 2023",
+                            "year": 2023,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Extending Statistical Thinking to ML Applications",
+                            "event": "Center for Astrophysics | Harvard & Smithsonian: AstroAI Seminar",
+                            "location": "Cambridge, MA",
+                            "date": "Aug 2023",
+                            "year": 2023,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "From Panchromatic Images to Stellar Ages and Beyond",
+                            "event": "McMaster University: Astronomy Lunch Seminar",
+                            "location": "Hamilton, ON",
+                            "date": "Apr 2023",
+                            "year": 2023,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "From Panchromatic Images to Stellar Ages and Beyond",
+                            "event": "University of Waterloo: Astroseminar",
+                            "location": "Waterloo, ON",
+                            "date": "Feb 2023",
+                            "year": 2023,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Galaxy Evolution through the Eyes of the Milky Way",
+                            "event": "NRC Herzberg Astronomy and Astrophysics Research Centre",
+                            "location": "Victoria, BC",
+                            "date": "Nov 2022",
+                            "year": 2022,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Galaxy Evolution through the Eyes of the Milky Way",
+                            "event": "Queen's University: Astronomy Seminar",
+                            "location": "Kingston, ON",
+                            "date": "Nov 2022",
+                            "year": 2022,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "From Panchromatic Images to Stellar Ages and Beyond",
+                            "event": "Institute for Advanced Study: Astrophysics Seminar",
+                            "location": "Princeton, NJ",
+                            "date": "Aug 2022",
+                            "year": 2022,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "More Data + More Parameters = More Fun with Galaxy Evolution",
+                            "event": "Saint Mary's University: Department of Astronomy and Physics Colloquium",
+                            "location": "Halifax, NS",
+                            "date": "Aug 2022",
+                            "year": 2022,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Mapping the Milky Way Near and Far",
+                            "event": "CASCA: CANadian Virtual Astronomy Seminar (CANVAS)",
+                            "location": "Virtual",
+                            "date": "Apr 2022",
+                            "year": 2022,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Statistical Challenges in Stellar Parameter Estimation from Theory and Data",
+                            "event": "IAU-IAA: Astrostats and Astroinfo Seminar",
+                            "location": "Virtual",
+                            "date": "Apr 2022",
+                            "year": 2022,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "An Introduction to (Dynamic) Nested Sampling",
+                            "event": "Saint Mary's University: Data Analytics Seminar",
+                            "location": "Halifax, NS",
+                            "date": "Jan 2022",
+                            "year": 2022,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Stars, Galaxies, and Everything In-Between: Galaxy Evolution Near and Far with Large Datasets",
+                            "event": "University of Toronto: Toronto Data Workshop",
+                            "location": "Toronto, ON",
+                            "date": "Oct 2021",
+                            "year": 2021,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Mapping the Milky Way with Stars and Dust",
+                            "event": "Penn State University: Department of Astronomy and Astrophysics Colloquium",
+                            "location": "University Park, PA",
+                            "date": "Sep 2021",
+                            "year": 2021,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Cosmological Cartography with Photometric Redshifts",
+                            "event": "University of Chicago: Kavli Institute for Cosmological Physics Seminar",
+                            "location": "Chicago, IL",
+                            "date": "Apr 2021",
+                            "year": 2021,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Mapping the Milky Way in the Age of Gaia",
+                            "event": "CANSSI Ontario: Data Science Applied Research and Education Seminar",
+                            "location": "Virtual",
+                            "date": "Feb 2021",
+                            "year": 2021,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Enabling Data-Driven Discovery in the Milky Way and Beyond Using Large Astronomical Datasets",
+                            "event": "University of Florida: Department of Astronomy Colloquium",
+                            "location": "Gainesville, FL",
+                            "date": "Sep 2020",
+                            "year": 2020,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Exploring the Galaxy Near and Far in the Age of Gaia",
+                            "event": "Villanova University: Department of Astrophysics and Planetary Science Colloquium",
+                            "location": "Villanova, PA",
+                            "date": "Oct 2019",
+                            "year": 2019,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Charting Nearby Molecular Clouds with Gaia: A New Map of Our Local Interstellar Medium",
+                            "event": "Harvard University: Summer Colloquium (joint with Catherine Zucker)",
+                            "location": "Cambridge, MA",
+                            "date": "Jun 2019",
+                            "year": 2019,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "Mapping the 3-D Distribution of Dust in the Milky Way with Stellar Photometry",
+                            "event": "University of Cambridge: Data Intensive Science Seminar",
+                            "location": "Cambridge, UK",
+                            "date": "Apr 2019",
+                            "year": 2019,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Big Data Inference: Using Hierarchical Bayes and Machine Learning to Improve Photometric Redshifts",
+                            "event": "UMass Amherst: Data Science Tea",
+                            "location": "Amherst, MA",
+                            "date": "Oct 2017",
+                            "year": 2017,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "An Introduction to Dynamic Nested Sampling",
+                            "event": "Harvard University: CHASC Astrostatistics Seminar",
+                            "location": "Cambridge, MA",
+                            "date": "Sep 2017",
+                            "year": 2017,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "Mapping, Visualizing, and Exploiting the Color-Redshift Relation",
+                            "event": "Kavli IPMU: Astronomy Lunch Seminar",
+                            "location": "Tokyo, Japan",
+                            "date": "Mar 2016",
+                            "year": 2016,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "The Evolution of Star-Forming Galaxies over Cosmic Time",
+                            "event": "University of Tsukuba: Theoretical Astrophysics Seminar",
+                            "location": "Tsukuba, Japan",
+                            "date": "Aug 2013",
+                            "year": 2013,
+                            "type": "Seminar"
+                        }
+                    ]
+                },
+                {
+                    "id": "contributed",
+                    "name": "Contributed Talks",
+                    "description": "Conference presentations and workshop contributions",
+                    "badge": "contributed",
+                    "color": "green",
+                    "talks": [
+                        {
+                            "title": "SBI++: Extending Simulation-Based Inference to Censored and Out-of-Distribution Data",
+                            "event": "Banff International Research Station: Astrostatistics in Canada and Beyond",
+                            "location": "Banff, AB",
+                            "date": "Nov 2023",
+                            "year": 2023,
+                            "type": "Contributed Talk"
+                        },
+                        {
+                            "title": "Rapid Stellar Parameter Inference with Probabilistic Machine Learning",
+                            "event": "University of Michigan: 2023 Clusters & Streams Workshop",
+                            "location": "Ann Arbor, MI",
+                            "date": "Aug 2023",
+                            "year": 2023,
+                            "type": "Contributed Talk"
+                        },
+                        {
+                            "title": "Connecting Galaxy Evolution between Observation, Simulation, and Theory",
+                            "event": "JSM 2023: True North Strong and... Amazing at Astrostatistics! (Invited Paper Session)",
+                            "location": "Toronto, ON",
+                            "date": "Aug 2023",
+                            "year": 2023,
+                            "type": "Invited Paper Session"
+                        },
+                        {
+                            "title": "Uncovering Galaxy Evolution through the Eyes of the Milky Way at the Dunlap Institute",
+                            "event": "Dunlap Institute for Astronomy & Astrophysics: 15th Anniversary Homecoming Celebration Spotlight Talk",
+                            "location": "Toronto, ON",
+                            "date": "Jun 2023",
+                            "year": 2023,
+                            "type": "Spotlight Talk"
+                        },
+                        {
+                            "title": "Photometric Biases in Modern Surveys",
+                            "event": "Surveys to Discovery (S2D) Conference",
+                            "location": "Montreal, QC",
+                            "date": "May 2023",
+                            "year": 2023,
+                            "type": "Contributed Talk"
+                        },
+                        {
+                            "title": "From Light to Mass and Back Again: Exploring Galaxy Evolution with 'New' Methods and 'Old' Outcomes",
+                            "event": "2023 Spring Research Conference (SRC)",
+                            "location": "Banff, AB",
+                            "date": "May 2023",
+                            "year": 2023,
+                            "type": "Contributed Talk"
+                        },
+                        {
+                            "title": "Panchromatic Modelling of Co-Eval Stellar Populations",
+                            "event": "McMaster University: 2022 Clusters Workshop",
+                            "location": "Hamilton, ON",
+                            "date": "Aug 2022",
+                            "year": 2022,
+                            "type": "Contributed Talk"
+                        },
+                        {
+                            "title": "Mapping the Milky Way in 5-D with Big Data",
+                            "event": "JSM 2022: Advances in Astrostatistics in the Great White North (Invited Paper Session)",
+                            "location": "Washington, DC",
+                            "date": "Aug 2022",
+                            "year": 2022,
+                            "type": "Invited Paper Session"
+                        },
+                        {
+                            "title": "Machine Learning in the Era of Astronomically Big Data",
+                            "event": "Seeing the Future: A Conference in Honour of Alyssa Goodman",
+                            "location": "Cambridge, MA",
+                            "date": "May 2022",
+                            "year": 2022,
+                            "type": "Contributed Talk"
+                        },
+                        {
+                            "title": "Unaccounted Uncertainties: The Role of Systematics in Astrophysics",
+                            "event": "AAS 238: Special Session (Statistics Discussant)",
+                            "location": "Virtual",
+                            "date": "Jun 2021",
+                            "year": 2021,
+                            "type": "Discussant"
+                        },
+                        {
+                            "title": "Photometric Biases in Modern Astronomical Surveys",
+                            "event": "JSM 2020: Astrostatistics Interest Group: Student Paper Award (Topic-Contributed Paper Session)",
+                            "location": "Virtual",
+                            "date": "Aug 2020",
+                            "year": 2020,
+                            "type": "Student Paper Award"
+                        },
+                        {
+                            "title": "Challenges Working with Posterior Distributions (with Alex Malz)",
+                            "event": "Lorentz Center: Colours of the Universe Workshop",
+                            "location": "Leiden, Netherlands",
+                            "date": "Sep 2018",
+                            "year": 2018,
+                            "type": "Contributed Talk"
+                        },
+                        {
+                            "title": "Improving Photometric Redshifts for Hyper Suprime-Cam",
+                            "event": "COSMO21 2016",
+                            "location": "Chania, Greece",
+                            "date": "May 2016",
+                            "year": 2016,
+                            "type": "Contributed Talk"
+                        }
+                    ]
+                },
+                {
+                    "id": "lectures",
+                    "name": "Lectures & Tutorials",
+                    "description": "Educational workshops and tutorial sessions",
+                    "badge": "educational",
+                    "color": "purple",
+                    "talks": [
+                        {
+                            "title": "A Conceptual Introduction to Deep Learning",
+                            "event": "Penn State: Summer School in Statistics for Astronomers (2025)",
+                            "location": "Virtual",
+                            "date": "Jun 2025",
+                            "year": 2025,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "Nested Sampling: Past, Present, and Future",
+                            "event": "Penn State: Summer School in Statistics for Astronomers (2025)",
+                            "location": "Virtual",
+                            "date": "Jun 2025",
+                            "year": 2025,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "Nested Sampling: Past, Present, and Future",
+                            "event": "Penn State: Summer School in Statistics for Astronomers (2024)",
+                            "location": "Virtual",
+                            "date": "Jun 2024",
+                            "year": 2024,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "Machine Learning for Star Cluster Science (with Steffani Grondin)",
+                            "event": "2023 ESO Conference: Two in a million – The interplay between binaries and star clusters",
+                            "location": "Garching, Germany",
+                            "date": "Sep 2023",
+                            "year": 2023,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Grondin)",
+                            "event": "University of Michigan: 2023 Clusters & Streams Workshop",
+                            "location": "Ann Arbor, MI",
+                            "date": "Aug 2023",
+                            "year": 2023,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "Uncertainty and Interpretability in Machine Learning Models (with Alex Gagliano)",
+                            "event": "NSF IAIFI Summer School",
+                            "location": "Boston, MA",
+                            "date": "Aug 2023",
+                            "year": 2023,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "A Tutorial of (Dynamic) Nested Sampling",
+                            "event": "Statistical Challenges in Modern Astronomy VIII",
+                            "location": "State College, PA",
+                            "date": "Jun 2023",
+                            "year": 2023,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "Introduction to Bayesian Inference with Linear Regression",
+                            "event": "Astro Hack Week 2020",
+                            "location": "Virtual",
+                            "date": "Aug 2020",
+                            "year": 2020,
+                            "type": "Tutorial"
+                        }
+                    ]
+                },
+                {
+                    "id": "panels",
+                    "name": "Panels",
+                    "description": "Panel discussions and roundtable sessions",
+                    "badge": "discussion",
+                    "color": "teal",
+                    "talks": [
+                        {
+                            "title": "Panel on inductive biases and interpretability",
+                            "event": "NeurIPS 2023: Workshop on Machine Learning and the Physical Sciences",
+                            "location": "New Orleans, LA",
+                            "date": "Dec 2023",
+                            "year": 2023,
+                            "type": "Panelist"
+                        },
+                        {
+                            "title": "Career Panel",
+                            "event": "NSF IAIFI Summer School",
+                            "location": "Boston, MA",
+                            "date": "Aug 2023",
+                            "year": 2023,
+                            "type": "Panelist"
+                        },
+                        {
+                            "title": "From Dunlap to Diverse Careers: A Panel Discussion on Opportunities and Challenges for Astrophysics Graduates (Moderator)",
+                            "event": "Dunlap Institute for Astronomy & Astrophysics: 15th Anniversary Homecoming Celebration",
+                            "location": "Toronto, ON",
+                            "date": "Jun 2023",
+                            "year": 2023,
+                            "type": "Panelist"
+                        }
+                    ]
+                },
+                {
+                    "id": "posters",
+                    "name": "Posters",
+                    "description": "Poster presentations at conferences and workshops",
+                    "badge": "visual",
+                    "color": "orange",
+                    "talks": [
+                        {
+                            "title": "A machine-learning led search for extra-tidal stars of globular clusters",
+                            "event": "2023 ESO Conference: Two in a million – The interplay between binaries and star clusters",
+                            "location": "Garching, Germany",
+                            "date": "Sep 2023",
+                            "year": 2023,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "Data Driven Stellar Spectral Modelling with GSPICE",
+                            "event": "2022 CASCA Annual General Meeting",
+                            "location": "Virtual",
+                            "date": "May 2022",
+                            "year": 2022,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "Deriving Stellar Properties, Distances, and Reddenings from Photometry (and Astrometry) with brutus",
+                            "event": "2021 CASCA Annual General Meeting",
+                            "location": "Virtual",
+                            "date": "May 2021",
+                            "year": 2021,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "Dynamic Nested Sampling with dynesty",
+                            "event": "Bayes Comp 2018",
+                            "location": "Barcelona, Spain",
+                            "date": "Mar 2018",
+                            "year": 2018,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "Improving Photometric Redshifts for Hyper Suprime-Cam (HSC) with Hierarchical Bayes and Machine Learning",
+                            "event": "AAS 229",
+                            "location": "Grapevine, TX",
+                            "date": "Jan 2017",
+                            "year": 2017,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "Parallel Galaxy Main Sequence and Quasar Evolution from z=0-6 (AAS Chamblis Award Honorable Mention)",
+                            "event": "AAS 223",
+                            "location": "Washington, DC",
+                            "date": "Jan 2014",
+                            "year": 2014,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "An In-Depth Analysis of the Kepler Low-Amplitude Blazhko RR Lyrae Stars: First Steps and Comparing Data Reduction Methods",
+                            "event": "AAS 221",
+                            "location": "Long Beach, CA",
+                            "date": "Jan 2013",
+                            "year": 2013,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "An In-Depth Analysis of the Kepler Low-Amplitude Blazhko RR Lyrae Stars: First Steps and Comparing Data Reduction Methods",
+                            "event": "2012 KASC Meeting",
+                            "location": "Balatonalmádi, Hungary",
+                            "date": "Jun 2012",
+                            "year": 2012,
+                            "type": "Poster"
+                        },
+                        {
+                            "title": "The X-ray Counterpart of the High-B Pulsar J0726-2612 (AAS Chamblis Award)",
+                            "event": "AAS 219",
+                            "location": "Austin, TX",
+                            "date": "Jan 2012",
+                            "year": 2012,
+                            "type": "Poster"
+                        }
+                    ]
+                },
+                {
+                    "id": "public",
+                    "name": "Public Talks & Events",
+                    "description": "Public outreach and science communication",
+                    "badge": "public",
+                    "color": "pink",
+                    "talks": [
+                        {
+                            "title": "Host",
+                            "event": "Astronomy on Tap (Toronto)",
+                            "location": "Toronto, ON",
+                            "date": "Jul 2024",
+                            "year": 2024,
+                            "type": "Event Host"
+                        },
+                        {
+                            "title": "The Role of AI in Modern Astrophysics",
+                            "event": "Christie Gardens Apartments & Care (Toronto)",
+                            "location": "Toronto, ON",
+                            "date": "Nov 2023",
+                            "year": 2023,
+                            "type": "Public Talk"
+                        },
+                        {
+                            "title": "Mapping the Milky Way from the Inside Out",
+                            "event": "Astronomy on Tap (Toronto)",
+                            "location": "Toronto, ON",
+                            "date": "Nov 2022",
+                            "year": 2022,
+                            "type": "Public Talk"
+                        },
+                        {
+                            "title": "Mapping the Milky Way in the Age of Gaia",
+                            "event": "RASC (Toronto Centre): Speaker's Night",
+                            "location": "Toronto, ON",
+                            "date": "Oct 2021",
+                            "year": 2021,
+                            "type": "Public Talk"
+                        },
+                        {
+                            "title": "Mapping the Milky Way in the Age of Gaia",
+                            "event": "RASC (Ottawa Centre): Monthly Meeting",
+                            "location": "Ottawa, ON",
+                            "date": "Jun 2021",
+                            "year": 2021,
+                            "type": "Public Talk"
+                        },
+                        {
+                            "title": "Keynote participant for open-source code contributions (dynesty) in the analysis of M87* by the EHT collaboration",
+                            "event": "GitHub Satellite 2019",
+                            "location": "Berlin, Germany",
+                            "date": "May 2019",
+                            "year": 2019,
+                            "type": "Keynote Participant"
+                        }
+                    ]
+                },
+                {
+                    "id": "media",
+                    "name": "Media Appearances",
+                    "description": "Television, radio, and podcast appearances",
+                    "badge": "media",
+                    "color": "red",
+                    "talks": [
+                        {
+                            "title": "Space bubble",
+                            "event": "CBC Calgary: Calgary Eyeopener with David Gray, Angela Knight",
+                            "location": "Radio Interview",
+                            "date": "Jan 2022",
+                            "year": 2022,
+                            "type": "Radio Interview"
+                        }
+                    ]
+                }
+            ],
+            "totalTalks": 79
         },
         "teaching": {
             "title": "Teaching & Education",

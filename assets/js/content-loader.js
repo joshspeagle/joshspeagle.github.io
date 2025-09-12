@@ -1924,61 +1924,211 @@ function createPublicationsContent(data) {
 }
 
 function createTalksContent(data) {
-    return `
-        <div class="page-intro">
-            <p>Here you'll find information about conference presentations, seminars, and public talks.</p>
+    // Statistics overview
+    const statsHtml = data.statistics ? `
+        <div class="talks-overview">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">${data.statistics.totalTalks}</span>
+                    <span class="stat-label">Total Presentations</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${data.statistics.totalYears}</span>
+                    <span class="stat-label">Years Active</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${data.statistics.countries}</span>
+                    <span class="stat-label">Countries</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">${data.statistics.invitedTalks}</span>
+                    <span class="stat-label">Invited Talks</span>
+                </div>
+            </div>
         </div>
-        
-        ${data.upcoming.events.length > 0 ? `
-            <div class="highlight-box">
-                <h3>${data.upcoming.title}</h3>
-                ${data.upcoming.events.map(event => `
-                    <div class="talk-item">
-                        <h4>${event.title}</h4>
-                        <p><strong>${event.event}</strong> - ${event.location} (${event.date})</p>
-                        <p><em>${event.type}</em></p>
-                    </div>
+    ` : '';
+
+    // Category filter buttons
+    const totalTalks = data.totalTalks || (data.categories ? data.categories.reduce((sum, cat) => sum + cat.talks.length, 0) : 0);
+    const filterButtons = data.categories ? `
+        <nav class="talks-filters" role="navigation" aria-label="Filter talks by category">
+            <button class="filter-btn active" data-filter="all" aria-pressed="true" aria-label="Show all categories, ${totalTalks} talks total">
+                All Categories (${totalTalks})
+            </button>
+            ${data.categories.map(category => `
+                <button class="filter-btn talk-badge talk-badge-${category.color}" data-filter="${category.id}" 
+                        aria-pressed="false" aria-label="Show ${category.name}, ${category.talks.length} talks">
+                    ${category.name} (${category.talks.length})
+                </button>
+            `).join('')}
+        </nav>
+        <div aria-live="polite" aria-atomic="true" class="sr-only" id="filter-status"></div>
+    ` : '';
+
+    // Generate category content
+    const categoriesHtml = data.categories ? data.categories.map(category => `
+        <section class="talks-category" data-category="${category.id}" aria-labelledby="category-${category.id}-heading">
+            <div class="category-header">
+                <h3 id="category-${category.id}-heading" role="heading" aria-level="3">
+                    <span class="talk-badge talk-badge-${category.color}">${category.name}</span>
+                    <span class="category-count">${category.talks.length} talks</span>
+                </h3>
+                <p class="category-description">${category.description}</p>
+            </div>
+            
+            <div class="talks-list" role="list">
+                ${category.talks.map((talk, index) => `
+                    <article class="talk-item" role="listitem" aria-labelledby="talk-${category.id}-${index}-title">
+                        <div class="talk-header">
+                            <h4 class="talk-title" id="talk-${category.id}-${index}-title" aria-label="${talk.title}, ${talk.type} at ${talk.event}, ${talk.date}">
+                                ${talk.title}
+                            </h4>
+                            <div class="talk-meta">
+                                <time class="talk-date" datetime="${talk.year}-${talk.date.split(' ')[1] === 'Jan' ? '01' : 
+                                    talk.date.split(' ')[1] === 'Feb' ? '02' :
+                                    talk.date.split(' ')[1] === 'Mar' ? '03' :
+                                    talk.date.split(' ')[1] === 'Apr' ? '04' :
+                                    talk.date.split(' ')[1] === 'May' ? '05' :
+                                    talk.date.split(' ')[1] === 'Jun' ? '06' :
+                                    talk.date.split(' ')[1] === 'Jul' ? '07' :
+                                    talk.date.split(' ')[1] === 'Aug' ? '08' :
+                                    talk.date.split(' ')[1] === 'Sep' ? '09' :
+                                    talk.date.split(' ')[1] === 'Oct' ? '10' :
+                                    talk.date.split(' ')[1] === 'Nov' ? '11' : '12'}">${talk.date}</time>
+                                <span class="talk-type talk-badge talk-badge-${category.color}" role="text">${talk.type}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="talk-details" aria-describedby="talk-${category.id}-${index}-title">
+                            <div class="talk-venue">
+                                <strong aria-label="Event: ${talk.event}">${talk.event}</strong>
+                                <span class="talk-location" aria-label="Location: ${talk.location}">${talk.location}</span>
+                            </div>
+                            ${talk.url ? `
+                                <div class="talk-links">
+                                    <a href="${talk.url}" target="_blank" rel="noopener noreferrer" class="external-link" 
+                                       aria-label="View recording for ${talk.title}">
+                                        View Recording
+                                    </a>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </article>
                 `).join('')}
             </div>
-        ` : ''}
-        
-        <div class="highlight-box">
-            <h3>${data.recent.title}</h3>
-            ${data.recent.talks.map(talk => `
-                <div class="talk-item">
-                    <h4>${talk.title}</h4>
-                    <p><strong>${talk.event}</strong> - ${talk.location} (${talk.date})</p>
-                    <p><em>${talk.type}</em></p>
-                </div>
-            `).join('')}
+        </section>
+    `).join('') : '';
+
+    // After creating the HTML, we'll initialize the filtering
+    const html = `
+        <div class="page-intro">
+            <p>${data.tagline || "Conference presentations and public speaking engagements"}</p>
+            ${data.note ? `<p class="note">${data.note}</p>` : ''}
         </div>
         
-        <div class="highlight-box">
-            <h3>${data.categories.title}</h3>
-            <div class="content-grid">
-                <div>
-                    <h4>Invited Talks</h4>
-                    <p>${data.categories.invited}</p>
-                </div>
-                <div>
-                    <h4>Contributed Talks</h4>
-                    <p>${data.categories.contributed}</p>
-                </div>
-                <div>
-                    <h4>Seminars</h4>
-                    <p>${data.categories.seminars}</p>
-                </div>
-                <div>
-                    <h4>Public Outreach</h4>
-                    <p>${data.categories.public}</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="contact-info">
-            <p><em>${data.note}</em></p>
-        </div>
+        ${statsHtml}
+        ${filterButtons}
+        ${categoriesHtml}
     `;
+    
+    // Initialize filtering after DOM update
+    setTimeout(() => {
+        initializeTalksFiltering();
+    }, 100);
+    
+    return html;
+}
+
+// Initialize talks filtering functionality
+function initializeTalksFiltering() {
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const filterStatus = document.getElementById('filter-status');
+    if (filterBtns.length === 0) return; // No filter buttons found
+    
+    // Function to update filter display and announce changes
+    function updateFilter(selectedBtn) {
+        const filter = selectedBtn.dataset.filter;
+        const filterLabel = selectedBtn.textContent.trim();
+        
+        // Update active button and aria-pressed states
+        filterBtns.forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-pressed', 'false');
+        });
+        selectedBtn.classList.add('active');
+        selectedBtn.setAttribute('aria-pressed', 'true');
+        
+        // Show/hide categories and count visible talks
+        let visibleCount = 0;
+        document.querySelectorAll('.talks-category').forEach(category => {
+            if (filter === 'all' || category.dataset.category === filter) {
+                category.style.display = 'block';
+                // Count talks in visible categories
+                visibleCount += category.querySelectorAll('.talk-item').length;
+            } else {
+                category.style.display = 'none';
+            }
+        });
+        
+        // Announce change to screen readers
+        if (filterStatus) {
+            filterStatus.textContent = filter === 'all' ? 
+                `Showing all ${visibleCount} talks` : 
+                `Showing ${visibleCount} talks in ${filterLabel.split(' (')[0]} category`;
+        }
+    }
+    
+    // Add click and keyboard event listeners
+    filterBtns.forEach((btn, index) => {
+        // Click handler
+        btn.addEventListener('click', function() {
+            updateFilter(this);
+        });
+        
+        // Keyboard navigation
+        btn.addEventListener('keydown', function(e) {
+            let targetIndex = index;
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    targetIndex = (index + 1) % filterBtns.length;
+                    filterBtns[targetIndex].focus();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    targetIndex = (index - 1 + filterBtns.length) % filterBtns.length;
+                    filterBtns[targetIndex].focus();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    filterBtns[0].focus();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    filterBtns[filterBtns.length - 1].focus();
+                    break;
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    updateFilter(this);
+                    break;
+            }
+        });
+        
+        // Ensure proper tab order
+        btn.setAttribute('tabindex', index === 0 ? '0' : '-1');
+    });
+    
+    // Update tabindex when focus changes
+    filterBtns.forEach(btn => {
+        btn.addEventListener('focus', function() {
+            filterBtns.forEach(b => b.setAttribute('tabindex', '-1'));
+            this.setAttribute('tabindex', '0');
+        });
+    });
 }
 
 function createTeachingContent(data) {
