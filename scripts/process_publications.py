@@ -126,6 +126,56 @@ def main():
     except Exception as e:
         logger.warning(f"⚠️ Could not run featured publications script: {e}")
 
+    # Run publication categorization script
+    logger.info("Running publication categorization...")
+    try:
+        categorization_script = Path(__file__).parent / "categorize_publications.py"
+        result = subprocess.run(
+            [sys.executable, str(categorization_script)],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode == 0:
+            logger.info("✅ Publication categorization completed successfully")
+            # Print the output from the categorization script
+            if result.stdout.strip():
+                print(result.stdout)
+        else:
+            logger.warning(
+                f"⚠️ Publication categorization script returned error code {result.returncode}"
+            )
+            if result.stderr:
+                logger.warning(f"Error: {result.stderr}")
+
+    except Exception as e:
+        logger.warning(f"⚠️ Could not run publication categorization script: {e}")
+
+    # Run citations timeline fix script
+    logger.info("Running citations timeline fix...")
+    try:
+        citations_fix_script = Path(__file__).parent / "fix_citations_timeline.py"
+        result = subprocess.run(
+            [sys.executable, str(citations_fix_script), "--no-backup"],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode == 0:
+            logger.info("✅ Citations timeline fix completed successfully")
+            # Print the output from the fix script
+            if result.stdout.strip():
+                print(result.stdout)
+        else:
+            logger.warning(
+                f"⚠️ Citations timeline fix script returned error code {result.returncode}"
+            )
+            if result.stderr:
+                logger.warning(f"Error: {result.stderr}")
+
+    except Exception as e:
+        logger.warning(f"⚠️ Could not run citations timeline fix script: {e}")
+
     logger.info("✅ Publication data post-processing completed successfully")
     return True
 

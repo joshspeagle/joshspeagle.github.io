@@ -1,11 +1,30 @@
 {
-  "lastUpdated": "2025-09-11T19:43:54.834003Z",
+  "lastUpdated": "2025-09-12T00:27:58.266289Z",
   "metrics": {
     "totalPapers": 121,
-    "hIndex": 43,
-    "i10Index": 84,
-    "totalCitations": 15703,
+    "hIndex": 42,
+    "i10Index": 77,
+    "totalCitations": 15225,
     "citationsPerYear": {
+      "2015": 102,
+      "2016": 165,
+      "2017": 227,
+      "2018": 492,
+      "2019": 703,
+      "2020": 1201,
+      "2021": 1671,
+      "2022": 2226,
+      "2023": 2539,
+      "2024": 3031,
+      "2025": 2803
+    },
+    "lastUpdated": "2025-09-12T00:27:58.266278Z",
+    "sources": [
+      "google_scholar",
+      "ads",
+      "openalex"
+    ],
+    "citationsByPublicationYear": {
       "2025": 94,
       "2024": 247,
       "2023": 297,
@@ -19,13 +38,7 @@
       "2015": 245,
       "2014": 2155,
       "2011": 22
-    },
-    "lastUpdated": "2025-09-11T15:43:54.668873Z",
-    "sources": [
-      "google_scholar",
-      "ads",
-      "openalex"
-    ]
+    }
   },
   "publications": [
     {
@@ -233,6 +246,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -337,6 +354,9 @@
       "sources": [
         "google_scholar",
         "ads"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -400,6 +420,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -455,6 +479,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -496,6 +524,9 @@
       "sources": [
         "google_scholar",
         "ads"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -548,6 +579,9 @@
       "sources": [
         "google_scholar",
         "ads"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -898,6 +932,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -1007,6 +1045,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -1158,6 +1199,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student"
       ]
     },
     {
@@ -1219,6 +1263,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -1437,6 +1485,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -1534,6 +1586,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -1604,6 +1660,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -1662,6 +1721,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -1718,6 +1781,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -1781,6 +1847,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -1823,6 +1893,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -1879,6 +1953,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -2122,6 +2200,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -2229,6 +2310,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -2360,6 +2445,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -2411,6 +2500,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -2454,6 +2546,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "all"
       ]
     },
     {
@@ -2500,6 +2595,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -2658,6 +2756,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -2699,6 +2800,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "all"
       ]
     },
     {
@@ -2988,6 +3092,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -3158,6 +3265,9 @@
       "sources": [
         "google_scholar",
         "ads"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -3341,6 +3451,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -3860,6 +3974,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -4049,6 +4167,9 @@
       },
       "sources": [
         "google_scholar"
+      ],
+      "authorshipCategories": [
+        "all"
       ]
     },
     {
@@ -4097,6 +4218,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -4199,6 +4323,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "all"
       ]
     },
     {
@@ -4229,6 +4356,9 @@
       "sources": [
         "google_scholar",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "all"
       ]
     },
     {
@@ -4274,6 +4404,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -4727,6 +4860,9 @@
       "sources": [
         "google_scholar",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "all"
       ]
     },
     {
@@ -4772,6 +4908,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -4822,6 +4961,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -4872,6 +5014,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -4927,6 +5072,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -5215,6 +5363,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -5443,6 +5594,10 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "student",
+        "significant"
       ]
     },
     {
@@ -5559,6 +5714,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -5647,6 +5805,9 @@
       "sources": [
         "google_scholar",
         "ads"
+      ],
+      "authorshipCategories": [
+        "all"
       ]
     },
     {
@@ -5697,6 +5858,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -5825,6 +5989,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -5929,6 +6096,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -5970,6 +6140,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -6077,6 +6250,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -6246,6 +6422,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -6382,6 +6561,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -6956,6 +7138,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -7149,6 +7334,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -7250,6 +7438,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -7295,6 +7486,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -7343,6 +7537,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -7393,6 +7590,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -7510,6 +7710,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     },
     {
@@ -7576,6 +7779,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -7612,6 +7818,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "significant"
       ]
     },
     {
@@ -7660,6 +7869,9 @@
         "google_scholar",
         "ads",
         "openalex"
+      ],
+      "authorshipCategories": [
+        "primary"
       ]
     }
   ],

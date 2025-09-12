@@ -11,6 +11,38 @@
     gap: 0.5rem;
 }
 
+/* Tablet styles */
+@media (max-width: 1024px) {
+    /* Home page tablet optimizations */
+    .intro-grid {
+        gap: 2rem;
+    }
+    
+    .art-showcase {
+        gap: 2rem;
+    }
+    
+    .timeline-container {
+        padding: 0 2rem;
+    }
+    
+    /* Mentorship page tablet optimizations */
+    .supervision-overview-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .dual-chart-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .mentee-cards {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+}
+
 /* Mobile styles */
 @media (max-width: 768px) {
 
@@ -143,6 +175,241 @@
     .dog-photos {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+    }
+    
+    /* Home page specific mobile optimizations */
+    
+    /* About section */
+    .profile-figure img {
+        max-width: 200px;
+        width: 100%;
+    }
+    
+    .contact-info p {
+        font-size: 0.9rem;
+        word-break: break-all; /* For long email addresses */
+    }
+    
+    /* Team section */
+    .art-showcase {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .art-logo-img {
+        max-width: 120px;
+        margin: 0 auto 1rem;
+    }
+    
+    .art-highlights {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .art-cta {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .art-button,
+    .art-button-secondary {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+        min-height: 44px; /* Touch target */
+    }
+    
+    /* Research section */
+    .research-areas li {
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .publication-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    /* Collaboration section */
+    .two-column {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    /* Biography section */
+    .timeline-container {
+        padding: 0 1rem;
+    }
+    
+    .timeline-item {
+        margin-bottom: 2rem;
+    }
+    
+    .timeline-content {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .timeline-date {
+        font-size: 0.8rem;
+    }
+    
+    .timeline-location {
+        font-size: 0.85rem;
+    }
+    
+    /* Mentorship page specific mobile optimizations */
+    
+    /* Overview section */
+    .supervision-overview-container {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .supervision-stats {
+        text-align: center;
+    }
+    
+    .stats-column {
+        flex-direction: row;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .stat {
+        min-width: 80px;
+        flex: 1;
+    }
+    
+    .career-stage-breakdowns {
+        text-align: center;
+    }
+    
+    .dual-chart-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+    
+    .chart-section {
+        width: 100%;
+    }
+    
+    .shared-legend {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    /* Mentee cards */
+    .mentee-cards {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .mentee-card {
+        padding: 1rem;
+    }
+    
+    .mentee-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .mentee-name {
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .timeline {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+    
+    .badge-row {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    .supervision-badge {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.6rem;
+    }
+    
+    .position-badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+        margin: 0.1rem;
+    }
+    
+    .mentee-content {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .project {
+        margin-bottom: 0.75rem;
+    }
+    
+    .co-supervisors {
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .career-context {
+        font-size: 0.8rem;
+        margin-top: 1rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Reduced motion support for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .timeline-item,
+    .mentee-card,
+    .art-button,
+    .art-button-secondary,
+    .supervision-badge,
+    .position-badge {
+        transition: none !important;
+        animation: none !important;
+    }
+    
+    .timeline-item:hover,
+    .mentee-card:hover,
+    .art-button:hover,
+    .art-button-secondary:hover {
+        transform: none !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .mentee-card {
+        border: 2px solid currentColor;
+    }
+    
+    .supervision-badge,
+    .position-badge {
+        border: 1px solid currentColor;
+        font-weight: 700;
+    }
+    
+    .timeline-item {
+        border: 1px solid currentColor;
     }
 }
 

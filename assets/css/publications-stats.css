@@ -1,0 +1,404 @@
+/**
+ * Publications Statistics Dashboard Styles
+ * 
+ * Provides styling for the interactive statistics dashboard including:
+ * - Chart containers and responsive layouts
+ * - Summary statistics display
+ * - ADS library links
+ * - Theme-aware styling
+ */
+
+/* Statistics Dashboard Container */
+.stats-dashboard {
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    margin-bottom: 2rem;
+}
+
+.dashboard-header h3 {
+    margin: 0 0 1rem 0;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Stats Summary */
+.stats-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.stat-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Clickable stat button styles */
+.stat-button {
+    color: var(--text-primary);
+    text-decoration: none;
+    cursor: pointer;
+    display: block;
+}
+
+.stat-button:hover {
+    background: var(--bg-highlight);
+    border-color: var(--accent-blue);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+}
+
+.stat-button:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.stat-icon {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 1rem;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.stat-button:hover .stat-icon {
+    opacity: 1;
+}
+
+/* Charts Container */
+.charts-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.chart-section {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 300px;
+}
+
+.chart-wrapper h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+}
+
+.chart-description {
+    margin: 0 0 1rem 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-align: center;
+    font-style: italic;
+}
+
+.chart-wrapper canvas {
+    max-height: 250px;
+}
+
+/* ADS Library Links */
+.ads-links {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.ads-links h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.library-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.library-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.library-link:hover {
+    background: var(--bg-highlight);
+    border-color: var(--accent-blue);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.15);
+}
+
+.link-icon {
+    font-size: 1.2em;
+    opacity: 0.8;
+}
+
+.library-link span:last-child {
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+    .charts-container {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    /* 2x2 Grid Layout:
+       Top-left: Citations over time (1st chart)
+       Top-right: Research areas (2nd chart) 
+       Bottom-left: Citations by publication year (3rd chart)
+       Bottom-right: Publications by year (4th chart)
+    */
+    .chart-section:nth-child(1) {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    
+    .chart-section:nth-child(2) {
+        grid-column: 2;
+        grid-row: 1;
+    }
+    
+    .chart-section:nth-child(3) {
+        grid-column: 1;
+        grid-row: 2;
+    }
+    
+    .chart-section:nth-child(4) {
+        grid-column: 2;
+        grid-row: 2;
+    }
+    
+    .chart-wrapper {
+        height: 350px;
+    }
+    
+    .chart-wrapper canvas {
+        max-height: 300px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .charts-container {
+        gap: 2rem;
+    }
+    
+    .chart-wrapper {
+        height: 400px;
+    }
+    
+    .chart-wrapper canvas {
+        max-height: 350px;
+    }
+    
+    .chart-wrapper h4 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .stats-dashboard {
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .stats-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stat-item {
+        padding: 0.75rem;
+    }
+    
+    .stat-number {
+        font-size: 1.5rem;
+    }
+    
+    .chart-section {
+        padding: 1rem;
+    }
+    
+    .chart-wrapper {
+        height: 250px;
+    }
+    
+    .chart-wrapper canvas {
+        max-height: 200px;
+    }
+    
+    .library-links {
+        grid-template-columns: 1fr;
+    }
+    
+    .library-link {
+        padding: 0.875rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Loading States */
+.stats-dashboard .loading-indicator {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+/* Ring Chart Legend */
+.ring-legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.inner-ring-label,
+.outer-ring-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.inner-ring-label:before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    opacity: 0.6;
+}
+
+.outer-ring-label:before {
+    content: '';
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-primary);
+    opacity: 0.8;
+}
+
+/* Chart Accessibility */
+.chart-wrapper canvas {
+    border-radius: 4px;
+}
+
+.chart-wrapper canvas:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .stats-dashboard {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .stat-item:hover,
+[data-theme="dark"] .library-link:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .library-link:hover {
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+/* Animation for chart loading */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chart-section {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.chart-section:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.chart-section:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .stats-dashboard,
+    .stat-item,
+    .chart-section,
+    .library-link {
+        border-width: 2px;
+    }
+    
+    .stat-number {
+        font-weight: 800;
+    }
+    
+    .library-link:hover {
+        border-width: 3px;
+    }
+}

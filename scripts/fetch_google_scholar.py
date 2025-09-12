@@ -157,7 +157,7 @@ class GoogleScholarFetcher:
 
                 # Get author information
                 author = scholarly.search_author_id(self.author_id)
-                author = scholarly.fill(author, sections=["basics", "indices"])
+                author = scholarly.fill(author, sections=["basics", "indices", "counts"])
 
                 metrics = {
                     "totalPapers": len(author.get("publications", [])),

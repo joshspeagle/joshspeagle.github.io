@@ -1,0 +1,104 @@
+{
+  "lastUpdated": "2025-09-11T22:52:46.201005Z",
+  "metrics": {
+    "totalPapers": 121,
+    "hIndex": 43,
+    "i10Index": 84,
+    "totalCitations": 15703,
+    "citationsPerYear": {
+      "2025": 94,
+      "2024": 247,
+      "2023": 297,
+      "2022": 1277,
+      "2021": 1183,
+      "2020": 3274,
+      "2019": 3476,
+      "2018": 3226,
+      "2017": 63,
+      "2016": 144,
+      "2015": 245,
+      "2014": 2155,
+      "2011": 22
+    },
+    "lastUpdated": "2025-09-11T22:52:46.200985Z",
+    "sources": [
+      "google_scholar",
+      "ads",
+      "openalex"
+    ]
+  },
+  "featuredPublications": [
+    {
+      "title": "DYNESTY: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
+      "year": 2020,
+      "citations": 2280,
+      "journal": "Monthly Notices of the Royal Astronomical Society",
+      "url": "https://ui.adsabs.harvard.edu/abs/2020MNRAS.493.3132S"
+    },
+    {
+      "title": "A Highly Consistent Framework for the Evolution of the Star-Forming \"Main Sequence\" from z ~ 0-6",
+      "year": 2014,
+      "citations": 1883,
+      "journal": "The Astrophysical Journal Supplement Series",
+      "url": "https://ui.adsabs.harvard.edu/abs/2014ApJS..214...15S"
+    },
+    {
+      "title": "The Hyper Suprime-Cam SSP Survey: Overview and survey design",
+      "year": 2018,
+      "citations": 1367,
+      "journal": "Publications of the Astronomical Society of Japan",
+      "url": "https://ui.adsabs.harvard.edu/abs/2018PASJ...70S...4A"
+    },
+    {
+      "title": "A 3D Dust Map Based on Gaia, Pan-STARRS 1, and 2MASS",
+      "year": 2019,
+      "citations": 1293,
+      "journal": "The Astrophysical Journal",
+      "url": "https://ui.adsabs.harvard.edu/abs/2019ApJ...887...93G"
+    },
+    {
+      "title": "First data release of the Hyper Suprime-Cam Subaru Strategic Program",
+      "year": 2018,
+      "citations": 750,
+      "journal": "Publications of the Astronomical Society of Japan",
+      "url": "https://ui.adsabs.harvard.edu/abs/2018PASJ...70S...8A"
+    }
+  ],
+  "recentPublications": [
+    {
+      "title": "The FENIKS Survey: Spectroscopic Confirmation of Massive Quiescent Galaxies at z ∼ 3–5",
+      "year": 2025,
+      "citations": 39,
+      "journal": "The Astrophysical Journal",
+      "url": "https://ui.adsabs.harvard.edu/abs/2025ApJ...978...90A"
+    },
+    {
+      "title": "Measuring σ <SUB>8</SUB> using DESI Legacy Imaging Surveys Emission-Line galaxies and Planck CMB lensing, and the impact of dust on parameter inference",
+      "year": 2025,
+      "citations": 17,
+      "journal": "Journal of Cosmology and Astroparticle Physics",
+      "url": "https://ui.adsabs.harvard.edu/abs/2025JCAP...02..045K"
+    },
+    {
+      "title": "Closing the Stellar Labels Gap: Stellar Label independent Evidence for [α/M] Information in Gaia BP/RP Spectra",
+      "year": 2025,
+      "citations": 8,
+      "journal": "The Astrophysical Journal",
+      "url": "https://ui.adsabs.harvard.edu/abs/2025ApJ...979....5L"
+    },
+    {
+      "title": "Discovery of Two Ultra-diffuse Galaxies with Unusually Bright Globular Cluster Luminosity Functions via a Mark-dependently Thinned Point Process (MATHPOP)",
+      "year": 2025,
+      "citations": 7,
+      "journal": "The Astrophysical Journal",
+      "url": "https://ui.adsabs.harvard.edu/abs/2025ApJ...984..147L"
+    },
+    {
+      "title": "Trustworthy scientific inference for inverse problems with generative models",
+      "year": 2025,
+      "citations": 1,
+      "journal": "arXiv e-prints",
+      "url": "https://ui.adsabs.harvard.edu/abs/2025arXiv250802602C"
+    }
+  ]
+}

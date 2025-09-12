@@ -3,6 +3,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     try {
         // Add loading indicator
         document.body.classList.add('loading');
+        
+        // Initialize keyboard navigation for all pages
+        initializeKeyboardNavigation();
+        
+        // Add theme change listener to update publication icons
+        window.addEventListener('themeChanged', function(event) {
+            updatePublicationIcons();
+        });
 
         // Determine current page type
         const currentPage = window.currentPage || 'home';
@@ -44,6 +52,33 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         // Remove loading indicator
         document.body.classList.remove('loading');
+
+        // Announce page load completion to screen readers
+        const pageTitle = document.title;
+        const currentPageType = window.currentPage || 'home';
+        let pageDescription = '';
+        
+        switch (currentPageType) {
+            case 'home':
+                pageDescription = 'Home page loaded with about, research, collaboration and biography sections';
+                break;
+            case 'publications':
+                pageDescription = 'Publications page loaded with research metrics and publication list';
+                break;
+            case 'mentorship':
+                pageDescription = 'Mentorship page loaded with supervision overview and mentee information';
+                break;
+            case 'talks':
+                pageDescription = 'Talks page loaded with presentation history';
+                break;
+            case 'teaching':
+                pageDescription = 'Teaching page loaded with course information and philosophy';
+                break;
+            default:
+                pageDescription = 'Page loaded successfully';
+        }
+        
+        announceToScreenReader(`${pageTitle}. ${pageDescription}`);
 
         // Re-initialize all functionality after content is loaded
         // Use requestAnimationFrame for better performance
@@ -284,28 +319,28 @@ function populateSections(sections) {
     if (aboutSection && sections.about) {
         const about = sections.about;
         aboutSection.innerHTML = `
-            <div class="intro-grid">
-                <div>
-                    <h2 class="section-title">${about.title}</h2>
-                    <p>${about.content}</p>
+            <div class="intro-grid" role="region" aria-labelledby="about-heading">
+                <section role="main" aria-labelledby="about-heading">
+                    <h2 id="about-heading" class="section-title">${about.title}</h2>
+                    <p aria-describedby="about-highlight">${about.content}</p>
                     
-                    <div class="highlight-box">
-                        <h3>${about.highlightBox.title}</h3>
-                        <p>${about.highlightBox.content}</p>
-                    </div>
+                    <aside class="highlight-box" role="complementary" aria-labelledby="highlight-heading">
+                        <h3 id="highlight-heading">${about.highlightBox.title}</h3>
+                        <p id="about-highlight">${about.highlightBox.content}</p>
+                    </aside>
                     
-                    <div class="contact-info">
-                        <h3>${about.contactInfo.title}</h3>
-                        <p><strong>Email:</strong> <a href="mailto:${about.contactInfo.email}">${about.contactInfo.email}</a></p>
-                        <p><strong>Office:</strong> ${about.contactInfo.office}</p>
-                    </div>
-                </div>
-                <div>
+                    <address class="contact-info" role="contentinfo" aria-labelledby="contact-heading">
+                        <h3 id="contact-heading">${about.contactInfo.title}</h3>
+                        <p><strong>Email:</strong> <a href="mailto:${about.contactInfo.email}" aria-label="Send email to ${about.contactInfo.email}">${about.contactInfo.email}</a></p>
+                        <p><strong>Office:</strong> <span aria-label="Office location">${about.contactInfo.office}</span></p>
+                    </address>
+                </section>
+                <figure class="profile-figure" role="img" aria-labelledby="profile-caption">
                     <img src="${about.profileImage.src}" alt="${about.profileImage.alt}" class="profile-image">
-                    <p style="text-align: center; font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
-                        ${about.profileImage.credit} <a href="${about.profileImage.creditLink}">${about.profileImage.creditName}</a>
-                    </p>
-                </div>
+                    <figcaption id="profile-caption" style="text-align: center; font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
+                        ${about.profileImage.credit} <a href="${about.profileImage.creditLink}" aria-label="Photo credit link">${about.profileImage.creditName}</a>
+                    </figcaption>
+                </figure>
             </div>
         `;
     }
@@ -315,31 +350,35 @@ function populateSections(sections) {
     if (teamSection && sections.team) {
         const team = sections.team;
         teamSection.innerHTML = `
-            <div class="art-showcase">
-                <div class="art-logo">
+            <div class="art-showcase" role="region" aria-labelledby="team-heading">
+                <figure class="art-logo" role="img" aria-labelledby="team-logo-caption">
                     <img src="${team.logo.src}" alt="${team.logo.alt}" class="art-logo-img">
-                </div>
-                <div class="art-content">
-                    <h2 class="section-title">${team.title}</h2>
-                    <p class="art-tagline">${team.tagline}</p>
+                    <figcaption id="team-logo-caption" class="sr-only">Astrostatistics Research Team logo</figcaption>
+                </figure>
+                <section class="art-content" aria-labelledby="team-heading">
+                    <h2 id="team-heading" class="section-title">${team.title}</h2>
+                    <p class="art-tagline" aria-describedby="team-description">${team.tagline}</p>
                     
-                    <p>${team.content}</p>
+                    <p id="team-description">${team.content}</p>
                     
-                    <div class="art-highlights">
-                        ${team.highlights.map(highlight => `
-                            <div class="art-highlight">
-                                <h4>${highlight.icon} ${highlight.title}</h4>
-                                <p>${highlight.content}</p>
-                            </div>
+                    <div class="art-highlights" role="list" aria-label="Team highlights">
+                        ${team.highlights.map((highlight, index) => `
+                            <article class="art-highlight" role="listitem" aria-labelledby="highlight-${index}-title">
+                                <h4 id="highlight-${index}-title">${highlight.icon} ${highlight.title}</h4>
+                                <p aria-describedby="highlight-${index}-title">${highlight.content}</p>
+                            </article>
                         `).join('')}
                     </div>
                     
-                    <div class="art-cta">
+                    <nav class="art-cta" role="navigation" aria-label="Team related links">
                         ${team.cta.map(button => `
-                            <a href="${button.url}" class="art-button${button.type === 'secondary' ? '-secondary' : ''}">${button.text}</a>
+                            <a href="${button.url}" 
+                               class="art-button${button.type === 'secondary' ? '-secondary' : ''}"
+                               aria-label="${button.text} - opens ${button.url.includes('http') ? 'external link' : 'page'}"
+                               ${button.url.includes('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>${button.text}</a>
                         `).join('')}
-                    </div>
-                </div>
+                    </nav>
+                </section>
             </div>
         `;
     }
@@ -349,25 +388,29 @@ function populateSections(sections) {
     if (researchSection && sections.research) {
         const research = sections.research;
         researchSection.innerHTML = `
-            <h2 class="section-title">${research.title}</h2>
-            
-            <p>${research.intro}</p>
-            <ul class="research-areas">
-                ${research.areas.map(area => `
-                    <li><strong>${area.icon} ${area.title}:</strong> ${area.description}</li>
-                `).join('')}
-            </ul>
-            
-            <p></p>
-            <p>${research.additionalContent}</p>
-            
-            <div class="highlight-box">
-                <h3>${research.publications.title}</h3>
-                <p>${research.publications.intro}</p>
-                <div class="publication-cards">
-                    ${research.publications.links.map(pub => createPublicationCard(pub)).join('')}
-                </div>
-            </div>
+            <section role="region" aria-labelledby="research-heading">
+                <h2 id="research-heading" class="section-title">${research.title}</h2>
+                
+                <p aria-describedby="research-areas-list">${research.intro}</p>
+                <ul id="research-areas-list" class="research-areas" role="list" aria-label="Research focus areas">
+                    ${research.areas.map((area, index) => `
+                        <li role="listitem" aria-labelledby="area-${index}-title">
+                            <strong id="area-${index}-title">${area.icon} ${area.title}:</strong> 
+                            <span aria-describedby="area-${index}-title">${area.description}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+                
+                <p>${research.additionalContent}</p>
+                
+                <aside class="highlight-box" role="complementary" aria-labelledby="publications-heading">
+                    <h3 id="publications-heading">${research.publications.title}</h3>
+                    <p aria-describedby="publications-cards">${research.publications.intro}</p>
+                    <div id="publications-cards" class="publication-cards" role="list" aria-label="Key publications">
+                        ${research.publications.links.map(pub => createPublicationCard(pub)).join('')}
+                    </div>
+                </aside>
+            </section>
         `;
     }
 
@@ -376,26 +419,30 @@ function populateSections(sections) {
     if (collaborationSection && sections.collaboration) {
         const collab = sections.collaboration;
         collaborationSection.innerHTML = `
-            <h2 class="section-title">${collab.title}</h2>
-            
-            <p>${collab.intro}</p>
-            
-            <div class="highlight-box">
-                <h3><strong>${collab.values.title}</strong></h3>
-                <div class="two-column">
-                    ${collab.values.items.map(value => `
-                        <div>
-                            <h4>${value.title}</h4>
-                            <p>${value.content}</p>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            
-            <div class="highlight-box">
-                <h3>${collab.opportunities.title}</h3>
-                ${collab.opportunities.categories.map(category => createOpportunityCategory(category)).join('')}
-            </div>
+            <section role="region" aria-labelledby="collaboration-heading">
+                <h2 id="collaboration-heading" class="section-title">${collab.title}</h2>
+                
+                <p aria-describedby="values-section">${collab.intro}</p>
+                
+                <aside class="highlight-box" role="complementary" aria-labelledby="values-heading">
+                    <h3 id="values-heading"><strong>${collab.values.title}</strong></h3>
+                    <div class="two-column" role="list" aria-label="Collaboration values">
+                        ${collab.values.items.map((value, index) => `
+                            <article role="listitem" aria-labelledby="value-${index}-title">
+                                <h4 id="value-${index}-title">${value.title}</h4>
+                                <p aria-describedby="value-${index}-title">${value.content}</p>
+                            </article>
+                        `).join('')}
+                    </div>
+                </aside>
+                
+                <aside id="values-section" class="highlight-box" role="complementary" aria-labelledby="opportunities-heading">
+                    <h3 id="opportunities-heading">${collab.opportunities.title}</h3>
+                    <div role="list" aria-label="Collaboration opportunities">
+                        ${collab.opportunities.categories.map(category => createOpportunityCategory(category)).join('')}
+                    </div>
+                </aside>
+            </section>
         `;
     }
 
@@ -404,23 +451,28 @@ function populateSections(sections) {
     if (bioSection && sections.biography) {
         const bio = sections.biography;
         bioSection.innerHTML = `
-            <h2 class="section-title">${bio.title}</h2>
-            
-            <div class="timeline-container">
-                <div class="timeline-line"></div>
-                ${bio.timeline.map(item => createTimelineItem(item)).join('')}
-            </div>
-            
-            <p>${bio.personalNote}</p>
-            
-            <div class="dog-photos">
-                ${bio.dogPhotos.map(photo => `
-                    <div class="dog-photo">
-                        <img src="${photo.src}" alt="${photo.alt}">
-                        <p>${photo.caption} ${photo.creditLink ? `<a href="${photo.creditLink}">${photo.creditName}</a>` : ''}</p>
-                    </div>
-                `).join('')}
-            </div>
+            <section role="region" aria-labelledby="bio-heading">
+                <h2 id="bio-heading" class="section-title">${bio.title}</h2>
+                
+                <div class="timeline-container" role="list" aria-label="Career timeline">
+                    <div class="timeline-line" aria-hidden="true"></div>
+                    ${bio.timeline.map(item => createTimelineItem(item)).join('')}
+                </div>
+                
+                <p aria-labelledby="personal-note">${bio.personalNote}</p>
+                
+                <aside class="dog-photos" role="complementary" aria-labelledby="personal-photos-heading">
+                    <h3 id="personal-photos-heading" class="sr-only">Personal Photos</h3>
+                    ${bio.dogPhotos.map((photo, index) => `
+                        <figure class="dog-photo" role="img" aria-labelledby="photo-${index}-caption">
+                            <img src="${photo.src}" alt="${photo.alt}">
+                            <figcaption id="photo-${index}-caption">
+                                ${photo.caption} ${photo.creditLink ? `<a href="${photo.creditLink}" aria-label="Photo credit link">${photo.creditName}</a>` : ''}
+                            </figcaption>
+                        </figure>
+                    `).join('')}
+                </aside>
+            </section>
         `;
     }
 }
@@ -507,16 +559,17 @@ function createOpportunityCategory(category) {
 }
 
 function createTimelineItem(item) {
+    const itemId = item.title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
     return `
-        <div class="timeline-item ${item.position}">
-            <div class="timeline-dot${item.current ? ' current' : ''}"></div>
+        <article class="timeline-item ${item.position}" role="listitem" aria-labelledby="timeline-${itemId}-title">
+            <div class="timeline-dot${item.current ? ' current' : ''}" aria-hidden="true"></div>
             <div class="timeline-content${item.current ? ' current' : ''}">
-                <h3>${item.title}</h3>
-                <span class="timeline-date">${item.date}</span>
-                <p>${item.content}</p>
-                <div class="timeline-location">📍 ${item.location}</div>
+                <h3 id="timeline-${itemId}-title">${item.title}</h3>
+                <time class="timeline-date" datetime="${item.date}">${item.date}</time>
+                <p aria-describedby="timeline-${itemId}-title">${item.content}</p>
+                <div class="timeline-location" aria-label="Location: ${item.location}">📍 ${item.location}</div>
             </div>
-        </div>
+        </article>
     `;
 }
 
@@ -621,89 +674,98 @@ function populateMentorshipSections(data) {
 // Create mentorship introduction content
 function createMentorshipIntro(data) {
     return `
-        <h1 class="section-title">Mentorship & Supervision</h1>
-        <p class="tagline">${data.tagline}</p>
-        <div class="intro-text">
-            <p>${data.introduction.content}</p>
-        </div>
+        <section role="banner" aria-labelledby="mentorship-main-heading">
+            <h1 id="mentorship-main-heading" class="section-title">Mentorship & Supervision</h1>
+            <p class="tagline" aria-describedby="intro-content">${data.tagline}</p>
+            <div class="intro-text" role="region" aria-labelledby="mentorship-main-heading">
+                <p id="intro-content">${data.introduction.content}</p>
+            </div>
+        </section>
     `;
 }
 
 // Create mentorship overview content
 function createMentorshipOverview(data, stats) {
     return `
-        <h2 class="section-title">Overview</h2>
-        <div class="supervision-overview-container">
-            <div class="supervision-stats">
-                <h3>Supervision Overview</h3>
-                <div class="stats-column">
-                    <div class="stat">
-                        <strong>${stats.total}</strong>
-                        <span>Total</span>
-                    </div>
-                    <div class="stat">
-                        <strong>${stats.current}</strong>
-                        <span>Current</span>
-                    </div>
-                    <div class="stat">
-                        <strong>${stats.completed}</strong>
-                        <span>Former</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="career-stage-breakdowns">
-                <h3>Career Stage Breakdown</h3>
-                <div class="dual-chart-container">
-                    <div class="chart-section">
-                        <h4>Current</h4>
-                        <div class="chart-container">
-                            ${createInteractiveBarChart(countCurrentMentees(data.menteesByStage))}
+        <section role="region" aria-labelledby="overview-heading">
+            <h2 id="overview-heading" class="section-title">Overview</h2>
+            <div class="supervision-overview-container">
+                <section class="supervision-stats" role="region" aria-labelledby="stats-heading">
+                    <h3 id="stats-heading">Supervision Overview</h3>
+                    <div class="stats-column" role="list" aria-label="Supervision statistics">
+                        <div class="stat" role="listitem" aria-labelledby="total-stat">
+                            <strong id="total-stat" aria-describedby="total-desc">${stats.total}</strong>
+                            <span id="total-desc">Total</span>
+                        </div>
+                        <div class="stat" role="listitem" aria-labelledby="current-stat">
+                            <strong id="current-stat" aria-describedby="current-desc">${stats.current}</strong>
+                            <span id="current-desc">Current</span>
+                        </div>
+                        <div class="stat" role="listitem" aria-labelledby="former-stat">
+                            <strong id="former-stat" aria-describedby="former-desc">${stats.completed}</strong>
+                            <span id="former-desc">Former</span>
                         </div>
                     </div>
-                    <div class="chart-section">
-                        <h4>Former</h4>
-                        <div class="chart-container">
-                            ${createInteractiveBarChart(countFormerMentees(data.menteesByStage.completed))}
+                </section>
+                
+                <section class="career-stage-breakdowns" role="region" aria-labelledby="breakdown-heading">
+                    <h3 id="breakdown-heading">Career Stage Breakdown</h3>
+                    <div class="dual-chart-container" role="img" aria-labelledby="charts-description">
+                        <p id="charts-description" class="sr-only">Bar charts showing distribution of mentees by career stage for current and former supervision</p>
+                        <div class="chart-section" role="img" aria-labelledby="current-chart-title">
+                            <h4 id="current-chart-title">Current</h4>
+                            <div class="chart-container" aria-label="Current mentees by career stage">
+                                ${createInteractiveBarChart(countCurrentMentees(data.menteesByStage))}
+                            </div>
+                        </div>
+                        <div class="chart-section" role="img" aria-labelledby="former-chart-title">
+                            <h4 id="former-chart-title">Former</h4>
+                            <div class="chart-container" aria-label="Former mentees by career stage">
+                                ${createInteractiveBarChart(countFormerMentees(data.menteesByStage.completed))}
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="shared-legend">
-                    <div class="legend-item">
-                        <span class="legend-color postdoc"></span>
-                        <span>Postdoctoral</span>
+                    <div class="shared-legend" role="list" aria-label="Chart legend">
+                        <div class="legend-item" role="listitem">
+                            <span class="legend-color postdoc" aria-hidden="true"></span>
+                            <span>Postdoctoral</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="legend-color doctoral" aria-hidden="true"></span>
+                            <span>Doctoral/Masters</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="legend-color bachelors" aria-hidden="true"></span>
+                            <span>Bachelors/Other</span>
+                        </div>
                     </div>
-                    <div class="legend-item">
-                        <span class="legend-color doctoral"></span>
-                        <span>Doctoral/Masters</span>
-                    </div>
-                    <div class="legend-item">
-                        <span class="legend-color bachelors"></span>
-                        <span>Bachelors/Other</span>
-                    </div>
-                </div>
+                </section>
             </div>
-        </div>
+        </section>
     `;
 }
 
 // Create current mentees content
 function createCurrentMentees(data) {
     return `
-        <h2 class="section-title">Current Mentees</h2>
-        ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.postdoctoral, 'postdoc')}
-        ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.doctoral, 'doctoral')}
-        ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.bachelors, 'bachelors')}
+        <section role="region" aria-labelledby="current-mentees-heading">
+            <h2 id="current-mentees-heading" class="section-title">Current Mentees</h2>
+            ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.postdoctoral, 'postdoc')}
+            ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.doctoral, 'doctoral')}
+            ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.bachelors, 'bachelors')}
+        </section>
     `;
 }
 
 // Create former mentees content
 function createFormerMentees(data) {
     return `
-        <h2 class="section-title">Former Mentees</h2>
-        ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.completed.postdoctoral, 'postdoc', true)}
-        ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.completed.doctoral, 'doctoral', true)}
-        ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.completed.bachelors, 'bachelors', true)}
+        <section role="region" aria-labelledby="former-mentees-heading">
+            <h2 id="former-mentees-heading" class="section-title">Former Mentees</h2>
+            ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.completed.postdoctoral, 'postdoc', true)}
+            ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.completed.doctoral, 'doctoral', true)}
+            ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.completed.bachelors, 'bachelors', true)}
+        </section>
     `;
 }
 
@@ -712,24 +774,26 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
 
     // Filter out placeholder entries
     const realMentees = mentees.filter(mentee => mentee.privacy !== 'placeholder');
+    const sectionId = title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    
     if (realMentees.length === 0 && mentees.length > 0) {
         return `
-            <div class="mentee-section">
-                <h4>${title}</h4>
-                <p class="privacy-note"><em>Mentee information will be displayed with appropriate permissions.</em></p>
-            </div>
+            <section class="mentee-section" role="region" aria-labelledby="${sectionId}-heading">
+                <h4 id="${sectionId}-heading">${title}</h4>
+                <p class="privacy-note" role="note"><em>Mentee information will be displayed with appropriate permissions.</em></p>
+            </section>
         `;
     }
 
     if (realMentees.length === 0) return '';
 
     return `
-        <div class="mentee-section">
-            <h4>${title}</h4>
-            <div class="mentee-cards">
+        <section class="mentee-section" role="region" aria-labelledby="${sectionId}-heading">
+            <h4 id="${sectionId}-heading">${title}</h4>
+            <div class="mentee-cards" role="list" aria-label="Mentees in ${title} category">
                 ${realMentees.map(mentee => createMenteeCard(mentee, type, isCompleted)).join('')}
             </div>
-        </div>
+        </section>
     `;
 }
 
@@ -745,7 +809,7 @@ function createMenteeCard(mentee, type, isCompleted = false) {
 
     const supervisionLevel = primarySupervisionType === 'Primary Supervisor' ? 'primary' :
         primarySupervisionType === 'Co-Supervisor' ? 'co' : 'secondary';
-    const supervisionBadge = `<span class="supervision-badge ${supervisionLevel} ${type}-context">${primarySupervisionType}</span>`;
+    const supervisionBadge = `<span class="supervision-badge ${supervisionLevel} ${type}-context" role="status" aria-label="Supervision type: ${primarySupervisionType}">${primarySupervisionType}</span>`;
 
     // Generate projects content
     let projectsContent;
@@ -778,7 +842,7 @@ function createMenteeCard(mentee, type, isCompleted = false) {
     // Combine fellowships/positions into a single inline block
     const awards = mentee.fellowships || mentee.scholarships || [];
     const awardsText = awards && awards.length > 0
-        ? `<div class="position-info">${awards.map(award => `<span class="position-badge">${award}</span>`).join('')}</div>`
+        ? `<div class="position-info" role="list" aria-label="Awards and fellowships">${awards.map(award => `<span class="position-badge" role="listitem">${award}</span>`).join('')}</div>`
         : '';
 
     // Remove redundant "Status:" label for current mentees, keep "Outcome:" for former
@@ -787,24 +851,25 @@ function createMenteeCard(mentee, type, isCompleted = false) {
         (mentee.currentStatus && mentee.currentStatus.trim() !== '' ? `<p class="current-status">${mentee.currentStatus}</p>` : '')
         : (mentee.currentStatus && mentee.currentStatus.trim() !== '' ? `<p class="current-status">${mentee.currentStatus}</p>` : '');
 
+    const menteeId = mentee.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
     return `
-        <div class="mentee-card ${type}">
-            <div class="mentee-header">
-                <h5 class="mentee-name">${mentee.name}</h5>
-                <span class="timeline">${mentee.timelinePeriod}</span>
-            </div>
+        <article class="mentee-card ${type}" role="listitem" aria-labelledby="mentee-${menteeId}-name">
+            <header class="mentee-header">
+                <h5 id="mentee-${menteeId}-name" class="mentee-name">${mentee.name}</h5>
+                <time class="timeline" datetime="${mentee.timelinePeriod}">${mentee.timelinePeriod}</time>
+            </header>
             
-            <div class="badge-row">
+            <div class="badge-row" role="group" aria-labelledby="mentee-${menteeId}-name">
                 ${supervisionBadge}
                 ${awardsText}
             </div>
             
-            <div class="mentee-content">
+            <div class="mentee-content" aria-describedby="mentee-${menteeId}-name">
                 ${projectsContent}
                 ${statusText}
-                <p class="career-context"><em>My role: ${mentee.myCareerStage}</em></p>
+                <p class="career-context" role="note"><em>My role: ${mentee.myCareerStage}</em></p>
             </div>
-        </div>
+        </article>
     `;
 }
 
@@ -924,14 +989,90 @@ async function loadPublicationsContent(publicationsSection, staticData) {
         // Show loading state
         publicationsSection.innerHTML = '<div class="loading-indicator">Loading publication data...</div>';
 
-        // Try to fetch dynamic publication data
-        const response = await fetch('assets/data/publications_data.json');
+        // Try to fetch dynamic publication data and mentorship data in parallel
+        const [publicationsResponse, mentorshipResponse] = await Promise.all([
+            fetch('assets/data/publications_data.json'),
+            fetch('assets/data/content.json')
+        ]);
 
-        if (response.ok) {
-            const dynamicData = await response.json();
+        if (publicationsResponse.ok) {
+            const dynamicData = await publicationsResponse.json();
+            
+            // Get mentorship data for student categorization
+            let mentorshipData = {};
+            if (mentorshipResponse.ok) {
+                const contentData = await mentorshipResponse.json();
+                mentorshipData = contentData.mentorship || {};
+            }
 
             // Create enhanced content with dynamic data
             publicationsSection.innerHTML = createDynamicPublicationsContent(dynamicData, staticData);
+
+            // Initialize statistics dashboard
+            console.log('Checking for PublicationsStats:', !!window.PublicationsStats);
+            console.log('Publications data exists:', !!dynamicData.publications);
+            console.log('Publications count:', dynamicData.publications?.length);
+            
+            if (window.PublicationsStats && dynamicData.publications) {
+                console.log('Initializing statistics dashboard...');
+                
+                // Wait for Chart.js to be fully loaded
+                const initializeStats = () => {
+                    try {
+                        const stats = new PublicationsStats(dynamicData, mentorshipData);
+                        console.log('PublicationsStats instance created:', stats);
+                        stats.renderDashboard('publications-statistics');
+                        console.log('Dashboard rendering initiated');
+                        
+                        // Store instance for potential cleanup/theme updates
+                        window.currentPublicationsStats = stats;
+                    } catch (error) {
+                        console.error('Error initializing statistics:', error);
+                    }
+                };
+                
+                // Store publications data globally for infinite scrolling
+                // Include ALL publications (not just 2020+) and exclude only featured ones
+                allPublicationsData = dynamicData.publications
+                    .filter(pub => pub.year && !pub.featured) 
+                    .sort((a, b) => {
+                        if (b.year !== a.year) return b.year - a.year; 
+                        return a.title.localeCompare(b.title); 
+                    });
+                
+                console.log('Global publications data set:', allPublicationsData.length, 'publications');
+                
+                // Check if Chart.js is loaded, if not wait a bit
+                if (window.Chart && Chart.defaults) {
+                    requestAnimationFrame(initializeStats);
+                } else {
+                    console.log('Waiting for Chart.js to load...');
+                    setTimeout(() => {
+                        if (window.Chart && Chart.defaults) {
+                            requestAnimationFrame(initializeStats);
+                        } else {
+                            console.error('Chart.js failed to load after waiting');
+                        }
+                    }, 500);
+                }
+                
+                // Initialize infinite scrolling for publications
+                requestAnimationFrame(() => {
+                    initializeInfiniteScrolling();
+                    console.log('Infinite scrolling initialized for publications');
+                    
+                    // Announce initial publications loaded to screen readers
+                    const initialCount = Math.min(20, dynamicData.publications.length); // Default display limit
+                    const totalCount = dynamicData.publications.length;
+                    announceToScreenReader(`Publications page loaded. Showing ${initialCount} of ${totalCount} publications.`);
+                });
+            } else {
+                console.warn('Cannot initialize statistics dashboard:', {
+                    hasPublicationsStats: !!window.PublicationsStats,
+                    hasPublications: !!dynamicData.publications,
+                    publicationsCount: dynamicData.publications?.length
+                });
+            }
 
             console.log('Loaded dynamic publication data:', {
                 papers: dynamicData.metrics?.totalPapers,
@@ -959,63 +1100,69 @@ function createDynamicPublicationsContent(dynamicData, staticData) {
         }) : 'Unknown';
 
     return `
-        <div class="highlight-box">
-            <h3>${staticData.categories.title}</h3>
-            <div class="content-grid">
-                ${staticData.categories.areas.map(area => `
-                    <div>
+        <section class="highlight-box" role="region" aria-labelledby="research-areas-heading">
+            <h3 id="research-areas-heading">${staticData.categories.title}</h3>
+            <div class="content-grid" role="list" aria-label="Research areas">
+                ${staticData.categories.areas.map((area, index) => `
+                    <div role="listitem" aria-describedby="area-${index}-desc">
                         <h4>${area.icon} ${area.title}</h4>
-                        <p>${area.description}</p>
+                        <p id="area-${index}-desc">${area.description}</p>
                     </div>
                 `).join('')}
             </div>
-        </div>
+        </section>
         
-        <div class="page-intro">
+        <section class="page-intro" role="region" aria-labelledby="overview-heading">
+            <h2 id="overview-heading" class="sr-only">Publications Overview</h2>
             <div class="content-grid">
-                <div>
-                    <h3>Research Metrics</h3>
-                    <div class="metrics-grid">
-                        <div class="metric">
-                            <strong>${metrics.totalPapers || staticData.metrics.totalPapers}</strong>
-                            <span>Publications</span>
+                <section role="region" aria-labelledby="metrics-heading">
+                    <h3 id="metrics-heading">Research Metrics</h3>
+                    <div class="metrics-grid" role="list" aria-label="Publication metrics">
+                        <div class="metric" role="listitem">
+                            <strong aria-describedby="publications-desc">${metrics.totalPapers || staticData.metrics.totalPapers}</strong>
+                            <span id="publications-desc">Publications</span>
                         </div>
-                        <div class="metric">
-                            <strong>${metrics.totalCitations || staticData.metrics.citations}</strong>
-                            <span>Citations</span>
+                        <div class="metric" role="listitem">
+                            <strong aria-describedby="citations-desc">${metrics.totalCitations || staticData.metrics.citations}</strong>
+                            <span id="citations-desc">Citations</span>
                         </div>
-                        <div class="metric">
-                            <strong>${metrics.hIndex || staticData.metrics.hIndex}</strong>
-                            <span>h-index</span>
+                        <div class="metric" role="listitem">
+                            <strong aria-describedby="hindex-desc">${metrics.hIndex || staticData.metrics.hIndex}</strong>
+                            <span id="hindex-desc">h-index</span>
                         </div>
-                        <div class="metric">
-                            <strong>${metrics.i10Index || 'N/A'}</strong>
-                            <span>i10-index</span>
+                        <div class="metric" role="listitem">
+                            <strong aria-describedby="i10index-desc">${metrics.i10Index || 'N/A'}</strong>
+                            <span id="i10index-desc">i10-index</span>
                         </div>
                     </div>
-                    <p><em>Last updated: ${lastUpdated}</em></p>
+                    <p><em>Last updated: <time datetime="${dynamicData.lastUpdated || ''}">${lastUpdated}</time></em></p>
                     ${metrics.sources ? `<p><small>Data sources: ${formatDataSources(metrics.sources)}</small></p>` : ''}
-                </div>
+                </section>
                 
-                <div>
-                    <h3>Publication Links</h3>
-                    <div class="publication-links">
-                        <a href="${staticData.links.ads}" class="pub-link pub-link-horizontal" aria-label="View publications on ADS">
+                <nav role="navigation" aria-labelledby="pub-links-heading">
+                    <h3 id="pub-links-heading">Publication Links</h3>
+                    <div class="publication-links" role="list">
+                        <a href="${staticData.links.ads}" class="pub-link pub-link-horizontal" role="listitem" aria-label="View publications on ADS">
                             <div class="link-icon">${getPublicationIcon('ads')}</div>
                             <span>Astrophysics Data System</span>
                         </a>
-                        <a href="${staticData.links.scholar}" class="pub-link pub-link-horizontal" aria-label="View publications on Google Scholar">
+                        <a href="${staticData.links.scholar}" class="pub-link pub-link-horizontal" role="listitem" aria-label="View publications on Google Scholar">
                             <div class="link-icon">${getPublicationIcon('scholar')}</div>
                             <span>Google Scholar</span>
                         </a>
-                        <a href="${staticData.links.orcid}" class="pub-link pub-link-horizontal" aria-label="View ORCID profile">
+                        <a href="${staticData.links.orcid}" class="pub-link pub-link-horizontal" role="listitem" aria-label="View ORCID profile">
                             <div class="link-icon">${getPublicationIcon('orcid')}</div>
                             <span>ORCID Profile</span>
                         </a>
                     </div>
-                </div>
+                </nav>
             </div>
-        </div>
+        </section>
+        
+        <section id="publications-statistics" role="region" aria-labelledby="stats-heading">
+            <h2 id="stats-heading" class="sr-only">Publication Statistics</h2>
+            <!-- Statistics dashboard will be rendered here -->
+        </section>
         
         ${createFeaturedPublications(dynamicData, staticData)}
         
@@ -1045,9 +1192,9 @@ function createFeaturedPublications(dynamicData, staticData) {
     }
 
     return `
-        <div class="highlight-box">
-            <h3>Featured Publications</h3>
-            <div class="featured-publications">
+        <section class="highlight-box" role="region" aria-labelledby="featured-heading">
+            <h3 id="featured-heading">Featured Publications</h3>
+            <div class="featured-publications" role="list" aria-label="Featured publications list">
                 ${featuredPapers.map(paper => {
         // Shorten author list if too long
         const authors = paper.authors || [];
@@ -1070,9 +1217,27 @@ function createFeaturedPublications(dynamicData, staticData) {
             arxivLink = paper.adsUrl;
         }
 
+        // Check if this is a student-led publication
+        const isStudentPaper = isStudentLed(paper);
+        
+        // Get publication category and create badges
+        const category = getPublicationCategory(paper);
+        const categoryBadge = createCategoryBadge(category);
+        const studentBadge = isStudentPaper ? 
+            `<span class="student-led-badge" title="Student-Led Research">🎓 Student-Led</span>` : '';
+        
+        // Apply student-led class if applicable
+        const paperClass = isStudentPaper ? 'featured-paper student-led-paper' : 'featured-paper';
+
         return `
-                        <div class="featured-paper">
-                            <h4><a href="${arxivLink}" target="_blank" rel="noopener noreferrer">${paper.title}</a></h4>
+                        <div class="${paperClass}">
+                            <div class="paper-header">
+                                <h4><a href="${arxivLink}" target="_blank" rel="noopener noreferrer">${paper.title}</a></h4>
+                                <div class="paper-badges">
+                                    ${categoryBadge}
+                                    ${studentBadge}
+                                </div>
+                            </div>
                             <p class="authors">${authorString}</p>
                             <p class="paper-details">${paper.year}${paper.journal ? ` • ${paper.journal}` : ''}${paper.citations ? ` • ${paper.citations} citations` : ''}</p>
                             ${paper.abstract ? `<p class="abstract">${paper.abstract}</p>` : ''}
@@ -1115,57 +1280,522 @@ function createRecentPublications(dynamicData) {
         return '';
     }
 
-    // Get the 20 most recent publications, excluding featured ones
-    const recentPubs = publications
-        .filter(pub => pub.year && pub.year >= 2020 && !pub.featured) // Exclude featured papers
+    // Get all publications, excluding featured ones (remove limit for infinite scrolling)
+    const allPubs = publications
+        .filter(pub => pub.year && !pub.featured) // Exclude featured papers, include all years
         .sort((a, b) => {
             if (b.year !== a.year) return b.year - a.year; // Sort by year descending
             return a.title.localeCompare(b.title); // Then by title for consistency
-        })
-        .slice(0, 20);
+        });
 
-    if (recentPubs.length === 0) {
+    if (allPubs.length === 0) {
         return '';
     }
 
+    // Note: allPublicationsData is set globally in loadPublicationsContent
+
+    // Initial batch size for lazy loading
+    const initialBatchSize = 20;
+    const initialPubs = allPubs.slice(0, initialBatchSize);
+
     return `
-        <div class="highlight-box">
-            <h3>Recent Publications</h3>
-            <div class="recent-publications">
-                ${recentPubs.map(pub => {
-        // Shorten author list if too long
-        const authors = pub.authors || [];
-        let authorString = '';
-        if (authors.length === 0) {
-            authorString = 'Authors not available';
-        } else if (authors.length <= 4) {
-            authorString = authors.join(', ');
-        } else {
-            authorString = authors.slice(0, 3).join(', ') + `, et al. (${authors.length} authors)`;
-        }
-
-        // Find arXiv link
-        let arxivLink = '';
-        if (pub.arxivId) {
-            arxivLink = `https://arxiv.org/abs/${pub.arxivId}`;
-        } else if (pub.scholarUrl && pub.scholarUrl.includes('arxiv')) {
-            arxivLink = pub.scholarUrl;
-        } else if (pub.adsUrl) {
-            // Use ADS link as fallback
-            arxivLink = pub.adsUrl;
-        }
-
-        return `
-                        <div class="recent-paper">
-                            <h4><a href="${arxivLink}" target="_blank" rel="noopener noreferrer">${pub.title}</a></h4>
-                            <p class="authors">${authorString}</p>
-                            <p class="paper-details">${pub.year}${pub.journal ? ` • ${pub.journal}` : ''}${pub.citations ? ` • ${pub.citations} citations` : ''}</p>
-                        </div>
-                    `;
-    }).join('')}
+        <section class="highlight-box" role="region" aria-labelledby="recent-heading">
+            <h3 id="recent-heading">Recent Publications (${allPubs.length} papers)</h3>
+            <div id="publications-container" class="recent-publications" role="feed" aria-label="Publications list" aria-busy="false" data-total="${allPubs.length}" data-loaded="${initialPubs.length}">
+                ${initialPubs.map(pub => createPublicationHTML(pub)).join('')}
             </div>
+            ${allPubs.length > initialBatchSize ? `
+            <div id="publications-loading" class="publications-loading" style="display: none;">
+                <div class="loading-spinner"></div>
+                <p>Loading more publications...</p>
+            </div>
+            <div id="publications-load-more" class="publications-load-more">
+                <button class="load-more-btn" 
+                        onclick="loadMorePublications()" 
+                        onkeydown="handleLoadMoreKeydown(event)"
+                        tabindex="0"
+                        aria-label="Load more publications">
+                    Load More Publications
+                </button>
+                <p class="load-more-info">Showing ${initialPubs.length} of ${allPubs.length} publications</p>
+            </div>
+            ` : ''}
         </div>
     `;
+}
+
+/**
+ * Determine research category for a publication
+ */
+function getPublicationCategory(pub) {
+    const keywordsMapping = {
+        // Statistical Learning & AI
+        "machine learning": "Statistical Learning & AI",
+        "artificial intelligence": "Statistical Learning & AI",
+        "neural networks": "Statistical Learning & AI",
+        "deep learning": "Statistical Learning & AI",
+        "pattern recognition": "Statistical Learning & AI",
+        // Interpretability & Insight
+        "interpretability": "Interpretability & Insight",
+        "explainable ai": "Interpretability & Insight",
+        "model interpretation": "Interpretability & Insight",
+        "feature importance": "Interpretability & Insight",
+        // Inference & Computation
+        "bayesian inference": "Inference & Computation",
+        "nested sampling": "Inference & Computation",
+        "mcmc": "Inference & Computation",
+        "monte carlo": "Inference & Computation",
+        "statistical inference": "Inference & Computation",
+        "computational statistics": "Inference & Computation",
+        "parameter estimation": "Inference & Computation",
+        // Discovery & Understanding
+        "galaxy formation": "Discovery & Understanding",
+        "galaxy evolution": "Discovery & Understanding",
+        "stellar populations": "Discovery & Understanding",
+        "astronomical surveys": "Discovery & Understanding",
+        "cosmology": "Discovery & Understanding",
+        "dark matter": "Discovery & Understanding",
+        "star formation": "Discovery & Understanding"
+    };
+    
+    const defaultCategory = "Discovery & Understanding";
+    
+    // Check title and abstract for keywords
+    const searchText = `${pub.title || ''} ${pub.abstract || ''}`.toLowerCase();
+    
+    // Find matching category based on keywords
+    for (const [keyword, category] of Object.entries(keywordsMapping)) {
+        if (searchText.includes(keyword.toLowerCase())) {
+            return category;
+        }
+    }
+    
+    return defaultCategory;
+}
+
+/**
+ * Get category badge color scheme
+ */
+function getCategoryColors(category) {
+    // Check if dark theme is active
+    const isDarkTheme = document.body.classList.contains('dark-theme');
+    
+    const colorSchemes = {
+        'Statistical Learning & AI': {
+            bg: isDarkTheme ? '#E74C3C' : '#C0392B',        // Lighter in dark mode, darker in light mode
+            bgLight: '#F1948A',
+            text: '#ffffff'
+        },
+        'Interpretability & Insight': {
+            bg: isDarkTheme ? '#16A085' : '#138D75',        // Lighter in dark mode, darker in light mode
+            bgLight: '#52C4A0',
+            text: '#ffffff'
+        },
+        'Inference & Computation': {
+            bg: isDarkTheme ? '#3498DB' : '#2E86AB',        // Lighter in dark mode, darker in light mode
+            bgLight: '#85C1E9',
+            text: '#ffffff'
+        },
+        'Discovery & Understanding': {
+            bg: isDarkTheme ? '#27AE60' : '#1E8449',        // Lighter in dark mode, darker in light mode
+            bgLight: '#82E0AA',
+            text: '#ffffff'
+        }
+    };
+    
+    return colorSchemes[category] || colorSchemes['Discovery & Understanding'];
+}
+
+/**
+ * Create category badge HTML
+ */
+function createCategoryBadge(category) {
+    const colors = getCategoryColors(category);
+    const shortLabels = {
+        'Statistical Learning & AI': 'ML & AI',
+        'Interpretability & Insight': 'Interpretability',
+        'Inference & Computation': 'Inference',
+        'Discovery & Understanding': 'Discovery'
+    };
+    
+    const shortLabel = shortLabels[category] || category;
+    
+    return `
+        <span class="category-badge" 
+              style="background-color: ${colors.bg}; color: ${colors.text};"
+              title="${category}">
+            ${shortLabel}
+        </span>
+    `;
+}
+
+/**
+ * Check if a publication is student-led
+ */
+function isStudentLed(pub) {
+    // Check if publication has authorship categories from ADS library data
+    if (pub.authorshipCategories && Array.isArray(pub.authorshipCategories)) {
+        return pub.authorshipCategories.includes('student');
+    }
+    
+    // Fallback: heuristic based on common student names and author position
+    // This is a simplified check - in practice you'd want to load actual student data
+    const authors = pub.authors || [];
+    if (authors.length === 0) return false;
+    
+    const firstAuthor = authors[0] || '';
+    
+    // Common student indicators (this would be replaced with actual student list)
+    const studentIndicators = [
+        'Yuan', 'Sanderson', 'Ting', 'Green', 'Eadie', 'Speagle'
+    ];
+    
+    return studentIndicators.some(indicator => 
+        firstAuthor.includes(indicator) && !firstAuthor.includes('Speagle')
+    );
+}
+
+/**
+ * Create HTML for a single publication
+ */
+function createPublicationHTML(pub) {
+    // Check if this is a student-led publication
+    const isStudentPaper = isStudentLed(pub);
+    
+    // Shorten author list if too long
+    const authors = pub.authors || [];
+    let authorString = '';
+    if (authors.length === 0) {
+        authorString = 'Authors not available';
+    } else if (authors.length <= 4) {
+        authorString = authors.join(', ');
+    } else {
+        authorString = authors.slice(0, 3).join(', ') + `, et al. (${authors.length} authors)`;
+    }
+
+    // Find arXiv link
+    let arxivLink = '';
+    if (pub.arxivId) {
+        arxivLink = `https://arxiv.org/abs/${pub.arxivId}`;
+    } else if (pub.scholarUrl && pub.scholarUrl.includes('arxiv')) {
+        arxivLink = pub.scholarUrl;
+    } else if (pub.adsUrl) {
+        // Use ADS link as fallback
+        arxivLink = pub.adsUrl;
+    }
+
+    // Get publication category and create badge
+    const category = getPublicationCategory(pub);
+    const categoryBadge = createCategoryBadge(category);
+    
+    // Create student-led indicator if applicable
+    const studentBadge = isStudentPaper ? 
+        `<span class="student-led-badge" title="Student-Led Research">🎓 Student-Led</span>` : '';
+
+    // Apply student-led class if applicable
+    const paperClass = isStudentPaper ? 'recent-paper student-led-paper' : 'recent-paper';
+
+    return `
+        <article class="${paperClass}" role="article" aria-labelledby="paper-title-${pub.title.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)}">
+            <div class="paper-header">
+                <h4 id="paper-title-${pub.title.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)}">
+                    <a href="${arxivLink}" 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       aria-describedby="paper-details-${pub.title.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)}"
+                       aria-label="Read paper: ${pub.title}">
+                        ${pub.title}
+                    </a>
+                </h4>
+                <div class="paper-badges" role="group" aria-label="Publication categories and attributes">
+                    ${categoryBadge}
+                    ${studentBadge}
+                </div>
+            </div>
+            <p class="authors" aria-label="Authors">${authorString}</p>
+            <p class="paper-details" 
+               id="paper-details-${pub.title.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)}"
+               aria-label="Publication details">
+               ${pub.year}${pub.journal ? ` • ${pub.journal}` : ''}${pub.citations ? ` • ${pub.citations} citations` : ''}
+            </p>
+        </article>
+    `;
+}
+
+// Global variables for infinite scrolling
+let allPublicationsData = [];
+let isLoadingMore = false;
+
+/**
+ * Re-enable the load more button and restore its accessibility attributes
+ */
+function reEnableLoadMoreButton() {
+    const loadMoreBtn = document.querySelector('.load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.disabled = false;
+        loadMoreBtn.setAttribute('aria-busy', 'false');
+        loadMoreBtn.setAttribute('aria-label', 'Load more publications');
+    }
+}
+
+/**
+ * Enhanced keyboard navigation handler for all interactive elements
+ */
+function initializeKeyboardNavigation() {
+    // Add keyboard support for any elements that might need it
+    document.addEventListener('keydown', function(event) {
+        // Handle skip links with Enter key
+        if (event.target.classList.contains('skip-link') && event.key === 'Enter') {
+            event.preventDefault();
+            const targetId = event.target.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                targetElement.focus();
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Enhance focus visibility for custom elements
+        if (event.key === 'Tab') {
+            // Add visible focus indicators where needed
+            setTimeout(() => {
+                if (document.activeElement.classList.contains('mentee-card') ||
+                    document.activeElement.classList.contains('timeline-item') ||
+                    document.activeElement.classList.contains('art-highlight')) {
+                    document.activeElement.style.outline = '3px solid var(--accent-blue)';
+                    document.activeElement.style.outlineOffset = '2px';
+                }
+            }, 10);
+        }
+    });
+    
+    // Remove custom outline when focus leaves
+    document.addEventListener('blur', function(event) {
+        if (event.target.classList.contains('mentee-card') ||
+            event.target.classList.contains('timeline-item') ||
+            event.target.classList.contains('art-highlight')) {
+            event.target.style.outline = '';
+            event.target.style.outlineOffset = '';
+        }
+    }, true);
+}
+
+/**
+ * Handle keyboard navigation for the load more button
+ */
+function handleLoadMoreKeydown(event) {
+    // Handle Enter and Space key presses
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault(); // Prevent default space scrolling
+        loadMorePublications();
+    }
+    // Handle Escape key to announce current status
+    else if (event.key === 'Escape') {
+        const loadMoreInfo = document.querySelector('.load-more-info');
+        if (loadMoreInfo) {
+            announceToScreenReader(loadMoreInfo.textContent);
+        }
+    }
+}
+
+/**
+ * Announce content to screen readers via ARIA live region
+ */
+function announceToScreenReader(message) {
+    let liveRegion = document.getElementById('sr-announcements');
+    
+    // Create live region if it doesn't exist
+    if (!liveRegion) {
+        liveRegion = document.createElement('div');
+        liveRegion.id = 'sr-announcements';
+        liveRegion.setAttribute('aria-live', 'polite');
+        liveRegion.setAttribute('aria-atomic', 'true');
+        liveRegion.style.position = 'absolute';
+        liveRegion.style.left = '-10000px';
+        liveRegion.style.width = '1px';
+        liveRegion.style.height = '1px';
+        liveRegion.style.overflow = 'hidden';
+        document.body.appendChild(liveRegion);
+    }
+    
+    // Clear and set new message
+    liveRegion.textContent = '';
+    setTimeout(() => {
+        liveRegion.textContent = message;
+    }, 100); // Small delay to ensure screen readers pick up the change
+}
+
+/**
+ * Load more publications for infinite scrolling
+ */
+function loadMorePublications() {
+    console.log('loadMorePublications called');
+    
+    // Prevent multiple simultaneous loads
+    if (isLoadingMore) {
+        console.log('Already loading, skipping...');
+        return;
+    }
+    isLoadingMore = true;
+    
+    // Disable load more button and update its state for accessibility
+    const loadMoreBtn = document.querySelector('.load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.setAttribute('aria-busy', 'true');
+        loadMoreBtn.setAttribute('aria-label', 'Loading more publications, please wait');
+    }
+    
+    // Announce to screen readers that content is loading
+    announceToScreenReader('Loading more publications...');
+    
+    const container = document.getElementById('publications-container');
+    const loadingDiv = document.getElementById('publications-loading');
+    const loadMoreDiv = document.getElementById('publications-load-more');
+    
+    if (!container || !loadingDiv || !loadMoreDiv) {
+        console.error('Required elements not found:', {
+            container: !!container,
+            loadingDiv: !!loadingDiv,
+            loadMoreDiv: !!loadMoreDiv
+        });
+        // Re-enable button on error
+        reEnableLoadMoreButton();
+        isLoadingMore = false;
+        return;
+    }
+    
+    const totalPubs = parseInt(container.dataset.total);
+    const loadedPubs = parseInt(container.dataset.loaded);
+    const batchSize = 20;
+    
+    console.log('Load more state:', {
+        totalPubs,
+        loadedPubs,
+        batchSize,
+        allPublicationsDataLength: allPublicationsData?.length || 0
+    });
+    
+    // Show loading indicator
+    loadingDiv.style.display = 'block';
+    loadMoreDiv.style.display = 'none';
+    
+    // Safety check
+    if (!allPublicationsData || allPublicationsData.length === 0) {
+        console.error('allPublicationsData is not available');
+        loadingDiv.style.display = 'none';
+        loadMoreDiv.style.display = 'block';
+        // Re-enable button
+        reEnableLoadMoreButton();
+        isLoadingMore = false;
+        return;
+    }
+    
+    // Check if we've already loaded everything
+    if (loadedPubs >= allPublicationsData.length) {
+        console.log('All publications already loaded');
+        loadingDiv.style.display = 'none';
+        loadMoreDiv.style.display = 'none';
+        // Re-enable button (though it will be hidden)
+        reEnableLoadMoreButton();
+        isLoadingMore = false;
+        return;
+    }
+    
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+        const nextBatch = allPublicationsData.slice(loadedPubs, loadedPubs + batchSize);
+        console.log('Next batch:', {
+            startIndex: loadedPubs,
+            endIndex: loadedPubs + batchSize,
+            batchLength: nextBatch.length,
+            firstTitle: nextBatch[0]?.title || 'N/A'
+        });
+        
+        // Add new publications to container
+        nextBatch.forEach(pub => {
+            const pubElement = document.createElement('div');
+            pubElement.innerHTML = createPublicationHTML(pub);
+            container.appendChild(pubElement.firstElementChild);
+        });
+        
+        // Update loaded count
+        const newLoadedCount = loadedPubs + nextBatch.length;
+        container.dataset.loaded = newLoadedCount;
+        
+        // Hide loading indicator
+        loadingDiv.style.display = 'none';
+        
+        // Show/hide load more button based on remaining publications
+        if (newLoadedCount < totalPubs) {
+            loadMoreDiv.style.display = 'block';
+            const loadMoreInfo = loadMoreDiv.querySelector('.load-more-info');
+            if (loadMoreInfo) {
+                loadMoreInfo.textContent = `Showing ${newLoadedCount} of ${totalPubs} publications`;
+            }
+        }
+        
+        // Initialize intersection observer for new publications if needed
+        initializeInfiniteScrolling();
+        
+        // Announce successful loading to screen readers
+        const loadedCount = Math.min(PUBLICATIONS_BATCH_SIZE, remainingCount);
+        announceToScreenReader(`Loaded ${loadedCount} more publications. ${totalPubs - newLoadedCount} publications remaining.`);
+        
+        // Re-enable load more button and restore its state
+        reEnableLoadMoreButton();
+        // Focus the button for keyboard users who just used it
+        const loadMoreBtn = document.querySelector('.load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.focus();
+        }
+        
+        // Reset loading flag
+        isLoadingMore = false;
+        
+    }, 500); // 500ms loading delay
+}
+
+// Global intersection observer
+let intersectionObserver = null;
+
+/**
+ * Initialize intersection observer for infinite scrolling
+ */
+function initializeInfiniteScrolling() {
+    const loadMoreDiv = document.getElementById('publications-load-more');
+    if (!loadMoreDiv) return;
+    
+    // Clean up existing observer
+    if (intersectionObserver) {
+        intersectionObserver.disconnect();
+    }
+    
+    // Create intersection observer
+    intersectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !isLoadingMore) {
+                const container = document.getElementById('publications-container');
+                if (container) {
+                    const totalPubs = parseInt(container.dataset.total);
+                    const loadedPubs = parseInt(container.dataset.loaded);
+                    
+                    console.log('Intersection triggered:', { loadedPubs, totalPubs, isLoadingMore });
+                    
+                    // Auto-load more when user scrolls near the bottom
+                    if (loadedPubs < totalPubs && !isLoadingMore) {
+                        // Temporarily disconnect observer to prevent multiple triggers
+                        intersectionObserver.disconnect();
+                        loadMorePublications();
+                    }
+                }
+            }
+        });
+    }, {
+        rootMargin: '200px' // Start loading 200px before the element comes into view
+    });
+    
+    intersectionObserver.observe(loadMoreDiv);
 }
 
 function createPublicationsContent(data) {
@@ -1360,12 +1990,60 @@ function populateFooter(footer) {
 
 // Function to update publication icons when theme changes
 function updatePublicationIcons() {
+    // Update publication card icons
     const publicationCards = document.querySelectorAll('.publication-card .card-icon');
     publicationCards.forEach((iconElement, index) => {
         // Get the icon type from the card's data or rebuild from known types
         const iconTypes = ['ads', 'scholar', 'arxiv', 'orcid'];
         if (iconTypes[index]) {
             iconElement.innerHTML = getPublicationIcon(iconTypes[index]);
+        }
+    });
+    
+    // Update publication links icons (in both publications and static pages)
+    const publicationLinks = document.querySelectorAll('.pub-link .link-icon');
+    publicationLinks.forEach(iconElement => {
+        // Determine icon type from the parent link
+        const parentLink = iconElement.closest('.pub-link');
+        if (parentLink) {
+            const href = parentLink.getAttribute('href');
+            let iconType = '';
+            
+            if (href.includes('ui.adsabs.harvard.edu') || href.includes('ads')) {
+                iconType = 'ads';
+            } else if (href.includes('scholar.google') || href.includes('scholar')) {
+                iconType = 'scholar';
+            } else if (href.includes('orcid.org') || href.includes('orcid')) {
+                iconType = 'orcid';
+            } else if (href.includes('arxiv.org') || href.includes('arxiv')) {
+                iconType = 'arxiv';
+            }
+            
+            if (iconType) {
+                iconElement.innerHTML = getPublicationIcon(iconType);
+            }
+        }
+    });
+    
+    // Update any other publication icons that might be present
+    const allIcons = document.querySelectorAll('svg[width="40"][height="40"]');
+    allIcons.forEach(iconElement => {
+        // Check if this is a publication icon by looking at its content
+        const iconText = iconElement.textContent;
+        const iconHTML = iconElement.outerHTML;
+        
+        if (iconText === 'a' || iconHTML.includes('L20 35 L20 45')) {
+            // This is an ADS icon
+            iconElement.outerHTML = getPublicationIcon('ads');
+        } else if (iconHTML.includes('L20 35 L50 20 L80 35')) {
+            // This is a Google Scholar icon
+            iconElement.outerHTML = getPublicationIcon('scholar');
+        } else if (iconText === 'arXiv') {
+            // This is an arXiv icon
+            iconElement.outerHTML = getPublicationIcon('arxiv');
+        } else if (iconHTML.includes('#A6CE39')) {
+            // This is an ORCID icon
+            iconElement.outerHTML = getPublicationIcon('orcid');
         }
     });
 }

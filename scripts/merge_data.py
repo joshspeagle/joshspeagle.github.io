@@ -404,23 +404,27 @@ class DataMerger:
             openalex_val = openalex_metrics.get(metric, 0)
             merged_metrics[metric] = max(scholar_val, ads_val, openalex_val)
 
-        # Merge citations per year
+        # Use Google Scholar citations per year (most reliable for this metric)
+        # Other sources often have incorrect or incomplete citation timeline data
         scholar_cpy = scholar_metrics.get("citationsPerYear", {})
-        ads_cpy = ads_metrics.get("citationsPerYear", {})
-        openalex_cpy = openalex_metrics.get("citationsPerYear", {})
 
-        merged_cpy = {}
-        all_years = (
-            set(scholar_cpy.keys()) | set(ads_cpy.keys()) | set(openalex_cpy.keys())
-        )
-        for year in all_years:
-            merged_cpy[year] = max(
-                scholar_cpy.get(year, 0),
-                ads_cpy.get(year, 0),
-                openalex_cpy.get(year, 0),
-            )
+        if scholar_cpy:
+            # Use Google Scholar data as authoritative source
+            merged_metrics["citationsPerYear"] = scholar_cpy
+        else:
+            # Fallback to merged data if Google Scholar unavailable
+            ads_cpy = ads_metrics.get("citationsPerYear", {})
+            openalex_cpy = openalex_metrics.get("citationsPerYear", {})
 
-        merged_metrics["citationsPerYear"] = merged_cpy
+            merged_cpy = {}
+            all_years = set(ads_cpy.keys()) | set(openalex_cpy.keys())
+            for year in all_years:
+                merged_cpy[year] = max(
+                    ads_cpy.get(year, 0),
+                    openalex_cpy.get(year, 0),
+                )
+
+            merged_metrics["citationsPerYear"] = merged_cpy
 
         # Add source information
         merged_metrics["sources"] = []
@@ -447,16 +451,16 @@ class DataMerger:
             ads_val = ads_metrics.get(metric, 0)
             merged_metrics[metric] = max(scholar_val, ads_val)
 
-        # Merge citations per year
+        # Use Google Scholar citations per year (most reliable for this metric)
         scholar_cpy = scholar_metrics.get("citationsPerYear", {})
-        ads_cpy = ads_metrics.get("citationsPerYear", {})
 
-        merged_cpy = {}
-        all_years = set(scholar_cpy.keys()) | set(ads_cpy.keys())
-        for year in all_years:
-            merged_cpy[year] = max(scholar_cpy.get(year, 0), ads_cpy.get(year, 0))
-
-        merged_metrics["citationsPerYear"] = merged_cpy
+        if scholar_cpy:
+            # Use Google Scholar data as authoritative source
+            merged_metrics["citationsPerYear"] = scholar_cpy
+        else:
+            # Fallback to ADS data if Google Scholar unavailable
+            ads_cpy = ads_metrics.get("citationsPerYear", {})
+            merged_metrics["citationsPerYear"] = ads_cpy
 
         # Add source information
         merged_metrics["sources"] = []

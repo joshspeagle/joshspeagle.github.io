@@ -482,6 +482,15 @@ class ManualPublicationUpdater:
         scholar_metrics = {}
         ads_metrics = {}
         openalex_metrics = {}
+        
+        # Fetch author metrics from Google Scholar
+        try:
+            logger.info("Fetching author metrics from Google Scholar...")
+            scholar_metrics = self.scholar_fetcher.fetch_author_metrics()
+            logger.info(f"Successfully fetched Scholar metrics: {scholar_metrics.get('totalCitations', 0)} total citations")
+        except Exception as e:
+            logger.warning(f"Failed to fetch Scholar metrics: {e}")
+            scholar_metrics = {}
 
         # Calculate metrics directly from merged data instead of individual sources
         # to avoid re-fetching
@@ -507,25 +516,41 @@ class ManualPublicationUpdater:
                 1 for pub in merged_publications if pub.get("citations", 0) >= 10
             )
 
-            # Calculate citations per year
-            citations_per_year = {}
+            # Calculate citations by publication year (different from citations per year!)
+            citations_by_pub_year = {}
             for pub in merged_publications:
                 year = pub.get("year")
                 if year and year >= 2000:
-                    citations_per_year[str(year)] = citations_per_year.get(
+                    citations_by_pub_year[str(year)] = citations_by_pub_year.get(
                         str(year), 0
                     ) + pub.get("citations", 0)
 
-            # Create merged metrics
-            merged_metrics = {
-                "totalPapers": total_papers,
-                "hIndex": h_index,
-                "i10Index": i10_index,
-                "totalCitations": total_citations,
-                "citationsPerYear": citations_per_year,
-                "lastUpdated": datetime.now().isoformat() + "Z",
-                "sources": ["google_scholar", "ads", "openalex"],
-            }
+            # Use Google Scholar metrics if available, otherwise calculate from merged data
+            if scholar_metrics:
+                # Use authoritative Google Scholar data
+                merged_metrics = {
+                    "totalPapers": scholar_metrics.get("totalPapers", total_papers),
+                    "hIndex": scholar_metrics.get("hIndex", h_index), 
+                    "i10Index": scholar_metrics.get("i10Index", i10_index),
+                    "totalCitations": scholar_metrics.get("totalCitations", total_citations),
+                    "citationsPerYear": scholar_metrics.get("citationsPerYear", {}),  # Correct timeline data
+                    "citationsByPublicationYear": citations_by_pub_year,  # Calculated breakdown
+                    "lastUpdated": scholar_metrics.get("lastUpdated", datetime.now().isoformat() + "Z"),
+                    "sources": ["google_scholar", "ads", "openalex"],
+                }
+            else:
+                # Fallback to calculated metrics
+                logger.warning("Using calculated metrics as fallback - citations timeline may be incorrect")
+                merged_metrics = {
+                    "totalPapers": total_papers,
+                    "hIndex": h_index,
+                    "i10Index": i10_index,
+                    "totalCitations": total_citations,
+                    "citationsPerYear": citations_by_pub_year,  # Fallback (will be wrong for timeline)
+                    "citationsByPublicationYear": citations_by_pub_year,
+                    "lastUpdated": datetime.now().isoformat() + "Z",
+                    "sources": ["ads", "openalex"],  # No google_scholar if metrics failed
+                }
 
         # Create consolidated data structure
         full_data = {
