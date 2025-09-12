@@ -43,9 +43,7 @@
                 },
                 {
                     "text": "Teaching",
-                    "href": "#",
-                    "disabled": true,
-                    "disabledReason": "Coming soon"
+                    "href": "teaching.html"
                 }
             ]
         }
@@ -205,7 +203,7 @@
             },
             "opportunities": {
                 "title": "Opportunities",
-                "categories": [
+                "cards": [
                     {
                         "title": "Postdoctoral Researchers",
                         "content": "Gwen and I are always looking for enthusiastic postdoctoral researchers to join the Astrostatistics Research Team! If you are interested in applying your skills to cutting-edge research in astrostatistics, please feel free to reach out to either me and/or Gwen.",
@@ -267,65 +265,62 @@
                         }
                     },
                     {
-                        "title": "Undergraduate Students",
-                        "content": "I love working with undergraduate students both throughout the year and over the summer. I often post opportunities through existing program streams (to ensure equitable review processes), so please keep an eye on some of the opportunities outlined below. If you are interested in learning more, please feel free to reach out.",
-                        "subcategories": [
+                        "title": "University of Toronto Undergraduates", 
+                        "content": "I love working with University of Toronto undergraduate students both throughout the year and over the summer. I often post opportunities through existing program streams to ensure equitable review processes.",
+                        "opportunities": [
                             {
-                                "title": "University of Toronto students:",
-                                "opportunities": [
-                                    {
-                                        "name": "Research Opportunity Program",
-                                        "url": "https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program",
-                                        "abbr": "ROP"
-                                    },
-                                    {
-                                        "name": "Work Study Program",
-                                        "url": "https://www.registrar.utoronto.ca/financial-aid-awards/work-study-program/",
-                                        "abbr": "WSP"
-                                    },
-                                    {
-                                        "name": "University of Toronto Excellence Award",
-                                        "url": "https://www.registrar.utoronto.ca/financial-aid-awards/utea/",
-                                        "abbr": "UTEA"
-                                    },
-                                    {
-                                        "name": "independent study courses",
-                                        "note": "AST, PHY, STA"
-                                    },
-                                    {
-                                        "name": "casual employment"
-                                    }
-                                ]
+                                "name": "Research Opportunity Program",
+                                "url": "https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program",
+                                "abbr": "ROP"
                             },
                             {
-                                "title": "Canadian students:",
-                                "opportunities": [
-                                    {
-                                        "name": "Astronomy & Astrophysics SURP",
-                                        "url": "https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/"
-                                    },
-                                    {
-                                        "name": "CITA SURF",
-                                        "url": "https://www.cita.utoronto.ca/opportunities/surf-at-cita/"
-                                    },
-                                    {
-                                        "name": "DSI SUDS",
-                                        "url": "https://datasciences.utoronto.ca/suds/"
-                                    }
-                                ]
+                                "name": "Work Study Program", 
+                                "url": "https://www.registrar.utoronto.ca/financial-aid-awards/work-study-program/",
+                                "abbr": "WSP"
                             },
                             {
-                                "title": "International students:",
-                                "opportunities": [
-                                    {
-                                        "name": "Mitacs Globalink Research Internship",
-                                        "url": "https://www.mitacs.ca/our-programs/globalink-research-internship-students/"
-                                    },
-                                    {
-                                        "name": "Mitacs Globalink Research Award",
-                                        "url": "https://www.mitacs.ca/our-programs/globalink-research-award/"
-                                    }
-                                ]
+                                "name": "University of Toronto Excellence Award",
+                                "url": "https://www.registrar.utoronto.ca/financial-aid-awards/utea/",
+                                "abbr": "UTEA"
+                            },
+                            {
+                                "name": "independent study courses",
+                                "note": "AST, PHY, STA"
+                            },
+                            {
+                                "name": "casual employment"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "Canadian Undergraduates",
+                        "content": "For Canadian undergraduate students, there are several excellent summer research programs available. These competitive programs provide structured research experiences with funding support.",
+                        "opportunities": [
+                            {
+                                "name": "Astronomy & Astrophysics SURP",
+                                "url": "https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/"
+                            },
+                            {
+                                "name": "CITA SURF",
+                                "url": "https://www.cita.utoronto.ca/opportunities/surf-at-cita/"
+                            },
+                            {
+                                "name": "DSI SUDS",
+                                "url": "https://datasciences.utoronto.ca/suds/"
+                            }
+                        ]
+                    },
+                    {
+                        "title": "International Undergraduates",
+                        "content": "International undergraduate students can apply for research internships through the Mitacs program, which provides funding and support for research experiences at Canadian universities.",
+                        "opportunities": [
+                            {
+                                "name": "Mitacs Globalink Research Internship",
+                                "url": "https://www.mitacs.ca/our-programs/globalink-research-internship-students/"
+                            },
+                            {
+                                "name": "Mitacs Globalink Research Award",
+                                "url": "https://www.mitacs.ca/our-programs/globalink-research-award/"
                             }
                         ]
                     },
@@ -761,6 +756,22 @@
                             ],
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Anna Tsvetkova",
+                            "timelinePeriod": "Spring-Summer 2025",
+                            "program": "<a href=\"https://www.mitacs.ca/our-programs/globalink-research-internship-students/\">MITACS Globalink</a>",
+                            "fellowships": [
+                                "<a href=\"https://www.mitacs.ca/our-programs/globalink-research-internship-students/\">MITACS Globalink</a>"
+                            ],
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                                "<a href=\"https://walmsley.dev/pages/about\">Mike Walmsley</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                            ],
+                            "project": "Identifying and Characterizing Strong Gravitational Lensing Systems Using Probabilistic Machine Learning",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate student (<a href=\"https://www.ukma.edu.ua/eng/\">UKMA</a>)"
                         },
                         {
                             "name": "Matthew Kustec",
@@ -2217,33 +2228,59 @@
         },
         "teaching": {
             "title": "Teaching & Education",
-            "tagline": "Bridging statistics and astronomy through education",
-            "courses": {
-                "title": "Current Courses",
-                "undergraduate": [
-                    {
-                        "code": "STA237",
-                        "title": "Probability, Statistics and Data Analysis I",
-                        "description": "Introduction to statistical thinking and data analysis"
-                    },
-                    {
-                        "code": "AST221",
-                        "title": "Stars and Planets",
-                        "description": "Introduction to stellar astrophysics and planetary science"
-                    }
-                ],
-                "graduate": [
-                    {
-                        "code": "STA2102",
-                        "title": "Computational Statistics",
-                        "description": "Advanced statistical computing and simulation methods"
-                    },
-                    {
-                        "code": "AST1501",
-                        "title": "Astrostatistics",
-                        "description": "Statistical methods for astronomical research"
-                    }
-                ]
+            "tagline": "Statistical methods and computational thinking for scientific discovery",
+            "courseHistory": [
+                {
+                    "code": "AST424",
+                    "title": "Introduction to Astrophysical Research",
+                    "terms": ["Winter 2025", "Full Year 2023-2024"],
+                    "level": "Undergraduate",
+                    "department": "Astronomy",
+                    "description": "Research methods and project-based learning in astrophysics",
+                    "color": "blue"
+                },
+                {
+                    "code": "STA130",
+                    "title": "Introduction to Statistical Reasoning and Data Science",
+                    "terms": ["Winter 2024", "Winter 2023"],
+                    "level": "Undergraduate", 
+                    "department": "Statistics",
+                    "description": "Foundational course in statistical thinking and data analysis",
+                    "color": "green"
+                },
+                {
+                    "code": "AST3101",
+                    "title": "Module: Ethics and Practice in Astronomy",
+                    "terms": ["Winter 2024", "Winter 2022"],
+                    "level": "Graduate",
+                    "department": "Astronomy",
+                    "description": "Research ethics and professional practice in astronomy",
+                    "color": "blue"
+                },
+                {
+                    "code": "JAS1101",
+                    "title": "Introduction to Astrostatistics", 
+                    "terms": ["Fall 2022", "Winter 2022 (partial)"],
+                    "level": "Graduate",
+                    "departments": ["Astronomy", "Statistics"],
+                    "description": "Statistical methods for astronomical research",
+                    "color": "purple"
+                },
+                {
+                    "code": "AST3101",
+                    "title": "Module: Introduction to Sampling",
+                    "terms": ["Fall 2021"],
+                    "level": "Graduate",
+                    "department": "Astronomy",
+                    "description": "Advanced sampling techniques in astronomical data analysis",
+                    "color": "blue"
+                }
+            ],
+            "teachingStats": {
+                "totalOfferings": 9,
+                "uniqueCourses": 5,
+                "yearsTeaching": 5,
+                "departments": 3
             },
             "philosophy": {
                 "title": "Teaching Philosophy",
@@ -2269,8 +2306,7 @@
             "description": "Peer-reviewed research and scholarly contributions"
         },
         "talks": {
-            "title": "Talks",
-            "description": "Conference presentations and public speaking engagements"
+            "title": "Talks"
         },
         "teaching": {
             "title": "Teaching",

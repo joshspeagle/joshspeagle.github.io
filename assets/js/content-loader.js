@@ -391,17 +391,20 @@ function populateSections(sections) {
             <section role="region" aria-labelledby="research-heading">
                 <h2 id="research-heading" class="section-title">${research.title}</h2>
                 
-                <p aria-describedby="research-areas-list">${research.intro}</p>
-                <ul id="research-areas-list" class="research-areas" role="list" aria-label="Research focus areas">
-                    ${research.areas.map((area, index) => `
-                        <li role="listitem" aria-labelledby="area-${index}-title">
-                            <strong id="area-${index}-title">${area.icon} ${area.title}:</strong> 
-                            <span aria-describedby="area-${index}-title">${area.description}</span>
-                        </li>
-                    `).join('')}
-                </ul>
+                <p>${research.intro}</p>
                 
-                <p>${research.additionalContent}</p>
+                <div class="content-grid" role="list" aria-label="Research focus areas">
+                    ${research.areas.map((area, index) => `
+                        <div class="research-card" role="listitem" aria-labelledby="area-${index}-title">
+                            <h4 id="area-${index}-title">${area.icon} ${area.title}</h4>
+                            <p>${area.description}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="research-context">
+                    <p>${research.additionalContent}</p>
+                </div>
                 
                 <aside class="highlight-box" role="complementary" aria-labelledby="publications-heading">
                     <h3 id="publications-heading">${research.publications.title}</h3>
@@ -438,8 +441,8 @@ function populateSections(sections) {
                 
                 <aside id="values-section" class="highlight-box" role="complementary" aria-labelledby="opportunities-heading">
                     <h3 id="opportunities-heading">${collab.opportunities.title}</h3>
-                    <div role="list" aria-label="Collaboration opportunities">
-                        ${collab.opportunities.categories.map(category => createOpportunityCategory(category)).join('')}
+                    <div class="research-grid" role="list" aria-label="Collaboration opportunities">
+                        ${collab.opportunities.cards.map(card => createOpportunityCard(card)).join('')}
                     </div>
                 </aside>
             </section>
@@ -519,42 +522,42 @@ function getPublicationIcon(iconType) {
     return icons[iconType] || '';
 }
 
-function createOpportunityCategory(category) {
+function createOpportunityCard(card) {
     let html = `
-        <h4>${category.title}</h4>
-        <p>${category.content}</p>
+        <div class="research-card" role="listitem">
+            <h4>${card.title}</h4>
+            <p>${card.content}</p>
     `;
 
-    if (category.fellowships) {
-        html += `<p><strong>${category.fellowships.intro}</strong> `;
-        html += category.fellowships.links.map(link =>
+    if (card.fellowships) {
+        html += `<br><p><strong>${card.fellowships.intro}</strong> `;
+        html += card.fellowships.links.map(link =>
             `<a href="${link.url}">${link.name}</a>${link.note ? ` (${link.note})` : ''}`
         ).join(', ');
         html += '</p>';
     }
 
-    if (category.programs) {
-        html += `<p><strong>${category.programs.intro}</strong> `;
-        html += category.programs.links.map(link =>
+    if (card.programs) {
+        html += `<br><p><strong>${card.programs.intro}</strong> `;
+        html += card.programs.links.map(link =>
             `<a href="${link.url}">${link.name}</a>`
         ).join(', ');
         html += '</p>';
     }
 
-    if (category.subcategories) {
-        category.subcategories.forEach(subcat => {
-            html += `<p><strong>${subcat.title}</strong> `;
-            html += subcat.opportunities.map(opp => {
-                if (opp.url) {
-                    return `<a href="${opp.url}">${opp.name}</a>${opp.abbr ? ` (${opp.abbr})` : ''}`;
-                } else {
-                    return `${opp.name}${opp.note ? ` (${opp.note})` : ''}`;
-                }
-            }).join(', ');
-            html += '</p>';
-        });
+    if (card.opportunities) {
+        html += `<br><p><strong>Programs:</strong> `;
+        html += card.opportunities.map(opp => {
+            if (opp.url) {
+                return `<a href="${opp.url}">${opp.name}</a>${opp.abbr ? ` (${opp.abbr})` : ''}`;
+            } else {
+                return `${opp.name}${opp.note ? ` (${opp.note})` : ''}`;
+            }
+        }).join(', ');
+        html += '</p>';
     }
 
+    html += '</div>';
     return html;
 }
 
@@ -608,6 +611,12 @@ function populatePageContent(pageType, data) {
         // Populate specific page content
         switch (pageType) {
             case 'mentorship':
+                // Populate page header manually for mentorship
+                const mentorshipTitle = document.getElementById('page-title');
+                const mentorshipTagline = document.getElementById('page-tagline');
+                if (mentorshipTitle) mentorshipTitle.textContent = sectionData.title;
+                if (mentorshipTagline) mentorshipTagline.textContent = sectionData.tagline;
+                
                 populateMentorshipSections(sectionData);
                 // Initialize interactive features for mentorship page
                 requestAnimationFrame(() => {
@@ -631,6 +640,12 @@ function populatePageContent(pageType, data) {
                 const teachingSection = document.getElementById(`${pageType}-content`);
                 if (teachingSection) {
                     teachingSection.innerHTML = createTeachingContent(sectionData);
+                    // Initialize filtering after DOM is updated
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            initializeTeachingFiltering();
+                        });
+                    });
                 }
                 break;
         }
@@ -639,14 +654,13 @@ function populatePageContent(pageType, data) {
 
 // New function to populate individual mentorship sections
 function populateMentorshipSections(data) {
+    // Store mentee data globally for lazy loading
+    allMenteesData = data;
+    
     // Calculate dynamic statistics from mentee data
     const stats = calculateMentorshipStats(data.menteesByStage);
 
-    // Populate introduction section
-    const introSection = document.getElementById('mentorship-intro');
-    if (introSection) {
-        introSection.innerHTML = createMentorshipIntro(data);
-    }
+    // Skip introduction section - using page header instead
 
     // Populate overview section
     const overviewSection = document.getElementById('mentorship-overview');
@@ -671,17 +685,9 @@ function populateMentorshipSections(data) {
     }
 }
 
-// Create mentorship introduction content
+// Create mentorship introduction content (empty - just using page header now)
 function createMentorshipIntro(data) {
-    return `
-        <section role="banner" aria-labelledby="mentorship-main-heading">
-            <h1 id="mentorship-main-heading" class="section-title">Mentorship & Supervision</h1>
-            <p class="tagline" aria-describedby="intro-content">${data.tagline}</p>
-            <div class="intro-text" role="region" aria-labelledby="mentorship-main-heading">
-                <p id="intro-content">${data.introduction.content}</p>
-            </div>
-        </section>
-    `;
+    return '';
 }
 
 // Create mentorship overview content
@@ -775,6 +781,7 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
     // Filter out placeholder entries
     const realMentees = mentees.filter(mentee => mentee.privacy !== 'placeholder');
     const sectionId = title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    console.log(`Creating section: ${title} -> ${sectionId}, ${realMentees.length} mentees`);
     
     if (realMentees.length === 0 && mentees.length > 0) {
         return `
@@ -787,14 +794,39 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
 
     if (realMentees.length === 0) return '';
 
-    return `
-        <section class="mentee-section" role="region" aria-labelledby="${sectionId}-heading">
-            <h4 id="${sectionId}-heading">${title}</h4>
-            <div class="mentee-cards" role="list" aria-label="Mentees in ${title} category">
-                ${realMentees.map(mentee => createMenteeCard(mentee, type, isCompleted)).join('')}
-            </div>
-        </section>
-    `;
+    // Implement lazy loading for sections with many mentees (threshold: 8+ mentees)
+    const lazyLoadThreshold = 8;
+    const shouldLazyLoad = realMentees.length > lazyLoadThreshold;
+    
+    if (shouldLazyLoad) {
+        const initialBatch = realMentees.slice(0, lazyLoadThreshold);
+        const remainingCount = realMentees.length - lazyLoadThreshold;
+        
+        return `
+            <section class="mentee-section" role="region" aria-labelledby="${sectionId}-heading">
+                <h4 id="${sectionId}-heading">${title} (${realMentees.length})</h4>
+                <div class="mentee-cards" role="list" aria-label="Mentees in ${title} category" 
+                     data-section-id="${sectionId}" data-type="${type}" data-completed="${isCompleted}">
+                    ${initialBatch.map(mentee => createMenteeCard(mentee, type, isCompleted)).join('')}
+                </div>
+                <div class="mentee-load-more" id="load-more-${sectionId}">
+                    <button class="load-more-btn" onclick="window.loadMoreMentees('${sectionId}', '${type}', ${isCompleted})"
+                            aria-label="Show all ${remainingCount} remaining mentees in ${title} section">
+                        Show all ${remainingCount} remaining mentees
+                    </button>
+                </div>
+            </section>
+        `;
+    } else {
+        return `
+            <section class="mentee-section" role="region" aria-labelledby="${sectionId}-heading">
+                <h4 id="${sectionId}-heading">${title} (${realMentees.length})</h4>
+                <div class="mentee-cards" role="list" aria-label="Mentees in ${title} category">
+                    ${realMentees.map(mentee => createMenteeCard(mentee, type, isCompleted)).join('')}
+                </div>
+            </section>
+        `;
+    }
 }
 
 function createMenteeCard(mentee, type, isCompleted = false) {
@@ -1299,7 +1331,7 @@ function createRecentPublications(dynamicData) {
 
     return `
         <section class="highlight-box" role="region" aria-labelledby="recent-heading">
-            <h3 id="recent-heading">Recent Publications (${allPubs.length} papers)</h3>
+            <h3 id="recent-heading">Recent Publications</h3>
             <div id="publications-container" class="recent-publications" role="feed" aria-label="Publications list" aria-busy="false" data-total="${allPubs.length}" data-loaded="${initialPubs.length}">
                 ${initialPubs.map(pub => createPublicationHTML(pub)).join('')}
             </div>
@@ -2132,7 +2164,109 @@ function initializeTalksFiltering() {
 }
 
 function createTeachingContent(data) {
-    return `
+    // No statistics needed - removed as requested
+
+    // Department and level filter buttons
+    const allDepartments = data.courseHistory.flatMap(course => 
+        course.departments ? course.departments : [course.department]
+    );
+    const uniqueDepartments = [...new Set(allDepartments)];
+    const uniqueLevels = [...new Set(data.courseHistory.map(course => course.level))];
+    
+    const filterButtons = data.courseHistory ? `
+        <nav class="teaching-filters" role="navigation" aria-label="Filter courses by department and level">
+            <div class="filter-section">
+                <h4 class="filter-section-title">All Courses</h4>
+                <button class="filter-btn active" data-filter="all" data-filter-type="general" aria-pressed="true" aria-label="Show all courses, ${data.teachingStats.totalOfferings} total">
+                    All Courses (${data.teachingStats.totalOfferings})
+                </button>
+            </div>
+            
+            <div class="filter-section">
+                <h4 class="filter-section-title">By Department</h4>
+                <div class="filter-buttons-row">
+                    ${uniqueDepartments.map(department => {
+                        const deptCourses = data.courseHistory.filter(course => 
+                            (course.departments && course.departments.includes(department)) || 
+                            course.department === department
+                        );
+                        const count = deptCourses.reduce((sum, course) => sum + course.terms.length, 0);
+                        return `
+                            <button class="filter-btn dept-badge dept-badge-${department.toLowerCase().replace(' ', '-')}" 
+                                    data-filter="${department.toLowerCase().replace(' ', '-')}" 
+                                    data-filter-type="department"
+                                    aria-pressed="false" aria-label="Show ${department} courses, ${count} offerings">
+                                ${department} (${count})
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <h4 class="filter-section-title">By Level</h4>
+                <div class="filter-buttons-row">
+                    ${uniqueLevels.map(level => {
+                        const levelCourses = data.courseHistory.filter(course => course.level === level);
+                        const count = levelCourses.reduce((sum, course) => sum + course.terms.length, 0);
+                        return `
+                            <button class="filter-btn level-badge level-badge-${level.toLowerCase()}" 
+                                    data-filter="${level.toLowerCase()}" 
+                                    data-filter-type="level"
+                                    aria-pressed="false" aria-label="Show ${level} courses, ${count} offerings">
+                                ${level} (${count})
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        </nav>
+        <div aria-live="polite" aria-atomic="true" class="sr-only" id="teaching-filter-status"></div>
+    ` : '';
+
+    // Generate course history
+    const courseHistoryHtml = data.courseHistory ? `
+        <div class="course-history">
+            ${data.courseHistory.map((course, index) => `
+                <article class="course-card" 
+                         data-departments="${course.departments ? course.departments.map(d => d.toLowerCase().replace(' ', '-')).join(' ') : course.department.toLowerCase().replace(' ', '-')}" 
+                         data-level="${course.level.toLowerCase()}"
+                         aria-labelledby="course-${index}-title" role="article">
+                    <div class="course-header">
+                        <div class="course-title-section">
+                            <h4 class="course-title" id="course-${index}-title">
+                                <span class="course-code">${course.code}</span>
+                                ${course.title}
+                            </h4>
+                            <div class="course-badges">
+                                <span class="level-badge level-badge-${course.level.toLowerCase()}">${course.level}</span>
+                                ${course.departments ? 
+                                    course.departments.map(dept => 
+                                        `<span class="dept-badge dept-badge-${dept.toLowerCase().replace(' ', '-')}">${dept}</span>`
+                                    ).join('') : 
+                                    `<span class="dept-badge dept-badge-${course.department.toLowerCase().replace(' ', '-')}">${course.department}</span>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="course-details">
+                        <p class="course-description">${course.description}</p>
+                        <div class="course-terms">
+                            <strong>Terms Taught:</strong>
+                            <div class="terms-list">
+                                ${course.terms.map(term => `
+                                    <span class="term-badge">${term}</span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `).join('')}
+        </div>
+    ` : '';
+
+    const html = `
         <div class="page-intro">
             <div class="highlight-box">
                 <h3>${data.philosophy.title}</h3>
@@ -2141,41 +2275,123 @@ function createTeachingContent(data) {
         </div>
         
         <div class="highlight-box">
-            <h3>${data.courses.title}</h3>
-            <div class="content-grid">
-                <div>
-                    <h4>Undergraduate Courses</h4>
-                    ${data.courses.undergraduate.map(course => `
-                        <div class="course-item">
-                            <h5>${course.code}: ${course.title}</h5>
-                            <p>${course.description}</p>
-                        </div>
-                    `).join('')}
-                </div>
-                <div>
-                    <h4>Graduate Courses</h4>
-                    ${data.courses.graduate.map(course => `
-                        <div class="course-item">
-                            <h5>${course.code}: ${course.title}</h5>
-                            <p>${course.description}</p>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
-        
-        <div class="content-grid">
-            <div class="highlight-box">
-                <h3>${data.resources.title}</h3>
-                <p>${data.resources.content}</p>
-            </div>
-            
-            <div class="highlight-box">
-                <h3>${data.workshops.title}</h3>
-                <p>${data.workshops.content}</p>
-            </div>
+            <h3>Teaching History</h3>
+            ${filterButtons}
+            ${courseHistoryHtml}
         </div>
     `;
+    
+    return html;
+}
+
+// Initialize teaching filtering functionality
+function initializeTeachingFiltering() {
+    const filterBtns = document.querySelectorAll('.teaching-filters .filter-btn');
+    const filterStatus = document.getElementById('teaching-filter-status');
+    if (filterBtns.length === 0) return;
+    
+    // Function to update filter display and announce changes
+    function updateTeachingFilter(selectedBtn) {
+        const filter = selectedBtn.dataset.filter;
+        const filterType = selectedBtn.dataset.filterType;
+        const filterLabel = selectedBtn.textContent.trim();
+        
+        // Update active button and aria-pressed states
+        filterBtns.forEach(btn => {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-pressed', 'false');
+        });
+        selectedBtn.classList.add('active');
+        selectedBtn.setAttribute('aria-pressed', 'true');
+        
+        // Show/hide course cards and count visible courses
+        let visibleCount = 0;
+        document.querySelectorAll('.course-card').forEach(card => {
+            let shouldShow = false;
+            
+            if (filter === 'all') {
+                shouldShow = true;
+            } else if (filterType === 'department') {
+                // Check if the course belongs to this department (handles multiple departments)
+                const courseDepartments = card.dataset.departments.split(' ');
+                shouldShow = courseDepartments.includes(filter);
+            } else if (filterType === 'level') {
+                shouldShow = card.dataset.level === filter;
+            }
+            
+            if (shouldShow) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        // Announce change to screen readers
+        if (filterStatus) {
+            let announcement;
+            if (filter === 'all') {
+                announcement = `Showing all ${visibleCount} courses`;
+            } else if (filterType === 'department') {
+                announcement = `Showing ${visibleCount} courses in ${filterLabel.split(' (')[0]} department`;
+            } else if (filterType === 'level') {
+                announcement = `Showing ${visibleCount} ${filterLabel.split(' (')[0].toLowerCase()} courses`;
+            }
+            filterStatus.textContent = announcement;
+        }
+    }
+    
+    // Add click and keyboard event listeners
+    filterBtns.forEach((btn, index) => {
+        // Click handler
+        btn.addEventListener('click', function() {
+            updateTeachingFilter(this);
+        });
+        
+        // Keyboard navigation
+        btn.addEventListener('keydown', function(e) {
+            let targetIndex = index;
+            
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    targetIndex = (index + 1) % filterBtns.length;
+                    filterBtns[targetIndex].focus();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    targetIndex = (index - 1 + filterBtns.length) % filterBtns.length;
+                    filterBtns[targetIndex].focus();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    filterBtns[0].focus();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    filterBtns[filterBtns.length - 1].focus();
+                    break;
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    updateTeachingFilter(this);
+                    break;
+            }
+        });
+        
+        // Ensure proper tab order
+        btn.setAttribute('tabindex', index === 0 ? '0' : '-1');
+    });
+    
+    // Update tabindex when focus changes
+    filterBtns.forEach(btn => {
+        btn.addEventListener('focus', function() {
+            filterBtns.forEach(b => b.setAttribute('tabindex', '-1'));
+            this.setAttribute('tabindex', '0');
+        });
+    });
 }
 
 function populateFooter(footer) {
@@ -2250,7 +2466,124 @@ function updatePublicationIcons() {
     });
 }
 
+// Global variable to store mentee data for lazy loading
+let allMenteesData = null;
+
+/**
+ * Load more mentees for a specific section
+ */
+function loadMoreMentees(sectionId, type, isCompleted) {
+    console.log('loadMoreMentees called:', sectionId, type, isCompleted);
+    console.log('allMenteesData available:', !!allMenteesData);
+    
+    if (!allMenteesData) {
+        console.error('Mentee data not available for lazy loading');
+        return;
+    }
+    
+    const container = document.querySelector(`[data-section-id="${sectionId}"]`);
+    const loadMoreDiv = document.getElementById(`load-more-${sectionId}`);
+    
+    if (!container || !loadMoreDiv) {
+        console.error('Required mentee elements not found');
+        return;
+    }
+    
+    // Show loading state
+    const loadMoreBtn = loadMoreDiv.querySelector('.load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.textContent = 'Loading mentees...';
+        loadMoreBtn.setAttribute('aria-busy', 'true');
+    }
+    
+    // Get the remaining mentees for this section
+    const currentMentees = container.children.length;
+    
+    // Find the right mentee data source
+    let menteeSource;
+    if (isCompleted) {
+        if (sectionId.includes('postdoctoral')) {
+            menteeSource = allMenteesData.menteesByStage.completed.postdoctoral;
+        } else if (sectionId.includes('doctoral')) {
+            menteeSource = allMenteesData.menteesByStage.completed.doctoral;
+        } else {
+            menteeSource = allMenteesData.menteesByStage.completed.bachelors;
+        }
+    } else {
+        if (sectionId.includes('postdoctoral')) {
+            menteeSource = allMenteesData.menteesByStage.postdoctoral;
+        } else if (sectionId.includes('doctoral')) {
+            menteeSource = allMenteesData.menteesByStage.doctoral;
+        } else {
+            menteeSource = allMenteesData.menteesByStage.bachelors;
+        }
+    }
+    
+    if (!menteeSource) {
+        console.error('Could not find mentee source for section:', sectionId);
+        return;
+    }
+    
+    const realMentees = menteeSource.filter(mentee => mentee.privacy !== 'placeholder');
+    const remainingMentees = realMentees.slice(currentMentees); // Get ALL remaining mentees
+    
+    // Add ALL the remaining mentee cards
+    remainingMentees.forEach(mentee => {
+        const menteeHTML = createMenteeCard(mentee, type, isCompleted);
+        container.insertAdjacentHTML('beforeend', menteeHTML);
+    });
+    
+    // Remove the load more button since everything is now loaded
+    loadMoreDiv.remove();
+    
+    // Announce to screen readers
+    announceToScreenReader(`Loaded ${remainingMentees.length} more mentees. All mentees in this section are now visible.`);
+}
+
+// Make loadMoreMentees globally available
+window.loadMoreMentees = loadMoreMentees;
+
+// Initialize scroll-based lazy loading for mentorship page
+function setupScrollBasedLoading() {
+    // Only set up if Intersection Observer is supported
+    if (!('IntersectionObserver' in window)) {
+        console.log('IntersectionObserver not supported, falling back to manual loading');
+        return;
+    }
+    
+    // Create intersection observer for load more buttons
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const button = entry.target.querySelector('.load-more-btn');
+                if (button) {
+                    // Trigger the load more function
+                    button.click();
+                    // Stop observing this element since it will be removed
+                    observer.unobserve(entry.target);
+                }
+            }
+        });
+    }, {
+        rootMargin: '100px' // Trigger when button is 100px from viewport
+    });
+    
+    // Observe all load more buttons
+    const loadMoreDivs = document.querySelectorAll('.mentee-load-more');
+    loadMoreDivs.forEach(div => {
+        observer.observe(div);
+    });
+    
+    console.log(`Set up scroll-based loading for ${loadMoreDivs.length} sections`);
+}
+
 // Initialize mentorship page interactive features
 function initializeMentorshipInteractivity() {
-    // No interactive features needed for now
+    console.log('Initializing mentorship interactivity, data available:', !!allMenteesData);
+    
+    // Set up scroll-based loading after a short delay to ensure DOM is ready
+    setTimeout(() => {
+        setupScrollBasedLoading();
+    }, 500);
 }

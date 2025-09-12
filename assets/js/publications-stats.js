@@ -305,7 +305,7 @@ class PublicationsStats {
         }
         
         container.innerHTML = `
-            <div class="stats-dashboard">
+            <div class="stats-dashboard highlight-box">
                 <div class="dashboard-header">
                     <h3>Publication Statistics</h3>
                     <div class="stats-summary">
