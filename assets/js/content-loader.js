@@ -198,11 +198,14 @@ function populateNavigation(navigation) {
                 </button>
             `;
         } else {
-            // Individual pages: show only "Back to Home" button (no toggle needed for single item)
+            // Individual pages: show "Home" and "Top" buttons
             navContainer.innerHTML = `
                 <a href="index.html" class="nav-link home-button">
-                    <span class="home-icon">←</span> Back to Home
+                    <span class="home-icon">🏠</span> Home
                 </a>
+                <button class="nav-link top-button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" type="button" aria-label="Scroll to top">
+                    <span class="top-icon">⬆️</span> Top
+                </button>
             `;
         }
     }

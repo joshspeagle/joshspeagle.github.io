@@ -124,6 +124,11 @@ sup {
         justify-content: center;
     }
 
+    /* Mobile spacing for top button */
+    .nav-link.top-button {
+        margin-left: 0.75rem;
+    }
+
     /* Header mobile optimization */
     .header {
         padding: 1rem 0;

@@ -487,6 +487,19 @@
     transform: scale(0.95);
 }
 
+/* Top button styling for non-home pages */
+.nav-link.top-button {
+    margin-left: 1rem;
+    background: inherit;
+    border: inherit;
+    color: inherit;
+}
+
+.nav-link.top-button .top-icon {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
 /* Section titles (specific to components) */
 
 .section-title {
