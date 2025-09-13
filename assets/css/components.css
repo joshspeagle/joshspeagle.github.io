@@ -624,6 +624,7 @@
     background: var(--bg-nav);
     padding: 0.75rem 0;
     border-bottom: 1px solid var(--border-primary);
+    overflow: visible;
 }
 
 .quick-links-inline {
@@ -631,6 +632,8 @@
     justify-content: center;
     gap: 2rem;
     flex-wrap: wrap;
+    position: relative;
+    overflow: visible;
 }
 
 .quick-link-inline {
@@ -1055,7 +1058,6 @@
     position: relative;
     display: inline-block;
     z-index: 1000;
-    /* Ensure the dropdown container has proper stacking context */
 }
 
 .quick-link-dropdown .dropdown-toggle {
@@ -1114,8 +1116,7 @@
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    z-index: 9999;
-    /* Increased z-index to ensure it appears above all content */
+    z-index: 1001;
     overflow: hidden;
     margin-top: 0.5rem;
 }
@@ -1762,34 +1763,77 @@
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
 
-    /* Quick link dropdown adjustments for mobile */
+    /* Mobile adjustments - minimal changes to desktop behavior */
     .quick-link-dropdown .dropdown-menu {
-        position: fixed;
-        top: auto;
-        left: 1rem;
-        right: 1rem;
-        width: auto;
-        min-width: auto;
-        transform: translateY(10px);
-    }
-
-    .quick-link-dropdown.open .dropdown-menu {
-        transform: translateY(0);
+        /* More compact width for mobile to better align with button */
+        width: 180px;
+        min-width: 160px;
+        max-width: calc(100vw - 2rem);
     }
 
     /* Regular nav dropdown adjustments for mobile */
     .dropdown-menu {
-        position: fixed;
-        top: auto;
-        left: 1rem;
-        right: 1rem;
-        width: auto;
-        min-width: auto;
-        transform: translateY(10px);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: auto;
+        width: 250px;
+        min-width: 250px;
+        max-width: calc(100vw - 2rem);
+        transform: translateY(-10px);
+        max-height: 80vh;
+        overflow-y: auto;
     }
 
     .nav-dropdown.open .dropdown-menu {
         transform: translateY(0);
+    }
+
+    /* Mobile dropdown item improvements */
+    .quick-link-dropdown .dropdown-item,
+    .dropdown-item {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+
+    .quick-link-dropdown .dropdown-item:hover,
+    .dropdown-item:hover {
+        padding-left: 1.25rem;
+    }
+
+    /* Improve dropdown toggle button on mobile */
+    .quick-link-dropdown .dropdown-toggle {
+        min-height: 44px;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.9rem;
+    }
+
+    .dropdown-toggle {
+        min-height: 44px;
+        font-size: 0.9rem;
+    }
+
+
+    /* Respect user's motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+        .quick-link-dropdown .dropdown-arrow,
+        .dropdown-arrow {
+            transition: none;
+        }
+        
+        .quick-link-dropdown .dropdown-item::before,
+        .dropdown-item::before {
+            transition: none;
+        }
+        
+        .quick-link-dropdown .dropdown-menu,
+        .dropdown-menu {
+            transition: none;
+        }
     }
 
     /* Page header adjustments */
@@ -3272,14 +3316,6 @@
     font-weight: 500;
 }
 
-/* Screen reader only content */
-.sr-only {
-    position: absolute;
-    left: -10000px;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-}
 
 /* Talks filter buttons */
 .talks-filters {
@@ -4119,5 +4155,367 @@
     .filter-btn:hover,
     .course-card:hover {
         transform: none !important;
+    }
+}
+
+/* Awards page styling */
+.award-item {
+    cursor: pointer;
+    position: relative;
+}
+
+.award-item:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.award-item:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.award-item .award-header {
+    margin-bottom: 1rem;
+}
+
+.award-item h4 {
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.award-meta {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.award-year {
+    font-weight: 600;
+    color: var(--accent-blue);
+    white-space: nowrap;
+}
+
+.award-separator {
+    color: var(--text-muted);
+}
+
+.award-organization {
+    font-style: italic;
+    flex: 1;
+    min-width: 0;
+}
+
+.award-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Service page styling */
+.service-container {
+    max-width: 100%;
+}
+
+.service-category {
+    margin-bottom: 3rem;
+}
+
+.service-category:last-child {
+    margin-bottom: 0;
+}
+
+.service-category-title {
+    color: var(--accent-blue);
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.service-organizations {
+    display: grid;
+    gap: 2rem;
+}
+
+.service-organization-group {
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.service-organization-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.service-organization-group:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+.service-organization-group:focus-visible {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+[data-theme="dark"] .service-organization-group:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.organization-name {
+    color: var(--accent-blue);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+.organization-positions {
+    display: grid;
+    gap: 1rem;
+}
+
+.position-item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.position-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.position-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.position-role {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    flex: 1;
+    line-height: 1.4;
+}
+
+.position-periods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: flex-start;
+}
+
+.period-tag {
+    background: var(--accent-blue);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* Fallback styling for old structure */
+.service-items {
+    display: grid;
+    gap: 1rem;
+}
+
+.service-item {
+    background: var(--bg-highlight);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+.service-item:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .service-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.service-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.service-role {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    flex: 1;
+}
+
+.service-period {
+    color: var(--accent-blue);
+    font-size: 0.9rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.service-organization {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 768px) {
+    /* Awards page mobile optimization */
+    .award-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .award-separator {
+        display: none;
+    }
+    
+    .award-year {
+        order: 1;
+        font-size: 0.85rem;
+    }
+    
+    .award-organization {
+        order: 2;
+        font-size: 0.85rem;
+    }
+    
+    /* Service page mobile optimization */
+    .service-organizations {
+        gap: 1.5rem;
+    }
+    
+    .service-organization-group {
+        padding: 1rem;
+    }
+    
+    .organization-name {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .position-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .position-periods {
+        align-self: flex-start;
+    }
+    
+    .position-role {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .period-tag {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.6rem;
+    }
+    
+    /* Fallback styling mobile */
+    .service-item-header {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .service-period {
+        align-self: flex-start;
+    }
+    
+    .service-item {
+        padding: 1rem;
+    }
+}
+
+/* Additional mobile breakpoint for very small screens */
+@media (max-width: 480px) {
+    .awards-container,
+    .service-container {
+        padding: 0;
+    }
+    
+    .research-grid {
+        gap: 0.75rem;
+        margin: 1rem 0;
+    }
+    
+    .research-card {
+        padding: 1rem;
+    }
+    
+    .service-organizations {
+        gap: 1rem;
+    }
+    
+    .service-organization-group {
+        padding: 0.75rem;
+    }
+    
+    .service-category {
+        margin-bottom: 2rem;
+    }
+    
+    .service-category-title {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Focus and accessibility improvements */
+.award-item:focus,
+.service-organization-group:focus,
+.service-item:focus {
+    background: var(--bg-primary);
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .award-item,
+    .service-organization-group,
+    .service-item {
+        transition: none;
+    }
+    
+    .award-item:hover,
+    .service-organization-group:hover,
+    .service-item:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .award-item,
+    .service-organization-group,
+    .service-item {
+        border-width: 2px;
+    }
+    
+    .period-tag {
+        border: 1px solid var(--text-primary);
     }
 }

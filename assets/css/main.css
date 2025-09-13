@@ -57,6 +57,7 @@ a:hover {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 2rem;
+    overflow: visible;
 }
 
 .two-column {
@@ -146,19 +147,34 @@ strong {
 /* Skip link for keyboard users */
 .skip-link {
     position: absolute;
-    top: -40px;
-    left: 6px;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
     background: var(--accent-blue);
     color: white;
-    padding: 8px;
-    border-radius: 4px;
     text-decoration: none;
-    z-index: 1000;
+    z-index: 10000;
     font-weight: 600;
+    border-radius: 4px;
 }
 
 .skip-link:focus {
+    position: absolute;
     top: 6px;
+    left: 6px;
+    width: auto;
+    height: auto;
+    padding: 8px 12px;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+    border-radius: 4px;
 }
 
 /* Enhanced focus styles for better accessibility */

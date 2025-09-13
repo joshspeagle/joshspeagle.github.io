@@ -44,6 +44,14 @@
                 {
                     "text": "Teaching",
                     "href": "teaching.html"
+                },
+                {
+                    "text": "Awards",
+                    "href": "awards.html"
+                },
+                {
+                    "text": "Service",
+                    "href": "service.html"
                 }
             ]
         }
@@ -2295,6 +2303,222 @@
                 "title": "Workshops & Training",
                 "content": "I regularly conduct workshops on Bayesian methods, Python for astronomy, and statistical computing for various audiences including graduate students, postdocs, and faculty."
             }
+        },
+        "awards": {
+            "title": "Awards & Honors",
+            "tagline": "Recognition and achievements in academia and research",
+            "awards": [
+                {
+                    "title": "Connaught New Researcher Award",
+                    "organization": "University of Toronto",
+                    "year": 2024,
+                    "description": "Supports new faculty members in their research endeavors during their first few years at the University of Toronto"
+                },
+                {
+                    "title": "John Charles Polanyi Prize in Physics",
+                    "organization": "Council of Ontario Universities",
+                    "year": 2022,
+                    "description": "Annual award recognizing recent achievement by young researchers at an Ontario university in the field of physics"
+                },
+                {
+                    "title": "Best Astrostatistics Student Paper Award",
+                    "organization": "American Statistical Association (ASA) Astrostatistics Interest Group (AIG)",
+                    "year": 2020,
+                    "description": "Recognition for outstanding student research in the field of astrostatistics"
+                },
+                {
+                    "title": "Eric R. Keto Prize for Best Thesis in Theoretical Astrophysics",
+                    "organization": "Harvard University",
+                    "year": 2020,
+                    "description": "Annual prize for the best PhD thesis in theoretical astrophysics at Harvard University"
+                }
+            ]
+        },
+        "service": {
+            "title": "Leadership & Service",
+            "tagline": "Professional service and community engagement",
+            "categories": [
+                {
+                    "title": "Professional Societies",
+                    "organizations": [
+                        {
+                            "name": "American Astronomical Society (AAS)",
+                            "positions": [
+                                {
+                                    "role": "Working Group on Astroinformatics & Astrostatistics Steering Committee",
+                                    "periods": ["2020-2026"]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "American Statistical Association (ASA)",
+                            "positions": [
+                                {
+                                    "role": "Astrostatistics Interest Group (AIG): Program Chair (Interim)",
+                                    "periods": ["2023-2024"]
+                                },
+                                {
+                                    "role": "Astrostatistics Interest Group (AIG): Web Director",
+                                    "periods": ["2020-2023"]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Canadian Astronomical Society (CASCA)",
+                            "positions": [
+                                {
+                                    "role": "Postdoc Committee",
+                                    "periods": ["2020-2023"]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Statistical Society of Canada (SSC)",
+                            "positions": [
+                                {
+                                    "role": "Data Science and Analytics Section: President Elect",
+                                    "periods": ["2024-2025"]
+                                },
+                                {
+                                    "role": "Data Science and Analytics Section: President",
+                                    "periods": ["2025-2026"]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "LSST Informatics & Statistics Science Collaboration",
+                            "positions": [
+                                {
+                                    "role": "Publication Committee: Chair",
+                                    "periods": ["2024"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "University of Toronto",
+                    "organizations": [
+                        {
+                            "name": "Department of Astronomy & Astrophysics",
+                            "positions": [
+                                {
+                                    "role": "Undergraduate Curriculum Committee",
+                                    "periods": ["2023-2024", "2025-2026"]
+                                },
+                                {
+                                    "role": "Summer Undergraduate Research Program (SURP) Committee: Chair",
+                                    "periods": ["2022-2024"]
+                                },
+                                {
+                                    "role": "Summer Undergraduate Research Program (SURP) Committee",
+                                    "periods": ["2021-2022"]
+                                },
+                                {
+                                    "role": "Training & Mentoring Committee: Co-Chair",
+                                    "periods": ["2021-2023"]
+                                },
+                                {
+                                    "role": "Graduate Admissions Committee",
+                                    "periods": ["2021"]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Department of Statistical Sciences",
+                            "positions": [
+                                {
+                                    "role": "Graduate Admissions Committee",
+                                    "periods": ["2022-Present"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Workshops & Conferences",
+                    "organizations": [
+                        {
+                            "name": "University of Toronto",
+                            "positions": [
+                                {
+                                    "role": "Annual UofT STATSTRO Workshop: Co-Organizer",
+                                    "periods": ["2021-Present"]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Conference Organization",
+                            "positions": [
+                                {
+                                    "role": "Globular Clusters & Their Tidal Tails: SOC Co-Chair, LOC Co-Chair",
+                                    "periods": ["2024"]
+                                },
+                                {
+                                    "role": "CASCA Annual General Meeting: SOC Co-Chair, LOC",
+                                    "periods": ["2024"]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Center for Astrophysics | Harvard & Smithsonian",
+                            "hidden": true,
+                            "positions": [
+                                {
+                                    "role": "CfA Machine Learning Journal Club: Founder and Organizer",
+                                    "periods": ["2017-2020"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "title": "Manuscript Referee Service",
+                    "hidden": true,
+                    "items": [
+                        {
+                            "role": "Referee",
+                            "organization": "Annals of Applied Statistics",
+                            "period": "2022-Present"
+                        },
+                        {
+                            "role": "Referee",
+                            "organization": "Statistical Science",
+                            "period": "2022-Present"
+                        },
+                        {
+                            "role": "Referee",
+                            "organization": "RAS Techniques and Instruments (RASTI)",
+                            "period": "2022-Present"
+                        },
+                        {
+                            "role": "Referee",
+                            "organization": "Bayesian Analysis",
+                            "period": "2021-Present"
+                        },
+                        {
+                            "role": "Referee",
+                            "organization": "Journal of Open Source Software (JOSS)",
+                            "period": "2020-Present"
+                        },
+                        {
+                            "role": "Referee",
+                            "organization": "Astronomy & Astrophysics (A&A)",
+                            "period": "2017-Present"
+                        },
+                        {
+                            "role": "Referee",
+                            "organization": "Monthly Notices of the Royal Astronomical Society (MNRAS)",
+                            "period": "2016-Present"
+                        },
+                        {
+                            "role": "Referee",
+                            "organization": "American Astronomical Society (AAS) Journals (AJ, ApJ, ApJL, ApJS)",
+                            "period": "2014-Present"
+                        }
+                    ]
+                }
+            ]
         }
     },
     "pages": {
@@ -2313,6 +2537,14 @@
         "teaching": {
             "title": "Teaching",
             "description": "Courses, workshops, and educational resources"
+        },
+        "awards": {
+            "title": "Awards & Honors",
+            "description": "Recognition and achievements in academia and research"
+        },
+        "service": {
+            "title": "Leadership & Service",
+            "description": "Professional service and community engagement"
         }
     },
     "footer": {

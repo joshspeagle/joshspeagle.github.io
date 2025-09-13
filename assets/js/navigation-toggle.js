@@ -88,9 +88,13 @@ function initializeNavigation() {
             });
         }
 
-        // Don't auto-collapse if user manually expanded the navigation
-        const userExpanded = sessionStorage.getItem('navManuallyExpanded') === 'true';
-        if (hasToggle && shouldCollapseNav() && !userExpanded) {
+        // Only auto-collapse on mobile if user hasn't manually expanded the navigation recently
+        const userExpanded = nav.classList.contains('nav-expanded');
+        const lastManualToggle = sessionStorage.getItem('navLastManualToggle');
+        const timeSinceManualToggle = lastManualToggle ? Date.now() - parseInt(lastManualToggle) : Infinity;
+        const recentManualToggle = timeSinceManualToggle < 5000; // 5 seconds
+        
+        if (hasToggle && shouldCollapseNav() && !userExpanded && !recentManualToggle) {
             nav.classList.add('nav-collapsed');
             toggleIcon.textContent = '+';
 
@@ -107,12 +111,15 @@ function initializeNavigation() {
         nav.classList.toggle('nav-collapsed');
         const isCollapsed = nav.classList.contains('nav-collapsed');
 
-        // Add/remove manual expansion marker
+        // Add/remove manual expansion marker and set timestamp
         if (isCollapsed) {
             nav.classList.remove('nav-expanded');
         } else {
             nav.classList.add('nav-expanded');
         }
+
+        // Record the time of manual toggle to prevent auto-collapse
+        sessionStorage.setItem('navLastManualToggle', Date.now().toString());
 
         if (hasToggle) {
             toggleIcon.textContent = isCollapsed ? '+' : '−';

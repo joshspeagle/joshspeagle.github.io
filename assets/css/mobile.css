@@ -87,6 +87,11 @@ sup {
         min-width: 0;
     }
     
+    /* Exception: Allow dropdown visibility for quick-links-bar */
+    .quick-links-bar .container {
+        overflow-x: visible;
+    }
+    
     .section {
         overflow-x: hidden;
         width: 100%;

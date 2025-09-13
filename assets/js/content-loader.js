@@ -208,8 +208,11 @@ function populateNavigation(navigation) {
     }
 }
 
+
 function initializeQuickLinkDropdowns() {
     const quickLinkDropdowns = document.querySelectorAll('.quick-link-dropdown');
+    let scrollTimeout;
+    let recentlyOpened = false;
 
     quickLinkDropdowns.forEach(dropdown => {
         const toggle = dropdown.querySelector('.dropdown-toggle');
@@ -237,6 +240,23 @@ function initializeQuickLinkDropdowns() {
                 } else {
                     dropdown.classList.add('open');
                     this.setAttribute('aria-expanded', 'true');
+                    
+                    // Set flag to prevent immediate closure by touchstart
+                    recentlyOpened = true;
+                    setTimeout(() => {
+                        recentlyOpened = false;
+                    }, 300);
+                }
+            });
+
+            // Close dropdown when clicking on items
+            menu.addEventListener('click', function (e) {
+                if (e.target.classList.contains('dropdown-item') && !e.target.classList.contains('disabled')) {
+                    // Small delay for visual feedback
+                    setTimeout(() => {
+                        dropdown.classList.remove('open');
+                        toggle.setAttribute('aria-expanded', 'false');
+                    }, 150);
                 }
             });
         }
@@ -251,64 +271,37 @@ function initializeQuickLinkDropdowns() {
             });
         }
     });
-}
 
-function initializeDropdowns() {
-    const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
-            const dropdown = this.parentNode;
-            const menu = dropdown.querySelector('.dropdown-menu');
-            const isOpen = dropdown.classList.contains('open');
-
-            // Close all other dropdowns
-            document.querySelectorAll('.nav-dropdown.open').forEach(openDropdown => {
-                if (openDropdown !== dropdown) {
-                    openDropdown.classList.remove('open');
-                    openDropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
-                }
-            });
-
-            // Toggle current dropdown
-            if (isOpen) {
-                dropdown.classList.remove('open');
-                this.setAttribute('aria-expanded', 'false');
-            } else {
-                dropdown.classList.add('open');
-                this.setAttribute('aria-expanded', 'true');
-            }
-        });
-    });
-
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function (e) {
-        if (!e.target.closest('.nav-dropdown')) {
-            document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
+    // Close dropdowns on scroll (with debounce)
+    window.addEventListener('scroll', function () {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            document.querySelectorAll('.quick-link-dropdown.open').forEach(dropdown => {
                 dropdown.classList.remove('open');
                 dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
             });
-        }
-    });
+        }, 100);
+    }, { passive: true });
 
-    // Keyboard navigation for accessibility
-    dropdownToggles.forEach(toggle => {
-        toggle.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            } else if (e.key === 'Escape') {
-                const dropdown = this.parentNode;
-                dropdown.classList.remove('open');
-                this.setAttribute('aria-expanded', 'false');
-                this.focus();
+    // Close dropdowns on mobile touch outside (for better mobile UX)
+    document.addEventListener('touchstart', function (e) {
+        // Don't close if recently opened (prevents race condition)
+        if (recentlyOpened) {
+            return;
+        }
+        
+        if (!e.target.closest('.quick-link-dropdown')) {
+            const openDropdowns = document.querySelectorAll('.quick-link-dropdown.open');
+            if (openDropdowns.length > 0) {
+                openDropdowns.forEach(dropdown => {
+                    dropdown.classList.remove('open');
+                    dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
+                });
             }
-        });
-    });
+        }
+    }, { passive: true });
 }
+
 
 function populateSections(sections) {
     // About Section
@@ -649,6 +642,18 @@ function populatePageContent(pageType, data) {
                             initializeTeachingFiltering();
                         });
                     });
+                }
+                break;
+            case 'awards':
+                const awardsSection = document.getElementById(`${pageType}-content`);
+                if (awardsSection) {
+                    awardsSection.innerHTML = createAwardsContent(sectionData);
+                }
+                break;
+            case 'service':
+                const serviceSection = document.getElementById(`${pageType}-content`);
+                if (serviceSection) {
+                    serviceSection.innerHTML = createServiceContent(sectionData);
                 }
                 break;
         }
@@ -2589,4 +2594,108 @@ function initializeMentorshipInteractivity() {
     setTimeout(() => {
         setupScrollBasedLoading();
     }, 500);
+}
+
+// Create awards content
+function createAwardsContent(data) {
+    if (!data || !data.awards) {
+        return '<p>No awards data available.</p>';
+    }
+
+    return `
+        <div class="awards-container" role="main" aria-label="Awards and honors">
+            <div class="research-grid" role="list" aria-label="List of ${data.awards.length} awards and honors">
+                ${data.awards.map((award, index) => `
+                    <div class="research-card award-item" 
+                         role="listitem" 
+                         aria-labelledby="award-title-${index}" 
+                         aria-describedby="award-desc-${index} award-meta-${index}"
+                         tabindex="0">
+                        <div class="award-header">
+                            <h4 id="award-title-${index}">${award.title}</h4>
+                            <div class="award-meta" id="award-meta-${index}" aria-label="Award details">
+                                <span class="award-year" aria-label="Year received">${award.year}</span>
+                                <span class="award-separator" aria-hidden="true">•</span>
+                                <span class="award-organization" aria-label="Awarding organization">${award.organization}</span>
+                            </div>
+                        </div>
+                        <p class="award-description" id="award-desc-${index}">${award.description}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+// Create service content
+function createServiceContent(data) {
+    if (!data || !data.categories) {
+        return '<p>No service data available.</p>';
+    }
+
+    // Filter out hidden categories
+    const visibleCategories = data.categories.filter(category => !category.hidden);
+
+    return `
+        <div class="service-container" role="main" aria-label="Professional service and leadership">
+            ${visibleCategories.map((category, categoryIndex) => `
+                <section class="service-category" 
+                         role="region" 
+                         aria-labelledby="category-${category.title.replace(/\s+/g, '-').toLowerCase()}"
+                         aria-describedby="category-desc-${categoryIndex}">
+                    <h3 id="category-${category.title.replace(/\s+/g, '-').toLowerCase()}" class="service-category-title">${category.title}</h3>
+                    <div class="service-organizations" 
+                         role="list" 
+                         id="category-desc-${categoryIndex}"
+                         aria-label="Organizations and positions in ${category.title}">
+                        ${category.organizations ? category.organizations.filter(org => !org.hidden).map((org, orgIndex) => `
+                            <div class="service-organization-group" 
+                                 role="listitem" 
+                                 aria-labelledby="org-${categoryIndex}-${orgIndex}"
+                                 tabindex="0">
+                                <h4 class="organization-name" id="org-${categoryIndex}-${orgIndex}">${org.name}</h4>
+                                <div class="organization-positions" 
+                                     role="list" 
+                                     aria-label="Positions at ${org.name}">
+                                    ${org.positions.map((position, posIndex) => `
+                                        <div class="position-item" 
+                                             role="listitem"
+                                             aria-labelledby="pos-${categoryIndex}-${orgIndex}-${posIndex}"
+                                             aria-describedby="periods-${categoryIndex}-${orgIndex}-${posIndex}">
+                                            <div class="position-header">
+                                                <span class="position-role" id="pos-${categoryIndex}-${orgIndex}-${posIndex}">${position.role}</span>
+                                                <div class="position-periods" 
+                                                     id="periods-${categoryIndex}-${orgIndex}-${posIndex}"
+                                                     aria-label="Service periods"
+                                                     role="list">
+                                                    ${position.periods.map((period, periodIndex) => `
+                                                        <span class="period-tag" 
+                                                              role="listitem"
+                                                              aria-label="Service period ${period}">${period}</span>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('') : 
+                        // Fallback for old structure
+                        category.items ? category.items.map((item, itemIndex) => `
+                            <div class="service-item" 
+                                 role="listitem"
+                                 aria-labelledby="item-${categoryIndex}-${itemIndex}"
+                                 tabindex="0">
+                                <div class="service-item-header">
+                                    <h4 class="service-role" id="item-${categoryIndex}-${itemIndex}">${item.role}</h4>
+                                    <div class="service-period" aria-label="Service period">${item.period}</div>
+                                </div>
+                                ${item.organization ? `<div class="service-organization" aria-label="Organization">${item.organization}</div>` : ''}
+                            </div>
+                        `).join('') : ''}
+                    </div>
+                </section>
+            `).join('')}
+        </div>
+    `;
 }
