@@ -72,6 +72,8 @@ CONFIG = {
         "min_papers": 50,  # Minimum expected number of papers
         "max_h_index": 100,  # Sanity check for h-index
         "max_citations": 50000,  # Sanity check for total citations
+        "clean_mathematical_notation": True,  # Auto-fix mathematical notation formatting
+        "validate_mathematical_notation": True,  # Check for mathematical notation issues
     },
 }
 

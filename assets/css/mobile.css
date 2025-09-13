@@ -43,8 +43,55 @@
     }
 }
 
+/* Fix for scientific notation rendering on mobile */
+sub, sup {
+    font-size: 0.7em;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+    display: inline-block; /* Prevent breaking */
+}
+
+sub {
+    bottom: -0.25em;
+}
+
+sup {
+    top: -0.5em;
+}
+
+/* Prevent mathematical notation from breaking across lines */
+.math-notation {
+    white-space: nowrap;
+    display: inline-block;
+}
+
 /* Mobile styles */
 @media (max-width: 768px) {
+    
+    /* Improved scientific notation on mobile */
+    sub, sup {
+        font-size: 0.65em;
+        line-height: 1;
+    }
+    
+    /* Prevent horizontal scroll on mobile only */
+    body {
+        overflow-x: hidden;
+        max-width: 100vw;
+    }
+    
+    .container {
+        width: 100%;
+        overflow-x: hidden;
+        min-width: 0;
+    }
+    
+    .section {
+        overflow-x: hidden;
+        width: 100%;
+        min-width: 0;
+    }
 
     /* Show navigation toggle on mobile */
     .nav-toggle {
@@ -285,22 +332,45 @@
     
     .career-stage-breakdowns {
         text-align: center;
+        margin-top: 1.5rem;
+    }
+    
+    .career-stage-breakdowns h3 {
+        margin-bottom: 1.75rem;
     }
     
     .dual-chart-container {
         flex-direction: column;
         gap: 2rem;
+        margin-top: 1rem;
     }
     
     .chart-section {
         width: 100%;
     }
     
+    .chart-section h4 {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 10;
+        background: var(--bg-primary);
+        padding-bottom: 1rem;
+    }
+    
+    .chart-container {
+        margin: 1.25rem 0;
+        padding: 0.5rem;
+        position: relative;
+        top: 0.75rem;
+        clear: both;
+    }
+    
     .shared-legend {
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
-        margin-top: 1rem;
+        margin-top: 2rem;
     }
     
     .legend-item {
@@ -430,6 +500,83 @@
 
     .section-title {
         font-size: 1.4rem;
+    }
+    
+    /* Extra small mentorship chart fixes */
+    .career-stage-breakdowns h3 {
+        margin-bottom: 2rem;
+        font-size: 1.2rem;
+    }
+    
+    .dual-chart-container {
+        gap: 1.75rem;
+    }
+    
+    .chart-section h4 {
+        margin-bottom: 1.75rem;
+        font-size: 1rem;
+        position: relative;
+        z-index: 10;
+        background: var(--bg-primary);
+        padding-bottom: 1.25rem;
+    }
+    
+    .chart-container {
+        margin: 1.25rem 0;
+        position: relative;
+        top: 1rem;
+        clear: both;
+    }
+    
+    .vertical-bar-chart {
+        max-width: 250px;
+        padding: 0.5rem 0;
+    }
+    
+    .bars-container {
+        height: 90px;
+    }
+    
+    /* Publication badge fixes for very small screens */
+    .paper-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+    
+    .paper-badges {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-self: flex-start;
+        gap: 0.25rem;
+        max-width: 100%;
+    }
+    
+    .category-badge {
+        font-size: 0.65rem !important;
+        padding: 0.125rem 0.375rem !important;
+        max-width: 90px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .student-led-badge {
+        font-size: 0.6rem !important;
+        padding: 0.15rem 0.4rem !important;
+    }
+    
+    /* Recent paper adjustments */
+    .recent-paper {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .recent-paper h4 {
+        font-size: 1rem;
+        line-height: 1.3;
+        margin-bottom: 0.5rem;
     }
 }
 

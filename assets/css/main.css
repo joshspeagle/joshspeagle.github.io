@@ -123,6 +123,13 @@ a:hover {
     transition: all 0.6s ease;
 }
 
+/* Fallback: Show content if JavaScript doesn't load or fails */
+.no-js .section,
+body:not(.loading) .section {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .section.visible {
     opacity: 1;
     transform: translateY(0);

@@ -115,6 +115,9 @@
 .chart-wrapper {
     position: relative;
     height: 300px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .chart-wrapper h4 {
@@ -135,6 +138,9 @@
 
 .chart-wrapper canvas {
     max-height: 250px;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
 }
 
 /* ADS Library Links */
@@ -253,6 +259,7 @@
     .stats-dashboard {
         padding: 1.5rem;
         margin: 1rem 0;
+        overflow-x: hidden;
     }
     
     .stats-summary {
@@ -267,16 +274,45 @@
         font-size: 1.5rem;
     }
     
+    .charts-container {
+        gap: 1.5rem;
+        margin: 1.5rem 0;
+    }
+    
     .chart-section {
         padding: 1rem;
+        width: 100%;
+        overflow-x: hidden;
     }
     
     .chart-wrapper {
-        height: 250px;
+        height: 320px; /* Increased further for doughnut chart */
+        width: 100%;
+        overflow: hidden;
+        padding-left: 0.5rem; /* Add padding for y-axis labels */
+        padding-bottom: 1rem; /* Add bottom padding for x-axis labels */
+    }
+    
+    /* Specific height adjustments for different chart types */
+    #research-areas-chart {
+        max-height: 280px !important; /* Ensure doughnut chart fits */
+    }
+    
+    /* Container for research areas chart needs more height */
+    .chart-section:nth-child(2) .chart-wrapper {
+        height: 400px; /* Extra height for doughnut + legends */
+    }
+    
+    .chart-wrapper h4 {
+        margin-bottom: 1rem;
+        font-size: 0.9rem; /* Reduced from 1rem */
     }
     
     .chart-wrapper canvas {
-        max-height: 200px;
+        max-height: 250px; /* Increased from 180px */
+        min-height: 200px; /* Ensure charts don't disappear */
+        width: 100% !important;
+        height: auto !important;
     }
     
     .library-links {
@@ -302,34 +338,70 @@
     display: flex;
     justify-content: center;
     gap: 2rem;
-    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
     font-size: 0.875rem;
     color: var(--text-secondary);
 }
 
-.inner-ring-label,
-.outer-ring-label {
+.ring-legend-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
-.inner-ring-label:before {
-    content: '';
-    width: 12px;
-    height: 12px;
+.ring-marker {
+    display: inline-block;
     border-radius: 50%;
-    background: var(--text-secondary);
-    opacity: 0.6;
+    background: #808080; /* Fixed gray color for both themes */
 }
 
-.outer-ring-label:before {
-    content: '';
+.inner-marker {
+    width: 10px;
+    height: 10px;
+    opacity: 0.5; /* Lighter for inner ring */
+}
+
+.outer-marker {
+    width: 14px;
+    height: 14px;
+    opacity: 1; /* More opaque for outer ring */
+}
+
+/* Category Legend */
+.category-legend {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
+}
+
+.category-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.category-marker {
+    display: inline-block;
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: var(--text-primary);
-    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+.category-label {
+    white-space: nowrap;
+}
+
+/* Chart Legend Spacing */
+.chart-wrapper .chartjs-legend ul li {
+    margin-left: 8px !important;
+}
+
+.chart-wrapper .chartjs-legend ul li span {
+    margin-right: 6px !important;
 }
 
 /* Chart Accessibility */
@@ -378,6 +450,131 @@
 
 .chart-section:nth-child(3) {
     animation-delay: 0.2s;
+}
+
+/* Very small screens (iPhone SE and smaller) */
+@media (max-width: 375px) {
+    .stats-dashboard {
+        padding: 1rem;
+        margin: 0.5rem 0;
+    }
+    
+    .stats-summary {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    
+    .stat-item {
+        padding: 0.625rem;
+    }
+    
+    .stat-number {
+        font-size: 1.25rem;
+    }
+    
+    .stat-label {
+        font-size: 0.75rem;
+    }
+    
+    .chart-section {
+        padding: 0.75rem;
+    }
+    
+    .chart-wrapper {
+        height: 280px; /* Increased for very small screens */
+        padding-left: 0.75rem; /* More padding for y-axis labels */
+    }
+    
+    /* Research areas chart needs even more height on very small screens */
+    .chart-section:nth-child(2) .chart-wrapper {
+        height: 420px !important; /* Extra height for doughnut + legends on very small screens */
+    }
+    
+    .chart-wrapper h4 {
+        font-size: 0.85rem; /* Smaller font */
+        margin-bottom: 0.5rem;
+    }
+    
+    .chart-wrapper canvas {
+        max-height: 200px; /* Increased from 160px */
+        min-height: 160px; /* Ensure visibility */
+    }
+    
+    /* Further optimize legends for very small screens */
+    .ring-legend {
+        gap: 0.5rem;
+        font-size: 0.65rem;
+        margin-bottom: 0.25rem;
+        flex-wrap: wrap;
+    }
+    
+    .ring-legend-item {
+        gap: 0.25rem;
+    }
+    
+    .ring-marker {
+        width: 6px !important;
+        height: 6px !important;
+    }
+    
+    .inner-marker {
+        width: 5px !important;
+        height: 5px !important;
+    }
+    
+    .outer-marker {
+        width: 8px !important;
+        height: 8px !important;
+    }
+    
+    .category-legend {
+        gap: 0.75rem;
+        font-size: 0.65rem;
+        margin-top: 0.25rem;
+        flex-wrap: wrap;
+    }
+    
+    .category-marker {
+        width: 6px !important;
+        height: 6px !important;
+    }
+    
+    .library-link {
+        padding: 0.75rem;
+        font-size: 0.85rem;
+    }
+    
+    .ring-legend {
+        gap: 0.75rem;
+        font-size: 0.7rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .ring-marker {
+        width: 8px !important;
+        height: 8px !important;
+    }
+    
+    .inner-marker {
+        width: 7px !important;
+        height: 7px !important;
+    }
+    
+    .outer-marker {
+        width: 10px !important;
+        height: 10px !important;
+    }
+    
+    .category-legend {
+        gap: 1rem;
+        font-size: 0.7rem;
+        margin-top: 0.5rem;
+    }
+    
+    .category-marker {
+        width: 8px !important;
+        height: 8px !important;
+    }
 }
 
 /* High contrast mode support */

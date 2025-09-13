@@ -198,14 +198,11 @@ function populateNavigation(navigation) {
                 </button>
             `;
         } else {
-            // Individual pages: show only "Back to Home" button
+            // Individual pages: show only "Back to Home" button (no toggle needed for single item)
             navContainer.innerHTML = `
                 <a href="index.html" class="nav-link home-button">
                     <span class="home-icon">←</span> Back to Home
                 </a>
-                <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation">
-                    <span id="navToggleIcon">+</span>
-                </button>
             `;
         }
     }
@@ -631,6 +628,12 @@ function populatePageContent(pageType, data) {
                 }
                 break;
             case 'talks':
+                // Populate page header manually for talks
+                const talksTitle = document.getElementById('page-title');
+                const talksTagline = document.getElementById('page-tagline');
+                if (talksTitle) talksTitle.textContent = sectionData.title;
+                if (talksTagline) talksTagline.textContent = sectionData.tagline;
+                
                 const talksSection = document.getElementById(`${pageType}-content`);
                 if (talksSection) {
                     talksSection.innerHTML = createTalksContent(sectionData);
@@ -716,6 +719,20 @@ function createMentorshipOverview(data, stats) {
                 
                 <section class="career-stage-breakdowns" role="region" aria-labelledby="breakdown-heading">
                     <h3 id="breakdown-heading">Career Stage Breakdown</h3>
+                    <div class="shared-legend" role="list" aria-label="Chart legend">
+                        <div class="legend-item" role="listitem">
+                            <span class="legend-color postdoc" aria-hidden="true"></span>
+                            <span>Postdoctoral</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="legend-color doctoral" aria-hidden="true"></span>
+                            <span>Doctoral/Masters</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
+                            <span class="legend-color bachelors" aria-hidden="true"></span>
+                            <span>Bachelors/Other</span>
+                        </div>
+                    </div>
                     <div class="dual-chart-container" role="img" aria-labelledby="charts-description">
                         <p id="charts-description" class="sr-only">Bar charts showing distribution of mentees by career stage for current and former supervision</p>
                         <div class="chart-section" role="img" aria-labelledby="current-chart-title">
@@ -729,20 +746,6 @@ function createMentorshipOverview(data, stats) {
                             <div class="chart-container" aria-label="Former mentees by career stage">
                                 ${createInteractiveBarChart(countFormerMentees(data.menteesByStage.completed))}
                             </div>
-                        </div>
-                    </div>
-                    <div class="shared-legend" role="list" aria-label="Chart legend">
-                        <div class="legend-item" role="listitem">
-                            <span class="legend-color postdoc" aria-hidden="true"></span>
-                            <span>Postdoctoral</span>
-                        </div>
-                        <div class="legend-item" role="listitem">
-                            <span class="legend-color doctoral" aria-hidden="true"></span>
-                            <span>Doctoral/Masters</span>
-                        </div>
-                        <div class="legend-item" role="listitem">
-                            <span class="legend-color bachelors" aria-hidden="true"></span>
-                            <span>Bachelors/Other</span>
                         </div>
                     </div>
                 </section>
@@ -2053,10 +2056,10 @@ function createTalksContent(data) {
 
     // After creating the HTML, we'll initialize the filtering
     const html = `
-        <div class="page-intro">
-            <p>${data.tagline || "Conference presentations and public speaking engagements"}</p>
+        ${data.tagline ? `<div class="page-intro">
+            <p>${data.tagline}</p>
             ${data.note ? `<p class="note">${data.note}</p>` : ''}
-        </div>
+        </div>` : ''}
         
         ${statsHtml}
         ${filterButtons}

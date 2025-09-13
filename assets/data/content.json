@@ -1517,7 +1517,8 @@
             }
         },
         "talks": {
-            "title": "Conference Talks & Presentations",
+            "title": "Talks & Events",
+            "tagline": "Presentations, panels, and public engagement across academia and beyond",
             "categories": [
                 {
                     "id": "invited",
@@ -2306,7 +2307,8 @@
             "description": "Peer-reviewed research and scholarly contributions"
         },
         "talks": {
-            "title": "Talks"
+            "title": "Talks & Events",
+            "tagline": "Presentations, panels, and public engagement across academia and beyond"
         },
         "teaching": {
             "title": "Teaching",

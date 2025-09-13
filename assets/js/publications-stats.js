@@ -43,12 +43,12 @@ class PublicationsStats {
                 secondary: '#32D74B',   // Green for contributor (moved from student)
                 accent: '#8E8E93',      // Gray for other (de-emphasized)
                 line: '#5BA3F5',        // Blue for line charts
-                // Research category gradients (dark mode)
+                // Research category gradients (dark mode) - moderately darker outer colors
                 research: {
-                    'Statistical Learning & AI': ['#FF6B6B', '#FF8E85'],        // Red gradient
-                    'Interpretability & Insight': ['#4ECDC4', '#6BD7CF'],       // Teal gradient  
-                    'Inference & Computation': ['#45B7D1', '#6BC7DC'],          // Blue gradient
-                    'Discovery & Understanding': ['#96CEB4', '#A8D5BE']         // Green gradient
+                    'Statistical Learning & AI': ['#E85555', '#FF8E85'],        // Moderately darker red, lighter red
+                    'Interpretability & Insight': ['#2A9D8F', '#6BD7CF'],       // Moderately darker teal, lighter teal  
+                    'Inference & Computation': ['#3B82F6', '#6BC7DC'],          // Moderately darker blue, lighter blue
+                    'Discovery & Understanding': ['#22C55E', '#A8D5BE']         // Moderately darker green, lighter green
                 }
             };
         } else {
@@ -255,6 +255,8 @@ class PublicationsStats {
         
         const textColor = isDarkMode ? '#E0E0E0' : '#333333';
         const gridColor = isDarkMode ? '#404040' : '#E0E0E0';
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 375;
         
         // Set Chart.js defaults only if Chart.js is fully loaded
         if (window.Chart && Chart.defaults) {
@@ -336,32 +338,38 @@ class PublicationsStats {
                     <div class="chart-section">
                         <div class="chart-wrapper">
                             <h4>Total Citations Received by Year</h4>
-                            <canvas id="citations-chart" width="400" height="200"></canvas>
+                            <canvas id="citations-chart"></canvas>
                         </div>
                     </div>
                     
                     <div class="chart-section">
                         <div class="chart-wrapper">
                             <h4>Publications by Research Category</h4>
-                            <canvas id="research-areas-chart" width="400" height="200"></canvas>
                             <div class="ring-legend">
-                                <span class="inner-ring-label">Inner: All Time</span>
-                                <span class="outer-ring-label">Outer: Last 5 Years</span>
+                                <div class="ring-legend-item">
+                                    <span class="ring-marker inner-marker"></span>
+                                    <span class="ring-label">Inner: All Time</span>
+                                </div>
+                                <div class="ring-legend-item">
+                                    <span class="ring-marker outer-marker"></span>
+                                    <span class="ring-label">Outer: Last 5 Years</span>
+                                </div>
                             </div>
+                            <canvas id="research-areas-chart"></canvas>
                         </div>
                     </div>
                     
                     <div class="chart-section">
                         <div class="chart-wrapper">
                             <h4>Citations by Publication Year</h4>
-                            <canvas id="citations-by-pub-year-chart" width="400" height="200"></canvas>
+                            <canvas id="citations-by-pub-year-chart"></canvas>
                         </div>
                     </div>
                     
                     <div class="chart-section">
                         <div class="chart-wrapper">
                             <h4>Publications by Year and Authorship</h4>
-                            <canvas id="papers-by-year-chart" width="400" height="200"></canvas>
+                            <canvas id="papers-by-year-chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -394,6 +402,9 @@ class PublicationsStats {
     createCitationsChart() {
         const ctx = document.getElementById('citations-chart');
         if (!ctx || !window.Chart) return;
+        
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 375;
         
         const citationsData = this.metrics.citationsPerYear || {};
         
@@ -457,12 +468,12 @@ class PublicationsStats {
                             display: true,
                             text: 'Citations Received (√ scale)',
                             font: {
-                                size: 14
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 14)
                             }
                         },
                         ticks: {
                             font: {
-                                size: 13
+                                size: isVerySmall ? 8 : (isMobile ? 10 : 13)
                             },
                             callback: function(value) {
                                 // Display the actual value (squared back)
@@ -475,13 +486,16 @@ class PublicationsStats {
                             display: true,
                             text: 'Year',
                             font: {
-                                size: 14
+                                size: isVerySmall ? 10 : (isMobile ? 12 : 14)
                             }
                         },
                         ticks: {
                             font: {
-                                size: 13
-                            }
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 13)
+                            },
+                            maxRotation: 45,
+                            minRotation: 45,
+                            maxTicksLimit: isMobile ? 6 : 10
                         }
                     }
                 }
@@ -495,6 +509,9 @@ class PublicationsStats {
     createCitationsByPubYearChart() {
         const ctx = document.getElementById('citations-by-pub-year-chart');
         if (!ctx || !window.Chart) return;
+        
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 375;
         
         // Aggregate citations by publication year and category
         const citationsByYear = {};
@@ -621,13 +638,15 @@ class PublicationsStats {
                             display: true,
                             text: 'Publication Year',
                             font: {
-                                size: 14
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 14)
                             }
                         },
                         ticks: {
                             font: {
-                                size: 13
-                            }
+                                size: isVerySmall ? 8 : (isMobile ? 10 : 13)
+                            },
+                            maxRotation: 45,
+                            minRotation: 45
                         }
                     },
                     y: {
@@ -637,13 +656,14 @@ class PublicationsStats {
                             display: true,
                             text: 'Total Citations (√ scale)',
                             font: {
-                                size: 14
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 14)
                             }
                         },
                         ticks: {
                             font: {
-                                size: 13
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 13)
                             },
+                            maxTicksLimit: isMobile ? 5 : 8,
                             callback: function(value) {
                                 // Display the actual value (squared back)
                                 return Math.round(value * value);
@@ -656,7 +676,7 @@ class PublicationsStats {
                         position: 'top',
                         labels: {
                             font: {
-                                size: 13
+                                size: isVerySmall ? 10 : (isMobile ? 11 : 13)
                             }
                         }
                     },
@@ -688,6 +708,9 @@ class PublicationsStats {
     createPapersByYearChart() {
         const ctx = document.getElementById('papers-by-year-chart');
         if (!ctx || !window.Chart) return;
+        
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 375;
         
         // Create contiguous years from first to last year with publications
         const dataYears = Object.keys(this.categories.byYear)
@@ -774,7 +797,9 @@ class PublicationsStats {
                         ticks: {
                             font: {
                                 size: 13
-                            }
+                            },
+                            maxRotation: 45,
+                            minRotation: 45
                         }
                     },
                     y: {
@@ -784,13 +809,14 @@ class PublicationsStats {
                             display: true,
                             text: 'Number of Publications (√ scale)',
                             font: {
-                                size: 14
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 14)
                             }
                         },
                         ticks: {
                             font: {
-                                size: 13
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 13)
                             },
+                            maxTicksLimit: isMobile ? 5 : 8,
                             callback: function(value) {
                                 // Display the actual value (squared back)
                                 return Math.round(value * value);
@@ -803,7 +829,7 @@ class PublicationsStats {
                         position: 'top',
                         labels: {
                             font: {
-                                size: 13
+                                size: isVerySmall ? 10 : (isMobile ? 11 : 13)
                             }
                         }
                     },
@@ -836,6 +862,9 @@ class PublicationsStats {
         const ctx = document.getElementById('research-areas-chart');
         if (!ctx || !window.Chart) return;
         
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 375;
+        
         // Use the 4 main research categories from config
         const mainCategories = [
             'Statistical Learning & AI',
@@ -860,9 +889,24 @@ class PublicationsStats {
             'Discovery'
         ];
         
-        // Generate colors for inner and outer rings
-        const innerColors = mainCategories.map(category => this.colors.research[category][1]); // Fainter colors
-        const outerColors = mainCategories.map(category => this.colors.research[category][0]); // Brighter colors
+        // Generate colors for inner and outer rings that mirror light/dark modes
+        const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+        const innerColors = mainCategories.map(category => {
+            if (isDarkMode) {
+                // Dark mode: lighter inner, darker outer (same as light mode structure)
+                return this.colors.research[category][1]; // Lighter colors for inner
+            } else {
+                return this.colors.research[category][1]; // Lighter colors for inner
+            }
+        });
+        const outerColors = mainCategories.map(category => {
+            if (isDarkMode) {
+                // Dark mode: darker outer ring
+                return this.colors.research[category][0]; // Darker colors for outer
+            } else {
+                return this.colors.research[category][0]; // Darker colors for outer
+            }
+        });
         
         this.charts.researchAreas = new Chart(ctx, {
             type: 'doughnut',
@@ -875,9 +919,9 @@ class PublicationsStats {
                         backgroundColor: innerColors,
                         borderColor: '#ffffff',
                         borderWidth: 2,
-                        weight: 1,
-                        cutout: '20%', // Inner ring - smaller cutout for more ring area
-                        radius: '45%' // Limit inner ring size
+                        weight: 1.5, // Moderate increase in weight for better visibility
+                        cutout: '20%', // Inner ring - original cutout
+                        radius: '45%' // Original inner ring size
                     },
                     {
                         label: 'Last 5 Years',
@@ -886,7 +930,7 @@ class PublicationsStats {
                         borderColor: '#ffffff',
                         borderWidth: 2,
                         weight: 1.5,
-                        cutout: '55%', // Outer ring - bigger gap between rings
+                        cutout: '55%', // Outer ring - gap between rings
                         radius: '100%' // Full outer ring size
                     }
                 ]
@@ -897,14 +941,38 @@ class PublicationsStats {
                 devicePixelRatio: 2,
                 plugins: {
                     legend: {
-                        position: 'bottom',
+                        position: 'top',
                         labels: {
                             font: {
                                 size: 12
                             },
                             padding: 15,
                             usePointStyle: true,
-                            pointStyle: 'circle'
+                            pointStyle: 'circle',
+                            generateLabels: function(chart) {
+                                // Custom legend generator to use outer ring colors
+                                const data = chart.data;
+                                const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+                                const textColor = isDarkMode ? '#E0E0E0' : '#333333';
+                                
+                                if (data.datasets.length >= 2) {
+                                    const outerDataset = data.datasets[1]; // Outer ring (Last 5 Years)
+                                    return data.labels.map((label, index) => {
+                                        return {
+                                            text: label,
+                                            fillStyle: outerDataset.backgroundColor[index],
+                                            strokeStyle: outerDataset.borderColor,
+                                            lineWidth: outerDataset.borderWidth,
+                                            pointStyle: 'circle',
+                                            datasetIndex: 1,
+                                            index: index,
+                                            fontColor: textColor,
+                                            textAlign: 'left'
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
                         }
                     },
                     tooltip: {
@@ -916,11 +984,6 @@ class PublicationsStats {
                                 const dataset = context.datasetIndex === 0 ? 'All Time' : 'Last 5 Years';
                                 return `${dataset} ${shortLabels[categoryIndex]}: ${value} papers`;
                             },
-                            afterLabel: function(context) {
-                                const categoryIndex = context.dataIndex;
-                                const categoryName = mainCategories[categoryIndex];
-                                return `Full name: ${categoryName}`;
-                            }
                         }
                     }
                 },
@@ -937,6 +1000,30 @@ class PublicationsStats {
                 }
             }
         });
+        
+        // Chart.js legend is now handled automatically at 'top' position
+    }
+    
+    /**
+     * Create custom category legend
+     */
+    createCategoryLegend(labels, colors) {
+        const legendContainer = document.getElementById('research-areas-category-legend');
+        if (!legendContainer) return;
+        
+        const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDarkMode ? '#E0E0E0' : '#333333';
+        
+        const legendItems = labels.map((label, index) => {
+            return `
+                <div class="category-legend-item">
+                    <span class="category-marker" style="background-color: ${colors[index]}"></span>
+                    <span class="category-label" style="color: ${textColor}">${label}</span>
+                </div>
+            `;
+        }).join('');
+        
+        legendContainer.innerHTML = legendItems;
     }
     
     /**

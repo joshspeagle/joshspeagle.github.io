@@ -1,5 +1,11 @@
 """
 Data consolidation and merging logic for publication data from multiple sources.
+
+This module handles:
+- Merging publication data from Google Scholar, ADS, and OpenAlex
+- Deduplication of papers across sources
+- Mathematical notation cleaning (removes spaces before <SUB>/<SUP> tags)
+- Validation and reporting of potential formatting issues
 """
 
 import json
@@ -58,11 +64,23 @@ class DataMerger:
         # Check for duplicates before returning
         deduplicated_publications = self._check_for_duplicates(merged_publications)
 
+        # Clean mathematical notation in titles and validate (if configured)
+        cleaned_publications = deduplicated_publications
+        if self.validation.get("clean_mathematical_notation", True):
+            logger.info("Cleaning mathematical notation in publication titles...")
+            for pub in cleaned_publications:
+                if pub.get('title'):
+                    pub['title'] = self.clean_mathematical_notation(pub['title'])
+        
+        # Validate mathematical notation and report issues (if configured)
+        if self.validation.get("validate_mathematical_notation", True):
+            self.validate_mathematical_notation(cleaned_publications)
+
         logger.info(
-            f"Merged into {len(deduplicated_publications)} publications with multi-source data"
+            f"Merged into {len(cleaned_publications)} publications with multi-source data"
         )
         return sorted(
-            deduplicated_publications, key=lambda x: x.get("year", 0), reverse=True
+            cleaned_publications, key=lambda x: x.get("year", 0), reverse=True
         )
 
     def _find_best_match(
@@ -203,6 +221,17 @@ class DataMerger:
             if i not in scholar_used:
                 merged_publications.append(scholar_pub)
 
+        # Clean mathematical notation in titles and validate (if configured)
+        if self.validation.get("clean_mathematical_notation", True):
+            logger.info("Cleaning mathematical notation in publication titles...")
+            for pub in merged_publications:
+                if pub.get('title'):
+                    pub['title'] = self.clean_mathematical_notation(pub['title'])
+        
+        # Validate mathematical notation and report issues (if configured)
+        if self.validation.get("validate_mathematical_notation", True):
+            self.validate_mathematical_notation(merged_publications)
+
         logger.info(f"Merged into {len(merged_publications)} unique publications")
         return sorted(merged_publications, key=lambda x: x.get("year", 0), reverse=True)
 
@@ -256,6 +285,62 @@ class DataMerger:
         title = re.sub(r"[^\w\s]", "", title.lower())
         title = re.sub(r"\s+", " ", title).strip()
         return title
+
+    def clean_mathematical_notation(self, title: str) -> str:
+        """Clean up mathematical notation formatting for web display."""
+        import re
+        
+        # Remove spaces before subscript/superscript tags
+        title = re.sub(r'σ\s+<SUB>', r'σ<SUB>', title)
+        title = re.sub(r'σ\s+<SUP>', r'σ<SUP>', title)
+        
+        # General fix for any Greek letter followed by space + subscript/superscript
+        title = re.sub(r'([α-ωΑ-Ω])\s+<SUB>', r'\1<SUB>', title)
+        title = re.sub(r'([α-ωΑ-Ω])\s+<SUP>', r'\1<SUP>', title)
+        
+        # Fix other common mathematical notation (Latin letters)
+        title = re.sub(r'([A-Za-z])\s+<SUB>', r'\1<SUB>', title)
+        title = re.sub(r'([A-Za-z])\s+<SUP>', r'\1<SUP>', title)
+        
+        # Fix common mathematical constants and variables
+        title = re.sub(r'H\s+<SUB>0</SUB>', r'H<SUB>0</SUB>', title)  # Hubble constant
+        title = re.sub(r'Ω\s+<SUB>m</SUB>', r'Ω<SUB>m</SUB>', title)  # Omega matter
+        title = re.sub(r'M\s+<SUB>☉</SUB>', r'M<SUB>☉</SUB>', title)  # Solar mass
+        
+        return title
+
+    def validate_mathematical_notation(self, publications: List[Dict]) -> List[Dict]:
+        """Check for potential mathematical notation formatting issues."""
+        import re
+        
+        issues = []
+        
+        for pub in publications:
+            title = pub.get('title', '')
+            
+            # Check for spaces before sub/sup tags
+            if re.search(r'\s+<SUB>', title) or re.search(r'\s+<SUP>', title):
+                issues.append({
+                    'id': pub.get('id', pub.get('bibcode', 'unknown')),
+                    'title': title,
+                    'issue': 'Space before subscript/superscript'
+                })
+                
+            # Check for Greek letters followed by space and numbers (potential σ 8 cases)
+            if re.search(r'[α-ωΑ-Ω]\s+\d', title):
+                issues.append({
+                    'id': pub.get('id', pub.get('bibcode', 'unknown')), 
+                    'title': title,
+                    'issue': 'Possible mathematical notation with space'
+                })
+        
+        if issues:
+            logger.warning(f"Found {len(issues)} potential mathematical notation issues:")
+            for issue in issues:
+                logger.warning(f"  {issue['id']}: {issue['issue']}")
+                logger.warning(f"    Title: {issue['title'][:100]}...")
+        
+        return issues
 
     def _check_for_duplicates(self, publications: List[Dict]) -> List[Dict]:
         """Check for duplicate publications and warn user, return deduplicated list."""

@@ -6,10 +6,27 @@ function initializeNavigation() {
     const navLinks = document.querySelectorAll('.nav-link:not(.dropdown-toggle)');
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
 
-    if (!nav || !navToggle || !toggleIcon) {
-        console.warn('Navigation toggle elements not found');
+    if (!nav) {
+        console.warn('Navigation element not found');
         return;
     }
+    
+    // Set up dropdown handlers (works with or without nav toggle)
+    function setupDropdownHandlers() {
+        // Add click handlers to dropdown items
+        document.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', handleDropdownItemClick);
+        });
+        
+        // Update active navigation on scroll
+        window.addEventListener('scroll', updateActiveNavigation);
+        
+        // Initialize active state
+        updateActiveNavigation();
+    }
+    
+    // If toggle elements don't exist, we still need basic navigation functionality
+    const hasToggle = navToggle && toggleIcon;
 
     // Check if navigation should be collapsed based on screen size
     function shouldCollapseNav() {
@@ -73,7 +90,7 @@ function initializeNavigation() {
 
         // Don't auto-collapse if user manually expanded the navigation
         const userExpanded = sessionStorage.getItem('navManuallyExpanded') === 'true';
-        if (shouldCollapseNav() && !userExpanded) {
+        if (hasToggle && shouldCollapseNav() && !userExpanded) {
             nav.classList.add('nav-collapsed');
             toggleIcon.textContent = '+';
 
@@ -97,17 +114,26 @@ function initializeNavigation() {
             nav.classList.add('nav-expanded');
         }
 
-        toggleIcon.textContent = isCollapsed ? '+' : '−';
+        if (hasToggle) {
+            toggleIcon.textContent = isCollapsed ? '+' : '−';
+        }
 
         // Visual feedback
-        navToggle.style.transform = 'scale(0.9)';
-        setTimeout(() => {
-            navToggle.style.transform = 'scale(1)';
-        }, 100);
+        if (hasToggle) {
+            navToggle.style.transform = 'scale(0.9)';
+            setTimeout(() => {
+                navToggle.style.transform = 'scale(1)';
+            }, 100);
+        }
     }
 
     // Apply mobile navigation state
     function applyMobileNavState() {
+        if (!hasToggle) {
+            // No toggle button on this page, just ensure nav is visible
+            return;
+        }
+        
         if (shouldCollapseNav()) {
             navToggle.style.display = 'flex';
 
@@ -125,11 +151,13 @@ function initializeNavigation() {
 
     // Auto-collapse navigation when clicking a link (on mobile)
     function handleNavLinkClick() {
-        if (shouldCollapseNav()) {
+        if (hasToggle && shouldCollapseNav()) {
             setTimeout(() => {
                 nav.classList.add('nav-collapsed');
                 nav.classList.remove('nav-expanded'); // Clear manual expansion
-                toggleIcon.textContent = '+';
+                if (hasToggle) {
+                    toggleIcon.textContent = '+';
+                }
 
                 // Also close any open dropdowns
                 document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
@@ -150,28 +178,30 @@ function initializeNavigation() {
         }
 
         // Handle mobile collapse
-        handleNavLinkClick();
+        if (navToggle && shouldCollapseNav()) {
+            handleNavLinkClick();
+        }
     }
+    
 
-    // Event listeners
-    navToggle.addEventListener('click', toggleNavigation);
-    navToggle.addEventListener('touchend', function (e) {
-        e.preventDefault();
-        toggleNavigation();
-    });
+    // Event listeners (only for pages with nav toggle)
+    if (hasToggle) {
+        navToggle.addEventListener('click', toggleNavigation);
+        navToggle.addEventListener('touchend', function (e) {
+            e.preventDefault();
+            toggleNavigation();
+        });
+    }
 
     // Add click handlers to nav links
     navLinks.forEach(link => {
         link.addEventListener('click', handleNavLinkClick);
     });
 
-    // Add click handlers to dropdown items
-    document.querySelectorAll('.dropdown-item').forEach(item => {
-        item.addEventListener('click', handleDropdownItemClick);
-    });
-
-    // Update active navigation on scroll
-    window.addEventListener('scroll', updateActiveNavigation);
+    // Set up dropdown handlers and common functionality
+    setupDropdownHandlers();
+    
+    // Add resize handler for mobile state
     window.addEventListener('resize', applyMobileNavState);
 
     // Initialize
@@ -181,7 +211,6 @@ function initializeNavigation() {
     });
 
     // Also initialize immediately
-    updateActiveNavigation();
     applyMobileNavState();
 }
 

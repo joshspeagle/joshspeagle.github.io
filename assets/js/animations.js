@@ -11,10 +11,11 @@ function initializeAnimations() {
         return;
     }
 
-    // Intersection Observer for fade-in animations with optimized settings
+    // Intersection Observer for fade-in animations with mobile-optimized settings
+    const isMobile = window.innerWidth <= 768;
     const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        threshold: isMobile ? 0.05 : 0.1, // Lower threshold for mobile
+        rootMargin: isMobile ? '0px 0px -20px 0px' : '0px 0px -50px 0px' // Less margin for mobile
     };
 
     const observer = new IntersectionObserver((entries) => {
