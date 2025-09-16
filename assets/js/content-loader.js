@@ -1889,12 +1889,15 @@ function createPublicationsContent(data) {
 }
 
 function createTalksContent(data) {
+    // Calculate total talks dynamically
+    const calculatedTotalTalks = data.categories ? data.categories.reduce((sum, cat) => sum + cat.talks.length, 0) : 0;
+
     // Statistics overview
     const statsHtml = data.statistics ? `
         <div class="talks-overview">
             <div class="stats-grid">
                 <div class="stat-item">
-                    <span class="stat-number">${data.statistics.totalTalks}</span>
+                    <span class="stat-number">${calculatedTotalTalks}</span>
                     <span class="stat-label">Total Presentations</span>
                 </div>
                 <div class="stat-item">
@@ -1914,11 +1917,10 @@ function createTalksContent(data) {
     ` : '';
 
     // Category filter buttons
-    const totalTalks = data.totalTalks || (data.categories ? data.categories.reduce((sum, cat) => sum + cat.talks.length, 0) : 0);
     const filterButtons = data.categories ? `
         <nav class="talks-filters" role="navigation" aria-label="Filter talks by category">
-            <button class="filter-btn active" data-filter="all" aria-pressed="true" aria-label="Show all categories, ${totalTalks} talks total">
-                All Categories (${totalTalks})
+            <button class="filter-btn active" data-filter="all" aria-pressed="true" aria-label="Show all categories, ${calculatedTotalTalks} talks total">
+                All Categories (${calculatedTotalTalks})
             </button>
             ${data.categories.map(category => `
                 <button class="filter-btn talk-badge talk-badge-${category.color}" data-filter="${category.id}" 

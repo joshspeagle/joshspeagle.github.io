@@ -1538,6 +1538,14 @@
                     "color": "amber",
                     "talks": [
                         {
+                            "title": "Bayesian Parameter Estimation and Model Selection Problems in Astrophysics",
+                            "event": "Bayes Comp 2025",
+                            "location": "Singapore",
+                            "date": "Jun 2025",
+                            "year": 2025,
+                            "type": "Invited Talk"
+                        },
+                        {
                             "title": "AI SpAI with My (Little?) AI: Applications of Statistical Learning in Modern Astrophysics",
                             "event": "AstroAI Summer Workshop",
                             "location": "Cambridge, MA",
@@ -2076,6 +2084,14 @@
                             "date": "Jun 2023",
                             "year": 2023,
                             "type": "Panelist"
+                        },
+                        {
+                            "title": "Understanding a Data-Rich Universe with Data-Driven Approaches (Organizer & Chair)",
+                            "event": "JSM 2021: Joint Statistical Meetings",
+                            "location": "Virtual",
+                            "date": "Aug 2021",
+                            "year": 2021,
+                            "type": "Panel Organizer & Chair"
                         }
                     ]
                 },
@@ -2234,8 +2250,7 @@
                         }
                     ]
                 }
-            ],
-            "totalTalks": 79
+            ]
         },
         "teaching": {
             "title": "Teaching & Education",
