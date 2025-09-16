@@ -1,26 +1,39 @@
 {
-  "lastUpdated": "2025-09-11T22:52:46.201005Z",
+  "lastUpdated": "2025-09-15T21:59:09.724383Z",
   "metrics": {
-    "totalPapers": 121,
-    "hIndex": 43,
-    "i10Index": 84,
-    "totalCitations": 15703,
+    "totalPapers": 122,
+    "hIndex": 42,
+    "i10Index": 77,
+    "totalCitations": 15298,
     "citationsPerYear": {
+      "2015": 102,
+      "2016": 165,
+      "2017": 227,
+      "2018": 492,
+      "2019": 704,
+      "2020": 1202,
+      "2021": 1671,
+      "2022": 2226,
+      "2023": 2540,
+      "2024": 3036,
+      "2025": 2866
+    },
+    "citationsByPublicationYear": {
       "2025": 94,
-      "2024": 247,
-      "2023": 297,
-      "2022": 1277,
-      "2021": 1183,
-      "2020": 3274,
-      "2019": 3476,
-      "2018": 3226,
+      "2024": 264,
+      "2023": 300,
+      "2022": 1292,
+      "2021": 1191,
+      "2020": 3290,
+      "2019": 3492,
+      "2018": 3239,
       "2017": 63,
-      "2016": 144,
-      "2015": 245,
-      "2014": 2155,
+      "2016": 145,
+      "2015": 246,
+      "2014": 2159,
       "2011": 22
     },
-    "lastUpdated": "2025-09-11T22:52:46.200985Z",
+    "lastUpdated": "2025-09-16T01:59:09Z",
     "sources": [
       "google_scholar",
       "ads",
@@ -31,35 +44,35 @@
     {
       "title": "DYNESTY: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
       "year": 2020,
-      "citations": 2280,
+      "citations": 2291,
       "journal": "Monthly Notices of the Royal Astronomical Society",
       "url": "https://ui.adsabs.harvard.edu/abs/2020MNRAS.493.3132S"
     },
     {
       "title": "A Highly Consistent Framework for the Evolution of the Star-Forming \"Main Sequence\" from z ~ 0-6",
       "year": 2014,
-      "citations": 1883,
+      "citations": 1887,
       "journal": "The Astrophysical Journal Supplement Series",
       "url": "https://ui.adsabs.harvard.edu/abs/2014ApJS..214...15S"
     },
     {
       "title": "The Hyper Suprime-Cam SSP Survey: Overview and survey design",
       "year": 2018,
-      "citations": 1367,
+      "citations": 1373,
       "journal": "Publications of the Astronomical Society of Japan",
       "url": "https://ui.adsabs.harvard.edu/abs/2018PASJ...70S...4A"
     },
     {
       "title": "A 3D Dust Map Based on Gaia, Pan-STARRS 1, and 2MASS",
       "year": 2019,
-      "citations": 1293,
+      "citations": 1303,
       "journal": "The Astrophysical Journal",
       "url": "https://ui.adsabs.harvard.edu/abs/2019ApJ...887...93G"
     },
     {
       "title": "First data release of the Hyper Suprime-Cam Subaru Strategic Program",
       "year": 2018,
-      "citations": 750,
+      "citations": 754,
       "journal": "Publications of the Astronomical Society of Japan",
       "url": "https://ui.adsabs.harvard.edu/abs/2018PASJ...70S...8A"
     }

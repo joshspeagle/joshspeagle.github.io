@@ -1260,16 +1260,24 @@ function createFeaturedPublications(dynamicData, staticData) {
             arxivLink = paper.adsUrl;
         }
 
-        // Check if this is a student-led publication
+        // Check if this is a student-led or postdoc-led publication
         const isStudentPaper = isStudentLed(paper);
-        
+        const isPostdocPaper = isPostdocLed(paper);
+
         // Get publication categories and create badges
         const categoryBadges = createCategoryBadges(paper);
-        const studentBadge = isStudentPaper ? 
+        const studentBadge = isStudentPaper ?
             `<span class="student-led-badge" title="Student-Led Research">🎓 Student-Led</span>` : '';
-        
-        // Apply student-led highlighting class if this featured paper is also student-led
-        const paperClass = isStudentPaper ? 'featured-paper student-led-paper' : 'featured-paper';
+        const postdocBadge = isPostdocPaper ?
+            `<span class="postdoc-led-badge" title="Postdoc-Led Research">🔬 Postdoc-Led</span>` : '';
+
+        // Apply appropriate highlighting class
+        let paperClass = 'featured-paper';
+        if (isStudentPaper) {
+            paperClass = 'featured-paper student-led-paper';
+        } else if (isPostdocPaper) {
+            paperClass = 'featured-paper postdoc-led-paper';
+        }
 
         return `
                         <div class="${paperClass}">
@@ -1278,6 +1286,7 @@ function createFeaturedPublications(dynamicData, staticData) {
                                 <div class="paper-badges">
                                     ${categoryBadges}
                                     ${studentBadge}
+                                    ${postdocBadge}
                                 </div>
                             </div>
                             <p class="authors">${authorString}</p>
@@ -1529,34 +1538,50 @@ function createCategoryBadge(category) {
  * Check if a publication is student-led
  */
 function isStudentLed(pub) {
-    // Check if publication has authorship categories from ADS library data
-    if (pub.authorshipCategories && Array.isArray(pub.authorshipCategories)) {
-        return pub.authorshipCategories.includes('student');
+    // Check if publication has authorship category from ADS library data
+    // Using singular 'authorshipCategory' not plural
+    if (pub.authorshipCategory) {
+        return pub.authorshipCategory === 'student';
     }
-    
+
     // Fallback: heuristic based on common student names and author position
     // This is a simplified check - in practice you'd want to load actual student data
     const authors = pub.authors || [];
     if (authors.length === 0) return false;
-    
+
     const firstAuthor = authors[0] || '';
-    
+
     // Common student indicators (this would be replaced with actual student list)
     const studentIndicators = [
         'Yuan', 'Sanderson', 'Ting', 'Green', 'Eadie', 'Speagle'
     ];
-    
-    return studentIndicators.some(indicator => 
+
+    return studentIndicators.some(indicator =>
         firstAuthor.includes(indicator) && !firstAuthor.includes('Speagle')
     );
+}
+
+/**
+ * Check if a publication is postdoc-led
+ */
+function isPostdocLed(pub) {
+    // Check if publication has authorship category from ADS library data
+    // Using singular 'authorshipCategory' not plural
+    if (pub.authorshipCategory) {
+        return pub.authorshipCategory === 'postdoc';
+    }
+
+    // No fallback heuristic for postdoc detection - rely on ADS library data
+    return false;
 }
 
 /**
  * Create HTML for a single publication
  */
 function createPublicationHTML(pub) {
-    // Check if this is a student-led publication
+    // Check if this is a student-led or postdoc-led publication
     const isStudentPaper = isStudentLed(pub);
+    const isPostdocPaper = isPostdocLed(pub);
     
     // Shorten author list if too long
     const authors = pub.authors || [];
@@ -1583,12 +1608,19 @@ function createPublicationHTML(pub) {
     // Get publication categories and create badges
     const categoryBadges = createCategoryBadges(pub);
     
-    // Create student-led indicator if applicable
-    const studentBadge = isStudentPaper ? 
+    // Create student-led or postdoc-led indicator if applicable
+    const studentBadge = isStudentPaper ?
         `<span class="student-led-badge" title="Student-Led Research">🎓 Student-Led</span>` : '';
+    const postdocBadge = isPostdocPaper ?
+        `<span class="postdoc-led-badge" title="Postdoc-Led Research">🔬 Postdoc-Led</span>` : '';
 
-    // Apply student-led class if applicable
-    const paperClass = isStudentPaper ? 'recent-paper student-led-paper' : 'recent-paper';
+    // Apply appropriate class
+    let paperClass = 'recent-paper';
+    if (isStudentPaper) {
+        paperClass = 'recent-paper student-led-paper';
+    } else if (isPostdocPaper) {
+        paperClass = 'recent-paper postdoc-led-paper';
+    }
 
     return `
         <article class="${paperClass}" role="article" aria-labelledby="paper-title-${pub.title.replace(/[^a-zA-Z0-9]/g, '').slice(0, 20)}">
@@ -1605,6 +1637,7 @@ function createPublicationHTML(pub) {
                 <div class="paper-badges" role="group" aria-label="Publication categories and attributes">
                     ${categoryBadges}
                     ${studentBadge}
+                    ${postdocBadge}
                 </div>
             </div>
             <p class="authors" aria-label="Authors">${authorString}</p>

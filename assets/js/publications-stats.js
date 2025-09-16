@@ -597,6 +597,10 @@ class PublicationsStats {
             const val = citationsByYear[year]?.primary || 0;
             return Math.sqrt(val);
         });
+        const postdocData = allYears.map(year => {
+            const val = citationsByYear[year]?.postdoc || 0;
+            return Math.sqrt(val);
+        });
         const studentData = allYears.map(year => {
             const val = citationsByYear[year]?.student || 0;
             return Math.sqrt(val);

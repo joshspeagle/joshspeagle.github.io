@@ -3096,6 +3096,108 @@
     color: #FF6B35 !important;
 }
 
+/* Postdoc-led badge styling */
+.postdoc-led-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #7C3AED 0%, #9333EA 100%);
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(147, 51, 234, 0.25);
+}
+
+.postdoc-led-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.35);
+}
+
+/* Postdoc-led paper highlighting */
+.postdoc-led-paper {
+    background: linear-gradient(135deg,
+        rgba(147, 51, 234, 0.04) 0%,
+        rgba(147, 51, 234, 0.08) 50%,
+        rgba(124, 58, 237, 0.12) 100%);
+    border-left: 4px solid #9333EA;
+    position: relative;
+}
+
+.postdoc-led-paper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+        rgba(147, 51, 234, 0.05) 0%,
+        rgba(124, 58, 237, 0.05) 100%);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+.postdoc-led-paper:hover {
+    border-left-color: #9333EA;
+    box-shadow: 0 4px 20px rgba(147, 51, 234, 0.15);
+}
+
+[data-theme="dark"] .postdoc-led-paper {
+    background: linear-gradient(135deg,
+        var(--bg-primary) 0%,
+        rgba(147, 51, 234, 0.08) 50%,
+        rgba(124, 58, 237, 0.12) 100%);
+}
+
+[data-theme="dark"] .postdoc-led-paper:hover {
+    box-shadow: 0 4px 20px rgba(147, 51, 234, 0.25);
+}
+
+/* Postdoc-led featured papers get enhanced highlighting */
+.featured-paper.postdoc-led-paper {
+    border-left-width: 6px;
+    border-left-color: #9333EA !important;
+    background: linear-gradient(135deg,
+        rgba(147, 51, 234, 0.08) 0%,
+        rgba(147, 51, 234, 0.04) 50%,
+        transparent 100%);
+}
+
+.featured-paper.postdoc-led-paper::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    height: 100%;
+    width: 6px;
+    background: linear-gradient(180deg,
+        #9333EA 0%,
+        rgba(147, 51, 234, 0.5) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.featured-paper.postdoc-led-paper:hover {
+    border-left-color: #9333EA !important;
+    box-shadow: 0 6px 25px rgba(147, 51, 234, 0.25) !important;
+    transform: translateX(2px);
+}
+
+/* Add a subtle purple tint to the title for postdoc-led featured papers */
+.featured-paper.postdoc-led-paper h4 a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.featured-paper.postdoc-led-paper h4 a:hover {
+    color: #9333EA !important;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .publications-loading,
@@ -3146,7 +3248,12 @@
         font-size: 0.7rem;
         padding: 0.25rem 0.7rem;
     }
-    
+
+    .postdoc-led-badge {
+        font-size: 0.7rem;
+        padding: 0.25rem 0.7rem;
+    }
+
     /* Featured papers mobile adjustments */
     .featured-publications {
         gap: 1.5rem;
@@ -3201,7 +3308,12 @@
         font-size: 0.65rem;
         padding: 0.2rem 0.6rem;
     }
-    
+
+    .postdoc-led-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.6rem;
+    }
+
     /* Compact author and details */
     .recent-paper .authors,
     .featured-paper .authors {
@@ -3273,12 +3385,14 @@
     }
     
     .category-badge,
-    .student-led-badge {
+    .student-led-badge,
+    .postdoc-led-badge {
         transition: none;
     }
-    
+
     .category-badge:hover,
-    .student-led-badge:hover {
+    .student-led-badge:hover,
+    .postdoc-led-badge:hover {
         transform: none;
     }
 }
@@ -4151,6 +4265,7 @@
     .featured-paper,
     .category-badge,
     .student-led-badge,
+    .postdoc-led-badge,
     .load-more-btn,
     .loading-spinner,
     .talk-item,
