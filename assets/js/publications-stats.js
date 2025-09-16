@@ -2,10 +2,10 @@
  * Publications Statistics Dashboard
  * 
  * Provides visualization and analysis of publication data including:
- * - Paper categorization (all/lead/significant/student)
+ * - Paper categorization (all/lead/significant/student/postdoc)
  * - Citation metrics over time
  * - Research area distribution
- * - Student impact tracking
+ * - Student and postdoc impact tracking
  */
 
 class PublicationsStats {
@@ -39,8 +39,9 @@ class PublicationsStats {
             // Dark mode colors - more vibrant and contrasting
             this.colors = {
                 primary: '#5BA3F5',     // Brighter blue for primary author
+                postdoc: '#9333EA',     // Purple for postdoc-led (matches badge)
                 student: '#FF6B35',     // Orange for student-led (matches badge)
-                secondary: '#32D74B',   // Green for contributor (moved from student)
+                secondary: '#32D74B',   // Green for contributor
                 accent: '#8E8E93',      // Gray for other (de-emphasized)
                 line: '#5BA3F5',        // Blue for line charts
                 // Research category gradients (dark mode) - moderately darker outer colors
@@ -55,8 +56,9 @@ class PublicationsStats {
             // Light mode colors - softer and professional
             this.colors = {
                 primary: '#007AFF',     // iOS blue for primary author
+                postdoc: '#7C3AED',     // Purple for postdoc-led (darker in dark mode)
                 student: '#DC582A',     // Orange for student-led (matches badge gradient)
-                secondary: '#34C759',   // Green for contributor (moved from student)
+                secondary: '#34C759',   // Green for contributor
                 accent: '#8E8E93',      // Gray for other (de-emphasized)
                 line: '#007AFF',        // Blue for line charts
                 // Research category gradients (light mode)
@@ -84,14 +86,16 @@ class PublicationsStats {
      * Categorize publications into types based on ADS libraries and authorship
      * Categories are mutually exclusive in the following priority order:
      * 1. Primary author (first or second author with Speagle)
-     * 2. Student-led (first author is a known student)
-     * 3. Non-student significant contribution (remaining papers in significant library)
-     * 4. Other (remaining papers not in significant categories)
+     * 2. Postdoc-led (papers in postdoc library)
+     * 3. Student-led (first author is a known student)
+     * 4. Non-student significant contribution (remaining papers in significant library)
+     * 5. Other (remaining papers not in significant categories)
      */
     categorizePublications() {
         this.categories = {
             all: [...this.publications],
             primary: [],
+            postdoc: [],
             student: [],
             nonStudentSignificant: [],
             other: [],
@@ -108,7 +112,7 @@ class PublicationsStats {
             
             // Initialize year counters
             if (!this.categories.byYear[year]) {
-                this.categories.byYear[year] = { primary: 0, student: 0, nonStudentSignificant: 0, other: 0, total: 0 };
+                this.categories.byYear[year] = { primary: 0, postdoc: 0, student: 0, nonStudentSignificant: 0, other: 0, total: 0 };
             }
             
             // Initialize area counters for probabilistic system
@@ -120,26 +124,30 @@ class PublicationsStats {
             });
             
             // Use ADS library-based categorization if available
-            const authorshipCategories = paper.authorshipCategories || [];
-            
+            // Now using singular 'authorshipCategory' field instead of plural
+            const authorshipCategory = paper.authorshipCategory || '';
+
             // Determine exclusive categorization based on your requirements:
             // 1. "primary" → papers in primary category
-            // 2. "student" → papers in student category  
-            // 3. "significant" → papers in significant category EXCLUDING student
-            // 4. "other" → all papers EXCLUDING any other marker
+            // 2. "postdoc" → papers in postdoc category
+            // 3. "student" → papers in student category
+            // 4. "significant" → papers in significant category EXCLUDING student/postdoc
+            // 5. "other" → all papers EXCLUDING any other marker
             let primaryCategory = 'other';
-            
-            if (authorshipCategories.length > 0) {
+
+            if (authorshipCategory) {
                 // Use ADS library data with exclusive logic
-                if (authorshipCategories.includes('primary')) {
+                if (authorshipCategory === 'primary') {
                     primaryCategory = 'primary';
-                } else if (authorshipCategories.includes('student')) {
+                } else if (authorshipCategory === 'postdoc') {
+                    primaryCategory = 'postdoc';
+                } else if (authorshipCategory === 'student') {
                     primaryCategory = 'student';
-                } else if (authorshipCategories.includes('significant')) {
-                    // Significant category excluding student papers
+                } else if (authorshipCategory === 'significant') {
+                    // Significant category excluding student/postdoc papers
                     primaryCategory = 'nonStudentSignificant';
                 } else {
-                    // Has categories but none of primary/student/significant (e.g., just "all")
+                    // Has category but not one we track specifically
                     primaryCategory = 'other';
                 }
             } else {
@@ -321,6 +329,11 @@ class PublicationsStats {
                             <span class="stat-label">Primary Author</span>
                             <span class="stat-icon">⭐</span>
                         </a>
+                        <a href="https://ui.adsabs.harvard.edu/user/libraries/6-JKiyOATdqEzuDGuUMWwg" class="stat-item stat-button" target="_blank" rel="noopener">
+                            <span class="stat-number">${this.categories.postdoc.length}</span>
+                            <span class="stat-label">Postdoc-Led</span>
+                            <span class="stat-icon">🔬</span>
+                        </a>
                         <a href="https://ui.adsabs.harvard.edu/user/libraries/yyWDBaVwS0GIrIkz2GKltg" class="stat-item stat-button" target="_blank" rel="noopener">
                             <span class="stat-number">${this.categories.student.length}</span>
                             <span class="stat-label">Student-Led</span>
@@ -329,7 +342,7 @@ class PublicationsStats {
                         <a href="https://ui.adsabs.harvard.edu/user/libraries/X5RfsxxzRXC-BWjU11xa4A" class="stat-item stat-button" target="_blank" rel="noopener">
                             <span class="stat-number">${this.categories.nonStudentSignificant.length}</span>
                             <span class="stat-label">Contributor</span>
-                            <span class="stat-icon">🔬</span>
+                            <span class="stat-icon">🤝</span>
                         </a>
                     </div>
                 </div>
@@ -525,6 +538,7 @@ class PublicationsStats {
             if (!citationsByYear[year]) {
                 citationsByYear[year] = {
                     primary: 0,
+                    postdoc: 0,
                     student: 0,
                     nonStudentSignificant: 0,
                     other: 0
@@ -532,15 +546,18 @@ class PublicationsStats {
             }
             
             // Determine category using same logic as categorizePublications
-            const authorshipCategories = paper.authorshipCategories || [];
+            // Now using singular 'authorshipCategory' field
+            const authorshipCategory = paper.authorshipCategory || '';
             let category = 'other';
-            
-            if (authorshipCategories.length > 0) {
-                if (authorshipCategories.includes('primary')) {
+
+            if (authorshipCategory) {
+                if (authorshipCategory === 'primary') {
                     category = 'primary';
-                } else if (authorshipCategories.includes('student')) {
+                } else if (authorshipCategory === 'postdoc') {
+                    category = 'postdoc';
+                } else if (authorshipCategory === 'student') {
                     category = 'student';
-                } else if (authorshipCategories.includes('significant')) {
+                } else if (authorshipCategory === 'significant') {
                     category = 'nonStudentSignificant';
                 }
             } else {
@@ -603,6 +620,13 @@ class PublicationsStats {
                         data: primaryData,
                         backgroundColor: this.colors.primary,
                         borderColor: this.colors.primary,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Postdoc-Led',
+                        data: postdocData,
+                        backgroundColor: this.colors.postdoc,
+                        borderColor: this.colors.postdoc,
                         borderWidth: 1
                     },
                     {
@@ -691,7 +715,7 @@ class PublicationsStats {
                                 const year = context[0].label;
                                 const yearData = citationsByYear[year];
                                 if (!yearData) return '';
-                                const total = (yearData?.primary || 0) + (yearData?.student || 0) + 
+                                const total = (yearData?.primary || 0) + (yearData?.postdoc || 0) + (yearData?.student || 0) +
                                              (yearData?.nonStudentSignificant || 0) + (yearData?.other || 0);
                                 return `Total citations for ${year} publications: ${total}`;
                             }
@@ -733,6 +757,10 @@ class PublicationsStats {
             const val = this.categories.byYear[year]?.primary || 0;
             return Math.sqrt(val);
         });
+        const postdocData = allYears.map(year => {
+            const val = this.categories.byYear[year]?.postdoc || 0;
+            return Math.sqrt(val);
+        });
         const studentData = allYears.map(year => {
             const val = this.categories.byYear[year]?.student || 0;
             return Math.sqrt(val);
@@ -756,6 +784,13 @@ class PublicationsStats {
                         data: primaryData,
                         backgroundColor: this.colors.primary,
                         borderColor: this.colors.primary,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Postdoc-Led',
+                        data: postdocData,
+                        backgroundColor: this.colors.postdoc,
+                        borderColor: this.colors.postdoc,
                         borderWidth: 1
                     },
                     {
@@ -844,7 +879,7 @@ class PublicationsStats {
                                 const year = context[0].label;
                                 const yearData = this.categories.byYear[year];
                                 if (!yearData) return '';
-                                const total = (yearData?.primary || 0) + (yearData?.student || 0) + 
+                                const total = (yearData?.primary || 0) + (yearData?.postdoc || 0) + (yearData?.student || 0) +
                                              (yearData?.nonStudentSignificant || 0) + (yearData?.other || 0);
                                 return `Total publications in ${year}: ${total}`;
                             }.bind(this)

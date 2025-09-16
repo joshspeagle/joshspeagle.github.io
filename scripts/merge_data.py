@@ -40,11 +40,12 @@ class DataMerger:
         logger.info(
             f"Merging data from {len(scholar_data)} Scholar, {len(ads_data)} ADS, and {len(openalex_data)} OpenAlex papers"
         )
+        logger.debug(f"Starting with {len(paper_list)} papers in paper_list")
 
         merged_publications = []
 
         # Process each paper from the original list
-        for paper in paper_list:
+        for i, paper in enumerate(paper_list):
             title = paper.get("title", "").strip()
             if not title:
                 continue
@@ -366,6 +367,17 @@ class DataMerger:
         for normalized_title, pubs in title_groups.items():
             if len(pubs) > 1:
                 duplicates_found.append(pubs)
+
+                # Check if this is the Walmsley paper being flagged as duplicate
+                for idx, pub in pubs:
+                    if "Scaling Laws" in pub.get("title", "") and "Galaxy" in pub.get("title", ""):
+                        logger.warning(f"🚨 WALMSLEY flagged as DUPLICATE!")
+                        logger.warning(f"   Normalized title: {normalized_title}")
+                        logger.warning(f"   Number of duplicates: {len(pubs)}")
+                        for dup_idx, dup_pub in pubs:
+                            logger.warning(f"   Duplicate {dup_idx}: {dup_pub.get('title', 'N/A')[:80]}")
+                            logger.warning(f"      Sources: {dup_pub.get('sources', [])}")
+                            logger.warning(f"      Citations: {dup_pub.get('citations', 0)}")
 
                 # For duplicates, prefer the one with more complete data
                 best_pub = None

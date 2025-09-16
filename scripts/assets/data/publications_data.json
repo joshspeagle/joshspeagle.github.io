@@ -1,24 +1,24 @@
 {
-  "lastUpdated": "2025-09-12T00:27:58.266289Z",
+  "lastUpdated": "2025-09-15T21:59:17.471770Z",
   "metrics": {
-    "totalPapers": 121,
+    "totalPapers": 122,
     "hIndex": 42,
     "i10Index": 77,
-    "totalCitations": 15225,
+    "totalCitations": 15298,
     "citationsPerYear": {
       "2015": 102,
       "2016": 165,
       "2017": 227,
       "2018": 492,
-      "2019": 703,
-      "2020": 1201,
+      "2019": 704,
+      "2020": 1202,
       "2021": 1671,
       "2022": 2226,
-      "2023": 2539,
-      "2024": 3031,
-      "2025": 2803
+      "2023": 2540,
+      "2024": 3036,
+      "2025": 2866
     },
-    "lastUpdated": "2025-09-12T00:27:58.266278Z",
+    "lastUpdated": "2025-09-15T21:59:17.471762Z",
     "sources": [
       "google_scholar",
       "ads",
@@ -106,7 +106,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.10869565217391304,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.8913043478260869
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 10.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 82.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "sensitivity(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "star(1)",
+            "redshift(1)",
+            "spectrum(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "postdoc"
     },
     {
       "title": "Measuring σ <SUB>8</SUB> using DESI Legacy Imaging Surveys Emission-Line galaxies and Planck CMB lensing, and the impact of dust on parameter inference",
@@ -181,7 +211,7 @@
       ],
       "doi": "10.1088/1475-7516/2025/02/045",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025JCAP...02..045K",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4407743851",
       "scholarUrl": "https://iopscience.iop.org/article/10.1088/1475-7516/2025/02/045/meta",
       "citations_by_source": {
@@ -193,7 +223,44 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.02909090909090909,
+        "Interpretability & Insight": 0.13090909090909092,
+        "Inference & Computation": 0.43636363636363634,
+        "Discovery & Understanding": 0.4036363636363636
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 8.0,
+          "Interpretability & Insight": 36.0,
+          "Inference & Computation": 120.0,
+          "Discovery & Understanding": 111.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectra(1)"
+          ],
+          "Interpretability & Insight": [
+            "systematic(1)",
+            "systematics(1)"
+          ],
+          "Inference & Computation": [
+            "inference(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "dark energy(2)",
+            "cosmology(1)",
+            "cosmological(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "postdoc"
     },
     {
       "title": "Closing the Stellar Labels Gap: Stellar Label independent Evidence for [α/M] Information in Gaia BP/RP Spectra",
@@ -234,7 +301,7 @@
       ],
       "doi": "10.3847/1538-4357/ad9607",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025ApJ...979....5L",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Interpretability & Insight",
       "openalexUrl": "https://openalex.org/W4406377883",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ad9607/meta",
       "citations_by_source": {
@@ -250,7 +317,51 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.3229357798165138,
+        "Interpretability & Insight": 0.44770642201834865,
+        "Inference & Computation": 0.08807339449541285,
+        "Discovery & Understanding": 0.14128440366972478
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 176.0,
+          "Interpretability & Insight": 244.0,
+          "Inference & Computation": 48.0,
+          "Discovery & Understanding": 77.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "variational auto-encoder(1)",
+            "auto-encoder(1)",
+            "encoder(1)",
+            "variational(1)",
+            "data-driven(1)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "systematics(1)",
+            "gap(2)",
+            "label(2)",
+            "labels(2)"
+          ],
+          "Inference & Computation": [
+            "evidence(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "stellar(3)",
+            "stars(2)",
+            "spectroscopy(1)"
+          ]
+        },
+        "original_category": "Interpretability & Insight",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Discovery of Two Ultra-diffuse Galaxies with Unusually Bright Globular Cluster Luminosity Functions via a Mark-dependently Thinned Point Process (MATHPOP)",
@@ -300,7 +411,7 @@
       ],
       "doi": "10.3847/1538-4357/adc71f",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025ApJ...984..147L",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4410177784",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/adc71f/meta",
       "citations_by_source": {
@@ -312,7 +423,41 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.030418250950570342,
+        "Inference & Computation": 0.5475285171102662,
+        "Discovery & Understanding": 0.4220532319391635
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 144.0,
+          "Discovery & Understanding": 111.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "dependent(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian statistics(1)",
+            "inference(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "star(1)",
+            "cluster(3)",
+            "globular cluster(3)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Trustworthy scientific inference for inverse problems with generative models",
@@ -357,7 +502,44 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.5887850467289719,
+        "Interpretability & Insight": 0.19158878504672897,
+        "Inference & Computation": 0.21962616822429906,
+        "Discovery & Understanding": 0.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 252.0,
+          "Interpretability & Insight": 82.0,
+          "Inference & Computation": 94.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "machine learning(1)",
+            "artificial intelligence(1)",
+            "generative models(2)",
+            "generative(2)",
+            "training(1)"
+          ],
+          "Interpretability & Insight": [
+            "trustworthy(1)",
+            "confidence(1)"
+          ],
+          "Inference & Computation": [
+            "inference(1)",
+            "probability(1)",
+            "frequentist(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "featured": true,
+      "authorshipCategory": "significant"
     },
     {
       "title": "ChronoFlow: A Data-driven Model for Gyrochronology",
@@ -424,7 +606,49 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.5198237885462555,
+        "Interpretability & Insight": 0.022026431718061675,
+        "Inference & Computation": 0.3700440528634361,
+        "Discovery & Understanding": 0.0881057268722467
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 236.0,
+          "Interpretability & Insight": 10.0,
+          "Inference & Computation": 168.0,
+          "Discovery & Understanding": 40.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "neural networks(1)",
+            "machine learning(1)",
+            "data-driven(2)",
+            "nonparametric(1)"
+          ],
+          "Interpretability & Insight": [
+            "constraining(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian statistics(1)",
+            "inference(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "star(2)",
+            "stars(2)",
+            "populations(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "featured": true,
+      "authorshipCategory": "student"
     },
     {
       "title": "Improving Harmonic Analysis Using Multitapering: Precise Frequency Estimation of Stellar Oscillations Using the Harmonic F-test",
@@ -467,7 +691,7 @@
       ],
       "doi": "10.3847/1538-3881/adc9b4",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025AJ....170....7P",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4399197840",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-3881/adc9b4/meta",
       "citations_by_source": {
@@ -483,7 +707,40 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.291970802919708,
+        "Inference & Computation": 0.43795620437956206,
+        "Discovery & Understanding": 0.27007299270072993
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 40.0,
+          "Inference & Computation": 60.0,
+          "Discovery & Understanding": 37.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(2)"
+          ],
+          "Inference & Computation": [
+            "estimation(2)",
+            "estimator(1)"
+          ],
+          "Discovery & Understanding": [
+            "stellar(2)",
+            "exoplanet(1)",
+            "spectrum(1)",
+            "detection(2)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "A Deep, High-Angular Resolution 3D Dust Map of the Southern Galactic Plane",
@@ -527,7 +784,38 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.4067796610169492,
+        "Discovery & Understanding": 0.5932203389830508
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 24.0,
+          "Discovery & Understanding": 35.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "inference(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "stars(1)",
+            "magnitude(1)",
+            "photometry(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "featured": true,
+      "authorshipCategory": "primary"
     },
     {
       "title": "Deriving Stellar Properties, Distances, and Reddenings using Photometry and Astrometry with BRUTUS",
@@ -569,7 +857,7 @@
       ],
       "doi": "10.48550/arXiv.2503.02227",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025arXiv250302227S",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "scholarUrl": "https://arxiv.org/abs/2503.02227",
       "arxivId": "2503.02227",
       "citations_by_source": {
@@ -582,7 +870,43 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.12213740458015267,
+        "Inference & Computation": 0.6106870229007634,
+        "Discovery & Understanding": 0.26717557251908397
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 16.0,
+          "Inference & Computation": 80.0,
+          "Discovery & Understanding": 35.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "systematic(1)"
+          ],
+          "Inference & Computation": [
+            "statistical framework(1)",
+            "priors(1)",
+            "calibrate(1)",
+            "grids(1)",
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(3)",
+            "stars(1)",
+            "photometry(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Detecting Stellar Flares in Photometric Data Using Hidden Markov Models",
@@ -631,7 +955,7 @@
       ],
       "doi": "10.3847/1538-4357/ad95f6",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025ApJ...979..141E",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4406687656",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ad95f6/meta",
       "citations_by_source": {
@@ -643,7 +967,42 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.16161616161616163,
+        "Inference & Computation": 0.6464646464646465,
+        "Discovery & Understanding": 0.1919191919191919
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 32.0,
+          "Inference & Computation": 128.0,
+          "Discovery & Understanding": 38.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "uncertainty(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian statistics(1)",
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "stellar(3)",
+            "star(1)",
+            "stars(2)",
+            "discovery(1)",
+            "identification(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "How does feedback affect the star formation histories of galaxies?",
@@ -706,7 +1065,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.1651376146788991,
+        "Discovery & Understanding": 0.8348623853211009
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 18.0,
+          "Discovery & Understanding": 91.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "simulation(1)",
+            "uniform(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(2)",
+            "stellar(1)",
+            "star(3)",
+            "stars(2)",
+            "cluster(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "MINERVA: A NIRCam Medium Band and MIRI Imaging Survey to Unlock the Hidden Gems of the Distant Universe",
@@ -819,7 +1208,33 @@
       "sources": [
         "google_scholar",
         "ads"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 38.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "universe(1)",
+            "survey(2)",
+            "telescope(1)",
+            "jwst(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "SPYGLASS. VI. Feedback-driven Star Formation in the Circinus Complex",
@@ -875,7 +1290,38 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.1935483870967742,
+        "Discovery & Understanding": 0.8064516129032258
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 18.0,
+          "Discovery & Understanding": 75.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "simulation(1)",
+            "uniform(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "star(3)",
+            "stars(2)",
+            "cluster(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "postdoc"
     },
     {
       "title": "SF-R You Sure? The Conflicting Role of Star Formation Rates in Constraining the Evolution of Milky Way Analogs in Cosmological Simulations",
@@ -936,7 +1382,42 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.340080971659919,
+        "Inference & Computation": 0.032388663967611336,
+        "Discovery & Understanding": 0.6275303643724697
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 84.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 155.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "conflicting(1)",
+            "role(1)",
+            "constraining(1)"
+          ],
+          "Inference & Computation": [
+            "trace(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "stellar(1)",
+            "star(3)",
+            "milky way(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "A parsec-scale Galactic 3D dust map out to 1.25 kpc from the Sun",
@@ -987,7 +1468,42 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.35,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.2,
+        "Discovery & Understanding": 0.45
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 28.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 16.0,
+          "Discovery & Understanding": 36.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectra(1)",
+            "gaussian process(1)",
+            "kernel(1)"
+          ],
+          "Inference & Computation": [
+            "distribution(1)",
+            "gaussian(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "stellar(1)",
+            "stars(1)",
+            "spectra(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Stochastic Modeling of Star Formation Histories. III. Constraints from Physically Motivated Gaussian Processes",
@@ -1033,7 +1549,7 @@
       ],
       "doi": "10.3847/1538-4357/acff64",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024ApJ...961...53I",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4390796298",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/acff64/meta",
       "citations_by_source": {
@@ -1048,7 +1564,42 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.17142857142857143,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.41904761904761906,
+        "Discovery & Understanding": 0.4095238095238095
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 36.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 88.0,
+          "Discovery & Understanding": 86.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(2)"
+          ],
+          "Inference & Computation": [
+            "stochastic(2)",
+            "distribution(1)",
+            "gaussian(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "star(3)",
+            "milky way(1)",
+            "formation(3)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Extending the chemical reach of the H3 survey: detailed abundances of the dwarf-galaxy stellar stream Wukong/LMS-1<SUP></SUP>",
@@ -1105,7 +1656,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.06299212598425197,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.937007874015748
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 119.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "stellar(2)",
+            "star(1)",
+            "stars(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Stochastic prior for non-parametric star-formation histories",
@@ -1136,7 +1716,7 @@
       ],
       "doi": "10.1093/mnras/stae1734",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024MNRAS.532.4002W",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4400759942",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/532/4/4002/7716033",
       "citations_by_source": {
@@ -1148,7 +1728,43 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.2248995983935743,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.5461847389558233,
+        "Discovery & Understanding": 0.2289156626506024
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 56.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 136.0,
+          "Discovery & Understanding": 57.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(1)",
+            "spectra(1)",
+            "parametric(3)"
+          ],
+          "Inference & Computation": [
+            "prior(2)",
+            "stochastic(2)",
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "star(3)",
+            "photometry(1)",
+            "spectra(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A catalogue of Galactic GEMS: Globular cluster Extra-tidal Mock Stars",
@@ -1202,7 +1818,34 @@
       ],
       "authorshipCategories": [
         "student"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 117.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "star(2)",
+            "stars(3)",
+            "milky way(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "The First Catalog of Candidate White Dwarf–Main-sequence Binaries in Open Star Clusters: A New Window into Common Envelope Evolution",
@@ -1251,7 +1894,7 @@
       ],
       "doi": "10.3847/1538-4357/ad7500",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024ApJ...976..102G",
-      "researchArea": "Statistical Learning & AI",
+      "researchArea": "Discovery & Understanding",
       "openalexUrl": "https://openalex.org/W4404414891",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ad7500/meta",
       "citations_by_source": {
@@ -1267,7 +1910,38 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.1793103448275862,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.8206896551724138
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 26.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 119.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "systematic(1)",
+            "independent(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "star(3)",
+            "stars(1)",
+            "supernovae(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "DESI complete calibration of the colour-redshift relation (DC3R2): results from early DESI data",
@@ -1346,7 +2020,7 @@
       ],
       "doi": "10.1093/mnras/stae1316",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024MNRAS.531.2582M",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4399283172",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/531/2/2582/7686823",
       "citations_by_source": {
@@ -1358,7 +2032,44 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.2907801418439716,
+        "Inference & Computation": 0.36879432624113473,
+        "Discovery & Understanding": 0.3404255319148936
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 82.0,
+          "Inference & Computation": 104.0,
+          "Discovery & Understanding": 96.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "systematic(1)",
+            "confidence(1)",
+            "calibration(2)"
+          ],
+          "Inference & Computation": [
+            "inference(1)",
+            "calibrate(1)",
+            "calibration(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "dark energy(2)",
+            "cosmology(1)",
+            "redshift(3)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Katachi (形): Decoding the Imprints of Past Star Formation on Present-day Morphology in Galaxies with Interpretable CNNs",
@@ -1404,7 +2115,7 @@
       ],
       "doi": "10.3847/1538-4357/ad3b95",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024ApJ...967..152A",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "openalexUrl": "https://openalex.org/W4399129478",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ad3b95/meta",
       "citations_by_source": {
@@ -1416,7 +2127,43 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.4386792452830189,
+        "Interpretability & Insight": 0.32075471698113206,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.24056603773584906
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 186.0,
+          "Interpretability & Insight": 136.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 102.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "neural network(1)",
+            "neural networks(1)",
+            "convolutional(2)",
+            "classification(1)"
+          ],
+          "Interpretability & Insight": [
+            "interpretable(2)",
+            "analysis(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(3)",
+            "stellar(1)",
+            "star(3)",
+            "formation(2)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "The Power of High-precision Broadband Photometry: Tracing the Milky Way Density Profile with Blue Horizontal Branch Stars in the Dark Energy Survey",
@@ -1473,7 +2220,7 @@
       ],
       "doi": "10.3847/1538-4357/ad738f",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024ApJ...975...81Y",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4403758235",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ad738f/meta",
       "citations_by_source": {
@@ -1489,7 +2236,38 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.5928853754940712,
+        "Discovery & Understanding": 0.40711462450592883
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 150.0,
+          "Discovery & Understanding": 103.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "bayesian(2)",
+            "bayesian statistics(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "star(1)",
+            "stars(3)",
+            "milky way(3)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Dynamical masses across the Hertzsprung-Russell diagram",
@@ -1526,7 +2304,7 @@
       ],
       "doi": "10.1093/mnras/stae297",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024MNRAS.528.4272H",
-      "researchArea": "Statistical Learning & AI",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4391344345",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/528/3/4272/7592024",
       "citations_by_source": {
@@ -1538,7 +2316,41 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.2733812949640288,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.38848920863309355,
+        "Discovery & Understanding": 0.3381294964028777
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 38.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 54.0,
+          "Discovery & Understanding": 47.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "neural networks(1)",
+            "training(1)"
+          ],
+          "Inference & Computation": [
+            "inference(1)",
+            "statistical inference(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "stars(2)",
+            "white dwarf(1)",
+            "magnitude(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Hierarchical Bayesian inference of globular cluster properties",
@@ -1590,7 +2402,47 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.007936507936507936,
+        "Interpretability & Insight": 0.015873015873015872,
+        "Inference & Computation": 0.9206349206349206,
+        "Discovery & Understanding": 0.05555555555555555
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 8.0,
+          "Interpretability & Insight": 16.0,
+          "Inference & Computation": 928.0,
+          "Discovery & Understanding": 56.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "gradient(1)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(3)",
+            "bayesian inference(3)",
+            "inference(3)",
+            "markov chain monte carlo(1)",
+            "markov chain(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stars(1)",
+            "cluster(3)",
+            "globular cluster(3)",
+            "kinematic(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Mapping the Milky Way in 5D with 170 Million Stars",
@@ -1663,7 +2515,34 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 93.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "star(1)",
+            "stars(3)",
+            "milky way(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Improving Power Spectrum Estimation Using Multitapering: Efficient Asteroseismic Analyses for Understanding Stars, the Milky Way, and Beyond",
@@ -1725,7 +2604,46 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.145748987854251,
+        "Interpretability & Insight": 0.32388663967611336,
+        "Inference & Computation": 0.19433198380566802,
+        "Discovery & Understanding": 0.3360323886639676
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 36.0,
+          "Interpretability & Insight": 80.0,
+          "Inference & Computation": 48.0,
+          "Discovery & Understanding": 83.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(2)"
+          ],
+          "Interpretability & Insight": [
+            "understanding(1)",
+            "analysis(2)",
+            "bias(1)"
+          ],
+          "Inference & Computation": [
+            "estimation(1)",
+            "estimator(1)"
+          ],
+          "Discovery & Understanding": [
+            "stellar(2)",
+            "stars(2)",
+            "exoplanet(1)",
+            "milky way(2)",
+            "spectrum(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Photometric Completeness Modelled with Neural Networks",
@@ -1784,7 +2702,42 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.6870229007633588,
+        "Interpretability & Insight": 0.07633587786259542,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.2366412213740458
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 180.0,
+          "Interpretability & Insight": 20.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 62.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "neural network(1)",
+            "neural networks(2)"
+          ],
+          "Interpretability & Insight": [
+            "understanding(1)",
+            "dependence(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(1)",
+            "star(1)",
+            "cluster(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models",
@@ -1835,7 +2788,7 @@
       ],
       "doi": "10.3847/1538-4357/ad6147",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024ApJ...972..104B",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4401966951",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ad6147/meta",
       "citations_by_source": {
@@ -1851,7 +2804,41 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.7954110898661568,
+        "Discovery & Understanding": 0.2045889101338432
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 416.0,
+          "Discovery & Understanding": 107.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian statistics(1)",
+            "model selection(1)",
+            "zero-inflated(2)",
+            "count data(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(2)",
+            "stellar(1)",
+            "star(1)",
+            "cluster(3)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Estimating Probability Densities with Transformer and Denoising Diffusion",
@@ -1897,7 +2884,41 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.6992481203007519,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.3007518796992481,
+        "Discovery & Understanding": 0.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 186.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 80.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "machine learning(1)",
+            "transformer(2)",
+            "training(1)",
+            "regression(1)",
+            "probabilistic model(1)"
+          ],
+          "Inference & Computation": [
+            "estimation(1)",
+            "probability(2)",
+            "probabilistic(1)",
+            "distribution(1)",
+            "gaussian(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Disentangling Stellar Age Estimates from Galactic Chemodynamical Evolution",
@@ -1957,7 +2978,94 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.034482758620689655,
+        "Interpretability & Insight": 0.26436781609195403,
+        "Inference & Computation": 0.06896551724137931,
+        "Discovery & Understanding": 0.632183908045977
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 46.0,
+          "Inference & Computation": 12.0,
+          "Discovery & Understanding": 110.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "prediction(1)"
+          ],
+          "Interpretability & Insight": [
+            "interpretable(1)",
+            "shapley(1)"
+          ],
+          "Inference & Computation": [
+            "probabilistic(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(3)",
+            "stars(2)",
+            "milky way(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
+    },
+    {
+      "id": "walmsley_2024_scaling",
+      "bibcode": "2024arXiv240402973W",
+      "title": "Scaling Laws for Galaxy Images",
+      "authors": [
+        "Walmsley, Mike",
+        "Bowles, Micah",
+        "Scaife, Anna M. M.",
+        "Makechemu, Jason Shingirai",
+        "Gordon, Alexander J.",
+        "Ferguson, Annette",
+        "Mann, Robert G.",
+        "Pearson, James",
+        "Popp, Jürgen J.",
+        "Bovy, Jo",
+        "Speagle, Josh",
+        "Dickinson, Hugh",
+        "Fortson, Lucy",
+        "Géron, Tobias",
+        "Kruk, Sandor",
+        "Lintott, Chris J.",
+        "Mantha, Kameswara",
+        "Mohan, Devina",
+        "O'Ryan, David",
+        "Slijepevic, Inigo V."
+      ],
+      "year": 2024,
+      "journal": "arXiv",
+      "doi": "10.48550/arXiv.2404.02973",
+      "arxivId": "2404.02973",
+      "abstract": "We present the first systematic investigation of supervised scaling laws outside of an ImageNet-like context - on images of galaxies.",
+      "citations": 3,
+      "url": "https://arxiv.org/abs/2404.02973",
+      "sources": [
+        "ads",
+        "google_scholar",
+        "openalex"
+      ],
+      "researchCategories": [
+        {
+          "name": "Statistical Learning & AI",
+          "probability": 0.85
+        },
+        {
+          "name": "Discovery & Understanding",
+          "probability": 0.15
+        }
+      ],
+      "authorshipCategory": "postdoc"
     },
     {
       "title": "JWST Reveals a Population of Ultrared, Flattened Galaxies at 2 ≲ z ≲ 6 Previously Missed by HST",
@@ -2030,7 +3138,33 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 96.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "stellar(1)",
+            "star(1)",
+            "universe(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "The Dark Energy Camera Plane Survey 2 (DECaPS2): More Sky, Less Bias, and Better Uncertainties",
@@ -2079,7 +3213,7 @@
       ],
       "doi": "10.3847/1538-4365/aca594",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023ApJS..264...28S",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Interpretability & Insight",
       "openalexUrl": "https://openalex.org/W4317213180",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4365/aca594?utm_source=se%D1%20uritylabru",
       "citations_by_source": {
@@ -2091,7 +3225,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.5034965034965035,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.4965034965034965
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 72.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 71.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "understanding(1)",
+            "bias(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stars(2)",
+            "dark energy(3)",
+            "survey(2)"
+          ]
+        },
+        "original_category": "Interpretability & Insight",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Dwarf galaxy archaeology from chemical abundances and star-formation histories",
@@ -2148,7 +3312,39 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0736196319018405,
+        "Inference & Computation": 0.12269938650306748,
+        "Discovery & Understanding": 0.803680981595092
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 12.0,
+          "Inference & Computation": 20.0,
+          "Discovery & Understanding": 131.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "robust(1)"
+          ],
+          "Inference & Computation": [
+            "likelihood(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "stellar(2)",
+            "star(3)",
+            "stars(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "SBI<SUP>++</SUP>: Flexible, Ultra-fast Likelihood-free Inference Customized for Astronomical Applications",
@@ -2188,7 +3384,7 @@
       ],
       "doi": "10.3847/2041-8213/ace361",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023ApJ...952L..10W",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4384699408",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/2041-8213/ace361/meta",
       "citations_by_source": {
@@ -2203,7 +3399,43 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.016901408450704224,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.8788732394366198,
+        "Discovery & Understanding": 0.10422535211267606
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 312.0,
+          "Discovery & Understanding": 37.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "accuracy(1)"
+          ],
+          "Inference & Computation": [
+            "inference(3)",
+            "likelihood(1)",
+            "likelihood-free(1)",
+            "posterior(1)",
+            "simulation(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "cosmic(1)",
+            "telescope(2)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "As Simple as Possible but No Simpler: Optimizing the Performance of Neural Net Emulators for Galaxy SED Fitting",
@@ -2247,7 +3479,7 @@
       ],
       "doi": "10.3847/1538-4357/ace720",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023ApJ...954..132M",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "openalexUrl": "https://openalex.org/W4386250645",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ace720/meta",
       "citations_by_source": {
@@ -2259,7 +3491,44 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.5806451612903226,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.22119815668202766,
+        "Discovery & Understanding": 0.19815668202764977
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 126.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 48.0,
+          "Discovery & Understanding": 43.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "neural network(2)",
+            "spectral(1)",
+            "prediction(1)",
+            "performance(1)"
+          ],
+          "Inference & Computation": [
+            "inference(1)",
+            "posterior(1)",
+            "traditional(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "stellar(1)",
+            "metallicity(1)",
+            "structure(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Searching for the extra-tidal stars of globular clusters using high-dimensional analysis and a core particle spray code",
@@ -2298,7 +3567,7 @@
       ],
       "doi": "10.1093/mnras/stac3367",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023MNRAS.518.4249G",
-      "researchArea": "Statistical Learning & AI",
+      "researchArea": "Discovery & Understanding",
       "openalexUrl": "https://openalex.org/W4309758865",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/518/3/4249/6835530",
       "citations_by_source": {
@@ -2314,7 +3583,48 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.2938388625592417,
+        "Interpretability & Insight": 0.20853080568720378,
+        "Inference & Computation": 0.13270142180094788,
+        "Discovery & Understanding": 0.36492890995260663
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 62.0,
+          "Interpretability & Insight": 44.0,
+          "Inference & Computation": 28.0,
+          "Discovery & Understanding": 77.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "machine learning(1)",
+            "embedding(1)",
+            "dimensionality reduction(1)"
+          ],
+          "Interpretability & Insight": [
+            "understanding(1)",
+            "analysis(2)"
+          ],
+          "Inference & Computation": [
+            "stochastic(1)",
+            "uniform(1)",
+            "approximation(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "star(1)",
+            "stars(3)",
+            "cluster(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Cool, Luminous, and Highly Variable Stars in the Magellanic Clouds. II. Spectroscopic and Environmental Analysis of Thorne-Żytkow Object and Super-AGB Star Candidates",
@@ -2382,7 +3692,39 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.192,
+        "Inference & Computation": 0.192,
+        "Discovery & Understanding": 0.616
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 24.0,
+          "Inference & Computation": 24.0,
+          "Discovery & Understanding": 77.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Inference & Computation": [
+            "asymptotic(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "star(2)",
+            "stars(3)",
+            "supernova(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "The HERBAL Model: A Hierarchical Errors-in-variables Bayesian Lognormal Hurdle Model for Galactic Globular Cluster Populations",
@@ -2433,7 +3775,7 @@
       ],
       "doi": "10.3847/1538-4357/ace7b7",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023ApJ...955...22B",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4386691212",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ace7b7/meta",
       "citations_by_source": {
@@ -2449,7 +3791,41 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.8208269525267994,
+        "Discovery & Understanding": 0.17917304747320062
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 536.0,
+          "Discovery & Understanding": 117.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "bayesian(3)",
+            "bayesian statistics(1)",
+            "evidence(1)",
+            "hurdle model(1)",
+            "hurdle(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "stellar(2)",
+            "star(1)",
+            "milky way(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Practical Guidance for Bayesian Inference in Astronomy",
@@ -2503,7 +3879,40 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.061696658097686374,
+        "Interpretability & Insight": 0.02056555269922879,
+        "Inference & Computation": 0.9177377892030848,
+        "Discovery & Understanding": 0.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 48.0,
+          "Interpretability & Insight": 16.0,
+          "Inference & Computation": 714.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "artificial intelligence(1)"
+          ],
+          "Interpretability & Insight": [
+            "interpretation(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(3)",
+            "bayesian inference(3)",
+            "bayesian statistics(2)",
+            "inference(3)",
+            "likelihood(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "A Novel Application of Conditional Normalizing Flows: Stellar Age Inference with Gyrochronology",
@@ -2533,7 +3942,7 @@
         "Context (archaeology)"
       ],
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023mla..confE..33V",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4384858619",
       "scholarUrl": "https://arxiv.org/abs/2307.08753",
       "arxivId": "2307.08753",
@@ -2549,7 +3958,44 @@
       ],
       "authorshipCategories": [
         "all"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.3639344262295082,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.5868852459016394,
+        "Discovery & Understanding": 0.04918032786885246
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 222.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 358.0,
+          "Discovery & Understanding": 30.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "machine learning(1)",
+            "artificial intelligence(1)",
+            "normalizing flows(2)",
+            "data-driven(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(2)",
+            "bayesian inference(1)",
+            "bayesian framework(1)",
+            "inference(2)",
+            "probability(1)"
+          ],
+          "Discovery & Understanding": [
+            "stellar(2)",
+            "star(2)",
+            "stars(2)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Zephyr : Stitching Heterogeneous Training Data with Normalizing Flows for Photometric Redshift Inference",
@@ -2598,7 +4044,53 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.4379746835443038,
+        "Interpretability & Insight": 0.24556962025316456,
+        "Inference & Computation": 0.27341772151898736,
+        "Discovery & Understanding": 0.043037974683544304
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 346.0,
+          "Interpretability & Insight": 194.0,
+          "Inference & Computation": 216.0,
+          "Discovery & Understanding": 34.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "deep learning(1)",
+            "machine learning(1)",
+            "artificial intelligence(1)",
+            "generative(1)",
+            "normalizing flows(2)"
+          ],
+          "Interpretability & Insight": [
+            "interpretability(2)",
+            "analysis(1)",
+            "uncertainty quantification(1)",
+            "uncertainty(1)",
+            "robustness(2)"
+          ],
+          "Inference & Computation": [
+            "inference(3)",
+            "estimation(2)",
+            "uncertainty quantification(1)",
+            "probabilistic(1)",
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "cosmology(1)",
+            "redshift(2)",
+            "evolution(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Roman Early-Definition Astrophysics Survey Opportunity: Galactic Roman Infrared Plane Survey (GRIPS)",
@@ -2711,7 +4203,35 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.22727272727272727,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.7727272727272727
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 10.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 34.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "sensitivity(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "structure(1)",
+            "survey(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Learning Reionization History from Quasars with Simulation-Based Inference",
@@ -2743,7 +4263,7 @@
       ],
       "doi": "10.48550/arXiv.2311.16238",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023arXiv231116238C",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4389157364",
       "scholarUrl": "https://arxiv.org/abs/2311.16238",
       "arxivId": "2311.16238",
@@ -2759,7 +4279,46 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.05166051660516605,
+        "Interpretability & Insight": 0.04428044280442804,
+        "Inference & Computation": 0.7232472324723247,
+        "Discovery & Understanding": 0.18081180811808117
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 14.0,
+          "Interpretability & Insight": 12.0,
+          "Inference & Computation": 196.0,
+          "Discovery & Understanding": 49.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectra(1)",
+            "performance(1)"
+          ],
+          "Interpretability & Insight": [
+            "understanding(1)"
+          ],
+          "Inference & Computation": [
+            "inference(3)",
+            "simulation(2)",
+            "traditional(1)"
+          ],
+          "Discovery & Understanding": [
+            "quasar(2)",
+            "cosmology(2)",
+            "universe(1)",
+            "redshift(2)",
+            "spectra(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Closing the stellar labels gap: An unsupervised, generative model for Gaia BP/RP spectra",
@@ -2788,7 +4347,7 @@
         "Spectral line"
       ],
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2023mla..confE..16L",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "openalexUrl": "https://openalex.org/W4384389708",
       "scholarUrl": "https://ml4astro.github.io/icml2023/assets/40.pdf",
       "citations_by_source": {
@@ -2803,7 +4362,46 @@
       ],
       "authorshipCategories": [
         "all"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.810126582278481,
+        "Interpretability & Insight": 0.1350210970464135,
+        "Inference & Computation": 0.005625879043600563,
+        "Discovery & Understanding": 0.04922644163150492
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 576.0,
+          "Interpretability & Insight": 96.0,
+          "Inference & Computation": 4.0,
+          "Discovery & Understanding": 35.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "deep learning(1)",
+            "artificial intelligence(1)",
+            "variational auto-encoder(1)",
+            "auto-encoder(1)",
+            "encoder(1)"
+          ],
+          "Interpretability & Insight": [
+            "gap(1)",
+            "labels(2)"
+          ],
+          "Inference & Computation": [
+            "traditional(1)"
+          ],
+          "Discovery & Understanding": [
+            "stellar(2)",
+            "spectra(2)",
+            "survey(1)",
+            "gaia(2)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "NANCY: Next-generation All-sky Near-infrared Community surveY",
@@ -3041,7 +4639,36 @@
       "sources": [
         "google_scholar",
         "ads"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.23076923076923078,
+        "Discovery & Understanding": 0.7692307692307693
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 6.0,
+          "Discovery & Understanding": 20.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "uniform(1)"
+          ],
+          "Discovery & Understanding": [
+            "spectroscopy(1)",
+            "survey(1)",
+            "telescope(1)",
+            "sdss(1)",
+            "desi(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Star formation near the Sun is driven by expansion of the Local Bubble",
@@ -3095,7 +4722,37 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.10666666666666667,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.8933333333333333
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 67.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "star(3)",
+            "stars(2)",
+            "supernova(1)",
+            "formation(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Fast, Slow, Early, Late: Quenching Massive Galaxies at z ∼ 0.8",
@@ -3157,7 +4814,43 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.053763440860215055,
+        "Interpretability & Insight": 0.08602150537634409,
+        "Inference & Computation": 0.26881720430107525,
+        "Discovery & Understanding": 0.5913978494623656
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 10.0,
+          "Interpretability & Insight": 16.0,
+          "Inference & Computation": 50.0,
+          "Discovery & Understanding": 110.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "nonparametric(1)"
+          ],
+          "Interpretability & Insight": [
+            "uncertainty(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian framework(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "stellar(2)",
+            "star(2)",
+            "redshift(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Nested sampling for physical scientists",
@@ -3220,7 +4913,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.94375,
+        "Discovery & Understanding": 0.05625
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 302.0,
+          "Discovery & Understanding": 18.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian inference(1)",
+            "inference(1)",
+            "prior(1)",
+            "sampling(3)"
+          ],
+          "Discovery & Understanding": [
+            "cosmology(2)",
+            "survey(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A New Census of the 0.2 &lt; z &lt; 3.0 Universe. II. The Star-forming Sequence",
@@ -3256,7 +4979,7 @@
       ],
       "doi": "10.3847/1538-4357/ac887d",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2022ApJ...936..165L",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ac887d/meta",
       "citations_by_source": {
         "ads": 145,
@@ -3268,7 +4991,47 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.4166666666666667,
+        "Interpretability & Insight": 0.16666666666666666,
+        "Inference & Computation": 0.041666666666666664,
+        "Discovery & Understanding": 0.375
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 80.0,
+          "Interpretability & Insight": 32.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 72.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "neural network(1)",
+            "normalizing flow(1)",
+            "spectral(1)",
+            "normalization(1)"
+          ],
+          "Interpretability & Insight": [
+            "systematic(1)",
+            "uncertainty(1)"
+          ],
+          "Inference & Computation": [
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "star(3)",
+            "universe(1)",
+            "redshift(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Evidence from Disrupted Halo Dwarfs that r-process Enrichment via Neutron Star Mergers is Delayed by ≳500 Myr",
@@ -3328,7 +5091,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.24161073825503357,
+        "Discovery & Understanding": 0.7583892617449665
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 36.0,
+          "Discovery & Understanding": 113.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "evidence(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "stellar(2)",
+            "star(3)",
+            "stars(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "The Stellar Halo of the Galaxy is Tilted and Doubly Broken",
@@ -3387,7 +5179,33 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 96.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "stellar(3)",
+            "stars(1)",
+            "milky way(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "The Mass of the Milky Way from the H3 Survey",
@@ -3455,7 +5273,41 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.7665706051873199,
+        "Discovery & Understanding": 0.2334293948126801
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 266.0,
+          "Discovery & Understanding": 81.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "bayesian(2)",
+            "bayesian statistics(1)",
+            "bayesian model(1)",
+            "inference(1)",
+            "monte carlo(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stars(2)",
+            "milky way(3)",
+            "dark matter(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Cosmological inference from an emulator based halo model. II. Joint analysis of galaxy-galaxy weak lensing and galaxy clustering from HSC-Y1 and SDSS",
@@ -3525,7 +5377,42 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.19753086419753085,
+        "Interpretability & Insight": 0.13168724279835392,
+        "Inference & Computation": 0.2962962962962963,
+        "Discovery & Understanding": 0.37448559670781895
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 48.0,
+          "Interpretability & Insight": 32.0,
+          "Inference & Computation": 72.0,
+          "Discovery & Understanding": 91.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "clustering(2)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(2)"
+          ],
+          "Inference & Computation": [
+            "inference(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "cosmology(2)",
+            "cosmological(1)",
+            "redshift(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A Tilt in the Dark Matter Halo of the Galaxy",
@@ -3586,7 +5473,33 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 87.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "stellar(1)",
+            "milky way(1)",
+            "dark matter(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Lensing without borders - I. A blind comparison of the amplitude of galaxy-galaxy lensing between independent imaging surveys",
@@ -3724,7 +5637,7 @@
       ],
       "doi": "10.1093/mnras/stab3586",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2022MNRAS.510.6150L",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Interpretability & Insight",
       "openalexUrl": "https://openalex.org/W4206113948",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/510/4/6150/6461104",
       "citations_by_source": {
@@ -3736,7 +5649,41 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.4577114427860697,
+        "Inference & Computation": 0.23880597014925373,
+        "Discovery & Understanding": 0.3034825870646766
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 92.0,
+          "Inference & Computation": 48.0,
+          "Discovery & Understanding": 61.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "systematic(1)",
+            "independent(2)",
+            "calibration(2)"
+          ],
+          "Inference & Computation": [
+            "calibration(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "cosmology(1)",
+            "universe(1)",
+            "redshift(2)",
+            "structure(1)"
+          ]
+        },
+        "original_category": "Interpretability & Insight",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "HSC Year 1 cosmology results with the minimal bias method: HSC ×BOSS galaxy-galaxy weak lensing and BOSS galaxy clustering",
@@ -3804,7 +5751,40 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.18848167539267016,
+        "Interpretability & Insight": 0.35602094240837695,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.45549738219895286
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 36.0,
+          "Interpretability & Insight": 68.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 87.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "clustering(1)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "bias(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "cosmology(2)",
+            "cosmological(1)",
+            "cosmic(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "The outer stellar mass of massive galaxies: a simple tracer of halo mass with scatter comparable to richness and reduced projection effects",
@@ -3861,7 +5841,33 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 75.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(3)",
+            "stellar(3)",
+            "cosmology(1)",
+            "luminosity(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A Ghost in Boötes: The Least-Luminous Disrupted Dwarf Galaxy",
@@ -3920,7 +5926,33 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 84.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "stellar(2)",
+            "stars(2)",
+            "luminosity(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Characterizing the 3D Kinematics of Young Stars in the Radcliffe Wave",
@@ -3978,7 +6010,37 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.12698412698412698,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.873015873015873
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 55.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "stellar(1)",
+            "stars(3)",
+            "spectroscopy(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Wide binaries from the H3 survey: the thick disc and halo have similar wide binary fractions",
@@ -4035,7 +6097,40 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.07407407407407407,
+        "Interpretability & Insight": 0.2037037037037037,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.7222222222222222
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 8.0,
+          "Interpretability & Insight": 22.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 78.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectra(1)"
+          ],
+          "Interpretability & Insight": [
+            "understanding(1)",
+            "confidence(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(1)",
+            "stars(2)",
+            "milky way(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "On the Robustness of the Velocity Anisotropy Parameter in Probing the Stellar Kinematics in Milky Way-Like Galaxies: Takeaway from TNG50 Simulation",
@@ -4095,7 +6190,40 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.3813559322033898,
+        "Inference & Computation": 0.2033898305084746,
+        "Discovery & Understanding": 0.4152542372881356
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 90.0,
+          "Inference & Computation": 48.0,
+          "Discovery & Understanding": 98.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "robustness(2)",
+            "sensitivity(1)"
+          ],
+          "Inference & Computation": [
+            "simulation(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "stellar(2)",
+            "stars(1)",
+            "milky way(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Birth of the Galactic Disk Revealed by the H3 Survey",
@@ -4152,7 +6280,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.20202020202020202,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.797979797979798
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 20.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 79.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "independent(1)",
+            "behavior(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "star(1)",
+            "stars(2)",
+            "spectroscopy(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Author Correction: Nested sampling for physical scientists (Nature Reviews Methods Primers,(2022), 2, 1,(39), 10.1038/s43586-022-00121-x)",
@@ -4170,7 +6328,31 @@
       ],
       "authorshipCategories": [
         "all"
-      ]
+      ],
+      "researchArea": "Inference & Computation",
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 1.0,
+        "Discovery & Understanding": 0.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 120.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "sampling(1)",
+            "nested sampling(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Monte Carlo Techniques for Addressing Large Errors and Missing Data in Simulation-based Inference",
@@ -4205,7 +6387,7 @@
       ],
       "doi": "10.48550/arXiv.2211.03747",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2022arXiv221103747W",
-      "researchArea": "Statistical Learning & AI",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W4308619134",
       "scholarUrl": "https://arxiv.org/abs/2211.03747",
       "arxivId": "2211.03747",
@@ -4221,7 +6403,43 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.1073345259391771,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.8372093023255814,
+        "Discovery & Understanding": 0.055456171735241505
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 60.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 468.0,
+          "Discovery & Understanding": 31.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "machine learning(1)"
+          ],
+          "Inference & Computation": [
+            "inference(3)",
+            "markov chain monte carlo(1)",
+            "markov chain(1)",
+            "monte carlo(3)",
+            "simulation(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "cosmic(1)",
+            "telescope(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Live Fast, Die $\\alpha$-Enhanced: The Mass-Metallicity-$\\alpha$ Relation of the Milky Way's Disrupted Dwarf Galaxies",
@@ -4275,7 +6493,33 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 101.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "stellar(1)",
+            "star(1)",
+            "milky way(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A Referee Primer for Early Career Astronomers",
@@ -4310,7 +6554,7 @@
       ],
       "doi": "10.48550/arXiv.2205.14270",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2022arXiv220514270N",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "openalexUrl": "https://openalex.org/W4281768144",
       "scholarUrl": "https://arxiv.org/abs/2205.14270",
       "arxivId": "2205.14270",
@@ -4326,7 +6570,29 @@
       ],
       "authorshipCategories": [
         "all"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 1.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 8.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "training(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Improving Power Spectral Estimation using Multitapering: Precise asteroseismic modeling of stars, exoplanets, and beyond",
@@ -4359,7 +6625,45 @@
       ],
       "authorshipCategories": [
         "all"
-      ]
+      ],
+      "researchArea": "Inference & Computation",
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.3037974683544304,
+        "Interpretability & Insight": 0.11814345991561181,
+        "Inference & Computation": 0.45569620253164556,
+        "Discovery & Understanding": 0.12236286919831224
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 72.0,
+          "Interpretability & Insight": 28.0,
+          "Inference & Computation": 108.0,
+          "Discovery & Understanding": 29.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(3)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "bias(1)"
+          ],
+          "Inference & Computation": [
+            "estimation(3)",
+            "estimator(2)"
+          ],
+          "Discovery & Understanding": [
+            "stellar(1)",
+            "stars(1)",
+            "exoplanet(1)",
+            "spectrum(1)",
+            "detection(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Stellar Population Inference with Prospector",
@@ -4392,7 +6696,7 @@
       ],
       "doi": "10.3847/1538-4365/abef67",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2021ApJS..254...22J",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W3160030944",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4365/abef67/meta",
       "citations_by_source": {
@@ -4407,7 +6711,42 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.13333333333333333,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.6370370370370371,
+        "Discovery & Understanding": 0.22962962962962963
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 36.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 172.0,
+          "Discovery & Understanding": 62.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(2)"
+          ],
+          "Inference & Computation": [
+            "inference(3)",
+            "grids(1)",
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(2)",
+            "photometry(1)",
+            "spectroscopy(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Reconstructing the Last Major Merger of the Milky Way with the H3 Survey",
@@ -4471,7 +6810,38 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.2857142857142857,
+        "Discovery & Understanding": 0.7142857142857143
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 36.0,
+          "Discovery & Understanding": 90.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "evidence(1)",
+            "grid(1)",
+            "simulation(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stars(2)",
+            "milky way(3)",
+            "formation(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Spatially resolved star formation and inside-out quenching in the TNG50 simulation and 3D-HST observations",
@@ -4538,7 +6908,42 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.03587443946188341,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.6188340807174888,
+        "Discovery & Understanding": 0.3452914798206278
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 8.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 138.0,
+          "Discovery & Understanding": 77.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "normalization(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian inference(1)",
+            "inference(1)",
+            "simulation(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(2)",
+            "star(3)",
+            "redshift(1)",
+            "formation(3)",
+            "evolution(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Orbital Clustering Identifies the Origins of Galactic Stellar Streams",
@@ -4601,7 +7006,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.2857142857142857,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.7142857142857143
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 36.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 90.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "clustering(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(3)",
+            "star(1)",
+            "milky way(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "On the Three-dimensional Structure of Local Molecular Clouds",
@@ -4645,7 +7079,7 @@
       ],
       "doi": "10.3847/1538-4357/ac1f96",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2021ApJ...919...35Z",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Interpretability & Insight",
       "openalexUrl": "https://openalex.org/W3200730817",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ac1f96/meta",
       "citations_by_source": {
@@ -4657,7 +7091,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.625,
+        "Inference & Computation": 0.125,
+        "Discovery & Understanding": 0.25
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 40.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 16.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "visualization(1)",
+            "uncertainty(1)"
+          ],
+          "Inference & Computation": [
+            "gaussian(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "structure(2)"
+          ]
+        },
+        "original_category": "Interpretability & Insight",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Ancient Very Metal-poor Stars Associated with the Galactic Disk in the H3 Survey",
@@ -4720,7 +7184,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.16666666666666666,
+        "Discovery & Understanding": 0.8333333333333334
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 20.0,
+          "Discovery & Understanding": 100.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "evidence(1)",
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(1)",
+            "star(1)",
+            "stars(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Data-driven Stellar Models",
@@ -4776,7 +7270,38 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.7530364372469636,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.24696356275303644
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 186.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 61.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "neural network(1)",
+            "neural networks(1)",
+            "data-driven(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(3)",
+            "stars(1)",
+            "milky way(1)",
+            "magnitude(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Inferring the Morphology of Stellar Distribution in TNG50: Twisted and Twisted-stretched Shapes",
@@ -4839,7 +7364,41 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.125,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.375,
+        "Discovery & Understanding": 0.5
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 24.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 72.0,
+          "Discovery & Understanding": 96.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "classification(1)"
+          ],
+          "Inference & Computation": [
+            "evidence(1)",
+            "simulation(1)",
+            "distribution(3)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "stellar(3)",
+            "stars(2)",
+            "milky way(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Making the sum greater than its parts",
@@ -4863,7 +7422,30 @@
       ],
       "authorshipCategories": [
         "all"
-      ]
+      ],
+      "researchArea": "Interpretability & Insight",
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 1.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 20.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "systematics(1)"
+          ]
+        },
+        "original_category": "Interpretability & Insight",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "DYNESTY: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
@@ -4911,7 +7493,43 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.007425742574257425,
+        "Interpretability & Insight": 0.019801980198019802,
+        "Inference & Computation": 0.9702970297029703,
+        "Discovery & Understanding": 0.0024752475247524753
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 16.0,
+          "Inference & Computation": 784.0,
+          "Discovery & Understanding": 2.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "performance(1)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(3)",
+            "posterior(1)",
+            "markov chain monte carlo(2)",
+            "markov chain(2)",
+            "mcmc(1)"
+          ],
+          "Discovery & Understanding": [
+            "structure(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "A compendium of distances to molecular clouds in the Star Formation Handbook",
@@ -4964,7 +7582,44 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.04316546762589928,
+        "Interpretability & Insight": 0.08633093525179857,
+        "Inference & Computation": 0.3597122302158273,
+        "Discovery & Understanding": 0.5107913669064749
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 12.0,
+          "Inference & Computation": 50.0,
+          "Discovery & Understanding": 71.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "accuracy(1)"
+          ],
+          "Interpretability & Insight": [
+            "understanding(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian framework(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "star(3)",
+            "distance(1)",
+            "parallax(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "A Galactic-scale gas wave in the solar neighbourhood",
@@ -5017,7 +7672,37 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.1016949152542373,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.8983050847457628
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 53.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "accuracy(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "star(1)",
+            "stars(2)",
+            "milky way(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "A New Census of the 0.2 &lt; z &lt; 3.0 Universe. I. The Stellar Mass Function",
@@ -5075,7 +7760,37 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.07207207207207207,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.9279279279279279
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 103.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "stellar(3)",
+            "star(2)",
+            "universe(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Euclid preparation. X. The Euclid photometric-redshift challenge",
@@ -5293,7 +8008,43 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.13186813186813187,
+        "Interpretability & Insight": 0.08791208791208792,
+        "Inference & Computation": 0.10989010989010989,
+        "Discovery & Understanding": 0.6703296703296703
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 12.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 10.0,
+          "Discovery & Understanding": 61.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "accuracy(1)",
+            "performance(1)"
+          ],
+          "Interpretability & Insight": [
+            "assessment(1)"
+          ],
+          "Inference & Computation": [
+            "probability(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "cosmology(2)",
+            "redshift(3)",
+            "photometry(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "MINESweeper: Spectrophotometric Modeling of Stars in the Gaia Era",
@@ -5366,7 +8117,43 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.22,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.35,
+        "Discovery & Understanding": 0.43
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 44.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 70.0,
+          "Discovery & Understanding": 86.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(2)",
+            "spectra(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian framework(1)",
+            "priors(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "stars(3)",
+            "cluster(1)",
+            "globular cluster(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "High-resolution Spectroscopy of the GD-1 Stellar Stream Localizes the Perturber near the Orbital Plane of Sagittarius",
@@ -5426,7 +8213,39 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.11650485436893204,
+        "Interpretability & Insight": 0.1553398058252427,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.7281553398058253
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 12.0,
+          "Interpretability & Insight": 16.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 75.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "ensemble(1)"
+          ],
+          "Interpretability & Insight": [
+            "uncertainty(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(3)",
+            "stars(1)",
+            "milky way(2)",
+            "cluster(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Weak lensing reveals a tight connection between dark matter halo mass and the distribution of stellar mass in massive galaxies",
@@ -5484,7 +8303,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.22857142857142856,
+        "Discovery & Understanding": 0.7714285714285715
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 32.0,
+          "Discovery & Understanding": 108.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "distribution(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "stellar(3)",
+            "star(2)",
+            "dark matter(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A Diffuse Metal-poor Component of the Sagittarius Stream Revealed by the H3 Survey",
@@ -5542,7 +8390,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0975609756097561,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.9024390243902439
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 74.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "dependence(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(2)",
+            "stars(2)",
+            "milky way(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Constraining the distance to the North Polar Spur with Gaia DR2",
@@ -5582,7 +8459,7 @@
       ],
       "doi": "10.1093/mnras/staa2702",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2020MNRAS.498.5863D",
-      "researchArea": "Inference & Computation",
+      "researchArea": "Discovery & Understanding",
       "openalexUrl": "https://openalex.org/W3081815346",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/498/4/5863/5902411",
       "citations_by_source": {
@@ -5598,7 +8475,41 @@
       "authorshipCategories": [
         "student",
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.2054794520547945,
+        "Inference & Computation": 0.273972602739726,
+        "Discovery & Understanding": 0.5205479452054794
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 30.0,
+          "Inference & Computation": 40.0,
+          "Discovery & Understanding": 76.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "constraining(1)"
+          ],
+          "Inference & Computation": [
+            "sampling(1)",
+            "nested sampling(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "star(1)",
+            "stars(2)",
+            "milky way(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "student"
     },
     {
       "title": "Discovery of Magellanic Stellar Debris in the H3 Survey",
@@ -5654,7 +8565,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.09302325581395349,
+        "Discovery & Understanding": 0.9069767441860465
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 78.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "stars(2)",
+            "milky way(2)",
+            "structure(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Photometric Biases in Modern Surveys",
@@ -5702,7 +8642,7 @@
       ],
       "doi": "10.3847/1538-3881/ab76ba",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2020AJ....159..165P",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W2912990100",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-3881/ab76ba/meta",
       "citations_by_source": {
@@ -5717,7 +8657,43 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.17475728155339806,
+        "Inference & Computation": 0.7184466019417476,
+        "Discovery & Understanding": 0.10679611650485436
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 36.0,
+          "Inference & Computation": 148.0,
+          "Discovery & Understanding": 22.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "bias(1)"
+          ],
+          "Inference & Computation": [
+            "likelihood(2)",
+            "estimation(1)",
+            "estimator(1)",
+            "maximum likelihood(1)",
+            "gaussian(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "photometry(2)",
+            "detection(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Searching for globular cluster chemical anomalies on the main sequence of a young massive cluster",
@@ -5779,7 +8755,40 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.14965986394557823,
+        "Inference & Computation": 0.08163265306122448,
+        "Discovery & Understanding": 0.7687074829931972
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 22.0,
+          "Inference & Computation": 12.0,
+          "Discovery & Understanding": 113.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "understanding(1)",
+            "behaviour(1)"
+          ],
+          "Inference & Computation": [
+            "evidence(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "star(2)",
+            "stars(2)",
+            "milky way(1)",
+            "cluster(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Mapping the Milky Way in the age of Gaia",
@@ -5808,7 +8817,39 @@
       ],
       "authorshipCategories": [
         "all"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.20689655172413793,
+        "Inference & Computation": 0.13793103448275862,
+        "Discovery & Understanding": 0.6551724137931034
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 12.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 38.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "understanding(1)"
+          ],
+          "Inference & Computation": [
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "stars(1)",
+            "milky way(2)",
+            "gaia(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A 3D Dust Map Based on Gaia, Pan-STARRS 1, and 2MASS",
@@ -5861,7 +8902,37 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.2898550724637681,
+        "Discovery & Understanding": 0.7101449275362319
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 20.0,
+          "Discovery & Understanding": 49.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "prior(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "stellar(2)",
+            "stars(1)",
+            "photometry(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Cosmology from cosmic shear power spectra with Subaru Hyper Suprime-Cam first-year data",
@@ -5942,7 +9013,43 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.28717948717948716,
+        "Interpretability & Insight": 0.041025641025641026,
+        "Inference & Computation": 0.041025641025641026,
+        "Discovery & Understanding": 0.6307692307692307
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 56.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 123.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(1)",
+            "spectra(2)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(1)"
+          ],
+          "Inference & Computation": [
+            "significance(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "dark matter(1)",
+            "cosmology(2)",
+            "universe(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "How to Measure Galaxy Star Formation Histories. II. Nonparametric Models",
@@ -5977,7 +9084,7 @@
       ],
       "doi": "10.3847/1538-4357/ab133c",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2019ApJ...876....3L",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "openalexUrl": "https://openalex.org/W4246559486",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ab133c/meta",
       "citations_by_source": {
@@ -5992,7 +9099,47 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.37815126050420167,
+        "Interpretability & Insight": 0.08403361344537816,
+        "Inference & Computation": 0.20168067226890757,
+        "Discovery & Understanding": 0.33613445378151263
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 90.0,
+          "Interpretability & Insight": 20.0,
+          "Inference & Computation": 48.0,
+          "Discovery & Understanding": 80.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(1)",
+            "nonparametric(3)",
+            "parametric(2)"
+          ],
+          "Interpretability & Insight": [
+            "bias(1)"
+          ],
+          "Inference & Computation": [
+            "prior(1)",
+            "priors(1)",
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "star(3)",
+            "photometry(2)",
+            "formation(3)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "An Older, More Quiescent Universe from Panchromatic SED Fitting of the 3D-HST Survey",
@@ -6033,7 +9180,7 @@
       ],
       "doi": "10.3847/1538-4357/ab1d5a",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2019ApJ...877..140L",
-      "researchArea": "Inference & Computation",
+      "researchArea": "Discovery & Understanding",
       "openalexUrl": "https://openalex.org/W3099210727",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ab1d5a/meta",
       "citations_by_source": {
@@ -6045,7 +9192,38 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.46632124352331605,
+        "Discovery & Understanding": 0.533678756476684
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 90.0,
+          "Discovery & Understanding": 103.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian inference(1)",
+            "inference(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "stellar(2)",
+            "star(2)",
+            "stars(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A Large Catalog of Accurate Distances to Local Molecular Clouds: The Gaia DR2 Edition",
@@ -6084,7 +9262,7 @@
       ],
       "doi": "10.3847/1538-4357/ab2388",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2019ApJ...879..125Z",
-      "researchArea": "Inference & Computation",
+      "researchArea": "Discovery & Understanding",
       "openalexUrl": "https://openalex.org/W3101913254",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/ab2388/meta",
       "citations_by_source": {
@@ -6099,7 +9277,39 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.40350877192982454,
+        "Discovery & Understanding": 0.5964912280701754
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 46.0,
+          "Discovery & Understanding": 68.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "sampling(1)",
+            "nested sampling(1)",
+            "uniform(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(1)",
+            "star(1)",
+            "stars(2)",
+            "photometry(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "A Conceptual Introduction to Markov Chain Monte Carlo Methods",
@@ -6143,7 +9353,38 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.03888888888888889,
+        "Inference & Computation": 0.9611111111111111,
+        "Discovery & Understanding": 0.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 28.0,
+          "Inference & Computation": 692.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "understanding(1)",
+            "analysis(1)"
+          ],
+          "Inference & Computation": [
+            "bayesian(1)",
+            "bayesian inference(1)",
+            "inference(1)",
+            "posterior(1)",
+            "markov chain monte carlo(3)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Towards a radially resolved semi-analytic model for the evolution of disc galaxies tuned with machine learning",
@@ -6181,7 +9422,7 @@
       ],
       "doi": "10.1093/mnras/stz1473",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2019MNRAS.487.3581F",
-      "researchArea": "Statistical Learning & AI",
+      "researchArea": "Discovery & Understanding",
       "openalexUrl": "https://openalex.org/W2899465358",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/487/3/3581/5513462",
       "citations_by_source": {
@@ -6193,7 +9434,40 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.4265402843601896,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.06635071090047394,
+        "Discovery & Understanding": 0.5071090047393365
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 90.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 14.0,
+          "Discovery & Understanding": 107.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "machine learning(1)"
+          ],
+          "Inference & Computation": [
+            "approximation(1)",
+            "traditional(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(3)",
+            "stellar(1)",
+            "star(2)",
+            "stars(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Galaxy-Galaxy lensing in HSC: Validation tests and the impact of heterogeneous spectroscopic training sets",
@@ -6238,7 +9512,7 @@
       ],
       "doi": "10.1093/mnras/stz2968",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.5658S",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Interpretability & Insight",
       "openalexUrl": "https://openalex.org/W2953089765",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/490/4/5658/5607800",
       "citations_by_source": {
@@ -6253,7 +9527,46 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.22123893805309736,
+        "Interpretability & Insight": 0.4336283185840708,
+        "Inference & Computation": 0.035398230088495575,
+        "Discovery & Understanding": 0.30973451327433627
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 50.0,
+          "Interpretability & Insight": 98.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 70.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "training(2)",
+            "validation(1)"
+          ],
+          "Interpretability & Insight": [
+            "bias(1)",
+            "robustness(2)",
+            "validation(1)"
+          ],
+          "Inference & Computation": [
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(1)",
+            "cosmology(1)",
+            "redshift(2)",
+            "magnitude(2)"
+          ]
+        },
+        "original_category": "Interpretability & Insight",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Evidence for the Cross-correlation between Cosmic Microwave Background Polarization Lensing from Polarbear and Cosmic Shear from Subaru Hyper Suprime-Cam",
@@ -6373,7 +9686,39 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.05504587155963303,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.3302752293577982,
+        "Discovery & Understanding": 0.6146788990825688
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 36.0,
+          "Discovery & Understanding": 67.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "prediction(1)"
+          ],
+          "Inference & Computation": [
+            "evidence(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "dark matter(1)",
+            "cosmology(2)",
+            "cosmic(3)",
+            "spectrum(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Measuring the Delay Time Distribution of Binary Neutron Stars. III. Using the Individual Star Formation Histories of Gravitational-wave Event Host Galaxies in the Local Universe",
@@ -6425,7 +9770,41 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.04950495049504951,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.25742574257425743,
+        "Discovery & Understanding": 0.693069306930693
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 10.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 52.0,
+          "Discovery & Understanding": 140.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "reconstruction(1)"
+          ],
+          "Inference & Computation": [
+            "priors(1)",
+            "distribution(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(3)",
+            "stellar(1)",
+            "star(3)",
+            "stars(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "The Next Decade of Astroinformatics and Astrostatistics",
@@ -6501,7 +9880,7 @@
       ],
       "doi": "10.48550/arXiv.1903.06796",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2019BAAS...51c.355S",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "openalexUrl": "https://openalex.org/W2984090244",
       "scholarUrl": "https://research-repository.st-andrews.ac.uk/handle/10023/30945",
       "citations_by_source": {
@@ -6513,7 +9892,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.6122448979591837,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.3877551020408163
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 30.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 19.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "machine learning(1)"
+          ],
+          "Discovery & Understanding": [
+            "stellar(1)",
+            "exoplanet(1)",
+            "cosmology(1)",
+            "detection(1)",
+            "characterization(1)"
+          ]
+        },
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Measuring Star Formation Histories, Distances, and Metallicities with Pixel Color-Magnitude Diagrams. I. Model Definition and Mock Tests",
@@ -6564,7 +9972,37 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.10619469026548672,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.8938053097345132
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 12.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 101.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "stellar(2)",
+            "star(3)",
+            "magnitude(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "High-Dimensional Dust Mapping",
@@ -6609,7 +10047,36 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.23076923076923078,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.7692307692307693
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 12.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 40.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "understanding(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "star(1)",
+            "milky way(1)",
+            "universe(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Sustaining Community-Driven Software for Astronomy in the 2020s",
@@ -6741,7 +10208,7 @@
       "abstract": "Software is critical to astronomical research. Sharing and sustaining astronomical software has long-term impacts on scientific outcomes. However, support for this has been uneven, creating significant risks. Thus, we highlight changes that will enable a sustainable software sharing system for astronomy and astrophysics in the next decade.",
       "keywords": [],
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2019BAAS...51g.180T",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Statistical Learning & AI",
       "scholarUrl": "https://ui.adsabs.harvard.edu/abs/2019BAAS...51g.180T/abstract",
       "citations_by_source": {
         "ads": 1,
@@ -6750,7 +10217,25 @@
       "sources": [
         "google_scholar",
         "ads"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.25,
+        "Interpretability & Insight": 0.25,
+        "Inference & Computation": 0.25,
+        "Discovery & Understanding": 0.25
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 0.0
+        },
+        "matched_terms": {},
+        "original_category": "Statistical Learning & AI",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "The Hyper Suprime-Cam SSP Survey: Overview and survey design",
@@ -6926,7 +10411,33 @@
       "sources": [
         "google_scholar",
         "ads"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 49.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "cosmology(1)",
+            "universe(1)",
+            "magnitude(1)",
+            "structure(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "First data release of the Hyper Suprime-Cam Subaru Strategic Program",
@@ -7084,7 +10595,33 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 72.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(1)",
+            "stellar(1)",
+            "stars(1)",
+            "dark matter(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Photometric redshifts for Hyper Suprime-Cam Subaru Strategic Program Data Release 1",
@@ -7141,7 +10678,41 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.05357142857142857,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.4642857142857143,
+        "Discovery & Understanding": 0.48214285714285715
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 52.0,
+          "Discovery & Understanding": 54.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "accuracy(1)"
+          ],
+          "Inference & Computation": [
+            "estimator(2)",
+            "calibrate(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "cosmology(1)",
+            "redshift(2)",
+            "photometry(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "The first-year shear catalog of the Subaru Hyper Suprime-Cam Subaru Strategic Program Survey",
@@ -7215,7 +10786,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.391304347826087,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.6086956521739131
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 36.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 56.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "systematics(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "cosmology(1)",
+            "cosmological(1)",
+            "catalog(2)",
+            "survey(2)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "An optically-selected cluster catalog at redshift 0.1 &lt; z &lt; 1.1 from the Hyper Suprime-Cam Subaru Strategic Program S16A data",
@@ -7282,7 +10883,39 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.04918032786885246,
+        "Interpretability & Insight": 0.16393442622950818,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.7868852459016393
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 6.0,
+          "Interpretability & Insight": 20.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 96.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "performance(1)"
+          ],
+          "Interpretability & Insight": [
+            "bias(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "cluster(3)",
+            "galaxy cluster(1)",
+            "cosmology(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Mapping Distances across the Perseus Molecular Cloud Using CO Observations, Stellar Photometry, and Gaia DR2 Parallax Measurements",
@@ -7322,7 +10955,7 @@
       ],
       "doi": "10.3847/1538-4357/aae97c",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2018ApJ...869...83Z",
-      "researchArea": "Inference & Computation",
+      "researchArea": "Discovery & Understanding",
       "openalexUrl": "https://openalex.org/W3098858782",
       "scholarUrl": "https://iopscience.iop.org/article/10.3847/1538-4357/aae97c/meta",
       "citations_by_source": {
@@ -7337,7 +10970,40 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.12121212121212122,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.08080808080808081,
+        "Discovery & Understanding": 0.797979797979798
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 12.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 79.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(1)"
+          ],
+          "Inference & Computation": [
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "stellar(2)",
+            "star(1)",
+            "stars(2)",
+            "photometry(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Source selection for cluster weak lensing measurements in the Hyper Suprime-Cam survey",
@@ -7393,7 +11059,37 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.31683168316831684,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.6831683168316832
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 32.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 69.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "systematics(1)",
+            "robust(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "cluster(3)",
+            "dark matter(1)",
+            "cosmology(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "Deriving photometric redshifts using fuzzy archetypes and self-organizing maps - I. Methodology",
@@ -7441,7 +11137,45 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.06376811594202898,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.8173913043478261,
+        "Discovery & Understanding": 0.11884057971014493
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 22.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 282.0,
+          "Discovery & Understanding": 41.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(1)",
+            "reconstruction(1)"
+          ],
+          "Inference & Computation": [
+            "priors(1)",
+            "markov chain monte carlo(1)",
+            "markov chain(1)",
+            "monte carlo(2)",
+            "sampling(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "cluster(1)",
+            "redshift(2)",
+            "photometry(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Deriving photometric redshifts using fuzzy archetypes and self-organizing maps - II. Implementation",
@@ -7474,7 +11208,7 @@
       ],
       "doi": "10.1093/mnras/stx510",
       "adsUrl": "https://ui.adsabs.harvard.edu/abs/2017MNRAS.469.1205S",
-      "researchArea": "Discovery & Understanding",
+      "researchArea": "Inference & Computation",
       "openalexUrl": "https://openalex.org/W2962703367",
       "scholarUrl": "https://academic.oup.com/mnras/article-abstract/469/1/1205/3059148",
       "citations_by_source": {
@@ -7489,7 +11223,45 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.06376811594202898,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.8173913043478261,
+        "Discovery & Understanding": 0.11884057971014493
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 22.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 282.0,
+          "Discovery & Understanding": 41.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectral(1)",
+            "reconstruction(1)"
+          ],
+          "Inference & Computation": [
+            "priors(1)",
+            "markov chain monte carlo(1)",
+            "markov chain(1)",
+            "monte carlo(2)",
+            "sampling(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "cluster(1)",
+            "redshift(2)",
+            "photometry(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "The Impossibly Early Galaxy Problem",
@@ -7540,7 +11312,38 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.21476510067114093,
+        "Discovery & Understanding": 0.785234899328859
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 32.0,
+          "Discovery & Understanding": 117.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "evidence(1)",
+            "hierarchical(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(2)",
+            "stellar(2)",
+            "star(2)",
+            "quasar(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "Exploring photometric redshifts as an optimization problem: an ensemble MCMC and simulated annealing-driven template-fitting approach",
@@ -7593,7 +11396,43 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.1386481802426343,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.8214904679376083,
+        "Discovery & Understanding": 0.03986135181975736
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 80.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 474.0,
+          "Discovery & Understanding": 23.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "optimization(2)",
+            "ensemble(2)"
+          ],
+          "Inference & Computation": [
+            "likelihood(1)",
+            "markov chain monte carlo(2)",
+            "markov chain(2)",
+            "mcmc(2)",
+            "monte carlo(2)"
+          ],
+          "Discovery & Understanding": [
+            "galaxies(1)",
+            "redshift(2)",
+            "catalog(1)"
+          ]
+        },
+        "original_category": "Inference & Computation",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Mapping the Galaxy Color-Redshift Relation: Optimal Photometric Redshift Calibration Strategies for Cosmology Surveys",
@@ -7660,7 +11499,45 @@
         "google_scholar",
         "ads",
         "openalex"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.027491408934707903,
+        "Interpretability & Insight": 0.19243986254295534,
+        "Inference & Computation": 0.281786941580756,
+        "Discovery & Understanding": 0.49828178694158076
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 8.0,
+          "Interpretability & Insight": 56.0,
+          "Inference & Computation": 82.0,
+          "Discovery & Understanding": 145.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "training(1)"
+          ],
+          "Interpretability & Insight": [
+            "analysis(1)",
+            "calibration(2)"
+          ],
+          "Inference & Computation": [
+            "calibration(2)",
+            "distribution(1)",
+            "approximate(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(3)",
+            "galaxies(2)",
+            "dark matter(1)",
+            "dark energy(1)",
+            "cosmology(3)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      }
     },
     {
       "title": "A Highly Consistent Framework for the Evolution of the Star-Forming \"Main Sequence\" from z ~ 0-6",
@@ -7713,7 +11590,40 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.06015037593984962,
+        "Inference & Computation": 0.06015037593984962,
+        "Discovery & Understanding": 0.8796992481203008
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 8.0,
+          "Inference & Computation": 8.0,
+          "Discovery & Understanding": 117.0
+        },
+        "matched_terms": {
+          "Interpretability & Insight": [
+            "dependent(1)"
+          ],
+          "Inference & Computation": [
+            "distribution(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(1)",
+            "stellar(2)",
+            "star(3)",
+            "cosmology(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     },
     {
       "title": "Star Formation at 4 &lt; z &lt; 6 from the Spitzer Large Area Survey with Hyper-Suprime-Cam (SPLASH)",
@@ -7782,7 +11692,34 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 1.0
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 123.0
+        },
+        "matched_terms": {
+          "Discovery & Understanding": [
+            "galaxy(1)",
+            "galaxies(2)",
+            "stellar(2)",
+            "star(3)",
+            "stars(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "A Uniform History for Galaxy Evolution",
@@ -7821,7 +11758,37 @@
       ],
       "authorshipCategories": [
         "significant"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.0,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.1978021978021978,
+        "Discovery & Understanding": 0.8021978021978022
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 0.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 18.0,
+          "Discovery & Understanding": 73.0
+        },
+        "matched_terms": {
+          "Inference & Computation": [
+            "uniform(1)"
+          ],
+          "Discovery & Understanding": [
+            "galaxy(2)",
+            "galaxies(2)",
+            "star(1)",
+            "quasar(1)",
+            "cosmic(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "significant"
     },
     {
       "title": "The X-Ray Counterpart of the High-B Pulsar PSR J0726-2612",
@@ -7872,7 +11839,37 @@
       ],
       "authorshipCategories": [
         "primary"
-      ]
+      ],
+      "categoryProbabilities": {
+        "Statistical Learning & AI": 0.21052631578947367,
+        "Interpretability & Insight": 0.0,
+        "Inference & Computation": 0.0,
+        "Discovery & Understanding": 0.7894736842105263
+      },
+      "_scoring_info": {
+        "method": "binary_priority_sum_normalization",
+        "raw_scores": {
+          "Statistical Learning & AI": 8.0,
+          "Interpretability & Insight": 0.0,
+          "Inference & Computation": 0.0,
+          "Discovery & Understanding": 30.0
+        },
+        "matched_terms": {
+          "Statistical Learning & AI": [
+            "spectra(1)"
+          ],
+          "Discovery & Understanding": [
+            "star(1)",
+            "stars(2)",
+            "neutron star(1)",
+            "spectrum(1)",
+            "spectra(1)"
+          ]
+        },
+        "original_category": "Discovery & Understanding",
+        "updated_at": "2025-09-16T01:59:10Z"
+      },
+      "authorshipCategory": "primary"
     }
   ],
   "sources": {
@@ -7990,5 +11987,31 @@
     ],
     "recentPapersCount": 46,
     "totalJournals": 14
-  }
+  },
+  "processing_history": [
+    {
+      "step": "binary_priority_probabilistic_scoring",
+      "timestamp": "2025-09-16T01:23:28Z",
+      "method": "binary_presence + methodological_priority + softmax",
+      "changes": 42,
+      "statistics": {
+        "high_confidence": 98,
+        "medium_confidence": 22,
+        "low_confidence": 1,
+        "multi_category": 69
+      }
+    },
+    {
+      "step": "binary_priority_probabilistic_scoring",
+      "timestamp": "2025-09-16T01:59:10Z",
+      "method": "binary_presence + methodological_priority + softmax",
+      "changes": 0,
+      "statistics": {
+        "high_confidence": 98,
+        "medium_confidence": 22,
+        "low_confidence": 1,
+        "multi_category": 69
+      }
+    }
+  ]
 }

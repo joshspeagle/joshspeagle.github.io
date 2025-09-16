@@ -57,7 +57,7 @@ class GoogleScholarFetcher:
                 paper_list = []
                 publications = author.get("publications", [])
 
-                for pub in publications:
+                for i, pub in enumerate(publications):
                     try:
                         bib = pub.get("bib", {})
                         title = bib.get("title", "").strip()
@@ -73,9 +73,14 @@ class GoogleScholarFetcher:
                                 }
                             )
 
+                            # Log if paper has empty authors (common in quick fetch)
+                            authors = bib.get("author", "")
+                            if not authors:
+                                logger.debug(f"Paper at index {i} has empty authors: {title[:60]}...")
+
                     except Exception as e:
                         logger.warning(
-                            f"Failed to extract basic info for publication: {e}"
+                            f"Failed to extract basic info for publication at index {i}: {e}"
                         )
                         continue
 
@@ -157,7 +162,7 @@ class GoogleScholarFetcher:
 
                 # Get author information
                 author = scholarly.search_author_id(self.author_id)
-                author = scholarly.fill(author, sections=["basics", "indices", "counts"])
+                author = scholarly.fill(author, sections=["basics", "indices", "counts", "publications"])
 
                 metrics = {
                     "totalPapers": len(author.get("publications", [])),

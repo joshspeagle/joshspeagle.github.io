@@ -5,7 +5,11 @@ Post-process scraped publication data for website deployment.
 This script:
 1. Loads the scraped publication data
 2. Marks specified papers as featured
-3. Deploys the processed data to the main website directory
+3. Runs publication categorization
+4. Fixes citation timeline data
+5. Updates ADS library cache from online libraries
+6. Applies authorship categories from ADS library cache
+7. Deploys the processed data to the main website directory
 """
 
 import json
@@ -129,7 +133,9 @@ def main():
     # Run publication categorization script
     logger.info("Running publication categorization...")
     try:
-        categorization_script = Path(__file__).parent / "apply_binary_priority_scoring.py"
+        categorization_script = (
+            Path(__file__).parent / "apply_binary_priority_scoring.py"
+        )
         result = subprocess.run(
             [sys.executable, str(categorization_script)],
             capture_output=True,
@@ -175,6 +181,56 @@ def main():
 
     except Exception as e:
         logger.warning(f"⚠️ Could not run citations timeline fix script: {e}")
+
+    # Update ADS library cache first
+    logger.info("Updating ADS library cache...")
+    try:
+        cache_update_script = Path(__file__).parent / "update_ads_library_cache.py"
+        result = subprocess.run(
+            [sys.executable, str(cache_update_script)],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode == 0:
+            logger.info("✅ ADS library cache updated successfully")
+            # Print the output from the cache update script
+            if result.stdout.strip():
+                print(result.stdout)
+        else:
+            logger.warning(
+                f"⚠️ ADS library cache update script returned error code {result.returncode}"
+            )
+            if result.stderr:
+                logger.warning(f"Error: {result.stderr}")
+
+    except Exception as e:
+        logger.warning(f"⚠️ Could not update ADS library cache: {e}")
+
+    # Run authorship categories application script
+    logger.info("Applying authorship categories from ADS library cache...")
+    try:
+        authorship_script = Path(__file__).parent / "apply_authorship_categories.py"
+        result = subprocess.run(
+            [sys.executable, str(authorship_script)],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode == 0:
+            logger.info("✅ Authorship categories applied successfully")
+            # Print the output from the authorship script
+            if result.stdout.strip():
+                print(result.stdout)
+        else:
+            logger.warning(
+                f"⚠️ Authorship categories script returned error code {result.returncode}"
+            )
+            if result.stderr:
+                logger.warning(f"Error: {result.stderr}")
+
+    except Exception as e:
+        logger.warning(f"⚠️ Could not run authorship categories script: {e}")
 
     logger.info("✅ Publication data post-processing completed successfully")
     return True
