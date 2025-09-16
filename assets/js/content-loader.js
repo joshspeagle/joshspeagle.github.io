@@ -805,8 +805,8 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
 
     if (realMentees.length === 0) return '';
 
-    // Implement lazy loading for sections with many mentees (threshold: 8+ mentees)
-    const lazyLoadThreshold = 8;
+    // Implement lazy loading for sections with many mentees (threshold: 20+ mentees)
+    const lazyLoadThreshold = 20;
     const shouldLazyLoad = realMentees.length > lazyLoadThreshold;
     
     if (shouldLazyLoad) {
@@ -822,8 +822,8 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
                 </div>
                 <div class="mentee-load-more" id="load-more-${sectionId}">
                     <button class="load-more-btn" onclick="window.loadMoreMentees('${sectionId}', '${type}', ${isCompleted})"
-                            aria-label="Show all ${remainingCount} remaining mentees in ${title} section">
-                        Show all ${remainingCount} remaining mentees
+                            aria-label="Load more mentees in ${title} section">
+                        Load More (${remainingCount} remaining)
                     </button>
                 </div>
             </section>
@@ -1074,7 +1074,7 @@ async function loadPublicationsContent(publicationsSection, staticData) {
                     }
                 };
                 
-                // Store publications data globally for infinite scrolling
+                // Store publications data globally for batch loading
                 // Include ALL publications (not just 2020+) and exclude only featured ones
                 allPublicationsData = dynamicData.publications
                     .filter(pub => pub.year && !pub.featured) 
@@ -1099,12 +1099,8 @@ async function loadPublicationsContent(publicationsSection, staticData) {
                     }, 500);
                 }
                 
-                // Initialize infinite scrolling for publications
+                // Announce initial publications loaded to screen readers
                 requestAnimationFrame(() => {
-                    initializeInfiniteScrolling();
-                    console.log('Infinite scrolling initialized for publications');
-                    
-                    // Announce initial publications loaded to screen readers
                     const initialCount = Math.min(20, dynamicData.publications.length); // Default display limit
                     const totalCount = dynamicData.publications.length;
                     announceToScreenReader(`Publications page loaded. Showing ${initialCount} of ${totalCount} publications.`);
@@ -1296,7 +1292,7 @@ function createFeaturedPublications(dynamicData, staticData) {
                     `;
     }).join('')}
             </div>
-        </div>
+        </section>
     `;
 }
 
@@ -1331,7 +1327,7 @@ function createRecentPublications(dynamicData) {
         return '';
     }
 
-    // Get all publications, excluding featured ones (remove limit for infinite scrolling)
+    // Get all publications, excluding featured ones (for batch loading)
     const allPubs = publications
         .filter(pub => pub.year && !pub.featured) // Exclude featured papers, include all years
         .sort((a, b) => {
@@ -1356,22 +1352,14 @@ function createRecentPublications(dynamicData) {
                 ${initialPubs.map(pub => createPublicationHTML(pub)).join('')}
             </div>
             ${allPubs.length > initialBatchSize ? `
-            <div id="publications-loading" class="publications-loading" style="display: none;">
-                <div class="loading-spinner"></div>
-                <p>Loading more publications...</p>
-            </div>
             <div id="publications-load-more" class="publications-load-more">
-                <button class="load-more-btn" 
-                        onclick="loadMorePublications()" 
-                        onkeydown="handleLoadMoreKeydown(event)"
-                        tabindex="0"
+                <button class="load-more-btn" onclick="loadMorePublications()"
                         aria-label="Load more publications">
-                    Load More Publications
+                    Load More (${allPubs.length - initialPubs.length} remaining)
                 </button>
-                <p class="load-more-info">Showing ${initialPubs.length} of ${allPubs.length} publications</p>
             </div>
             ` : ''}
-        </div>
+        </section>
     `;
 }
 
@@ -1650,21 +1638,10 @@ function createPublicationHTML(pub) {
     `;
 }
 
-// Global variables for infinite scrolling
+// Global variables for batch loading
 let allPublicationsData = [];
 let isLoadingMore = false;
 
-/**
- * Re-enable the load more button and restore its accessibility attributes
- */
-function reEnableLoadMoreButton() {
-    const loadMoreBtn = document.querySelector('.load-more-btn');
-    if (loadMoreBtn) {
-        loadMoreBtn.disabled = false;
-        loadMoreBtn.setAttribute('aria-busy', 'false');
-        loadMoreBtn.setAttribute('aria-label', 'Load more publications');
-    }
-}
 
 /**
  * Enhanced keyboard navigation handler for all interactive elements
@@ -1708,23 +1685,6 @@ function initializeKeyboardNavigation() {
     }, true);
 }
 
-/**
- * Handle keyboard navigation for the load more button
- */
-function handleLoadMoreKeydown(event) {
-    // Handle Enter and Space key presses
-    if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault(); // Prevent default space scrolling
-        loadMorePublications();
-    }
-    // Handle Escape key to announce current status
-    else if (event.key === 'Escape') {
-        const loadMoreInfo = document.querySelector('.load-more-info');
-        if (loadMoreInfo) {
-            announceToScreenReader(loadMoreInfo.textContent);
-        }
-    }
-}
 
 /**
  * Announce content to screen readers via ARIA live region
@@ -1754,7 +1714,7 @@ function announceToScreenReader(message) {
 }
 
 /**
- * Load more publications for infinite scrolling
+ * Load more publications in batches
  */
 function loadMorePublications() {
     console.log('loadMorePublications called');
@@ -1766,55 +1726,39 @@ function loadMorePublications() {
     }
     isLoadingMore = true;
     
-    // Disable load more button and update its state for accessibility
-    const loadMoreBtn = document.querySelector('.load-more-btn');
-    if (loadMoreBtn) {
-        loadMoreBtn.disabled = true;
-        loadMoreBtn.setAttribute('aria-busy', 'true');
-        loadMoreBtn.setAttribute('aria-label', 'Loading more publications, please wait');
-    }
-    
-    // Announce to screen readers that content is loading
-    announceToScreenReader('Loading more publications...');
-    
     const container = document.getElementById('publications-container');
-    const loadingDiv = document.getElementById('publications-loading');
     const loadMoreDiv = document.getElementById('publications-load-more');
-    
-    if (!container || !loadingDiv || !loadMoreDiv) {
+
+    if (!container || !loadMoreDiv) {
         console.error('Required elements not found:', {
             container: !!container,
-            loadingDiv: !!loadingDiv,
             loadMoreDiv: !!loadMoreDiv
         });
-        // Re-enable button on error
-        reEnableLoadMoreButton();
         isLoadingMore = false;
         return;
+    }
+
+    // Show loading state
+    const loadMoreBtn = loadMoreDiv.querySelector('.load-more-btn');
+    if (loadMoreBtn) {
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.textContent = 'Loading publications...';
+        loadMoreBtn.setAttribute('aria-busy', 'true');
     }
     
     const totalPubs = parseInt(container.dataset.total);
     const loadedPubs = parseInt(container.dataset.loaded);
     const batchSize = 20;
     
-    console.log('Load more state:', {
-        totalPubs,
-        loadedPubs,
-        batchSize,
-        allPublicationsDataLength: allPublicationsData?.length || 0
-    });
-    
-    // Show loading indicator
-    loadingDiv.style.display = 'block';
-    loadMoreDiv.style.display = 'none';
-    
     // Safety check
     if (!allPublicationsData || allPublicationsData.length === 0) {
         console.error('allPublicationsData is not available');
-        loadingDiv.style.display = 'none';
-        loadMoreDiv.style.display = 'block';
         // Re-enable button
-        reEnableLoadMoreButton();
+        if (loadMoreBtn) {
+            loadMoreBtn.disabled = false;
+            loadMoreBtn.textContent = 'Load More Publications';
+            loadMoreBtn.setAttribute('aria-busy', 'false');
+        }
         isLoadingMore = false;
         return;
     }
@@ -1822,10 +1766,10 @@ function loadMorePublications() {
     // Check if we've already loaded everything
     if (loadedPubs >= allPublicationsData.length) {
         console.log('All publications already loaded');
-        loadingDiv.style.display = 'none';
-        loadMoreDiv.style.display = 'none';
-        // Re-enable button (though it will be hidden)
-        reEnableLoadMoreButton();
+        // Remove button since everything is loaded
+        if (loadMoreDiv) {
+            loadMoreDiv.remove();
+        }
         isLoadingMore = false;
         return;
     }
@@ -1833,12 +1777,6 @@ function loadMorePublications() {
     // Simulate loading delay for better UX
     setTimeout(() => {
         const nextBatch = allPublicationsData.slice(loadedPubs, loadedPubs + batchSize);
-        console.log('Next batch:', {
-            startIndex: loadedPubs,
-            endIndex: loadedPubs + batchSize,
-            batchLength: nextBatch.length,
-            firstTitle: nextBatch[0]?.title || 'N/A'
-        });
         
         // Add new publications to container
         nextBatch.forEach(pub => {
@@ -1851,32 +1789,24 @@ function loadMorePublications() {
         const newLoadedCount = loadedPubs + nextBatch.length;
         container.dataset.loaded = newLoadedCount;
         
-        // Hide loading indicator
-        loadingDiv.style.display = 'none';
-        
-        // Show/hide load more button based on remaining publications
-        if (newLoadedCount < totalPubs) {
-            loadMoreDiv.style.display = 'block';
-            const loadMoreInfo = loadMoreDiv.querySelector('.load-more-info');
-            if (loadMoreInfo) {
-                loadMoreInfo.textContent = `Showing ${newLoadedCount} of ${totalPubs} publications`;
+        // Update or remove load more button based on remaining publications
+        const remainingCount = allPublicationsData.length - newLoadedCount;
+
+        if (remainingCount > 0) {
+            // Update button text with remaining count
+            if (loadMoreBtn) {
+                loadMoreBtn.textContent = `Load More (${remainingCount} remaining)`;
+                loadMoreBtn.disabled = false;
+                loadMoreBtn.setAttribute('aria-busy', 'false');
             }
+        } else {
+            // Remove the load more button since everything is now loaded
+            loadMoreDiv.remove();
         }
-        
-        // Initialize intersection observer for new publications if needed
-        initializeInfiniteScrolling();
-        
+
         // Announce successful loading to screen readers
-        const loadedCount = Math.min(PUBLICATIONS_BATCH_SIZE, remainingCount);
-        announceToScreenReader(`Loaded ${loadedCount} more publications. ${totalPubs - newLoadedCount} publications remaining.`);
-        
-        // Re-enable load more button and restore its state
-        reEnableLoadMoreButton();
-        // Focus the button for keyboard users who just used it
-        const loadMoreBtn = document.querySelector('.load-more-btn');
-        if (loadMoreBtn) {
-            loadMoreBtn.focus();
-        }
+        const loadedCount = Math.min(batchSize, nextBatch.length);
+        announceToScreenReader(`Loaded ${loadedCount} more publications. ${remainingCount} publications remaining.`);
         
         // Reset loading flag
         isLoadingMore = false;
@@ -1884,47 +1814,6 @@ function loadMorePublications() {
     }, 500); // 500ms loading delay
 }
 
-// Global intersection observer
-let intersectionObserver = null;
-
-/**
- * Initialize intersection observer for infinite scrolling
- */
-function initializeInfiniteScrolling() {
-    const loadMoreDiv = document.getElementById('publications-load-more');
-    if (!loadMoreDiv) return;
-    
-    // Clean up existing observer
-    if (intersectionObserver) {
-        intersectionObserver.disconnect();
-    }
-    
-    // Create intersection observer
-    intersectionObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && !isLoadingMore) {
-                const container = document.getElementById('publications-container');
-                if (container) {
-                    const totalPubs = parseInt(container.dataset.total);
-                    const loadedPubs = parseInt(container.dataset.loaded);
-                    
-                    console.log('Intersection triggered:', { loadedPubs, totalPubs, isLoadingMore });
-                    
-                    // Auto-load more when user scrolls near the bottom
-                    if (loadedPubs < totalPubs && !isLoadingMore) {
-                        // Temporarily disconnect observer to prevent multiple triggers
-                        intersectionObserver.disconnect();
-                        loadMorePublications();
-                    }
-                }
-            }
-        });
-    }, {
-        rootMargin: '200px' // Start loading 200px before the element comes into view
-    });
-    
-    intersectionObserver.observe(loadMoreDiv);
-}
 
 function createPublicationsContent(data) {
     return `
@@ -2519,20 +2408,20 @@ let allMenteesData = null;
 function loadMoreMentees(sectionId, type, isCompleted) {
     console.log('loadMoreMentees called:', sectionId, type, isCompleted);
     console.log('allMenteesData available:', !!allMenteesData);
-    
+
     if (!allMenteesData) {
         console.error('Mentee data not available for lazy loading');
         return;
     }
-    
+
     const container = document.querySelector(`[data-section-id="${sectionId}"]`);
     const loadMoreDiv = document.getElementById(`load-more-${sectionId}`);
-    
+
     if (!container || !loadMoreDiv) {
         console.error('Required mentee elements not found');
         return;
     }
-    
+
     // Show loading state
     const loadMoreBtn = loadMoreDiv.querySelector('.load-more-btn');
     if (loadMoreBtn) {
@@ -2540,96 +2429,77 @@ function loadMoreMentees(sectionId, type, isCompleted) {
         loadMoreBtn.textContent = 'Loading mentees...';
         loadMoreBtn.setAttribute('aria-busy', 'true');
     }
-    
-    // Get the remaining mentees for this section
-    const currentMentees = container.children.length;
-    
-    // Find the right mentee data source
-    let menteeSource;
-    if (isCompleted) {
-        if (sectionId.includes('postdoctoral')) {
-            menteeSource = allMenteesData.menteesByStage.completed.postdoctoral;
-        } else if (sectionId.includes('doctoral')) {
-            menteeSource = allMenteesData.menteesByStage.completed.doctoral;
-        } else {
-            menteeSource = allMenteesData.menteesByStage.completed.bachelors;
-        }
-    } else {
-        if (sectionId.includes('postdoctoral')) {
-            menteeSource = allMenteesData.menteesByStage.postdoctoral;
-        } else if (sectionId.includes('doctoral')) {
-            menteeSource = allMenteesData.menteesByStage.doctoral;
-        } else {
-            menteeSource = allMenteesData.menteesByStage.bachelors;
-        }
-    }
-    
-    if (!menteeSource) {
-        console.error('Could not find mentee source for section:', sectionId);
-        return;
-    }
-    
-    const realMentees = menteeSource.filter(mentee => mentee.privacy !== 'placeholder');
-    const remainingMentees = realMentees.slice(currentMentees); // Get ALL remaining mentees
-    
-    // Add ALL the remaining mentee cards
-    remainingMentees.forEach(mentee => {
-        const menteeHTML = createMenteeCard(mentee, type, isCompleted);
-        container.insertAdjacentHTML('beforeend', menteeHTML);
-    });
-    
-    // Remove the load more button since everything is now loaded
-    loadMoreDiv.remove();
-    
-    // Announce to screen readers
-    announceToScreenReader(`Loaded ${remainingMentees.length} more mentees. All mentees in this section are now visible.`);
-}
 
-// Make loadMoreMentees globally available
-window.loadMoreMentees = loadMoreMentees;
+    setTimeout(() => {
+        // Get the current mentees count
+        const currentMentees = container.children.length;
 
-// Initialize scroll-based lazy loading for mentorship page
-function setupScrollBasedLoading() {
-    // Only set up if Intersection Observer is supported
-    if (!('IntersectionObserver' in window)) {
-        console.log('IntersectionObserver not supported, falling back to manual loading');
-        return;
-    }
-    
-    // Create intersection observer for load more buttons
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const button = entry.target.querySelector('.load-more-btn');
-                if (button) {
-                    // Trigger the load more function
-                    button.click();
-                    // Stop observing this element since it will be removed
-                    observer.unobserve(entry.target);
-                }
+        // Find the right mentee data source
+        let menteeSource;
+        if (isCompleted) {
+            if (sectionId.includes('postdoctoral')) {
+                menteeSource = allMenteesData.menteesByStage.completed.postdoctoral;
+            } else if (sectionId.includes('doctoral')) {
+                menteeSource = allMenteesData.menteesByStage.completed.doctoral;
+            } else {
+                menteeSource = allMenteesData.menteesByStage.completed.bachelors;
             }
+        } else {
+            if (sectionId.includes('postdoctoral')) {
+                menteeSource = allMenteesData.menteesByStage.postdoctoral;
+            } else if (sectionId.includes('doctoral')) {
+                menteeSource = allMenteesData.menteesByStage.doctoral;
+            } else {
+                menteeSource = allMenteesData.menteesByStage.bachelors;
+            }
+        }
+
+        if (!menteeSource) {
+            console.error('Could not find mentee source for section:', sectionId);
+            return;
+        }
+
+        const realMentees = menteeSource.filter(mentee => mentee.privacy !== 'placeholder');
+        const batchSize = 20;
+        const nextBatch = realMentees.slice(currentMentees, currentMentees + batchSize);
+
+        // Add the next batch of mentee cards
+        nextBatch.forEach(mentee => {
+            const menteeHTML = createMenteeCard(mentee, type, isCompleted);
+            container.insertAdjacentHTML('beforeend', menteeHTML);
         });
-    }, {
-        rootMargin: '100px' // Trigger when button is 100px from viewport
-    });
-    
-    // Observe all load more buttons
-    const loadMoreDivs = document.querySelectorAll('.mentee-load-more');
-    loadMoreDivs.forEach(div => {
-        observer.observe(div);
-    });
-    
-    console.log(`Set up scroll-based loading for ${loadMoreDivs.length} sections`);
+
+        const newLoadedCount = currentMentees + nextBatch.length;
+        const remainingCount = realMentees.length - newLoadedCount;
+
+        // Update or remove load more button
+        if (remainingCount > 0) {
+            // Update button text with remaining count
+            loadMoreBtn.disabled = false;
+            loadMoreBtn.textContent = `Load More (${remainingCount} remaining)`;
+            loadMoreBtn.setAttribute('aria-busy', 'false');
+        } else {
+            // Remove the load more button since everything is now loaded
+            loadMoreDiv.remove();
+        }
+
+        // Announce to screen readers
+        announceToScreenReader(`Loaded ${nextBatch.length} more mentees. ${remainingCount > 0 ? remainingCount + ' mentees remaining.' : 'All mentees in this section are now visible.'}`);
+
+    }, 300); // 300ms loading delay
 }
+
+// Make functions globally available
+window.loadMoreMentees = loadMoreMentees;
+window.loadMorePublications = loadMorePublications;
+
 
 // Initialize mentorship page interactive features
 function initializeMentorshipInteractivity() {
     console.log('Initializing mentorship interactivity, data available:', !!allMenteesData);
-    
-    // Set up scroll-based loading after a short delay to ensure DOM is ready
-    setTimeout(() => {
-        setupScrollBasedLoading();
-    }, 500);
+
+    // Use manual loading only - no automatic scroll-based loading
+    console.log('Mentorship page initialized with manual loading only');
 }
 
 // Create awards content
