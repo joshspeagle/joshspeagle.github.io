@@ -492,7 +492,7 @@
                         "name": "Leo Watson",
                         "timelinePeriod": "Fall 2024-Present",
                         "scholarships": [
-                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
+                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC CGS-D</a>"
                         ],
                         "supervisionType": "Co-Supervisor",
                         "coSupervisors": [
@@ -538,6 +538,7 @@
                         "name": "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>",
                         "timelinePeriod": "Fall 2022-Present",
                         "scholarships": [
+                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/cgsm-bescm_eng.asp\">NSERC CGS-M</a>",
                             "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
                         ],
                         "supervisionType": "Secondary Supervisor",
