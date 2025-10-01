@@ -1539,6 +1539,14 @@
                     "color": "amber",
                     "talks": [
                         {
+                            "title": "A Brief History of <s>Time</s> MCMC in Astronomy",
+                            "event": "The Fast and Curious 2: MCMC in Action",
+                            "location": "Toronto, Canada",
+                            "date": "Sep 2025",
+                            "year": 2025,
+                            "type": "Invited Talk"
+                        },
+                        {
                             "title": "Bayesian Parameter Estimation and Model Selection Problems in Astrophysics",
                             "event": "Bayes Comp 2025",
                             "location": "Singapore",
