@@ -378,19 +378,19 @@
                     "position": "left"
                 },
                 {
+                    "title": "Research Scientist",
+                    "date": "Jan-Apr 2025",
+                    "content": "While on leave from UofT, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on cutting-edge quantitative trading strategies for crypto assets.",
+                    "location": "Toronto, Canada (Remote)",
+                    "position": "left"
+                },
+                {
                     "title": "Assistant Professor",
                     "date": "2022 - Present",
                     "content": "Joint appointment in Statistical Sciences and Astronomy & Astrophysics. Co-leading the <a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a> with Gwen Eadie.",
                     "location": "Toronto, Canada",
                     "position": "right",
                     "current": true
-                },
-                {
-                    "title": "Research Scientist",
-                    "date": "Jan-Apr 2025",
-                    "content": "While on leave from UofT, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on cutting-edge quantitative trading strategies for crypto assets.",
-                    "location": "Toronto, Canada (Remote)",
-                    "position": "left"
                 }
             ],
             "personalNote": "Outside of work, I mostly enjoy hanging out at home or going out with my wife, our two dogs, and our son. I also watch way too much anime, play way too many video games, and have a supremely unhealthy love of junk food and soda.",
@@ -1629,6 +1629,14 @@
                     "talks": [
                         {
                             "title": "A Conceptual Introduction to Deep Learning",
+                            "event": "UC Berkeley: BIDMAP Seminar",
+                            "location": "Berkeley, CA",
+                            "date": "Oct 2025",
+                            "year": 2025,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "A Conceptual Introduction to Deep Learning",
                             "event": "Penn State University: Department of Astronomy and Astrophysics Seminar",
                             "location": "State College, PA",
                             "date": "May 2025",
@@ -1653,7 +1661,7 @@
                         },
                         {
                             "title": "Trust Me, I am an Astrophysics Foundation Model",
-                            "event": "Tsinghua University",
+                            "event": "Tsinghua University: Astrophysics Colloquium",
                             "location": "Beijing, China",
                             "date": "Dec 2024",
                             "year": 2024,
