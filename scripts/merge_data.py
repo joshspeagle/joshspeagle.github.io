@@ -159,6 +159,10 @@ class DataMerger:
                 if field not in merged and field in scholar_data:
                     merged[field] = scholar_data[field]
 
+            # Merge authors if not present or empty
+            if not merged.get("authors") and scholar_data.get("authors"):
+                merged["authors"] = scholar_data["authors"]
+
             sources_found.append("google_scholar")
             citations_by_source["google_scholar"] = scholar_data.get("citations", 0)
 

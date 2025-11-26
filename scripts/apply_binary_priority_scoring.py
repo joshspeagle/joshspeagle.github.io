@@ -281,11 +281,18 @@ def process_all_publications(input_file, output_file=None, dry_run=False):
 def main():
     """Main function."""
     import argparse
-    
+    from pathlib import Path
+
+    # Determine correct default path (handle running from scripts/ or project root)
+    if Path("../assets/data/publications_data.json").exists():
+        default_input = "../assets/data/publications_data.json"
+    else:
+        default_input = "assets/data/publications_data.json"
+
     parser = argparse.ArgumentParser(description="Apply binary priority scoring to all publications")
     parser.add_argument(
         "--input",
-        default="assets/data/publications_data.json",
+        default=default_input,
         help="Input publications JSON file"
     )
     parser.add_argument(

@@ -89,6 +89,9 @@ class UnifiedPublicationPipeline:
         start_time = time.time()
 
         try:
+            # Stage 0: Backup existing data before we do anything
+            self._stage_0_backup_existing()
+
             # Stage 1: Quick fetch of paper list
             self._stage_1_quick_fetch()
 
@@ -122,6 +125,35 @@ class UnifiedPublicationPipeline:
             console.print(f"\n❌ [bold red]Pipeline failed: {e}[/bold red]")
             logger.error(f"Pipeline error: {e}", exc_info=True)
             sys.exit(1)
+
+    def _stage_0_backup_existing(self):
+        """Stage 0: Backup existing publications data before making any changes."""
+        console.print("\n[bold green][0/7][/bold green] Backing up existing data...")
+
+        existing_file = Path("assets/data/publications_data.json")
+
+        if not existing_file.exists():
+            # Try parent directory (if running from scripts/)
+            existing_file = Path("../assets/data/publications_data.json")
+
+        if existing_file.exists():
+            backup_dir = Path("assets/data/backups")
+            if not backup_dir.exists():
+                backup_dir = Path("../assets/data/backups")
+            backup_dir.mkdir(parents=True, exist_ok=True)
+
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            backup_path = backup_dir / f"publications_PRE_UPDATE_{timestamp}.json"
+
+            try:
+                import shutil
+                shutil.copy2(existing_file, backup_path)
+                console.print(f"  ✓ Existing data backed up to {backup_path}")
+            except Exception as e:
+                console.print(f"  ⚠️  Backup failed: {e}", style="yellow")
+                raise RuntimeError(f"Failed to backup existing data: {e}")
+        else:
+            console.print("  ℹ️  No existing publications_data.json found (first run?)")
 
     def _stage_1_quick_fetch(self):
         """Stage 1: Quick fetch of paper list from Google Scholar."""
@@ -367,8 +399,14 @@ class UnifiedPublicationPipeline:
         """Stage 6: Save the scraped/merged data."""
         console.print("\n[bold green][6/7][/bold green] Saving scraped data...")
 
+        # Determine correct path (handle running from scripts/ or project root)
+        if Path("../assets/data").exists():
+            base_path = Path("../assets/data")
+        else:
+            base_path = Path("assets/data")
+
         # Create backup
-        backup_dir = Path("assets/data/backups")
+        backup_dir = base_path / "backups"
         backup_dir.mkdir(parents=True, exist_ok=True)
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -383,7 +421,7 @@ class UnifiedPublicationPipeline:
             console.print(f"  ⚠️  Backup failed: {e}", style="yellow")
 
         # Save main file
-        output_path = Path("assets/data/publications_data.json")
+        output_path = base_path / "publications_data.json"
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         with open(output_path, "w", encoding="utf-8") as f:

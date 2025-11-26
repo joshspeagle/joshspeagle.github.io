@@ -4,10 +4,15 @@ Flag featured publications in the website data.
 """
 
 import json
+import sys
 from pathlib import Path
 from rich.console import Console
 
-console = Console()
+# Force UTF-8 encoding for Windows compatibility
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding="utf-8")
+
+console = Console(force_terminal=True)
 
 
 def flag_featured_publications():
@@ -40,7 +45,7 @@ def flag_featured_publications():
             "description": "Carzon et al.",
         },
         {
-            "title_pattern": "A Deep, High-Angular Resolution 3D Dust Map",
+            "title_pattern": "A Deep, High-angular-resolution 3D Dust Map",
             "description": "Zucker, Saydjari and Speagle et al.",
         },
         {

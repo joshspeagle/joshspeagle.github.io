@@ -1246,7 +1246,7 @@ function createFeaturedPublications(dynamicData, staticData) {
             authorString = authors.slice(0, 3).join(', ') + `, et al. (${authors.length} authors)`;
         }
 
-        // Find arXiv link
+        // Find paper link (arXiv preferred, then ADS, then Scholar URL)
         let arxivLink = '';
         if (paper.arxivId) {
             arxivLink = `https://arxiv.org/abs/${paper.arxivId}`;
@@ -1254,6 +1254,9 @@ function createFeaturedPublications(dynamicData, staticData) {
             arxivLink = paper.scholarUrl;
         } else if (paper.adsUrl) {
             arxivLink = paper.adsUrl;
+        } else if (paper.scholarUrl) {
+            // Use Scholar URL as final fallback (e.g., OpenReview links)
+            arxivLink = paper.scholarUrl;
         }
 
         // Check if this is a student-led or postdoc-led publication
@@ -1582,7 +1585,7 @@ function createPublicationHTML(pub) {
         authorString = authors.slice(0, 3).join(', ') + `, et al. (${authors.length} authors)`;
     }
 
-    // Find arXiv link
+    // Find paper link (arXiv preferred, then ADS, then Scholar URL)
     let arxivLink = '';
     if (pub.arxivId) {
         arxivLink = `https://arxiv.org/abs/${pub.arxivId}`;
@@ -1591,6 +1594,9 @@ function createPublicationHTML(pub) {
     } else if (pub.adsUrl) {
         // Use ADS link as fallback
         arxivLink = pub.adsUrl;
+    } else if (pub.scholarUrl) {
+        // Use Scholar URL as final fallback (e.g., OpenReview links)
+        arxivLink = pub.scholarUrl;
     }
 
     // Get publication categories and create badges

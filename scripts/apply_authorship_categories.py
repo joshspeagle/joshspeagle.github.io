@@ -66,7 +66,7 @@ def load_publications(pub_path=None):
             return {}
 
     try:
-        with open(pub_path, "r") as f:
+        with open(pub_path, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
         logger.error(f"Publications data not found at {pub_path}")
@@ -160,7 +160,7 @@ def save_publications(publications_data, output_path=None):
         # Ensure directory exists
         Path(output_path).parent.mkdir(parents=True, exist_ok=True)
 
-        with open(output_path, "w") as f:
+        with open(output_path, "w", encoding="utf-8") as f:
             json.dump(publications_data, f, indent=2, ensure_ascii=False)
         logger.info(f"Saved updated publications to {output_path}")
         return True
