@@ -586,9 +586,6 @@
                         "timelinePeriod": "Fall 2025-Present",
                         "currentStatus": "MSc Statistics student",
                         "supervisionType": "Primary Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.statistics.utoronto.ca/people/directories/all-faculty/sebastian-jaimungal\">Sebastian Jaimungal</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
-                        ],
                         "project": "Time Series Forecasting with Deep Markov Models",
                         "myCareerStage": "Assistant Professor"
                     },
