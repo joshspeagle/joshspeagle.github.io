@@ -273,7 +273,7 @@
                         }
                     },
                     {
-                        "title": "University of Toronto Undergraduates", 
+                        "title": "University of Toronto Undergraduates",
                         "content": "I love working with University of Toronto undergraduate students both throughout the year and over the summer. I often post opportunities through existing program streams to ensure equitable review processes.",
                         "opportunities": [
                             {
@@ -282,7 +282,7 @@
                                 "abbr": "ROP"
                             },
                             {
-                                "name": "Work Study Program", 
+                                "name": "Work Study Program",
                                 "url": "https://www.registrar.utoronto.ca/financial-aid-awards/work-study-program/",
                                 "abbr": "WSP"
                             },
@@ -1626,6 +1626,22 @@
                     "talks": [
                         {
                             "title": "A Conceptual Introduction to Deep Learning",
+                            "event": "Cambridge: Astrophysics Data Science Seminar",
+                            "location": "Cambridge, UK",
+                            "date": "Dec 2025",
+                            "year": 2025,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "A Conceptual Introduction to Deep Learning",
+                            "event": "MPIA: Data Science Seminar",
+                            "location": "Heidelberg, Germany",
+                            "date": "Dec 2025",
+                            "year": 2025,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "A Conceptual Introduction to Deep Learning",
                             "event": "UC Berkeley: BIDMAP Seminar",
                             "location": "Berkeley, CA",
                             "date": "Oct 2025",
@@ -2273,7 +2289,10 @@
                 {
                     "code": "AST424",
                     "title": "Introduction to Astrophysical Research",
-                    "terms": ["Winter 2025", "Full Year 2023-2024"],
+                    "terms": [
+                        "Winter 2025",
+                        "Full Year 2023-2024"
+                    ],
                     "level": "Undergraduate",
                     "department": "Astronomy",
                     "description": "Research methods and project-based learning in astrophysics",
@@ -2282,8 +2301,11 @@
                 {
                     "code": "STA130",
                     "title": "Introduction to Statistical Reasoning and Data Science",
-                    "terms": ["Winter 2024", "Winter 2023"],
-                    "level": "Undergraduate", 
+                    "terms": [
+                        "Winter 2024",
+                        "Winter 2023"
+                    ],
+                    "level": "Undergraduate",
                     "department": "Statistics",
                     "description": "Foundational course in statistical thinking and data analysis",
                     "color": "green"
@@ -2291,7 +2313,10 @@
                 {
                     "code": "AST3101",
                     "title": "Module: Ethics and Practice in Astronomy",
-                    "terms": ["Winter 2024", "Winter 2022"],
+                    "terms": [
+                        "Winter 2024",
+                        "Winter 2022"
+                    ],
                     "level": "Graduate",
                     "department": "Astronomy",
                     "description": "Research ethics and professional practice in astronomy",
@@ -2299,17 +2324,25 @@
                 },
                 {
                     "code": "JAS1101",
-                    "title": "Introduction to Astrostatistics", 
-                    "terms": ["Fall 2022", "Winter 2022 (partial)"],
+                    "title": "Introduction to Astrostatistics",
+                    "terms": [
+                        "Fall 2022",
+                        "Winter 2022 (partial)"
+                    ],
                     "level": "Graduate",
-                    "departments": ["Astronomy", "Statistics"],
+                    "departments": [
+                        "Astronomy",
+                        "Statistics"
+                    ],
                     "description": "Statistical methods for astronomical research",
                     "color": "purple"
                 },
                 {
                     "code": "AST3101",
                     "title": "Module: Introduction to Sampling",
-                    "terms": ["Fall 2021"],
+                    "terms": [
+                        "Fall 2021"
+                    ],
                     "level": "Graduate",
                     "department": "Astronomy",
                     "description": "Advanced sampling techniques in astronomical data analysis",
@@ -2377,7 +2410,9 @@
                             "positions": [
                                 {
                                     "role": "Working Group on Astroinformatics & Astrostatistics Steering Committee",
-                                    "periods": ["2020-2026"]
+                                    "periods": [
+                                        "2020-2026"
+                                    ]
                                 }
                             ]
                         },
@@ -2386,11 +2421,15 @@
                             "positions": [
                                 {
                                     "role": "Astrostatistics Interest Group (AIG): Program Chair (Interim)",
-                                    "periods": ["2023-2024"]
+                                    "periods": [
+                                        "2023-2024"
+                                    ]
                                 },
                                 {
                                     "role": "Astrostatistics Interest Group (AIG): Web Director",
-                                    "periods": ["2020-2023"]
+                                    "periods": [
+                                        "2020-2023"
+                                    ]
                                 }
                             ]
                         },
@@ -2399,7 +2438,9 @@
                             "positions": [
                                 {
                                     "role": "Postdoc Committee",
-                                    "periods": ["2020-2023"]
+                                    "periods": [
+                                        "2020-2023"
+                                    ]
                                 }
                             ]
                         },
@@ -2408,11 +2449,15 @@
                             "positions": [
                                 {
                                     "role": "Data Science and Analytics Section: President Elect",
-                                    "periods": ["2024-2025"]
+                                    "periods": [
+                                        "2024-2025"
+                                    ]
                                 },
                                 {
                                     "role": "Data Science and Analytics Section: President",
-                                    "periods": ["2025-2026"]
+                                    "periods": [
+                                        "2025-2026"
+                                    ]
                                 }
                             ]
                         },
@@ -2421,7 +2466,9 @@
                             "positions": [
                                 {
                                     "role": "Publication Committee: Chair",
-                                    "periods": ["2024"]
+                                    "periods": [
+                                        "2024"
+                                    ]
                                 }
                             ]
                         }
@@ -2435,23 +2482,34 @@
                             "positions": [
                                 {
                                     "role": "Undergraduate Curriculum Committee",
-                                    "periods": ["2023-2024", "2025-2026"]
+                                    "periods": [
+                                        "2023-2024",
+                                        "2025-2026"
+                                    ]
                                 },
                                 {
                                     "role": "Summer Undergraduate Research Program (SURP) Committee: Chair",
-                                    "periods": ["2022-2024"]
+                                    "periods": [
+                                        "2022-2024"
+                                    ]
                                 },
                                 {
                                     "role": "Summer Undergraduate Research Program (SURP) Committee",
-                                    "periods": ["2021-2022"]
+                                    "periods": [
+                                        "2021-2022"
+                                    ]
                                 },
                                 {
                                     "role": "Training & Mentoring Committee: Co-Chair",
-                                    "periods": ["2021-2023"]
+                                    "periods": [
+                                        "2021-2023"
+                                    ]
                                 },
                                 {
                                     "role": "Graduate Admissions Committee",
-                                    "periods": ["2021"]
+                                    "periods": [
+                                        "2021"
+                                    ]
                                 }
                             ]
                         },
@@ -2460,7 +2518,9 @@
                             "positions": [
                                 {
                                     "role": "Graduate Admissions Committee",
-                                    "periods": ["2022-Present"]
+                                    "periods": [
+                                        "2022-Present"
+                                    ]
                                 }
                             ]
                         }
@@ -2474,7 +2534,9 @@
                             "positions": [
                                 {
                                     "role": "Annual UofT STATSTRO Workshop: Co-Organizer",
-                                    "periods": ["2021-Present"]
+                                    "periods": [
+                                        "2021-Present"
+                                    ]
                                 }
                             ]
                         },
@@ -2483,11 +2545,15 @@
                             "positions": [
                                 {
                                     "role": "Globular Clusters & Their Tidal Tails: SOC Co-Chair, LOC Co-Chair",
-                                    "periods": ["2024"]
+                                    "periods": [
+                                        "2024"
+                                    ]
                                 },
                                 {
                                     "role": "CASCA Annual General Meeting: SOC Co-Chair, LOC",
-                                    "periods": ["2024"]
+                                    "periods": [
+                                        "2024"
+                                    ]
                                 }
                             ]
                         },
@@ -2497,7 +2563,9 @@
                             "positions": [
                                 {
                                     "role": "CfA Machine Learning Journal Club: Founder and Organizer",
-                                    "periods": ["2017-2020"]
+                                    "periods": [
+                                        "2017-2020"
+                                    ]
                                 }
                             ]
                         }

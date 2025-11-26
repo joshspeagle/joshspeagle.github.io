@@ -1916,15 +1916,15 @@ function createTalksContent(data) {
         </div>
     ` : '';
 
-    // Category filter buttons
+    // Category filter buttons - all categories enabled by default (aria-pressed="true")
     const filterButtons = data.categories ? `
         <nav class="talks-filters" role="navigation" aria-label="Filter talks by category">
-            <button class="filter-btn active" data-filter="all" aria-pressed="true" aria-label="Show all categories, ${calculatedTotalTalks} talks total">
-                All Categories (${calculatedTotalTalks})
+            <button class="filter-btn active" data-filter="all" aria-pressed="true" aria-label="Reset to show all categories, ${calculatedTotalTalks} talks total">
+                All (${calculatedTotalTalks})
             </button>
             ${data.categories.map(category => `
-                <button class="filter-btn talk-badge talk-badge-${category.color}" data-filter="${category.id}" 
-                        aria-pressed="false" aria-label="Show ${category.name}, ${category.talks.length} talks">
+                <button class="filter-btn talk-badge talk-badge-${category.color}" data-filter="${category.id}"
+                        aria-pressed="true" aria-label="Toggle ${category.name}, ${category.talks.length} talks">
                     ${category.name} (${category.talks.length})
                 </button>
             `).join('')}
@@ -1932,48 +1932,69 @@ function createTalksContent(data) {
         <div aria-live="polite" aria-atomic="true" class="sr-only" id="filter-status"></div>
     ` : '';
 
-    // Generate category content
-    const categoriesHtml = data.categories ? data.categories.map(category => `
-        <section class="talks-category" data-category="${category.id}" aria-labelledby="category-${category.id}-heading">
-            <div class="category-header">
-                <h3 id="category-${category.id}-heading" role="heading" aria-level="3">
-                    <span class="talk-badge talk-badge-${category.color}">${category.name}</span>
-                    <span class="category-count">${category.talks.length} talks</span>
-                </h3>
-                <p class="category-description">${category.description}</p>
-            </div>
-            
-            <div class="talks-list" role="list">
-                ${category.talks.map((talk, index) => `
-                    <article class="talk-item" role="listitem" aria-labelledby="talk-${category.id}-${index}-title">
+    // Flatten all talks into a single array with category metadata, then sort chronologically
+    const allTalks = [];
+    if (data.categories) {
+        data.categories.forEach(category => {
+            category.talks.forEach(talk => {
+                allTalks.push({
+                    ...talk,
+                    categoryId: category.id,
+                    categoryName: category.name,
+                    categoryColor: category.color
+                });
+            });
+        });
+    }
+
+    // Sort by year descending (newest first), then by month within year
+    const monthOrder = { 'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
+                         'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12 };
+    allTalks.sort((a, b) => {
+        if (b.year !== a.year) return b.year - a.year;
+        // Extract month from date string (e.g., "Sep 2025" -> "Sep")
+        const monthA = a.date.split(' ')[0];
+        const monthB = b.date.split(' ')[0];
+        return (monthOrder[monthB] || 0) - (monthOrder[monthA] || 0);
+    });
+
+    // Generate flat chronological list of all talks
+    const talksListHtml = allTalks.length > 0 ? `
+        <div class="talks-list" role="list">
+            ${allTalks.map((talk, index) => {
+                const isInvited = talk.categoryId === 'invited';
+                return `
+                    <article class="talk-item${isInvited ? ' invited-talk' : ''}" role="listitem"
+                             data-category="${talk.categoryId}"
+                             aria-labelledby="talk-${index}-title">
                         <div class="talk-header">
-                            <h4 class="talk-title" id="talk-${category.id}-${index}-title" aria-label="${talk.title}, ${talk.type} at ${talk.event}, ${talk.date}">
+                            <h4 class="talk-title" id="talk-${index}-title" aria-label="${talk.title}, ${talk.type} at ${talk.event}, ${talk.date}">
                                 ${talk.title}
                             </h4>
                             <div class="talk-meta">
-                                <time class="talk-date" datetime="${talk.year}-${talk.date.split(' ')[1] === 'Jan' ? '01' : 
-                                    talk.date.split(' ')[1] === 'Feb' ? '02' :
-                                    talk.date.split(' ')[1] === 'Mar' ? '03' :
-                                    talk.date.split(' ')[1] === 'Apr' ? '04' :
-                                    talk.date.split(' ')[1] === 'May' ? '05' :
-                                    talk.date.split(' ')[1] === 'Jun' ? '06' :
-                                    talk.date.split(' ')[1] === 'Jul' ? '07' :
-                                    talk.date.split(' ')[1] === 'Aug' ? '08' :
-                                    talk.date.split(' ')[1] === 'Sep' ? '09' :
-                                    talk.date.split(' ')[1] === 'Oct' ? '10' :
-                                    talk.date.split(' ')[1] === 'Nov' ? '11' : '12'}">${talk.date}</time>
-                                <span class="talk-type talk-badge talk-badge-${category.color}" role="text">${talk.type}</span>
+                                <time class="talk-date" datetime="${talk.year}-${talk.date.split(' ')[0] === 'Jan' ? '01' :
+                                    talk.date.split(' ')[0] === 'Feb' ? '02' :
+                                    talk.date.split(' ')[0] === 'Mar' ? '03' :
+                                    talk.date.split(' ')[0] === 'Apr' ? '04' :
+                                    talk.date.split(' ')[0] === 'May' ? '05' :
+                                    talk.date.split(' ')[0] === 'Jun' ? '06' :
+                                    talk.date.split(' ')[0] === 'Jul' ? '07' :
+                                    talk.date.split(' ')[0] === 'Aug' ? '08' :
+                                    talk.date.split(' ')[0] === 'Sep' ? '09' :
+                                    talk.date.split(' ')[0] === 'Oct' ? '10' :
+                                    talk.date.split(' ')[0] === 'Nov' ? '11' : '12'}">${talk.date}</time>
+                                <span class="talk-type talk-badge talk-badge-${talk.categoryColor}" role="text">${talk.type}</span>
                             </div>
                         </div>
-                        
-                        <div class="talk-details" aria-describedby="talk-${category.id}-${index}-title">
+
+                        <div class="talk-details" aria-describedby="talk-${index}-title">
                             <div class="talk-venue">
                                 <strong aria-label="Event: ${talk.event}">${talk.event}</strong>
                                 <span class="talk-location" aria-label="Location: ${talk.location}">${talk.location}</span>
                             </div>
                             ${talk.url ? `
                                 <div class="talk-links">
-                                    <a href="${talk.url}" target="_blank" rel="noopener noreferrer" class="external-link" 
+                                    <a href="${talk.url}" target="_blank" rel="noopener noreferrer" class="external-link"
                                        aria-label="View recording for ${talk.title}">
                                         View Recording
                                     </a>
@@ -1981,10 +2002,10 @@ function createTalksContent(data) {
                             ` : ''}
                         </div>
                     </article>
-                `).join('')}
-            </div>
-        </section>
-    `).join('') : '';
+                `;
+            }).join('')}
+        </div>
+    ` : '';
 
     // After creating the HTML, we'll initialize the filtering
     const html = `
@@ -1992,70 +2013,109 @@ function createTalksContent(data) {
             <p>${data.tagline}</p>
             ${data.note ? `<p class="note">${data.note}</p>` : ''}
         </div>` : ''}
-        
+
         ${statsHtml}
         ${filterButtons}
-        ${categoriesHtml}
+        ${talksListHtml}
     `;
-    
+
     // Initialize filtering after DOM update
     setTimeout(() => {
         initializeTalksFiltering();
     }, 100);
-    
+
     return html;
 }
 
-// Initialize talks filtering functionality
+// Initialize talks filtering functionality with toggle behavior
 function initializeTalksFiltering() {
     const filterBtns = document.querySelectorAll('.filter-btn');
     const filterStatus = document.getElementById('filter-status');
     if (filterBtns.length === 0) return; // No filter buttons found
-    
-    // Function to update filter display and announce changes
-    function updateFilter(selectedBtn) {
-        const filter = selectedBtn.dataset.filter;
-        const filterLabel = selectedBtn.textContent.trim();
-        
-        // Update active button and aria-pressed states
-        filterBtns.forEach(btn => {
-            btn.classList.remove('active');
-            btn.setAttribute('aria-pressed', 'false');
-        });
-        selectedBtn.classList.add('active');
-        selectedBtn.setAttribute('aria-pressed', 'true');
-        
-        // Show/hide categories and count visible talks
+
+    // Get all category IDs (excluding "all" button)
+    const categoryBtns = Array.from(filterBtns).filter(btn => btn.dataset.filter !== 'all');
+    const allCategoryIds = categoryBtns.map(btn => btn.dataset.filter);
+
+    // Track enabled categories - all enabled by default
+    const enabledCategories = new Set(allCategoryIds);
+
+    // Function to update visibility based on enabled categories
+    function updateVisibility() {
         let visibleCount = 0;
-        document.querySelectorAll('.talks-category').forEach(category => {
-            if (filter === 'all' || category.dataset.category === filter) {
-                category.style.display = 'block';
-                // Count talks in visible categories
-                visibleCount += category.querySelectorAll('.talk-item').length;
+        document.querySelectorAll('.talk-item').forEach(item => {
+            const catId = item.dataset.category;
+            if (enabledCategories.has(catId)) {
+                item.style.display = '';
+                visibleCount++;
             } else {
-                category.style.display = 'none';
+                item.style.display = 'none';
             }
         });
-        
+
+        // Update button states
+        categoryBtns.forEach(btn => {
+            const catId = btn.dataset.filter;
+            const isEnabled = enabledCategories.has(catId);
+            btn.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+        });
+
+        // Update "All" button state - active only when all categories are enabled
+        const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+        if (allBtn) {
+            const allEnabled = enabledCategories.size === allCategoryIds.length;
+            allBtn.classList.toggle('active', allEnabled);
+            allBtn.setAttribute('aria-pressed', allEnabled ? 'true' : 'false');
+        }
+
         // Announce change to screen readers
         if (filterStatus) {
-            filterStatus.textContent = filter === 'all' ? 
-                `Showing all ${visibleCount} talks` : 
-                `Showing ${visibleCount} talks in ${filterLabel.split(' (')[0]} category`;
+            const enabledNames = categoryBtns
+                .filter(btn => enabledCategories.has(btn.dataset.filter))
+                .map(btn => btn.textContent.trim().split(' (')[0]);
+
+            if (enabledCategories.size === allCategoryIds.length) {
+                filterStatus.textContent = `Showing all ${visibleCount} talks`;
+            } else if (enabledCategories.size === 0) {
+                filterStatus.textContent = 'No categories selected, showing 0 talks';
+            } else {
+                filterStatus.textContent = `Showing ${visibleCount} talks in ${enabledNames.join(', ')}`;
+            }
         }
     }
-    
+
+    // Function to toggle a category
+    function toggleCategory(categoryId) {
+        if (enabledCategories.has(categoryId)) {
+            enabledCategories.delete(categoryId);
+        } else {
+            enabledCategories.add(categoryId);
+        }
+        updateVisibility();
+    }
+
+    // Function to reset all categories to enabled
+    function resetAllCategories() {
+        allCategoryIds.forEach(id => enabledCategories.add(id));
+        updateVisibility();
+    }
+
     // Add click and keyboard event listeners
     filterBtns.forEach((btn, index) => {
         // Click handler
         btn.addEventListener('click', function() {
-            updateFilter(this);
+            const filter = this.dataset.filter;
+            if (filter === 'all') {
+                resetAllCategories();
+            } else {
+                toggleCategory(filter);
+            }
         });
-        
+
         // Keyboard navigation
         btn.addEventListener('keydown', function(e) {
             let targetIndex = index;
-            
+
             switch(e.key) {
                 case 'ArrowRight':
                 case 'ArrowDown':
@@ -2080,15 +2140,20 @@ function initializeTalksFiltering() {
                 case 'Enter':
                 case ' ':
                     e.preventDefault();
-                    updateFilter(this);
+                    const filter = this.dataset.filter;
+                    if (filter === 'all') {
+                        resetAllCategories();
+                    } else {
+                        toggleCategory(filter);
+                    }
                     break;
             }
         });
-        
+
         // Ensure proper tab order
         btn.setAttribute('tabindex', index === 0 ? '0' : '-1');
     });
-    
+
     // Update tabindex when focus changes
     filterBtns.forEach(btn => {
         btn.addEventListener('focus', function() {
