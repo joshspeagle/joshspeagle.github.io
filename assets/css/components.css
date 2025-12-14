@@ -3496,7 +3496,8 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.filter-btn.active,
+/* Active state for "All" button only - badge buttons keep their own colors */
+.filter-btn[data-filter="all"].active,
 .filter-btn[data-filter="all"][aria-pressed="true"] {
     background: var(--primary-color);
     color: white;
@@ -3510,7 +3511,9 @@
 }
 
 /* Ensure category buttons keep their badge colors when enabled */
-.filter-btn.talk-badge[aria-pressed="true"] {
+.filter-btn.talk-badge[aria-pressed="true"],
+.filter-btn.dept-badge[aria-pressed="true"],
+.filter-btn.level-badge[aria-pressed="true"] {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 

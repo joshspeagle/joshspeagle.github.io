@@ -2137,7 +2137,7 @@ function createTeachingContent(data) {
         <nav class="teaching-filters" role="navigation" aria-label="Filter courses by department and level">
             <div class="filter-section">
                 <h4 class="filter-section-title">All Courses</h4>
-                <button class="filter-btn active" data-filter="all" data-filter-type="general" aria-pressed="true" aria-label="Show all courses, ${data.teachingStats.totalOfferings} total">
+                <button class="filter-btn active" data-filter="all" data-filter-type="general" aria-pressed="true" aria-label="Reset to show all courses, ${data.teachingStats.totalOfferings} total">
                     All Courses (${data.teachingStats.totalOfferings})
                 </button>
             </div>
@@ -2146,16 +2146,16 @@ function createTeachingContent(data) {
                 <h4 class="filter-section-title">By Department</h4>
                 <div class="filter-buttons-row">
                     ${uniqueDepartments.map(department => {
-                        const deptCourses = data.courseHistory.filter(course => 
-                            (course.departments && course.departments.includes(department)) || 
+                        const deptCourses = data.courseHistory.filter(course =>
+                            (course.departments && course.departments.includes(department)) ||
                             course.department === department
                         );
                         const count = deptCourses.reduce((sum, course) => sum + course.terms.length, 0);
                         return `
-                            <button class="filter-btn dept-badge dept-badge-${department.toLowerCase().replace(' ', '-')}" 
-                                    data-filter="${department.toLowerCase().replace(' ', '-')}" 
+                            <button class="filter-btn active dept-badge dept-badge-${department.toLowerCase().replace(' ', '-')}"
+                                    data-filter="${department.toLowerCase().replace(' ', '-')}"
                                     data-filter-type="department"
-                                    aria-pressed="false" aria-label="Show ${department} courses, ${count} offerings">
+                                    aria-pressed="true" aria-label="Toggle ${department} courses, ${count} offerings">
                                 ${department} (${count})
                             </button>
                         `;
@@ -2170,10 +2170,10 @@ function createTeachingContent(data) {
                         const levelCourses = data.courseHistory.filter(course => course.level === level);
                         const count = levelCourses.reduce((sum, course) => sum + course.terms.length, 0);
                         return `
-                            <button class="filter-btn level-badge level-badge-${level.toLowerCase()}" 
-                                    data-filter="${level.toLowerCase()}" 
+                            <button class="filter-btn active level-badge level-badge-${level.toLowerCase()}"
+                                    data-filter="${level.toLowerCase()}"
                                     data-filter-type="level"
-                                    aria-pressed="false" aria-label="Show ${level} courses, ${count} offerings">
+                                    aria-pressed="true" aria-label="Toggle ${level} courses, ${count} offerings">
                                 ${level} (${count})
                             </button>
                         `;
