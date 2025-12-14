@@ -136,6 +136,33 @@
     font-style: italic;
 }
 
+/* Chart Notes Section */
+.chart-notes {
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.chart-notes p {
+    margin: 0.5rem 0;
+}
+
+.chart-notes p:first-child {
+    margin-top: 0;
+}
+
+.chart-notes p:last-child {
+    margin-bottom: 0;
+}
+
+.chart-notes a {
+    color: var(--accent-blue);
+}
+
 .chart-wrapper canvas {
     max-height: 250px;
     width: 100% !important;

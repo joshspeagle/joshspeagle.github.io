@@ -31,6 +31,12 @@ CONFIG = {
         "retry_attempts": 3,
         "retry_delay": 2,
     },
+    "ads_metrics": {
+        "endpoint": "https://api.adsabs.harvard.edu/v1/metrics",
+        "metric_types": ["indicators", "timeseries"],
+        "metrics": ["h", "g", "i10", "i100", "tori", "read10", "riq", "m"],
+        "timeout": 60,
+    },
     "output": {
         "full_data": "assets/data/publications_data.json",
         "summary": "assets/data/publications_summary.json",

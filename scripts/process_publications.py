@@ -9,7 +9,8 @@ This script:
 4. Fixes citation timeline data
 5. Updates ADS library cache from online libraries
 6. Applies authorship categories from ADS library cache
-7. Deploys the processed data to the main website directory
+7. Fetches ADS bibliometric metrics (h-index, g-index, tori, etc. time series)
+8. Deploys the processed data to the main website directory
 """
 
 import json
@@ -231,6 +232,31 @@ def main():
 
     except Exception as e:
         logger.warning(f"⚠️ Could not run authorship categories script: {e}")
+
+    # Fetch ADS bibliometric metrics (h-index, g-index, tori, etc. time series)
+    logger.info("Fetching ADS bibliometric metrics...")
+    try:
+        metrics_script = Path(__file__).parent / "fetch_ads_metrics.py"
+        result = subprocess.run(
+            [sys.executable, str(metrics_script)],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode == 0:
+            logger.info("✅ ADS bibliometric metrics fetched successfully")
+            # Print the output from the metrics script
+            if result.stdout.strip():
+                print(result.stdout)
+        else:
+            logger.warning(
+                f"⚠️ ADS metrics script returned error code {result.returncode}"
+            )
+            if result.stderr:
+                logger.warning(f"Error: {result.stderr}")
+
+    except Exception as e:
+        logger.warning(f"⚠️ Could not fetch ADS bibliometric metrics: {e}")
 
     logger.info("✅ Publication data post-processing completed successfully")
     return True

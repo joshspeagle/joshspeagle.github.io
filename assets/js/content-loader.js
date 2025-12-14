@@ -1153,8 +1153,8 @@ function createDynamicPublicationsContent(dynamicData, staticData) {
                             <span id="hindex-desc">h-index</span>
                         </div>
                         <div class="metric" role="listitem">
-                            <strong aria-describedby="i10index-desc">${metrics.i10Index || 'N/A'}</strong>
-                            <span id="i10index-desc">i10-index</span>
+                            <strong aria-describedby="gindex-desc">${metrics.adsMetricsCurrent?.g || 'N/A'}</strong>
+                            <span id="gindex-desc">g-index</span>
                         </div>
                     </div>
                     <p><em>Last updated: <time datetime="${dynamicData.lastUpdated || ''}">${lastUpdated}</time></em></p>

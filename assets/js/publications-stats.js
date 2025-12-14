@@ -355,7 +355,7 @@ class PublicationsStats {
 
                     <div class="chart-section">
                         <div class="chart-wrapper">
-                            <h4>Research Focus Over Time (3-Year Avg)</h4>
+                            <h4>Research Focus Over Time</h4>
                             <canvas id="research-evolution-chart"></canvas>
                         </div>
                     </div>
@@ -373,6 +373,25 @@ class PublicationsStats {
                             <canvas id="papers-by-year-chart"></canvas>
                         </div>
                     </div>
+
+                    <div class="chart-section">
+                        <div class="chart-wrapper">
+                            <h4>Citations by Rank</h4>
+                            <canvas id="citation-rank-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-section">
+                        <div class="chart-wrapper">
+                            <h4>Research Impact (RIQ) by Role</h4>
+                            <canvas id="ads-metrics-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-notes">
+                    <p><strong>Citations by Rank:</strong> <span id="gini-description">Shows cumulative citation distribution across papers.</span></p>
+                    <p><strong>Research Impact (RIQ):</strong> RIQ measures citation impact normalized by career length. Shaded band shows typical range for astronomers (<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" rel="noopener">Pepe & Kurtz 2012</a>).</p>
                 </div>
             </div>
         `;
@@ -391,6 +410,8 @@ class PublicationsStats {
         this.createResearchEvolutionChart();
         this.createCitationsByPubYearChart();
         this.createPapersByYearChart();
+        this.createCitationRankChart();
+        this.createADSMetricsChart();
     }
     
     /**
@@ -937,56 +958,43 @@ class PublicationsStats {
             }
         });
 
-        // Use actual publication year range from papers
+        // Use actual publication year range from papers for CALCULATION
         const pubYears = Object.keys(dataByYear).map(y => parseInt(y)).sort((a, b) => a - b);
         if (pubYears.length === 0) return;
 
-        const startYear = Math.min(...pubYears);
-        const endYear = Math.max(...pubYears);
-        const allYears = [];
+        const calcStartYear = Math.min(...pubYears);
+        const calcEndYear = Math.max(...pubYears);
+        const allCalcYears = [];
 
-        for (let year = startYear; year <= endYear; year++) {
-            allYears.push(year.toString());
+        for (let year = calcStartYear; year <= calcEndYear; year++) {
+            allCalcYears.push(year.toString());
         }
 
-        // Calculate raw percentages for each category (normalized to 100%)
-        const rawPercentageData = {};
+        // Get display range from citations chart (same x-axis range)
+        const citationsData = this.metrics.citationsPerYear || {};
+        const citationYears = Object.keys(citationsData).map(y => parseInt(y)).sort((a, b) => a - b);
+        const displayStartYear = citationYears.length > 0 ? Math.min(...citationYears) : calcStartYear;
+        const displayEndYear = calcEndYear; // Always show up to current year
+
+        // Filter to only include years with more than 5 papers
+        const minPapersThreshold = 5;
+        const filteredYears = allCalcYears.filter(year => {
+            const yearData = dataByYear[year];
+            return yearData && yearData.total > minPapersThreshold;
+        });
+
+        // Calculate raw percentages for each category (no smoothing)
+        const percentageData = {};
         mainCategories.forEach(category => {
-            rawPercentageData[category] = allYears.map(year => {
+            percentageData[category] = filteredYears.map(year => {
                 const yearData = dataByYear[year];
-                if (!yearData || yearData.total === 0) return null; // null for missing data
+                if (!yearData || yearData.total === 0) return 0;
                 return (yearData[category] / yearData.total) * 100;
             });
         });
 
-        // Apply 3-year rolling average smoothing
-        const smoothingWindow = 3;
-        const percentageData = {};
-        mainCategories.forEach(category => {
-            percentageData[category] = rawPercentageData[category].map((val, idx, arr) => {
-                // Collect values within the window (excluding nulls)
-                const windowValues = [];
-                for (let i = Math.max(0, idx - Math.floor(smoothingWindow / 2));
-                     i <= Math.min(arr.length - 1, idx + Math.floor(smoothingWindow / 2));
-                     i++) {
-                    if (arr[i] !== null) {
-                        windowValues.push(arr[i]);
-                    }
-                }
-                if (windowValues.length === 0) return 0;
-                return windowValues.reduce((sum, v) => sum + v, 0) / windowValues.length;
-            });
-        });
-
-        // Renormalize smoothed data to sum to 100% for each year
-        allYears.forEach((year, idx) => {
-            const total = mainCategories.reduce((sum, cat) => sum + percentageData[cat][idx], 0);
-            if (total > 0) {
-                mainCategories.forEach(cat => {
-                    percentageData[cat][idx] = (percentageData[cat][idx] / total) * 100;
-                });
-            }
-        });
+        // Use filtered years for display
+        const displayYears = filteredYears;
 
         // Get colors for categories
         const categoryColors = mainCategories.map(category => this.colors.research[category][0]);
@@ -1008,7 +1016,7 @@ class PublicationsStats {
         this.charts.researchEvolution = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: allYears,
+                labels: displayYears,
                 datasets: datasets
             },
             options: {
@@ -1069,7 +1077,7 @@ class PublicationsStats {
                         intersect: false,
                         callbacks: {
                             title: function(context) {
-                                return `${context[0].label} (3-year avg)`;
+                                return context[0].label;
                             },
                             label: function(context) {
                                 const value = context.parsed.y;
@@ -1092,7 +1100,413 @@ class PublicationsStats {
             }
         });
     }
-    
+
+    /**
+     * Citation rank chart - shows cumulative % of citations vs paper rank
+     * X-axis: Paper rank (sqrt scale to spread out top papers)
+     * Y-axis: Cumulative % of total citations (0-100%)
+     * Colored segments for Top 1%, 1-5%, 5-20%, Bottom 80%
+     */
+    createCitationRankChart() {
+        const ctx = document.getElementById('citation-rank-chart');
+        if (!ctx || !window.Chart) return;
+
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 375;
+
+        // Sort papers by citations descending
+        const sorted = [...this.publications].sort((a, b) =>
+            (b.citations || 0) - (a.citations || 0)
+        );
+        const n = sorted.length;
+        const total = sorted.reduce((sum, p) => sum + (p.citations || 0), 0);
+
+        if (total === 0 || n === 0) return;
+
+        // Calculate cumulative citation percentages
+        let cumSum = 0;
+        const cumulative = sorted.map(p => {
+            cumSum += (p.citations || 0);
+            return (cumSum / total) * 100;
+        });
+
+        // Calculate Gini coefficient (measures citation inequality, 0=equal, 1=concentrated)
+        // Formula: G = (2 * Σ(i * x_i)) / (n * Σx_i) - (n+1)/n for ascending sorted data
+        // Since we have descending, we reverse the index
+        let giniSum = 0;
+        sorted.forEach((p, i) => {
+            giniSum += (n - i) * (p.citations || 0);
+        });
+        const gini = (2 * giniSum) / (n * total) - (n + 1) / n;
+        const giniDisplay = Math.abs(gini).toFixed(2);
+
+        // Update Gini description in the notes section
+        const giniEl = document.getElementById('gini-description');
+        if (giniEl) {
+            giniEl.textContent = `Gini coefficient: ${giniDisplay} (1 = all citations to one paper).`;
+        }
+
+        // Define percentile boundaries
+        const p1 = Math.max(1, Math.ceil(n * 0.01));
+        const p5 = Math.ceil(n * 0.05);
+        const p20 = Math.ceil(n * 0.20);
+
+        // Get cumulative % at each boundary for legend
+        const pct1 = cumulative[p1 - 1]?.toFixed(0) || 0;
+        const pct5 = cumulative[p5 - 1]?.toFixed(0) || 0;
+        const pct20 = cumulative[p20 - 1]?.toFixed(0) || 0;
+
+        // Colors for segments (red = top ranked, blue = lower ranked)
+        const segmentColors = {
+            top1: { bg: 'rgba(211, 47, 47, 0.7)', line: 'rgba(183, 28, 28, 1)' },
+            top5: { bg: 'rgba(245, 124, 0, 0.5)', line: 'rgba(230, 81, 0, 1)' },
+            top20: { bg: 'rgba(56, 142, 60, 0.4)', line: 'rgba(46, 125, 50, 1)' },
+            rest: { bg: 'rgba(30, 136, 229, 0.25)', line: 'rgba(21, 101, 192, 1)' },
+        };
+
+        // Create segment data with sqrt-transformed x values
+        const createSegmentData = (startIdx, endIdx) => {
+            const data = [];
+            for (let i = startIdx; i < endIdx && i < n; i++) {
+                data.push({ x: Math.sqrt(i + 1), y: cumulative[i] });
+            }
+            return data;
+        };
+
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#e0e0e0' : '#333333';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+        this.charts.citationRank = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: `Top 1% (${pct1}% of citations)`,
+                        data: createSegmentData(0, p1),
+                        backgroundColor: segmentColors.top1.bg,
+                        borderColor: segmentColors.top1.line,
+                        borderWidth: 2,
+                        fill: true,
+                        showLine: true,
+                        pointRadius: 0,
+                        tension: 0.1,
+                    },
+                    {
+                        label: `Top 1-5% (${pct5 - pct1}% of citations)`,
+                        data: createSegmentData(p1, p5),
+                        backgroundColor: segmentColors.top5.bg,
+                        borderColor: segmentColors.top5.line,
+                        borderWidth: 2,
+                        fill: true,
+                        showLine: true,
+                        pointRadius: 0,
+                        tension: 0.1,
+                    },
+                    {
+                        label: `Top 5-20% (${pct20 - pct5}% of citations)`,
+                        data: createSegmentData(p5, p20),
+                        backgroundColor: segmentColors.top20.bg,
+                        borderColor: segmentColors.top20.line,
+                        borderWidth: 2,
+                        fill: true,
+                        showLine: true,
+                        pointRadius: 0,
+                        tension: 0.1,
+                    },
+                    {
+                        label: `Bottom 80% (${100 - pct20}% of citations)`,
+                        data: createSegmentData(p20, n),
+                        backgroundColor: segmentColors.rest.bg,
+                        borderColor: segmentColors.rest.line,
+                        borderWidth: 2,
+                        fill: true,
+                        showLine: true,
+                        pointRadius: 0,
+                        tension: 0.1,
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'nearest',
+                    intersect: false,
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: textColor,
+                            boxWidth: isVerySmall ? 10 : 12,
+                            font: { size: isVerySmall ? 10 : (isMobile ? 11 : 12) },
+                        },
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: (items) => {
+                                const sqrtX = items[0].parsed.x;
+                                const rank = Math.round(sqrtX * sqrtX);
+                                return `Top ${rank} paper${rank > 1 ? 's' : ''}`;
+                            },
+                            label: (context) => {
+                                const sqrtX = context.parsed.x;
+                                const rank = Math.round(sqrtX * sqrtX);
+                                const idx = rank - 1;
+                                if (idx >= 0 && idx < sorted.length) {
+                                    const paper = sorted[idx];
+                                    const title = paper.title?.substring(0, 40) || 'Unknown';
+                                    return [
+                                        `${context.parsed.y.toFixed(1)}% of total citations`,
+                                        `#${rank}: ${title}${paper.title?.length > 40 ? '...' : ''}`,
+                                    ];
+                                }
+                                return `${context.parsed.y.toFixed(1)}% of citations`;
+                            },
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Paper Rank (√ scale)',
+                            color: textColor,
+                            font: { size: isVerySmall ? 9 : (isMobile ? 11 : 14) },
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: { size: isVerySmall ? 8 : (isMobile ? 10 : 13) },
+                            callback: function(value) {
+                                const rank = Math.round(value * value);
+                                return rank;
+                            },
+                        },
+                        grid: { color: gridColor },
+                        min: 1,
+                        max: Math.sqrt(n) * 1.02,
+                        afterBuildTicks: (scale) => {
+                            const maxRank = n;
+                            // Fewer ticks on mobile
+                            const allRanks = [1, 2, 5, 10, 20, 50, 100, 150];
+                            const mobileRanks = [1, 5, 20, 50, 150];
+                            const niceRanks = (isMobile ? mobileRanks : allRanks).filter(r => r <= maxRank);
+                            scale.ticks = niceRanks.map(r => ({ value: Math.sqrt(r) }));
+                        },
+                    },
+                    y: {
+                        type: 'linear',
+                        title: {
+                            display: true,
+                            text: 'Cumulative % of Citations',
+                            color: textColor,
+                            font: { size: isVerySmall ? 9 : (isMobile ? 11 : 14) },
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: { size: isVerySmall ? 8 : (isMobile ? 10 : 13) },
+                            maxTicksLimit: isMobile ? 5 : 6,
+                            callback: (value) => `${value}%`,
+                        },
+                        grid: { color: gridColor },
+                        min: 0,
+                        max: 100,
+                    },
+                },
+            },
+        });
+    }
+
+    /**
+     * RIQ (Research Impact Quotient) by authorship category over time
+     * RIQ = sqrt(tori) / years_active * 1000
+     * Shows impact normalized by career length
+     */
+    createADSMetricsChart() {
+        const ctx = document.getElementById('ads-metrics-chart');
+        if (!ctx || !window.Chart) return;
+
+        const riqByCategory = this.metrics.riqByCategory || {};
+
+        // Check if we have any RIQ data
+        const hasData = Object.keys(riqByCategory).some(cat =>
+            riqByCategory[cat]?.riq_series && Object.keys(riqByCategory[cat].riq_series).length > 0
+        );
+
+        if (!hasData) {
+            // Show placeholder message if no data yet
+            const wrapper = ctx.parentElement;
+            if (wrapper) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'chart-placeholder';
+                placeholder.innerHTML = '<p>RIQ time series data not yet available.<br>Run the publication pipeline to fetch this data.</p>';
+                wrapper.appendChild(placeholder);
+                ctx.style.display = 'none';
+            }
+            return;
+        }
+
+        const isMobile = window.innerWidth <= 768;
+        const isVerySmall = window.innerWidth <= 375;
+
+        // Collect all years across all categories
+        const allYears = new Set();
+        Object.values(riqByCategory).forEach(cat => {
+            if (cat.riq_series) {
+                Object.keys(cat.riq_series).forEach(y => allYears.add(y));
+            }
+        });
+        const years = Array.from(allYears).sort();
+
+        // Category colors, labels, and styling
+        const categoryConfig = {
+            all: { color: '#455a64', label: 'All Papers', dashed: true, order: 0 },
+            primary: { color: '#1565c0', label: 'Primary Author', order: 1 },
+            significant: { color: '#2e7d32', label: 'Significant Contrib.', order: 2 },
+            student: { color: '#f57c00', label: 'Student-led', order: 3 },
+            postdoc: { color: '#7b1fa2', label: 'Postdoc-led', order: 4 },
+        };
+
+        const datasets = Object.entries(riqByCategory)
+            .filter(([_, data]) => data.riq_series && Object.keys(data.riq_series).length > 0)
+            .map(([category, data]) => {
+                const config = categoryConfig[category] || {};
+                const currentRiq = data.current ? ` (${Math.round(data.current)})` : '';
+                return {
+                    label: (config.label || category) + currentRiq,
+                    data: years.map(y => data.riq_series[y] ?? null),
+                    borderColor: config.color || '#666',
+                    backgroundColor: (config.color || '#666') + '20',
+                    borderDash: config.dashed ? [5, 5] : [],
+                    borderWidth: config.dashed ? 2 : 2,
+                    tension: 0.3,
+                    pointRadius: isMobile ? 2 : 3,
+                    spanGaps: true,
+                    order: config.order ?? 5,
+                };
+            })
+            .sort((a, b) => a.order - b.order);
+
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const textColor = isDark ? '#e0e0e0' : '#333333';
+        const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+        // IQR band values from Pepe & Kurtz 2012 (converted to ADS scale ×1000)
+        const iqrLow = 60;   // Q1 for typical astronomers
+        const iqrHigh = 150; // Q3 for typical astronomers
+        const bandColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.06)';
+
+        // Custom plugin to draw IQR reference band and mean line
+        const iqrBandPlugin = {
+            id: 'iqrBand',
+            beforeDraw: (chart) => {
+                const { ctx, chartArea, scales } = chart;
+                if (!chartArea) return;
+
+                const yScale = scales.y;
+                const yTop = yScale.getPixelForValue(iqrHigh);
+                const yBottom = yScale.getPixelForValue(iqrLow);
+                const yMean = yScale.getPixelForValue(100); // Global mean
+
+                ctx.save();
+
+                // Draw IQR band
+                ctx.fillStyle = bandColor;
+                ctx.fillRect(chartArea.left, yTop, chartArea.width, yBottom - yTop);
+
+                // Draw mean line
+                ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.3)' : 'rgba(0, 0, 0, 0.25)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.moveTo(chartArea.left, yMean);
+                ctx.lineTo(chartArea.right, yMean);
+                ctx.stroke();
+
+                // Add "Mean" label
+                ctx.fillStyle = textColor;
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText('Mean', chartArea.left + 4, yMean - 4);
+
+                ctx.restore();
+            },
+        };
+
+        this.charts.adsMetrics = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: datasets
+            },
+            plugins: [iqrBandPlugin],
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: textColor,
+                            boxWidth: isVerySmall ? 10 : 12,
+                            font: { size: isVerySmall ? 10 : (isMobile ? 11 : 12) },
+                        },
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => {
+                                const value = context.parsed.y;
+                                return value ? `${context.dataset.label}: ${value.toFixed(0)}` : null;
+                            },
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year',
+                            color: textColor,
+                            font: { size: isVerySmall ? 10 : (isMobile ? 12 : 14) },
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: { size: isVerySmall ? 9 : (isMobile ? 11 : 13) },
+                            maxRotation: 45,
+                            minRotation: 45,
+                            maxTicksLimit: isMobile ? 6 : 10,
+                        },
+                        grid: { color: gridColor },
+                    },
+                    y: {
+                        type: 'linear',
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'RIQ',
+                            color: textColor,
+                            font: { size: isVerySmall ? 9 : (isMobile ? 11 : 14) },
+                        },
+                        ticks: {
+                            color: textColor,
+                            font: { size: isVerySmall ? 8 : (isMobile ? 10 : 13) },
+                            maxTicksLimit: isMobile ? 5 : 8,
+                        },
+                        grid: { color: gridColor },
+                    },
+                },
+            },
+        });
+    }
+
     /**
      * Clean up chart instances
      */
