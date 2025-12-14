@@ -188,3 +188,6 @@ function addNavigationStyles() {
     `;
     document.head.appendChild(style);
 }
+
+// Expose globally for content-loader to call after content is loaded
+window.initializeAnimations = initAnimations;

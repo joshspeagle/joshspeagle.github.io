@@ -1410,34 +1410,39 @@ function getPublicationCategories(pub, threshold = 0.2) {
 
 /**
  * Get category badge color scheme
+ *
+ * Color palette chosen to minimize overlap with authorship colors:
+ * - Authorship uses: Blue (primary), Purple (postdoc), Orange (student), Green (contributor)
+ * - Research categories use: Crimson red, Teal, Indigo, Golden yellow
+ * These provide good separation while remaining visually distinct.
  */
 function getCategoryColors(category) {
     // Check if dark theme is active
-    const isDarkTheme = document.body.classList.contains('dark-theme');
-    
+    const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+
     const colorSchemes = {
         'Statistical Learning & AI': {
-            bg: isDarkTheme ? '#E74C3C' : '#C0392B',        // Lighter in dark mode, darker in light mode
-            bgLight: '#F1948A',
+            bg: isDarkTheme ? '#EF5350' : '#C62828',        // Crimson red (distinct from orange)
+            bgLight: '#FFCDD2',
             text: '#ffffff'
         },
         'Interpretability & Insight': {
-            bg: isDarkTheme ? '#16A085' : '#138D75',        // Lighter in dark mode, darker in light mode
-            bgLight: '#52C4A0',
+            bg: isDarkTheme ? '#26A69A' : '#00897B',        // Teal (distinct from purple and green)
+            bgLight: '#B2DFDB',
             text: '#ffffff'
         },
         'Inference & Computation': {
-            bg: isDarkTheme ? '#3498DB' : '#2E86AB',        // Lighter in dark mode, darker in light mode
-            bgLight: '#85C1E9',
+            bg: isDarkTheme ? '#5C6BC0' : '#3949AB',        // Indigo (darker than primary author blue)
+            bgLight: '#C5CAE9',
             text: '#ffffff'
         },
         'Discovery & Understanding': {
-            bg: isDarkTheme ? '#27AE60' : '#1E8449',        // Lighter in dark mode, darker in light mode
-            bgLight: '#82E0AA',
-            text: '#ffffff'
+            bg: isDarkTheme ? '#FFCA28' : '#F9A825',        // Golden yellow (distinct from orange)
+            bgLight: '#FFF9C4',
+            text: '#1a1a2e'                                  // Dark text for contrast on yellow
         }
     };
-    
+
     return colorSchemes[category] || colorSchemes['Discovery & Understanding'];
 }
 
@@ -2244,69 +2249,119 @@ function initializeTeachingFiltering() {
     const filterBtns = document.querySelectorAll('.teaching-filters .filter-btn');
     const filterStatus = document.getElementById('teaching-filter-status');
     if (filterBtns.length === 0) return;
-    
-    // Function to update filter display and announce changes
-    function updateTeachingFilter(selectedBtn) {
-        const filter = selectedBtn.dataset.filter;
-        const filterType = selectedBtn.dataset.filterType;
-        const filterLabel = selectedBtn.textContent.trim();
-        
-        // Update active button and aria-pressed states
-        filterBtns.forEach(btn => {
-            btn.classList.remove('active');
-            btn.setAttribute('aria-pressed', 'false');
-        });
-        selectedBtn.classList.add('active');
-        selectedBtn.setAttribute('aria-pressed', 'true');
-        
-        // Show/hide course cards and count visible courses
+
+    // Get department and level filter buttons separately
+    const deptBtns = Array.from(filterBtns).filter(btn => btn.dataset.filterType === 'department');
+    const levelBtns = Array.from(filterBtns).filter(btn => btn.dataset.filterType === 'level');
+    const allDeptIds = deptBtns.map(btn => btn.dataset.filter);
+    const allLevelIds = levelBtns.map(btn => btn.dataset.filter);
+
+    // Track enabled filters - all enabled by default
+    const enabledDepartments = new Set(allDeptIds);
+    const enabledLevels = new Set(allLevelIds);
+
+    // Function to update visibility based on enabled filters
+    function updateVisibility() {
         let visibleCount = 0;
         document.querySelectorAll('.course-card').forEach(card => {
-            let shouldShow = false;
-            
-            if (filter === 'all') {
-                shouldShow = true;
-            } else if (filterType === 'department') {
-                // Check if the course belongs to this department (handles multiple departments)
-                const courseDepartments = card.dataset.departments.split(' ');
-                shouldShow = courseDepartments.includes(filter);
-            } else if (filterType === 'level') {
-                shouldShow = card.dataset.level === filter;
-            }
-            
-            if (shouldShow) {
+            const courseDepartments = card.dataset.departments.split(' ');
+            const courseLevel = card.dataset.level;
+
+            // Course is visible if it matches ANY enabled department AND ANY enabled level
+            const matchesDept = courseDepartments.some(dept => enabledDepartments.has(dept));
+            const matchesLevel = enabledLevels.has(courseLevel);
+
+            if (matchesDept && matchesLevel) {
                 card.style.display = 'block';
                 visibleCount++;
             } else {
                 card.style.display = 'none';
             }
         });
-        
+
+        // Update department button states
+        deptBtns.forEach(btn => {
+            const isEnabled = enabledDepartments.has(btn.dataset.filter);
+            btn.classList.toggle('active', isEnabled);
+            btn.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+        });
+
+        // Update level button states
+        levelBtns.forEach(btn => {
+            const isEnabled = enabledLevels.has(btn.dataset.filter);
+            btn.classList.toggle('active', isEnabled);
+            btn.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+        });
+
+        // Update "All" button state
+        const allBtn = document.querySelector('.teaching-filters .filter-btn[data-filter="all"]');
+        if (allBtn) {
+            const allEnabled = enabledDepartments.size === allDeptIds.length && enabledLevels.size === allLevelIds.length;
+            allBtn.classList.toggle('active', allEnabled);
+            allBtn.setAttribute('aria-pressed', allEnabled ? 'true' : 'false');
+        }
+
         // Announce change to screen readers
         if (filterStatus) {
-            let announcement;
-            if (filter === 'all') {
-                announcement = `Showing all ${visibleCount} courses`;
-            } else if (filterType === 'department') {
-                announcement = `Showing ${visibleCount} courses in ${filterLabel.split(' (')[0]} department`;
-            } else if (filterType === 'level') {
-                announcement = `Showing ${visibleCount} ${filterLabel.split(' (')[0].toLowerCase()} courses`;
+            const enabledDeptNames = deptBtns
+                .filter(btn => enabledDepartments.has(btn.dataset.filter))
+                .map(btn => btn.textContent.trim().split(' (')[0]);
+            const enabledLevelNames = levelBtns
+                .filter(btn => enabledLevels.has(btn.dataset.filter))
+                .map(btn => btn.textContent.trim().split(' (')[0]);
+
+            if (enabledDepartments.size === allDeptIds.length && enabledLevels.size === allLevelIds.length) {
+                filterStatus.textContent = `Showing all ${visibleCount} courses`;
+            } else {
+                const deptText = enabledDeptNames.length > 0 ? enabledDeptNames.join(', ') : 'no departments';
+                const levelText = enabledLevelNames.length > 0 ? enabledLevelNames.join(', ') : 'no levels';
+                filterStatus.textContent = `Showing ${visibleCount} courses (${deptText}; ${levelText})`;
             }
-            filterStatus.textContent = announcement;
         }
     }
-    
+
+    // Function to toggle a filter
+    function toggleFilter(filterId, filterType) {
+        if (filterType === 'department') {
+            if (enabledDepartments.has(filterId)) {
+                enabledDepartments.delete(filterId);
+            } else {
+                enabledDepartments.add(filterId);
+            }
+        } else if (filterType === 'level') {
+            if (enabledLevels.has(filterId)) {
+                enabledLevels.delete(filterId);
+            } else {
+                enabledLevels.add(filterId);
+            }
+        }
+        updateVisibility();
+    }
+
+    // Function to reset all filters to enabled
+    function resetAllFilters() {
+        allDeptIds.forEach(id => enabledDepartments.add(id));
+        allLevelIds.forEach(id => enabledLevels.add(id));
+        updateVisibility();
+    }
+
     // Add click and keyboard event listeners
     filterBtns.forEach((btn, index) => {
         // Click handler
         btn.addEventListener('click', function() {
-            updateTeachingFilter(this);
+            const filter = this.dataset.filter;
+            const filterType = this.dataset.filterType;
+            if (filter === 'all') {
+                resetAllFilters();
+            } else {
+                toggleFilter(filter, filterType);
+            }
         });
-        
+
         // Keyboard navigation
         btn.addEventListener('keydown', function(e) {
             let targetIndex = index;
-            
+
             switch(e.key) {
                 case 'ArrowRight':
                 case 'ArrowDown':
@@ -2331,15 +2386,21 @@ function initializeTeachingFiltering() {
                 case 'Enter':
                 case ' ':
                     e.preventDefault();
-                    updateTeachingFilter(this);
+                    const filter = this.dataset.filter;
+                    const filterType = this.dataset.filterType;
+                    if (filter === 'all') {
+                        resetAllFilters();
+                    } else {
+                        toggleFilter(filter, filterType);
+                    }
                     break;
             }
         });
-        
+
         // Ensure proper tab order
         btn.setAttribute('tabindex', index === 0 ? '0' : '-1');
     });
-    
+
     // Update tabindex when focus changes
     filterBtns.forEach(btn => {
         btn.addEventListener('focus', function() {

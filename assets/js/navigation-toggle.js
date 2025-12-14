@@ -233,3 +233,6 @@ export function initNavigation() {
         cleanupHandlers.forEach(cleanup => cleanup());
     });
 }
+
+// Expose globally for content-loader to call after content is loaded
+window.initializeNavigation = initNavigation;

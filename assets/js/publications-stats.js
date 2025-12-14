@@ -35,6 +35,9 @@ class PublicationsStats {
     updateColorScheme() {
         const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
         
+        // Research category colors chosen to minimize overlap with authorship colors:
+        // - Authorship uses: Blue (primary), Purple (postdoc), Orange (student), Green (contributor)
+        // - Research categories use: Crimson red, Teal, Indigo, Golden yellow
         if (isDarkMode) {
             // Dark mode colors - more vibrant and contrasting
             this.colors = {
@@ -44,12 +47,12 @@ class PublicationsStats {
                 secondary: '#32D74B',   // Green for contributor
                 accent: '#8E8E93',      // Gray for other (de-emphasized)
                 line: '#5BA3F5',        // Blue for line charts
-                // Research category gradients (dark mode) - moderately darker outer colors
+                // Research category gradients (dark mode)
                 research: {
-                    'Statistical Learning & AI': ['#E85555', '#FF8E85'],        // Moderately darker red, lighter red
-                    'Interpretability & Insight': ['#2A9D8F', '#6BD7CF'],       // Moderately darker teal, lighter teal  
-                    'Inference & Computation': ['#3B82F6', '#6BC7DC'],          // Moderately darker blue, lighter blue
-                    'Discovery & Understanding': ['#22C55E', '#A8D5BE']         // Moderately darker green, lighter green
+                    'Statistical Learning & AI': ['#EF5350', '#FFCDD2'],        // Crimson red gradient
+                    'Interpretability & Insight': ['#26A69A', '#B2DFDB'],       // Teal gradient
+                    'Inference & Computation': ['#5C6BC0', '#C5CAE9'],          // Indigo gradient
+                    'Discovery & Understanding': ['#FFCA28', '#FFF9C4']         // Golden yellow gradient
                 }
             };
         } else {
@@ -63,10 +66,10 @@ class PublicationsStats {
                 line: '#007AFF',        // Blue for line charts
                 // Research category gradients (light mode)
                 research: {
-                    'Statistical Learning & AI': ['#E74C3C', '#F1948A'],        // Red gradient
-                    'Interpretability & Insight': ['#16A085', '#52C4A0'],       // Teal gradient
-                    'Inference & Computation': ['#3498DB', '#85C1E9'],          // Blue gradient  
-                    'Discovery & Understanding': ['#27AE60', '#82E0AA']         // Green gradient
+                    'Statistical Learning & AI': ['#C62828', '#FFCDD2'],        // Crimson red gradient
+                    'Interpretability & Insight': ['#00897B', '#B2DFDB'],       // Teal gradient
+                    'Inference & Computation': ['#3949AB', '#C5CAE9'],          // Indigo gradient
+                    'Discovery & Understanding': ['#F9A825', '#FFF9C4']         // Golden yellow gradient
                 }
             };
         }

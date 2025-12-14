@@ -1672,10 +1672,22 @@
     line-height: 1.6;
     margin: 1rem 0 0 0;
     padding: 1rem;
-    background: var(--bg-secondary);
+    background: rgba(100, 181, 246, 0.08);
     border-radius: 4px;
     border-left: 3px solid var(--accent-blue);
     font-style: italic;
+}
+
+/* Student-led paper abstract uses orange theme */
+.featured-paper.student-led-paper .abstract {
+    background: rgba(255, 107, 53, 0.08);
+    border-left-color: #FF6B35;
+}
+
+/* Postdoc-led paper abstract uses purple theme */
+.featured-paper.postdoc-led-paper .abstract {
+    background: rgba(147, 51, 234, 0.08);
+    border-left-color: #9333EA;
 }
 
 /* Publication statistics styles */
@@ -3033,7 +3045,23 @@
     font-size: 0.95rem;
     line-height: 1.5;
     margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(100, 181, 246, 0.08);
+    border-radius: 4px;
+    border-left: 3px solid var(--accent-blue);
     font-style: italic;
+}
+
+/* Student-led paper abstract uses orange theme to match card */
+.featured-paper.student-led-paper .abstract {
+    background: rgba(255, 107, 53, 0.08);
+    border-left-color: #FF6B35;
+}
+
+/* Postdoc-led paper abstract uses purple theme to match card */
+.featured-paper.postdoc-led-paper .abstract {
+    background: rgba(147, 51, 234, 0.08);
+    border-left-color: #9333EA;
 }
 
 /* Student-led featured papers get enhanced highlighting */
