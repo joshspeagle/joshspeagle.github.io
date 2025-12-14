@@ -1,4 +1,20 @@
-// Main JavaScript - Core functionality
+/**
+ * Main Application Entry Point
+ * ES6 Module that orchestrates all site functionality
+ */
+
+// Import modules
+import { initTheme } from './theme-toggle.js';
+import { initAnimations } from './animations.js';
+import { initNavigation } from './navigation-toggle.js';
+import { CONFIG } from './utils/config.js';
+
+// Content loader will be imported after refactoring
+// For now, we'll load it via a dynamic import or keep it separate
+
+/**
+ * Initialize main functionality (smooth scrolling, hover effects)
+ */
 function initializeMainFunctionality() {
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -14,16 +30,16 @@ function initializeMainFunctionality() {
         });
     });
 
-    // Enhanced navigation link interactions
+    // Enhanced navigation link interactions (desktop only)
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('mouseenter', function () {
-            if (window.innerWidth > 768) { // Only on desktop
+            if (window.innerWidth > CONFIG.charts.mobileBreakpoint) {
                 this.style.transform = 'translateY(-2px) scale(1.05)';
             }
         });
 
         link.addEventListener('mouseleave', function () {
-            if (window.innerWidth > 768) { // Only on desktop
+            if (window.innerWidth > CONFIG.charts.mobileBreakpoint) {
                 this.style.transform = 'translateY(-2px) scale(1)';
             }
         });
@@ -54,21 +70,43 @@ function initializeMainFunctionality() {
     // Back to top on logo/name click
     const nameElement = document.querySelector('.name');
     if (nameElement) {
+        nameElement.style.cursor = 'pointer';
         nameElement.addEventListener('click', function () {
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            this.style.cursor = 'pointer';
         });
     }
 }
 
-// Wait for content to be loaded, then initialize
-document.addEventListener('DOMContentLoaded', function () {
-    // The content loader will call initializeMainFunctionality after loading content
-    // This is just a fallback in case the page is loaded directly with content
-    if (document.querySelector('.name')) {
-        initializeMainFunctionality();
-    }
-});
+/**
+ * Initialize the application
+ */
+async function initApp() {
+    // Initialize theme first
+    initTheme();
 
-// Export for use by content loader
+    // Initialize navigation
+    initNavigation();
+
+    // Initialize animations
+    initAnimations();
+
+    // Initialize main functionality
+    initializeMainFunctionality();
+
+    // Load content dynamically
+    // The content-loader handles page-specific content loading
+    // It's loaded separately to avoid circular dependencies during the transition
+}
+
+// Export for use by content-loader (during transition period)
+export { initializeMainFunctionality };
+
+// Make available globally during transition
 window.initializeMainFunctionality = initializeMainFunctionality;
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+} else {
+    initApp();
+}

@@ -202,8 +202,6 @@ class PublicationsStats {
             // Count total papers for year
             this.categories.byYear[year].total++;
         });
-        
-        console.log('Publication categories:', this.categories);
     }
     
     /**
@@ -306,11 +304,8 @@ class PublicationsStats {
      * Create the complete statistics dashboard
      */
     renderDashboard(containerId) {
-        console.log('renderDashboard called with containerId:', containerId);
         const container = document.getElementById(containerId);
-        console.log('Container found:', !!container);
         if (!container) {
-            console.error(`Container ${containerId} not found`);
             return;
         }
         
@@ -390,23 +385,19 @@ class PublicationsStats {
         `;
         
         // Create charts after DOM is ready
-        console.log('Dashboard HTML rendered, preparing to create charts...');
-        console.log('Chart.js available:', !!window.Chart);
         requestAnimationFrame(() => {
             this.createCharts();
         });
     }
-    
+
     /**
      * Create all charts
      */
     createCharts() {
-        console.log('createCharts called');
         this.createCitationsChart();
         this.createCitationsByPubYearChart();
         this.createPapersByYearChart();
         this.createResearchAreasChart();
-        console.log('All chart creation methods called');
     }
     
     /**
@@ -1091,6 +1082,3 @@ class PublicationsStats {
 
 // Export for use in other modules
 window.PublicationsStats = PublicationsStats;
-
-// Debug logging
-console.log('PublicationsStats module loaded successfully');

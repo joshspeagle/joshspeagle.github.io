@@ -12,14 +12,23 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+    <!-- Theme Variables (must load first for CSS custom properties) -->
+    <link rel="stylesheet" href="assets/css/theme-variables.css">
+
     <!-- CSS Files -->
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/components.css">
     <link rel="stylesheet" href="assets/css/circuit-components.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
 
-    <!-- Theme System -->
-    <link rel="stylesheet" href="assets/css/theme-variables.css">
+    <!-- Immediate theme detection (prevents flash of wrong theme) -->
+    <script>
+        (function() {
+            const theme = localStorage.getItem('preferred-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.classList.add('no-transition');
+        })();
+    </script>
 </head>
 
 <body class="gradient-bg-main">
@@ -80,18 +89,16 @@
         </div>
     </footer>
 
-    <!-- Theme Toggle -->
-    <script src="assets/js/theme-toggle.js"></script>
-
-    <!-- Other JavaScript Files -->
+    <!-- Page Configuration -->
     <script>
-        // Set the page type for content loader
         window.currentPage = 'service';
     </script>
+
+    <!-- Content Loader (loads before modules for content rendering) -->
     <script src="assets/js/content-loader.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/navigation-toggle.js"></script>
-    <script src="assets/js/animations.js"></script>
+
+    <!-- Main Application Module (ES6 - imports theme, navigation, animations) -->
+    <script type="module" src="assets/js/main.js"></script>
 </body>
 
 </html>

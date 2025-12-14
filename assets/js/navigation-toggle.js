@@ -1,5 +1,16 @@
-// Enhanced Navigation Toggle JavaScript - Supports dropdown navigation and multi-page sites
-function initializeNavigation() {
+/**
+ * Navigation Toggle - Dropdown navigation and multi-page site support
+ * ES6 Module version
+ */
+
+import { CONFIG } from './utils/config.js';
+import { appState } from './state/app-state.js';
+import { logger } from './utils/logger.js';
+
+/**
+ * Initialize navigation system
+ */
+export function initNavigation() {
     const nav = document.querySelector('.nav');
     const navToggle = document.getElementById('navToggle');
     const toggleIcon = document.getElementById('navToggleIcon');
@@ -7,43 +18,39 @@ function initializeNavigation() {
     const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
 
     if (!nav) {
-        console.warn('Navigation element not found');
+        logger.warn('Navigation element not found');
         return;
     }
-    
-    // Set up dropdown handlers (works with or without nav toggle)
-    function setupDropdownHandlers() {
-        // Add click handlers to dropdown items
-        document.querySelectorAll('.dropdown-item').forEach(item => {
-            item.addEventListener('click', handleDropdownItemClick);
-        });
-        
-        // Update active navigation on scroll
-        window.addEventListener('scroll', updateActiveNavigation);
-        
-        // Initialize active state
-        updateActiveNavigation();
-    }
-    
-    // If toggle elements don't exist, we still need basic navigation functionality
+
     const hasToggle = navToggle && toggleIcon;
 
-    // Check if navigation should be collapsed based on screen size
+    // Store cleanup handlers
+    const cleanupHandlers = [];
+
+    /**
+     * Check if navigation should be collapsed based on screen size
+     */
     function shouldCollapseNav() {
-        return window.innerWidth <= 768;
+        return window.innerWidth <= CONFIG.charts.mobileBreakpoint;
     }
 
-    // Get current page type for highlighting
+    /**
+     * Get current page type for highlighting
+     */
     function getCurrentPage() {
         const path = window.location.pathname;
         if (path.includes('mentorship')) return 'mentorship';
         if (path.includes('publications')) return 'publications';
         if (path.includes('talks')) return 'talks';
         if (path.includes('teaching')) return 'teaching';
+        if (path.includes('awards')) return 'awards';
+        if (path.includes('service')) return 'service';
         return 'home';
     }
 
-    // Update active navigation link based on current section or page
+    /**
+     * Update active navigation link based on current section or page
+     */
     function updateActiveNavigation() {
         const currentPage = getCurrentPage();
 
@@ -55,7 +62,7 @@ function initializeNavigation() {
         if (currentPage === 'home') {
             // Home page - highlight based on scroll position
             const sections = document.querySelectorAll('.section[id]');
-            let current = 'about'; // Default to first section
+            let current = 'about';
 
             sections.forEach(section => {
                 const sectionTop = section.offsetTop - 100;
@@ -76,7 +83,6 @@ function initializeNavigation() {
                 const href = item.getAttribute('href');
                 if (href && href.includes(currentPage)) {
                     item.classList.add('active');
-                    // Also highlight the parent dropdown toggle
                     const parentDropdown = item.closest('.nav-dropdown');
                     if (parentDropdown) {
                         const parentToggle = parentDropdown.querySelector('.dropdown-toggle');
@@ -88,17 +94,16 @@ function initializeNavigation() {
             });
         }
 
-        // Only auto-collapse on mobile if user hasn't manually expanded the navigation recently
+        // Auto-collapse on mobile if not manually expanded
         const userExpanded = nav.classList.contains('nav-expanded');
         const lastManualToggle = sessionStorage.getItem('navLastManualToggle');
         const timeSinceManualToggle = lastManualToggle ? Date.now() - parseInt(lastManualToggle) : Infinity;
-        const recentManualToggle = timeSinceManualToggle < 5000; // 5 seconds
-        
+        const recentManualToggle = timeSinceManualToggle < CONFIG.delays.navigationTimeout;
+
         if (hasToggle && shouldCollapseNav() && !userExpanded && !recentManualToggle) {
             nav.classList.add('nav-collapsed');
             toggleIcon.textContent = '+';
 
-            // Also close any open dropdowns
             document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
                 dropdown.classList.remove('open');
                 dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
@@ -106,27 +111,23 @@ function initializeNavigation() {
         }
     }
 
-    // Toggle navigation expanded/collapsed state
+    /**
+     * Toggle navigation expanded/collapsed state
+     */
     function toggleNavigation() {
         nav.classList.toggle('nav-collapsed');
         const isCollapsed = nav.classList.contains('nav-collapsed');
 
-        // Add/remove manual expansion marker and set timestamp
         if (isCollapsed) {
             nav.classList.remove('nav-expanded');
         } else {
             nav.classList.add('nav-expanded');
         }
 
-        // Record the time of manual toggle to prevent auto-collapse
         sessionStorage.setItem('navLastManualToggle', Date.now().toString());
 
         if (hasToggle) {
             toggleIcon.textContent = isCollapsed ? '+' : '−';
-        }
-
-        // Visual feedback
-        if (hasToggle) {
             navToggle.style.transform = 'scale(0.9)';
             setTimeout(() => {
                 navToggle.style.transform = 'scale(1)';
@@ -134,17 +135,15 @@ function initializeNavigation() {
         }
     }
 
-    // Apply mobile navigation state
+    /**
+     * Apply mobile navigation state
+     */
     function applyMobileNavState() {
-        if (!hasToggle) {
-            // No toggle button on this page, just ensure nav is visible
-            return;
-        }
-        
+        if (!hasToggle) return;
+
         if (shouldCollapseNav()) {
             navToggle.style.display = 'flex';
 
-            // Only auto-collapse if not manually expanded
             if (!nav.classList.contains('nav-expanded')) {
                 nav.classList.add('nav-collapsed');
                 toggleIcon.textContent = '+';
@@ -156,78 +155,81 @@ function initializeNavigation() {
         }
     }
 
-    // Auto-collapse navigation when clicking a link (on mobile)
+    /**
+     * Handle nav link click - auto-collapse on mobile
+     */
     function handleNavLinkClick() {
         if (hasToggle && shouldCollapseNav()) {
             setTimeout(() => {
                 nav.classList.add('nav-collapsed');
-                nav.classList.remove('nav-expanded'); // Clear manual expansion
+                nav.classList.remove('nav-expanded');
                 if (hasToggle) {
                     toggleIcon.textContent = '+';
                 }
 
-                // Also close any open dropdowns
                 document.querySelectorAll('.nav-dropdown.open').forEach(dropdown => {
                     dropdown.classList.remove('open');
                     dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
                 });
-            }, 300);
+            }, CONFIG.delays.dropdownRecentlyOpened);
         }
     }
 
-    // Handle dropdown item clicks (close dropdown and collapse mobile nav)
+    /**
+     * Handle dropdown item clicks
+     */
     function handleDropdownItemClick() {
-        // Close the dropdown
         const dropdown = this.closest('.nav-dropdown');
         if (dropdown) {
             dropdown.classList.remove('open');
             dropdown.querySelector('.dropdown-toggle').setAttribute('aria-expanded', 'false');
         }
 
-        // Handle mobile collapse
         if (navToggle && shouldCollapseNav()) {
             handleNavLinkClick();
         }
     }
-    
 
-    // Event listeners (only for pages with nav toggle)
+    // Set up event listeners
     if (hasToggle) {
         navToggle.addEventListener('click', toggleNavigation);
-        navToggle.addEventListener('touchend', function (e) {
+        const touchHandler = function (e) {
             e.preventDefault();
             toggleNavigation();
+        };
+        navToggle.addEventListener('touchend', touchHandler);
+        cleanupHandlers.push(() => {
+            navToggle.removeEventListener('click', toggleNavigation);
+            navToggle.removeEventListener('touchend', touchHandler);
         });
     }
 
-    // Add click handlers to nav links
+    // Nav link click handlers
     navLinks.forEach(link => {
         link.addEventListener('click', handleNavLinkClick);
+        cleanupHandlers.push(() => link.removeEventListener('click', handleNavLinkClick));
     });
 
-    // Set up dropdown handlers and common functionality
-    setupDropdownHandlers();
-    
-    // Add resize handler for mobile state
+    // Dropdown item click handlers
+    document.querySelectorAll('.dropdown-item').forEach(item => {
+        item.addEventListener('click', handleDropdownItemClick);
+        cleanupHandlers.push(() => item.removeEventListener('click', handleDropdownItemClick));
+    });
+
+    // Scroll handler for active navigation
+    window.addEventListener('scroll', updateActiveNavigation);
+    cleanupHandlers.push(() => window.removeEventListener('scroll', updateActiveNavigation));
+
+    // Resize handler
     window.addEventListener('resize', applyMobileNavState);
+    cleanupHandlers.push(() => window.removeEventListener('resize', applyMobileNavState));
 
     // Initialize
-    window.addEventListener('load', function () {
-        updateActiveNavigation(); // Set initial active section
-        applyMobileNavState();     // Apply mobile state after active section is set
-    });
-
-    // Also initialize immediately
+    updateActiveNavigation();
     applyMobileNavState();
-}
 
-// Initialize navigation when DOM is ready (fallback for direct page load)
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeNavigation);
-} else {
-    // DOM is already loaded, initialize immediately
-    initializeNavigation();
+    // Register cleanup
+    appState.registerCleanupHandler(() => {
+        cleanupHandlers.forEach(cleanup => cleanup());
+    });
 }
-
-// Export for use by content loader
-window.initializeNavigation = initializeNavigation;

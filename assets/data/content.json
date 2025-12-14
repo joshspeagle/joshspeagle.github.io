@@ -1536,6 +1536,14 @@
                     "color": "amber",
                     "talks": [
                         {
+                            "title": "Astro-Statistical Learning and Uncertainty Quantification",
+                            "event": "CFE-CMStatistics 2025: Starstruck Statistics",
+                            "location": "London, UK",
+                            "date": "Dec 2025",
+                            "year": 2025,
+                            "type": "Invited Talk"
+                        },
+                        {
                             "title": "A Brief History of <s>Time</s> MCMC in Astronomy",
                             "event": "The Fast and Curious 2: MCMC in Action",
                             "location": "Toronto, Canada",
@@ -1628,6 +1636,14 @@
                             "title": "A Conceptual Introduction to Deep Learning",
                             "event": "Cambridge: Astrophysics Data Science Seminar",
                             "location": "Cambridge, UK",
+                            "date": "Dec 2025",
+                            "year": 2025,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "A Conceptual Introduction to Deep Learning",
+                            "event": "University of Vienna: Astronomy & Astrophysics Seminar",
+                            "location": "Vienna, Austria",
                             "date": "Dec 2025",
                             "year": 2025,
                             "type": "Seminar"

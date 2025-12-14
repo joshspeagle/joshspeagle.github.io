@@ -80,7 +80,6 @@ ENV/
 env/
 
 # Claude-specific files
-CLAUDE.md
 .claude/
 
 # Miscellaneous

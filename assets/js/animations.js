@@ -1,5 +1,15 @@
-// Optimized Animations JavaScript - Scroll animations and visual effects
-function initializeAnimations() {
+/**
+ * Animations - Scroll animations and visual effects
+ * ES6 Module version
+ */
+
+import { CONFIG } from './utils/config.js';
+import { appState } from './state/app-state.js';
+
+/**
+ * Initialize all animations
+ */
+export function initAnimations() {
     // Check if user prefers reduced motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -11,28 +21,49 @@ function initializeAnimations() {
         return;
     }
 
-    // Intersection Observer for fade-in animations with mobile-optimized settings
-    const isMobile = window.innerWidth <= 768;
+    // Initialize section observer
+    initSectionObserver();
+
+    // Initialize timeline observer
+    initTimelineObserver();
+
+    // Initialize parallax effect
+    initParallax(prefersReducedMotion);
+
+    // Initialize animated elements
+    initAnimatedElements();
+
+    // Initialize publication links animation
+    initPublicationLinksAnimation();
+
+    // Add active navigation styles
+    addNavigationStyles();
+}
+
+/**
+ * Initialize intersection observer for sections
+ */
+function initSectionObserver() {
+    const isMobile = window.innerWidth <= CONFIG.charts.mobileBreakpoint;
     const observerOptions = {
-        threshold: isMobile ? 0.05 : 0.1, // Lower threshold for mobile
-        rootMargin: isMobile ? '0px 0px -20px 0px' : '0px 0px -50px 0px' // Less margin for mobile
+        threshold: isMobile ? 0.05 : 0.1,
+        rootMargin: isMobile ? '0px 0px -20px 0px' : '0px 0px -50px 0px'
     };
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                // Disconnect observer for this element to improve performance
                 observer.unobserve(entry.target);
 
-                // Optimized staggered animation using requestAnimationFrame
+                // Staggered animation for child elements
                 const animatedElements = entry.target.querySelectorAll('.highlight-box, .contact-info, .dog-photo');
                 animatedElements.forEach((element, index) => {
                     requestAnimationFrame(() => {
                         setTimeout(() => {
                             element.style.opacity = '1';
                             element.style.transform = 'translateY(0)';
-                        }, index * 50); // Reduced from 100ms to 50ms for snappier feel
+                        }, index * 50);
                     });
                 });
             }
@@ -44,22 +75,55 @@ function initializeAnimations() {
         observer.observe(section);
     });
 
-    // Initialize animated elements with hidden state
-    document.querySelectorAll('.highlight-box, .contact-info, .dog-photo').forEach(element => {
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    // Register for cleanup
+    appState.registerObserver(observer);
+}
+
+/**
+ * Initialize timeline animation observer
+ */
+function initTimelineObserver() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    if (timelineItems.length === 0) return;
+
+    const timelineObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                requestAnimationFrame(() => {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 50);
+                });
+                timelineObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    timelineItems.forEach(item => {
+        timelineObserver.observe(item);
     });
 
-    // Optimized parallax effect with better performance
+    // Register for cleanup
+    appState.registerObserver(timelineObserver);
+}
+
+/**
+ * Initialize parallax effect for header
+ * @param {boolean} prefersReducedMotion - User's motion preference
+ */
+function initParallax(prefersReducedMotion) {
+    if (window.innerWidth <= CONFIG.charts.mobileBreakpoint || prefersReducedMotion) {
+        return;
+    }
+
     let ticking = false;
-    const header = document.querySelector('.header'); // Cache DOM query
+    const header = document.querySelector('.header');
 
     function updateParallax() {
         if (header) {
             const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.3; // Reduced intensity for subtler effect
-            header.style.transform = `translate3d(0, ${rate}px, 0)`; // Use translate3d for hardware acceleration
+            const rate = scrolled * -0.3;
+            header.style.transform = `translate3d(0, ${rate}px, 0)`;
         }
         ticking = false;
     }
@@ -71,12 +135,29 @@ function initializeAnimations() {
         }
     }
 
-    // Enable parallax on larger screens only and respect motion preferences
-    if (window.innerWidth > 768 && !prefersReducedMotion) {
-        window.addEventListener('scroll', requestParallaxUpdate, { passive: true }); // Passive listener for better performance
-    }
+    window.addEventListener('scroll', requestParallaxUpdate, { passive: true });
 
-    // Smooth reveal animation for publication links
+    // Register cleanup
+    appState.registerCleanupHandler(() => {
+        window.removeEventListener('scroll', requestParallaxUpdate);
+    });
+}
+
+/**
+ * Initialize animated elements with hidden state
+ */
+function initAnimatedElements() {
+    document.querySelectorAll('.highlight-box, .contact-info, .dog-photo').forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+}
+
+/**
+ * Initialize publication links reveal animation
+ */
+function initPublicationLinksAnimation() {
     const publicationLinks = document.querySelectorAll('.publication-links li');
     publicationLinks.forEach((link, index) => {
         link.style.opacity = '0';
@@ -86,53 +167,24 @@ function initializeAnimations() {
         setTimeout(() => {
             link.style.opacity = '1';
             link.style.transform = 'translateX(0)';
-        }, 500 + (index * 100));
+        }, CONFIG.delays.loadingSimulation + (index * 100));
     });
-
-    // Optimized timeline animation with observer reuse
-    const timelineItems = document.querySelectorAll('.timeline-item');
-    if (timelineItems.length > 0) {
-        const timelineObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    requestAnimationFrame(() => {
-                        setTimeout(() => {
-                            entry.target.classList.add('visible');
-                        }, index * 50); // Reduced delay for snappier animations
-                    });
-                    // Disconnect after animating to improve performance
-                    timelineObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        timelineItems.forEach(item => {
-            timelineObserver.observe(item);
-        });
-    }
-
-    // Add CSS for active navigation state (if not already added)
-    if (!document.getElementById('animation-styles')) {
-        const style = document.createElement('style');
-        style.id = 'animation-styles';
-        style.textContent = `
-            .nav-link.active {
-                background: rgba(100, 181, 246, 0.3) !important;
-                border-color: #64b5f6 !important;
-                color: #ffffff !important;
-            }
-        `;
-        document.head.appendChild(style);
-    }
 }
 
-// Initialize animations when DOM is ready (fallback for direct page load)
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeAnimations);
-} else {
-    // DOM is already loaded, initialize immediately
-    initializeAnimations();
-}
+/**
+ * Add CSS for active navigation state
+ */
+function addNavigationStyles() {
+    if (document.getElementById('animation-styles')) return;
 
-// Export for use by content loader
-window.initializeAnimations = initializeAnimations;
+    const style = document.createElement('style');
+    style.id = 'animation-styles';
+    style.textContent = `
+        .nav-link.active {
+            background: rgba(100, 181, 246, 0.3) !important;
+            border-color: #64b5f6 !important;
+            color: #ffffff !important;
+        }
+    `;
+    document.head.appendChild(style);
+}

@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     <li>Checking your internet connection</li>
                     <li>Trying again in a few moments</li>
                 </ul>
-                <button onclick="window.location.reload()" style="background: var(--accent-blue); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px;">
+                <button data-action="refresh-page" style="background: var(--accent-blue); color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px;">
                     Refresh Page
                 </button>
             </div>
@@ -203,7 +203,7 @@ function populateNavigation(navigation) {
                 <a href="index.html" class="nav-link home-button">
                     <span class="home-icon">🏠</span> Home
                 </a>
-                <button class="nav-link top-button" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" type="button" aria-label="Scroll to top">
+                <button class="nav-link top-button" data-action="scroll-top" type="button" aria-label="Scroll to top">
                     <span class="top-icon">⬆️</span> Top
                 </button>
             `;
@@ -792,7 +792,6 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
     // Filter out placeholder entries
     const realMentees = mentees.filter(mentee => mentee.privacy !== 'placeholder');
     const sectionId = title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-    console.log(`Creating section: ${title} -> ${sectionId}, ${realMentees.length} mentees`);
     
     if (realMentees.length === 0 && mentees.length > 0) {
         return `
@@ -821,7 +820,8 @@ function createMenteeSection(title, mentees, type, isCompleted = false) {
                     ${initialBatch.map(mentee => createMenteeCard(mentee, type, isCompleted)).join('')}
                 </div>
                 <div class="mentee-load-more" id="load-more-${sectionId}">
-                    <button class="load-more-btn" onclick="window.loadMoreMentees('${sectionId}', '${type}', ${isCompleted})"
+                    <button class="load-more-btn" data-action="load-more-mentees"
+                            data-section="${sectionId}" data-type="${type}" data-completed="${isCompleted}"
                             aria-label="Load more mentees in ${title} section">
                         Load More (${remainingCount} remaining)
                     </button>
@@ -940,9 +940,7 @@ function calculateMentorshipStats(menteesByStage) {
 
 // Simple counting function for current mentees
 function countCurrentMentees(menteesByStage) {
-    console.log('countCurrentMentees called with:', menteesByStage);
     if (!menteesByStage) {
-        console.log('No menteesByStage data');
         return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
     }
 
@@ -950,16 +948,12 @@ function countCurrentMentees(menteesByStage) {
     const doctoral = (menteesByStage.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
     const bachelors = (menteesByStage.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
 
-    const result = { postdoctoral, doctoral, bachelors };
-    console.log('countCurrentMentees result:', result);
-    return result;
+    return { postdoctoral, doctoral, bachelors };
 }
 
 // Simple counting function for former mentees
 function countFormerMentees(completedMentees) {
-    console.log('countFormerMentees called with:', completedMentees);
     if (!completedMentees) {
-        console.log('No completedMentees data');
         return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
     }
 
@@ -967,35 +961,26 @@ function countFormerMentees(completedMentees) {
     const doctoral = (completedMentees.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
     const bachelors = (completedMentees.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
 
-    const result = { postdoctoral, doctoral, bachelors };
-    console.log('countFormerMentees result:', result);
-    return result;
+    return { postdoctoral, doctoral, bachelors };
 }
 
 // Simple bar chart function
 function createInteractiveBarChart(counts) {
-    console.log('createInteractiveBarChart called with counts:', counts);
-
     // Handle empty data
     const total = counts.postdoctoral + counts.doctoral + counts.bachelors;
-    console.log('Total count:', total);
     if (total === 0) {
-        console.log('Returning no-data message');
         return '<p class="no-data">No mentee data available</p>';
     }
 
     // Calculate heights - use 150px max height for good visibility
     const maxCount = Math.max(counts.postdoctoral, counts.doctoral, counts.bachelors);
     const maxHeight = 150;
-    console.log('Max count:', maxCount, 'Max height:', maxHeight);
 
     // Calculate individual bar heights with square root scaling for better visual comparison
     const maxSqrt = Math.sqrt(maxCount);
     const postdocHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.postdoctoral) / maxSqrt) * maxHeight, 15) : 0;
     const doctoralHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.doctoral) / maxSqrt) * maxHeight, 15) : 0;
     const bachelorsHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.bachelors) / maxSqrt) * maxHeight, 15) : 0;
-
-    console.log('Calculated heights:', { postdocHeight, doctoralHeight, bachelorsHeight });
 
     return `
         <div class="vertical-bar-chart">
@@ -1052,79 +1037,53 @@ async function loadPublicationsContent(publicationsSection, staticData) {
             publicationsSection.innerHTML = createDynamicPublicationsContent(dynamicData, staticData);
 
             // Initialize statistics dashboard
-            console.log('Checking for PublicationsStats:', !!window.PublicationsStats);
-            console.log('Publications data exists:', !!dynamicData.publications);
-            console.log('Publications count:', dynamicData.publications?.length);
-            
             if (window.PublicationsStats && dynamicData.publications) {
-                console.log('Initializing statistics dashboard...');
-                
                 // Wait for Chart.js to be fully loaded
                 const initializeStats = () => {
                     try {
                         const stats = new PublicationsStats(dynamicData, mentorshipData);
-                        console.log('PublicationsStats instance created:', stats);
                         stats.renderDashboard('publications-statistics');
-                        console.log('Dashboard rendering initiated');
-                        
+
                         // Store instance for potential cleanup/theme updates
                         window.currentPublicationsStats = stats;
                     } catch (error) {
-                        console.error('Error initializing statistics:', error);
+                        // Statistics initialization failed - page continues to work without charts
                     }
                 };
-                
+
                 // Store publications data globally for batch loading
                 // Include ALL publications (not just 2020+) and exclude only featured ones
                 allPublicationsData = dynamicData.publications
-                    .filter(pub => pub.year && !pub.featured) 
+                    .filter(pub => pub.year && !pub.featured)
                     .sort((a, b) => {
-                        if (b.year !== a.year) return b.year - a.year; 
-                        return a.title.localeCompare(b.title); 
+                        if (b.year !== a.year) return b.year - a.year;
+                        return a.title.localeCompare(b.title);
                     });
-                
-                console.log('Global publications data set:', allPublicationsData.length, 'publications');
-                
+
                 // Check if Chart.js is loaded, if not wait a bit
                 if (window.Chart && Chart.defaults) {
                     requestAnimationFrame(initializeStats);
                 } else {
-                    console.log('Waiting for Chart.js to load...');
                     setTimeout(() => {
                         if (window.Chart && Chart.defaults) {
                             requestAnimationFrame(initializeStats);
-                        } else {
-                            console.error('Chart.js failed to load after waiting');
                         }
                     }, 500);
                 }
-                
+
                 // Announce initial publications loaded to screen readers
                 requestAnimationFrame(() => {
-                    const initialCount = Math.min(20, dynamicData.publications.length); // Default display limit
+                    const initialCount = Math.min(20, dynamicData.publications.length);
                     const totalCount = dynamicData.publications.length;
                     announceToScreenReader(`Publications page loaded. Showing ${initialCount} of ${totalCount} publications.`);
                 });
-            } else {
-                console.warn('Cannot initialize statistics dashboard:', {
-                    hasPublicationsStats: !!window.PublicationsStats,
-                    hasPublications: !!dynamicData.publications,
-                    publicationsCount: dynamicData.publications?.length
-                });
             }
-
-            console.log('Loaded dynamic publication data:', {
-                papers: dynamicData.metrics?.totalPapers,
-                lastUpdated: dynamicData.lastUpdated
-            });
         } else {
             // Fall back to static data
-            console.log('Dynamic data not available, using static content');
             publicationsSection.innerHTML = createPublicationsContent(staticData);
         }
     } catch (error) {
         // Fall back to static data on error
-        console.warn('Failed to load dynamic publication data:', error);
         publicationsSection.innerHTML = createPublicationsContent(staticData);
     }
 }
@@ -1356,7 +1315,7 @@ function createRecentPublications(dynamicData) {
             </div>
             ${allPubs.length > initialBatchSize ? `
             <div id="publications-load-more" class="publications-load-more">
-                <button class="load-more-btn" onclick="loadMorePublications()"
+                <button class="load-more-btn" data-action="load-more-publications"
                         aria-label="Load more publications">
                     Load More (${allPubs.length - initialPubs.length} remaining)
                 </button>
@@ -1723,23 +1682,16 @@ function announceToScreenReader(message) {
  * Load more publications in batches
  */
 function loadMorePublications() {
-    console.log('loadMorePublications called');
-    
     // Prevent multiple simultaneous loads
     if (isLoadingMore) {
-        console.log('Already loading, skipping...');
         return;
     }
     isLoadingMore = true;
-    
+
     const container = document.getElementById('publications-container');
     const loadMoreDiv = document.getElementById('publications-load-more');
 
     if (!container || !loadMoreDiv) {
-        console.error('Required elements not found:', {
-            container: !!container,
-            loadMoreDiv: !!loadMoreDiv
-        });
         isLoadingMore = false;
         return;
     }
@@ -1751,14 +1703,12 @@ function loadMorePublications() {
         loadMoreBtn.textContent = 'Loading publications...';
         loadMoreBtn.setAttribute('aria-busy', 'true');
     }
-    
-    const totalPubs = parseInt(container.dataset.total);
+
     const loadedPubs = parseInt(container.dataset.loaded);
     const batchSize = 20;
-    
+
     // Safety check
     if (!allPublicationsData || allPublicationsData.length === 0) {
-        console.error('allPublicationsData is not available');
         // Re-enable button
         if (loadMoreBtn) {
             loadMoreBtn.disabled = false;
@@ -1768,10 +1718,9 @@ function loadMorePublications() {
         isLoadingMore = false;
         return;
     }
-    
+
     // Check if we've already loaded everything
     if (loadedPubs >= allPublicationsData.length) {
-        console.log('All publications already loaded');
         // Remove button since everything is loaded
         if (loadMoreDiv) {
             loadMoreDiv.remove();
@@ -2479,11 +2428,7 @@ let allMenteesData = null;
  * Load more mentees for a specific section
  */
 function loadMoreMentees(sectionId, type, isCompleted) {
-    console.log('loadMoreMentees called:', sectionId, type, isCompleted);
-    console.log('allMenteesData available:', !!allMenteesData);
-
     if (!allMenteesData) {
-        console.error('Mentee data not available for lazy loading');
         return;
     }
 
@@ -2491,7 +2436,6 @@ function loadMoreMentees(sectionId, type, isCompleted) {
     const loadMoreDiv = document.getElementById(`load-more-${sectionId}`);
 
     if (!container || !loadMoreDiv) {
-        console.error('Required mentee elements not found');
         return;
     }
 
@@ -2528,7 +2472,6 @@ function loadMoreMentees(sectionId, type, isCompleted) {
         }
 
         if (!menteeSource) {
-            console.error('Could not find mentee source for section:', sectionId);
             return;
         }
 
@@ -2569,10 +2512,7 @@ window.loadMorePublications = loadMorePublications;
 
 // Initialize mentorship page interactive features
 function initializeMentorshipInteractivity() {
-    console.log('Initializing mentorship interactivity, data available:', !!allMenteesData);
-
     // Use manual loading only - no automatic scroll-based loading
-    console.log('Mentorship page initialized with manual loading only');
 }
 
 // Create awards content
@@ -2678,3 +2618,32 @@ function createServiceContent(data) {
         </div>
     `;
 }
+
+// Event delegation for data-action handlers
+document.addEventListener('click', function(e) {
+    const actionElement = e.target.closest('[data-action]');
+    if (!actionElement) return;
+
+    const action = actionElement.dataset.action;
+
+    switch (action) {
+        case 'refresh-page':
+            window.location.reload();
+            break;
+
+        case 'scroll-top':
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            break;
+
+        case 'load-more-publications':
+            loadMorePublications();
+            break;
+
+        case 'load-more-mentees':
+            const sectionId = actionElement.dataset.section;
+            const type = actionElement.dataset.type;
+            const isCompleted = actionElement.dataset.completed === 'true';
+            loadMoreMentees(sectionId, type, isCompleted);
+            break;
+    }
+});

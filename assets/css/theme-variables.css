@@ -78,6 +78,26 @@
     --toggle-button-bg: var(--bg-nav);
     --toggle-button-border: var(--border-accent);
     --toggle-icon-color: var(--accent-orange);
+
+    /* === ALIAS VARIABLES === */
+    /* These provide compatibility with older/external code that uses these names */
+
+    /* Primary color aliases */
+    --primary-color: var(--accent-blue);
+    --primary-rgb: 100, 181, 246;
+
+    /* Text color alias */
+    --text-color: var(--text-primary);
+
+    /* Border aliases */
+    --border-color: var(--border-primary);
+    --border-light: rgba(255, 255, 255, 0.05);
+    --border-medium: rgba(255, 255, 255, 0.15);
+
+    /* Background aliases */
+    --bg-primary: var(--bg-primary-1);
+    --bg-secondary: var(--bg-primary-2);
+    --bg-tooltip: rgba(0, 0, 0, 0.9);
 }
 
 /* Light Theme Override */
@@ -157,6 +177,25 @@
     --toggle-button-bg: var(--bg-nav);
     --toggle-button-border: var(--border-accent);
     --toggle-icon-color: var(--accent-blue);
+
+    /* === ALIAS VARIABLES === */
+
+    /* Primary color aliases */
+    --primary-color: var(--accent-blue);
+    --primary-rgb: 25, 118, 210;
+
+    /* Text color alias */
+    --text-color: var(--text-primary);
+
+    /* Border aliases */
+    --border-color: var(--border-primary);
+    --border-light: rgba(0, 0, 0, 0.05);
+    --border-medium: rgba(0, 0, 0, 0.15);
+
+    /* Background aliases */
+    --bg-primary: var(--bg-primary-1);
+    --bg-secondary: var(--bg-primary-2);
+    --bg-tooltip: rgba(255, 255, 255, 0.95);
 }
 
 /* === UTILITY CLASSES === */
