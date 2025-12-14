@@ -1,4 +1,28 @@
 // Enhanced Content Loader - Dynamically loads content from JSON with dropdown and page support
+
+/**
+ * Sort academic terms chronologically (most recent year first, then Winter → Summer → Fall within year)
+ * @param {string[]} terms - Array of term strings like "Winter 2024", "Fall 2022"
+ * @returns {string[]} - Sorted array of terms
+ */
+function sortTermsChronologically(terms) {
+    const termOrder = { 'winter': 1, 'summer': 2, 'fall': 3, 'full': 0 };
+
+    return [...terms].sort((a, b) => {
+        // Extract year (last 4-digit number in string)
+        const yearA = parseInt(a.match(/\d{4}/)?.[0] || '0');
+        const yearB = parseInt(b.match(/\d{4}/)?.[0] || '0');
+
+        // Sort by year descending (most recent first)
+        if (yearB !== yearA) return yearB - yearA;
+
+        // Within same year, sort by term: Winter (1) → Summer (2) → Fall (3)
+        const termA = a.toLowerCase().split(' ')[0];
+        const termB = b.toLowerCase().split(' ')[0];
+        return (termOrder[termA] || 4) - (termOrder[termB] || 4);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', async function () {
     try {
         // Add loading indicator
@@ -2215,7 +2239,7 @@ function createTeachingContent(data) {
                         <div class="course-terms">
                             <strong>Terms Taught:</strong>
                             <div class="terms-list">
-                                ${course.terms.map(term => `
+                                ${sortTermsChronologically(course.terms).map(term => `
                                     <span class="term-badge">${term}</span>
                                 `).join('')}
                             </div>
