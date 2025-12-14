@@ -56,6 +56,9 @@ assets/data/backups/
 # Deprecated scripts
 scripts/_deprecated/
 
+# Temp folder for PDF downloads during categorization
+scripts/temp/
+
 # Archive files
 *.zip
 *.tar.gz

@@ -152,6 +152,97 @@ HTML files include an inline theme detection script to prevent flash of wrong th
 - Papers show badges for categories with ≥20% probability
 - Student-led papers get orange highlighting
 
+### LLM-Based Paper Categorization
+
+**IMPORTANT**: Paper categorization uses LLM agents that read full papers and apply a detailed rubric. This replaces the old keyword-based scoring system.
+
+#### Key Files
+- **Rubric**: `scripts/llm_categorization_rubric.md` - Detailed instructions for categorization
+- **Data**: `assets/data/publications_data.json` - Publication data to be updated
+
+#### When to Categorize
+- After running the publication pipeline (new papers need categorization)
+- When manually adding a new publication
+- When re-categorizing existing papers (if requested)
+
+#### Batch Processing Workflow
+
+To categorize papers, spawn agents that **directly modify** `publications_data.json`. Run in batches of 5-10 papers to manage context and allow progress tracking.
+
+**Step 1**: Identify papers needing categorization
+```
+Papers without `llm_categorization` field, or with outdated categorizations
+```
+
+**Step 2**: For each batch, spawn parallel agents with this prompt:
+
+```
+Categorize this paper and UPDATE the publications_data.json file directly:
+
+Title: {title}
+ADS Bibcode: {bibcode}
+
+Instructions:
+1. Read scripts/llm_categorization_rubric.md for the categorization rubric
+2. Access the full paper via arXiv HTML (https://arxiv.org/html/{arxiv_id})
+   - If arXiv ID unknown, search: "{bibcode} arxiv" or check ADS page
+   - Fall back to abstract-only if full paper unavailable
+3. Categorize according to the rubric
+4. Read assets/data/publications_data.json
+5. Find the paper entry by bibcode
+6. Update the paper's entry with:
+   - Set `categoryProbabilities` to your categorization values
+   - Set `researchArea` to the category with highest probability
+   - Add `llm_categorization` field with full output (see format below)
+7. Write the updated JSON back to the file
+```
+
+**Step 3**: After each batch, verify the changes were applied correctly.
+
+#### Agent Output Format
+
+The `llm_categorization` field should contain:
+```json
+{
+  "categorization": {
+    "Statistical Learning & AI": 0.XX,
+    "Interpretability & Insight": 0.XX,
+    "Inference & Computation": 0.XX,
+    "Discovery & Understanding": 0.XX
+  },
+  "reasoning": "2-3 sentences explaining the categorization...",
+  "full_paper_analyzed": true,
+  "source": "arxiv_html",
+  "arxiv_id": "XXXX.XXXXX",
+  "model": "claude-sonnet-4-5-20250929",
+  "timestamp": "2025-12-14T12:00:00Z"
+}
+```
+
+Source values: `arxiv_html`, `arxiv_pdf`, `journal`, `abstract_only`
+
+#### Example Agent Spawn
+
+```
+Spawn 5 parallel agents for papers with bibcodes:
+- 2024MNRAS.531.2582M
+- 2023ApJ...954..132M
+- 2022arXiv221103747W
+- 2023arXiv231116238C
+- 2024arXiv240715703L
+```
+
+Each agent reads the rubric, fetches the paper, categorizes it, and writes directly to the JSON file.
+
+#### Tracking Progress
+
+Use a TODO list to track batches:
+- Batch 1 (papers 1-10): [status]
+- Batch 2 (papers 11-20): [status]
+- etc.
+
+Papers are considered "done" when they have an `llm_categorization` field with a valid timestamp.
+
 ## Publication Pipeline
 
 The `scripts/` directory contains a Python pipeline for fetching and processing publication data.

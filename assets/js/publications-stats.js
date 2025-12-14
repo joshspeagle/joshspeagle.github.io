@@ -352,21 +352,11 @@ class PublicationsStats {
                             <canvas id="citations-chart"></canvas>
                         </div>
                     </div>
-                    
+
                     <div class="chart-section">
                         <div class="chart-wrapper">
-                            <h4>Publications by Research Category</h4>
-                            <div class="ring-legend">
-                                <div class="ring-legend-item">
-                                    <span class="ring-marker inner-marker"></span>
-                                    <span class="ring-label">Inner: All Time</span>
-                                </div>
-                                <div class="ring-legend-item">
-                                    <span class="ring-marker outer-marker"></span>
-                                    <span class="ring-label">Outer: Last 5 Years</span>
-                                </div>
-                            </div>
-                            <canvas id="research-areas-chart"></canvas>
+                            <h4>Research Focus Over Time (3-Year Avg)</h4>
+                            <canvas id="research-evolution-chart"></canvas>
                         </div>
                     </div>
                     
@@ -398,9 +388,9 @@ class PublicationsStats {
      */
     createCharts() {
         this.createCitationsChart();
+        this.createResearchEvolutionChart();
         this.createCitationsByPubYearChart();
         this.createPapersByYearChart();
-        this.createResearchAreasChart();
     }
     
     /**
@@ -889,174 +879,218 @@ class PublicationsStats {
     }
     
     /**
-     * Research areas comparison chart - all-time vs last 5 years
+     * Research focus evolution chart - 100% stacked area showing category proportions over time
      */
-    createResearchAreasChart() {
-        const ctx = document.getElementById('research-areas-chart');
+    createResearchEvolutionChart() {
+        const ctx = document.getElementById('research-evolution-chart');
         if (!ctx || !window.Chart) return;
-        
+
         const isMobile = window.innerWidth <= 768;
         const isVerySmall = window.innerWidth <= 375;
-        
-        // Use the 4 main research categories from config
+
+        // Research categories
         const mainCategories = [
             'Statistical Learning & AI',
-            'Interpretability & Insight', 
+            'Interpretability & Insight',
             'Inference & Computation',
             'Discovery & Understanding'
         ];
-        
-        // Ensure all categories exist with default values, round to 1 decimal place
-        const allTimeData = mainCategories.map(area => {
-            return Math.round((this.categories.byArea[area]?.allTime || 0) * 10) / 10;
-        });
-        const recentData = mainCategories.map(area => {
-            return Math.round((this.categories.byArea[area]?.lastFiveYears || 0) * 10) / 10;
-        });
-        
-        // Create shortened labels
+
         const shortLabels = [
             'ML & AI',
-            'Interpretability', 
+            'Interpretability',
             'Inference',
             'Discovery'
         ];
-        
-        // Generate colors for inner and outer rings that mirror light/dark modes
-        const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-        const innerColors = mainCategories.map(category => {
-            if (isDarkMode) {
-                // Dark mode: lighter inner, darker outer (same as light mode structure)
-                return this.colors.research[category][1]; // Lighter colors for inner
+
+        // Aggregate probabilistic paper counts by year and category
+        const dataByYear = {};
+
+        this.publications.forEach(paper => {
+            const year = paper.year;
+            if (!year || year === 'Unknown') return;
+
+            if (!dataByYear[year]) {
+                dataByYear[year] = {
+                    'Statistical Learning & AI': 0,
+                    'Interpretability & Insight': 0,
+                    'Inference & Computation': 0,
+                    'Discovery & Understanding': 0,
+                    total: 0
+                };
+            }
+
+            // Use probabilistic counts if available
+            if (paper.categoryProbabilities && typeof paper.categoryProbabilities === 'object') {
+                mainCategories.forEach(category => {
+                    const prob = paper.categoryProbabilities[category] || 0;
+                    dataByYear[year][category] += prob;
+                    dataByYear[year].total += prob;
+                });
             } else {
-                return this.colors.research[category][1]; // Lighter colors for inner
+                // Fallback: count as 1.0 for primary category
+                const area = paper.researchArea || 'Discovery & Understanding';
+                if (mainCategories.includes(area)) {
+                    dataByYear[year][area] += 1;
+                    dataByYear[year].total += 1;
+                }
             }
         });
-        const outerColors = mainCategories.map(category => {
-            if (isDarkMode) {
-                // Dark mode: darker outer ring
-                return this.colors.research[category][0]; // Darker colors for outer
-            } else {
-                return this.colors.research[category][0]; // Darker colors for outer
-            }
+
+        // Use actual publication year range from papers
+        const pubYears = Object.keys(dataByYear).map(y => parseInt(y)).sort((a, b) => a - b);
+        if (pubYears.length === 0) return;
+
+        const startYear = Math.min(...pubYears);
+        const endYear = Math.max(...pubYears);
+        const allYears = [];
+
+        for (let year = startYear; year <= endYear; year++) {
+            allYears.push(year.toString());
+        }
+
+        // Calculate raw percentages for each category (normalized to 100%)
+        const rawPercentageData = {};
+        mainCategories.forEach(category => {
+            rawPercentageData[category] = allYears.map(year => {
+                const yearData = dataByYear[year];
+                if (!yearData || yearData.total === 0) return null; // null for missing data
+                return (yearData[category] / yearData.total) * 100;
+            });
         });
-        
-        this.charts.researchAreas = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: shortLabels,
-                datasets: [
-                    {
-                        label: 'All-Time',
-                        data: allTimeData,
-                        backgroundColor: innerColors,
-                        borderColor: '#ffffff',
-                        borderWidth: 2,
-                        weight: 1.5, // Moderate increase in weight for better visibility
-                        cutout: '20%', // Inner ring - original cutout
-                        radius: '45%' // Original inner ring size
-                    },
-                    {
-                        label: 'Last 5 Years',
-                        data: recentData,
-                        backgroundColor: outerColors,
-                        borderColor: '#ffffff',
-                        borderWidth: 2,
-                        weight: 1.5,
-                        cutout: '55%', // Outer ring - gap between rings
-                        radius: '100%' // Full outer ring size
+
+        // Apply 3-year rolling average smoothing
+        const smoothingWindow = 3;
+        const percentageData = {};
+        mainCategories.forEach(category => {
+            percentageData[category] = rawPercentageData[category].map((val, idx, arr) => {
+                // Collect values within the window (excluding nulls)
+                const windowValues = [];
+                for (let i = Math.max(0, idx - Math.floor(smoothingWindow / 2));
+                     i <= Math.min(arr.length - 1, idx + Math.floor(smoothingWindow / 2));
+                     i++) {
+                    if (arr[i] !== null) {
+                        windowValues.push(arr[i]);
                     }
-                ]
+                }
+                if (windowValues.length === 0) return 0;
+                return windowValues.reduce((sum, v) => sum + v, 0) / windowValues.length;
+            });
+        });
+
+        // Renormalize smoothed data to sum to 100% for each year
+        allYears.forEach((year, idx) => {
+            const total = mainCategories.reduce((sum, cat) => sum + percentageData[cat][idx], 0);
+            if (total > 0) {
+                mainCategories.forEach(cat => {
+                    percentageData[cat][idx] = (percentageData[cat][idx] / total) * 100;
+                });
+            }
+        });
+
+        // Get colors for categories
+        const categoryColors = mainCategories.map(category => this.colors.research[category][0]);
+        const categoryColorsLight = mainCategories.map(category => this.colors.research[category][0] + '80'); // 50% opacity for fill
+
+        // Create datasets for stacked area (order matters - first is at bottom)
+        const datasets = mainCategories.map((category, index) => ({
+            label: shortLabels[index],
+            data: percentageData[category],
+            backgroundColor: categoryColorsLight[index],
+            borderColor: categoryColors[index],
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            pointHoverRadius: 4
+        }));
+
+        this.charts.researchEvolution = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: allYears,
+                datasets: datasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                devicePixelRatio: 2,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year',
+                            font: {
+                                size: isVerySmall ? 10 : (isMobile ? 12 : 14)
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 13)
+                            },
+                            maxRotation: 45,
+                            minRotation: 45,
+                            maxTicksLimit: isMobile ? 6 : 10
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        max: 100,
+                        title: {
+                            display: true,
+                            text: 'Research Focus (%)',
+                            font: {
+                                size: isVerySmall ? 9 : (isMobile ? 11 : 14)
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: isVerySmall ? 8 : (isMobile ? 10 : 13)
+                            },
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
                 plugins: {
                     legend: {
                         position: 'top',
                         labels: {
                             font: {
-                                size: 12
+                                size: isVerySmall ? 10 : (isMobile ? 11 : 12)
                             },
-                            padding: 15,
                             usePointStyle: true,
-                            pointStyle: 'circle',
-                            generateLabels: function(chart) {
-                                // Custom legend generator to use outer ring colors
-                                const data = chart.data;
-                                const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-                                const textColor = isDarkMode ? '#E0E0E0' : '#333333';
-                                
-                                if (data.datasets.length >= 2) {
-                                    const outerDataset = data.datasets[1]; // Outer ring (Last 5 Years)
-                                    return data.labels.map((label, index) => {
-                                        return {
-                                            text: label,
-                                            fillStyle: outerDataset.backgroundColor[index],
-                                            strokeStyle: outerDataset.borderColor,
-                                            lineWidth: outerDataset.borderWidth,
-                                            pointStyle: 'circle',
-                                            datasetIndex: 1,
-                                            index: index,
-                                            fontColor: textColor,
-                                            textAlign: 'left'
-                                        };
-                                    });
-                                }
-                                return [];
-                            }
+                            pointStyle: 'rect'
                         }
                     },
                     tooltip: {
+                        mode: 'index',
+                        intersect: false,
                         callbacks: {
-                            label: function(context) {
-                                const categoryIndex = context.dataIndex;
-                                const categoryName = mainCategories[categoryIndex];
-                                const value = context.parsed;
-                                const dataset = context.datasetIndex === 0 ? 'All Time' : 'Last 5 Years';
-                                return `${dataset} ${shortLabels[categoryIndex]}: ${value} papers`;
+                            title: function(context) {
+                                return `${context[0].label} (3-year avg)`;
                             },
+                            label: function(context) {
+                                const value = context.parsed.y;
+                                return `${context.dataset.label}: ${value.toFixed(1)}%`;
+                            },
+                            afterBody: function(context) {
+                                const year = context[0].label;
+                                const yearData = dataByYear[year];
+                                if (!yearData) return '';
+                                return `Papers in ${year}: ${yearData.total.toFixed(1)}`;
+                            }
                         }
                     }
                 },
                 interaction: {
-                    intersect: true,
-                    mode: 'point'
-                },
-                elements: {
-                    arc: {
-                        hoverOffset: 6,
-                        borderWidth: 2,
-                        hoverBorderWidth: 3
-                    }
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
                 }
             }
         });
-        
-        // Chart.js legend is now handled automatically at 'top' position
-    }
-    
-    /**
-     * Create custom category legend
-     */
-    createCategoryLegend(labels, colors) {
-        const legendContainer = document.getElementById('research-areas-category-legend');
-        if (!legendContainer) return;
-        
-        const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-        const textColor = isDarkMode ? '#E0E0E0' : '#333333';
-        
-        const legendItems = labels.map((label, index) => {
-            return `
-                <div class="category-legend-item">
-                    <span class="category-marker" style="background-color: ${colors[index]}"></span>
-                    <span class="category-label" style="color: ${textColor}">${label}</span>
-                </div>
-            `;
-        }).join('');
-        
-        legendContainer.innerHTML = legendItems;
     }
     
     /**
