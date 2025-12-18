@@ -633,12 +633,24 @@ function populatePageContent(pageType, data) {
                 const mentorshipTagline = document.getElementById('page-tagline');
                 if (mentorshipTitle) mentorshipTitle.textContent = sectionData.title;
                 if (mentorshipTagline) mentorshipTagline.textContent = sectionData.tagline;
-                
-                populateMentorshipSections(sectionData);
-                // Initialize interactive features for mentorship page
-                requestAnimationFrame(() => {
-                    initializeMentorshipInteractivity();
-                });
+
+                // Show loading indicators first to avoid blocking the UI
+                const overviewSectionInit = document.getElementById('mentorship-overview');
+                const currentSectionInit = document.getElementById('mentorship-current');
+                const formerSectionInit = document.getElementById('mentorship-former');
+
+                if (overviewSectionInit) overviewSectionInit.innerHTML = '<div class="loading-indicator">Loading overview...</div>';
+                if (currentSectionInit) currentSectionInit.innerHTML = '<div class="loading-indicator">Loading current mentees...</div>';
+                if (formerSectionInit) formerSectionInit.innerHTML = '<div class="loading-indicator">Loading former mentees...</div>';
+
+                // Defer rendering to allow UI to update with loading indicators
+                setTimeout(() => {
+                    populateMentorshipSections(sectionData);
+                    // Initialize interactive features for mentorship page
+                    requestAnimationFrame(() => {
+                        initializeMentorshipInteractivity();
+                    });
+                }, 0);
                 break;
             case 'publications':
                 const publicationsSection = document.getElementById(`${pageType}-content`);
@@ -687,37 +699,42 @@ function populatePageContent(pageType, data) {
     }
 }
 
-// New function to populate individual mentorship sections
+// New function to populate individual mentorship sections progressively
 function populateMentorshipSections(data) {
     // Store mentee data globally for lazy loading
     allMenteesData = data;
-    
+
     // Calculate dynamic statistics from mentee data
     const stats = calculateMentorshipStats(data.menteesByStage);
 
-    // Skip introduction section - using page header instead
+    // Render sections progressively to avoid blocking the main thread
+    // Use requestAnimationFrame to allow browser to paint between sections
 
-    // Populate overview section
+    // Step 1: Render overview immediately (it's small)
     const overviewSection = document.getElementById('mentorship-overview');
     if (overviewSection) {
         overviewSection.innerHTML = createMentorshipOverview(data, stats);
     }
 
-    // Populate current mentees section
-    const currentSection = document.getElementById('mentorship-current');
-    if (currentSection) {
-        currentSection.innerHTML = createCurrentMentees(data);
-    }
+    // Step 2: Render current mentees after a frame
+    requestAnimationFrame(() => {
+        const currentSection = document.getElementById('mentorship-current');
+        if (currentSection) {
+            currentSection.innerHTML = createCurrentMentees(data);
+        }
 
-    // Populate former mentees section (if there are any)
-    const formerSection = document.getElementById('mentorship-former');
-    if (formerSection && data.menteesByStage.completed && (
-        (data.menteesByStage.completed.postdoctoral && data.menteesByStage.completed.postdoctoral.length > 0) ||
-        (data.menteesByStage.completed.doctoral && data.menteesByStage.completed.doctoral.length > 0) ||
-        (data.menteesByStage.completed.bachelors && data.menteesByStage.completed.bachelors.length > 0)
-    )) {
-        formerSection.innerHTML = createFormerMentees(data);
-    }
+        // Step 3: Render former mentees after another frame (this is the largest section)
+        requestAnimationFrame(() => {
+            const formerSection = document.getElementById('mentorship-former');
+            if (formerSection && data.menteesByStage.completed && (
+                (data.menteesByStage.completed.postdoctoral && data.menteesByStage.completed.postdoctoral.length > 0) ||
+                (data.menteesByStage.completed.doctoral && data.menteesByStage.completed.doctoral.length > 0) ||
+                (data.menteesByStage.completed.bachelors && data.menteesByStage.completed.bachelors.length > 0)
+            )) {
+                formerSection.innerHTML = createFormerMentees(data);
+            }
+        });
+    });
 }
 
 // Create mentorship introduction content (empty - just using page header now)
