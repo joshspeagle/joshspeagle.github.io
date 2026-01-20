@@ -2051,6 +2051,19 @@
     color: #bf360c;
 }
 
+[data-theme="light"] .supervision-badge.mastersProjects-context.primary {
+    background: linear-gradient(135deg, #283593, #3949AB);
+}
+
+[data-theme="light"] .supervision-badge.mastersProjects-context.co {
+    background: linear-gradient(135deg, #3949AB, #5C6BC0);
+}
+
+[data-theme="light"] .supervision-badge.mastersProjects-context.secondary {
+    background: linear-gradient(135deg, #7986CB, #9FA8DA);
+    color: #1A237E;
+}
+
 .privacy-note {
     color: var(--text-muted);
     font-style: italic;
@@ -2095,6 +2108,10 @@
 
 .mentee-card.bachelors {
     border-left-color: var(--accent-orange);
+}
+
+.mentee-card.mastersProjects {
+    border-left-color: var(--category-indigo);
 }
 
 /* Legacy support for old categories */
@@ -2206,6 +2223,23 @@
     background: linear-gradient(135deg, #ffab40, #ffc947);
     color: #e65100;
     border-color: rgba(255, 171, 64, 0.3);
+}
+
+/* Masters Projects context supervision badges (indigo gradients) */
+.supervision-badge.mastersProjects-context.primary {
+    background: linear-gradient(135deg, #3949AB, #5C6BC0);
+    border-color: rgba(57, 73, 171, 0.3);
+}
+
+.supervision-badge.mastersProjects-context.co {
+    background: linear-gradient(135deg, #5C6BC0, #7986CB);
+    border-color: rgba(92, 107, 192, 0.3);
+}
+
+.supervision-badge.mastersProjects-context.secondary {
+    background: linear-gradient(135deg, #7986CB, #9FA8DA);
+    color: #283593;
+    border-color: rgba(121, 134, 203, 0.3);
 }
 
 /* Position badges with neutral purple theme for better readability and hyperlink visibility */
@@ -2489,17 +2523,21 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Bar segment colors */
+/* Bar segment colors - aligned with research area colors */
 .bar-segment.postdoc {
-    background: linear-gradient(180deg, var(--accent-blue), #4a90e2);
+    background: linear-gradient(180deg, var(--category-crimson), var(--category-crimson-dark));
 }
 
 .bar-segment.doctoral {
-    background: linear-gradient(180deg, var(--accent-green), #4caf50);
+    background: linear-gradient(180deg, var(--category-teal), var(--category-teal-dark));
+}
+
+.bar-segment.mastersProjects {
+    background: linear-gradient(180deg, var(--category-indigo), var(--category-indigo-dark));
 }
 
 .bar-segment.bachelors {
-    background: linear-gradient(180deg, var(--accent-orange), #ff9800);
+    background: linear-gradient(180deg, var(--category-yellow), var(--category-yellow-dark));
 }
 
 /* Bar labels container */
@@ -2578,15 +2616,19 @@
 }
 
 .legend-color.postdoc {
-    background: linear-gradient(135deg, var(--accent-blue), #5a9fd4);
+    background: linear-gradient(135deg, var(--category-crimson), var(--category-crimson-dark));
 }
 
 .legend-color.doctoral {
-    background: linear-gradient(135deg, var(--accent-green), #66bb6a);
+    background: linear-gradient(135deg, var(--category-teal), var(--category-teal-dark));
+}
+
+.legend-color.mastersProjects {
+    background: linear-gradient(135deg, var(--category-indigo), var(--category-indigo-dark));
 }
 
 .legend-color.bachelors {
-    background: linear-gradient(135deg, var(--accent-orange), #ffb74d);
+    background: linear-gradient(135deg, var(--category-yellow), var(--category-yellow-dark));
 }
 
 /* Tooltip (for future enhancement) */

@@ -29,10 +29,21 @@
     /* Accent Colors - These remain vibrant in both themes */
     --accent-blue: #64b5f6;
     --accent-green: #81c784;
+    --accent-purple: #b388ff;
     --accent-orange: #ffb74d;
     --accent-red: #DC143C;
     --accent-yellow: #FFD700;
     --accent-yellow-border: rgba(255, 193, 7, 0.3);
+
+    /* Research Category Colors - shared across publications & mentorship */
+    --category-crimson: #EF5350;
+    --category-crimson-dark: #C62828;
+    --category-teal: #26A69A;
+    --category-teal-dark: #00897B;
+    --category-indigo: #5C6BC0;
+    --category-indigo-dark: #3949AB;
+    --category-yellow: #FFCA28;
+    --category-yellow-dark: #F9A825;
 
     /* Brand Colors */
     --brand-arxiv: #b31b1b;
@@ -128,10 +139,21 @@
     /* Accent Colors - Adjusted for light mode contrast */
     --accent-blue: #1976D2;
     --accent-green: #388E3C;
+    --accent-purple: #7c4dff;
     --accent-orange: #F57C00;
     --accent-red: #C62828;
     --accent-yellow: #FFA000;
     --accent-yellow-border: rgba(255, 152, 0, 0.4);
+
+    /* Research Category Colors - slightly darker for light mode contrast */
+    --category-crimson: #C62828;
+    --category-crimson-dark: #B71C1C;
+    --category-teal: #00897B;
+    --category-teal-dark: #00695C;
+    --category-indigo: #3949AB;
+    --category-indigo-dark: #283593;
+    --category-yellow: #F9A825;
+    --category-yellow-dark: #F57F17;
 
     /* Brand Colors - Keep original for recognition */
     --brand-arxiv: #b31b1b;

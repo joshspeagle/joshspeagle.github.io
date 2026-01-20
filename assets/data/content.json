@@ -489,6 +489,21 @@
                 ],
                 "doctoral": [
                     {
+                        "name": "<a href=\"https://pinchen.fan/\">Pinchen Fan</a>",
+                        "timelinePeriod": "Winter 2026-Present",
+                        "fellowships": [
+                            "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
+                        ],
+                        "supervisionType": "Secondary Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://sites.psu.edu/astrowright/\">Jason Wright</a> (<a href=\"https://science.psu.edu/astro\">Penn State</a>)",
+                            "<a href=\"https://www.dunlap.utoronto.ca/~vanderlinde/\">Keith Vanderlinde</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                        ],
+                        "project": "SETI, biosignature detection, exoplanet characterization, and gravitational waves",
+                        "myCareerStage": "Assistant Professor",
+                        "currentStatus": "PhD candidate (<a href=\"https://science.psu.edu/astro\">Penn State</a>)"
+                    },
+                    {
                         "name": "Leo Watson",
                         "timelinePeriod": "Fall 2024-Present",
                         "scholarships": [
@@ -500,7 +515,7 @@
                         ],
                         "project": "Statistical learning, quantum computing, and MCMC methods for astronomical Bayesian inference",
                         "myCareerStage": "Assistant Professor",
-                        "currentStatus": "PhD student"
+                        "currentStatus": "PhD candidate"
                     },
                     {
                         "name": "<a href=\"https://alexlaroche7.github.io\">Alex Laroche</a>",
@@ -567,6 +582,25 @@
                 ],
                 "bachelors": [
                     {
+                        "name": "Mehmet Bükücü",
+                        "timelinePeriod": "Winter 2026-Present",
+                        "currentStatus": "Undergraduate student",
+                        "supervisionType": "Primary Supervisor",
+                        "project": "Galaxy evolution with a single star?",
+                        "myCareerStage": "Assistant Professor"
+                    },
+                    {
+                        "name": "Isabella Rivera",
+                        "timelinePeriod": "Winter 2026-Present",
+                        "currentStatus": "Undergraduate student",
+                        "supervisionType": "Secondary Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                        ],
+                        "project": "Tracing Star Formation Histories and Evolution in Rho Ophiuchi",
+                        "myCareerStage": "Assistant Professor"
+                    },
+                    {
                         "name": "Diego Martinez Noriega",
                         "timelinePeriod": "Fall 2025-Present",
                         "program": "Co-op Program",
@@ -582,6 +616,24 @@
                         "myCareerStage": "Assistant Professor"
                     },
                     {
+                        "name": "Chuxuan Ai",
+                        "timelinePeriod": "Fall 2025-Present",
+                        "currentStatus": "Undergraduate student",
+                        "supervisionType": "Primary Supervisor",
+                        "project": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
+                        "myCareerStage": "Assistant Professor"
+                    }
+                ],
+                "mastersProjects": [
+                    {
+                        "name": "Philip Loewen",
+                        "timelinePeriod": "Winter 2026-Present",
+                        "currentStatus": "MSc Statistics student",
+                        "supervisionType": "Primary Supervisor",
+                        "project": "Understanding Architectural Biases in Neural Time Series Models",
+                        "myCareerStage": "Assistant Professor"
+                    },
+                    {
                         "name": "Isabelle Huang",
                         "timelinePeriod": "Fall 2025-Present",
                         "currentStatus": "MSc Statistics student",
@@ -590,11 +642,15 @@
                         "myCareerStage": "Assistant Professor"
                     },
                     {
-                        "name": "Chuxuan Ai",
+                        "name": "Alex Brisebois",
                         "timelinePeriod": "Fall 2025-Present",
-                        "currentStatus": "Undergraduate student",
-                        "supervisionType": "Primary Supervisor",
-                        "project": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
+                        "currentStatus": "PhD student (AST 1501)",
+                        "supervisionType": "Co-Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.dunlap.utoronto.ca/~hlozek/\">Renée Hložek</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)",
+                            "<a href=\"https://tanveerkarim.com/\">Tanveer Karim</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                        ],
+                        "project": "Exploring the Feasibility of Detecting a Time-Dependent σ<sub>8</sub> with LSST",
                         "myCareerStage": "Assistant Professor"
                     }
                 ],
@@ -692,6 +748,17 @@
                         }
                     ],
                     "bachelors": [
+                        {
+                            "name": "Mayesha Rahaman",
+                            "timelinePeriod": "Fall 2025",
+                            "supervisionType": "Secondary Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                            ],
+                            "project": "Kinematic and Demographic Analysis of the SCYA-89 Stellar Association",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate student"
+                        },
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/alejandro-ortega-cruz-prieto-/\">Alejandro Ortega Cruz Prieto</a>",
                             "timelinePeriod": "Summer 2024-Summer 2025",
@@ -1466,7 +1533,8 @@
                             "currentStatus": "Undergraduate researcher (<a href=\"https://www.iitk.ac.in/\">IIT Kanpur</a>)",
                             "outcome": "Joined PhD program in Astrophysics at <a href=\"https://www.caltech.edu/\">Caltech</a>"
                         }
-                    ]
+                    ],
+                    "mastersProjects": []
                 }
             }
         },
@@ -2306,13 +2374,24 @@
                     "code": "AST424",
                     "title": "Introduction to Astrophysical Research",
                     "terms": [
-                        "Winter 2025",
+                        "Fall 2025",
                         "Full Year 2023-2024"
                     ],
                     "level": "Undergraduate",
                     "department": "Astronomy",
                     "description": "Research methods and project-based learning in astrophysics",
                     "color": "blue"
+                },
+                {
+                    "code": "STA437",
+                    "title": "Methods for Multivariate Data",
+                    "terms": [
+                        "Winter 2026"
+                    ],
+                    "level": "Undergraduate",
+                    "department": "Statistics",
+                    "description": "Practical techniques for multivariate data analysis including dimensionality reduction, classification, and inference",
+                    "color": "green"
                 },
                 {
                     "code": "STA130",
@@ -2366,8 +2445,8 @@
                 }
             ],
             "teachingStats": {
-                "totalOfferings": 9,
-                "uniqueCourses": 5,
+                "totalOfferings": 10,
+                "uniqueCourses": 6,
                 "yearsTeaching": 5,
                 "departments": 3
             },

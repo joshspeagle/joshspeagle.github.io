@@ -778,6 +778,10 @@ function createMentorshipOverview(data, stats) {
                             <span>Doctoral/Masters</span>
                         </div>
                         <div class="legend-item" role="listitem">
+                            <span class="legend-color mastersProjects" aria-hidden="true"></span>
+                            <span>Master's Projects</span>
+                        </div>
+                        <div class="legend-item" role="listitem">
                             <span class="legend-color bachelors" aria-hidden="true"></span>
                             <span>Bachelors/Other</span>
                         </div>
@@ -810,6 +814,7 @@ function createCurrentMentees(data) {
             <h2 id="current-mentees-heading" class="section-title">Current Mentees</h2>
             ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.postdoctoral, 'postdoc')}
             ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.doctoral, 'doctoral')}
+            ${createMenteeSection("Master's Projects", data.menteesByStage.mastersProjects, 'mastersProjects')}
             ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.bachelors, 'bachelors')}
         </section>
     `;
@@ -822,6 +827,7 @@ function createFormerMentees(data) {
             <h2 id="former-mentees-heading" class="section-title">Former Mentees</h2>
             ${createMenteeSection('Postdoctoral Researchers', data.menteesByStage.completed.postdoctoral, 'postdoc', true)}
             ${createMenteeSection('Doctoral & Masters Students', data.menteesByStage.completed.doctoral, 'doctoral', true)}
+            ${createMenteeSection("Master's Projects", data.menteesByStage.completed.mastersProjects, 'mastersProjects', true)}
             ${createMenteeSection('Bachelors Students & Other Researchers', data.menteesByStage.completed.bachelors, 'bachelors', true)}
         </section>
     `;
@@ -899,7 +905,7 @@ function createMenteeCard(mentee, type, isCompleted = false) {
     let projectsContent;
     if (hasMultipleProjects) {
         // Multiple projects format - keep same styling as single projects
-        const projectLabel = type === 'bachelors' ? 'Project' : 'Research Interests';
+        const projectLabel = (type === 'bachelors' || type === 'mastersProjects') ? 'Project' : 'Research Interests';
         projectsContent = '';
 
         mentee.projects.forEach((project, index) => {
@@ -913,7 +919,7 @@ function createMenteeCard(mentee, type, isCompleted = false) {
         });
     } else {
         // Legacy single project format
-        const projectLabel = type === 'bachelors' ? 'Project' : 'Research Interests';
+        const projectLabel = (type === 'bachelors' || type === 'mastersProjects') ? 'Project' : 'Research Interests';
         projectsContent = `<p class="project"><strong>${projectLabel}:</strong> ${mentee.project}</p>`;
 
         // Legacy co-supervisors (separate from project)
@@ -963,8 +969,8 @@ function calculateMentorshipStats(menteesByStage) {
     const currentCounts = countCurrentMentees(menteesByStage);
     const formerCounts = countFormerMentees(menteesByStage.completed || {});
 
-    const totalCurrent = currentCounts.postdoctoral + currentCounts.doctoral + currentCounts.bachelors;
-    const totalCompleted = formerCounts.postdoctoral + formerCounts.doctoral + formerCounts.bachelors;
+    const totalCurrent = currentCounts.postdoctoral + currentCounts.doctoral + currentCounts.mastersProjects + currentCounts.bachelors;
+    const totalCompleted = formerCounts.postdoctoral + formerCounts.doctoral + formerCounts.mastersProjects + formerCounts.bachelors;
     const totalOverall = totalCurrent + totalCompleted;
 
     return {
@@ -974,6 +980,7 @@ function calculateMentorshipStats(menteesByStage) {
         breakdown: {
             postdoctoral: currentCounts.postdoctoral + formerCounts.postdoctoral,
             doctoral: currentCounts.doctoral + formerCounts.doctoral,
+            mastersProjects: currentCounts.mastersProjects + formerCounts.mastersProjects,
             bachelors: currentCounts.bachelors + formerCounts.bachelors
         }
     };
@@ -982,45 +989,48 @@ function calculateMentorshipStats(menteesByStage) {
 // Simple counting function for current mentees
 function countCurrentMentees(menteesByStage) {
     if (!menteesByStage) {
-        return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
+        return { postdoctoral: 0, doctoral: 0, mastersProjects: 0, bachelors: 0 };
     }
 
     const postdoctoral = (menteesByStage.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
     const doctoral = (menteesByStage.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const mastersProjects = (menteesByStage.mastersProjects || []).filter(m => m.privacy !== 'placeholder').length;
     const bachelors = (menteesByStage.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
 
-    return { postdoctoral, doctoral, bachelors };
+    return { postdoctoral, doctoral, mastersProjects, bachelors };
 }
 
 // Simple counting function for former mentees
 function countFormerMentees(completedMentees) {
     if (!completedMentees) {
-        return { postdoctoral: 0, doctoral: 0, bachelors: 0 };
+        return { postdoctoral: 0, doctoral: 0, mastersProjects: 0, bachelors: 0 };
     }
 
     const postdoctoral = (completedMentees.postdoctoral || []).filter(m => m.privacy !== 'placeholder').length;
     const doctoral = (completedMentees.doctoral || []).filter(m => m.privacy !== 'placeholder').length;
+    const mastersProjects = (completedMentees.mastersProjects || []).filter(m => m.privacy !== 'placeholder').length;
     const bachelors = (completedMentees.bachelors || []).filter(m => m.privacy !== 'placeholder').length;
 
-    return { postdoctoral, doctoral, bachelors };
+    return { postdoctoral, doctoral, mastersProjects, bachelors };
 }
 
 // Simple bar chart function
 function createInteractiveBarChart(counts) {
     // Handle empty data
-    const total = counts.postdoctoral + counts.doctoral + counts.bachelors;
+    const total = counts.postdoctoral + counts.doctoral + counts.mastersProjects + counts.bachelors;
     if (total === 0) {
         return '<p class="no-data">No mentee data available</p>';
     }
 
     // Calculate heights - use 150px max height for good visibility
-    const maxCount = Math.max(counts.postdoctoral, counts.doctoral, counts.bachelors);
+    const maxCount = Math.max(counts.postdoctoral, counts.doctoral, counts.mastersProjects, counts.bachelors);
     const maxHeight = 150;
 
     // Calculate individual bar heights with square root scaling for better visual comparison
     const maxSqrt = Math.sqrt(maxCount);
     const postdocHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.postdoctoral) / maxSqrt) * maxHeight, 15) : 0;
     const doctoralHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.doctoral) / maxSqrt) * maxHeight, 15) : 0;
+    const mastersProjectsHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.mastersProjects) / maxSqrt) * maxHeight, 15) : 0;
     const bachelorsHeight = maxCount > 0 ? Math.max((Math.sqrt(counts.bachelors) / maxSqrt) * maxHeight, 15) : 0;
 
     return `
@@ -1033,6 +1043,10 @@ function createInteractiveBarChart(counts) {
                 <div class="bar-column">
                     <div class="bar-segment doctoral" style="height: ${doctoralHeight}px;"></div>
                     <div class="count">${counts.doctoral}</div>
+                </div>
+                <div class="bar-column">
+                    <div class="bar-segment mastersProjects" style="height: ${mastersProjectsHeight}px;"></div>
+                    <div class="count">${counts.mastersProjects}</div>
                 </div>
                 <div class="bar-column">
                     <div class="bar-segment bachelors" style="height: ${bachelorsHeight}px;"></div>
@@ -2560,6 +2574,8 @@ function loadMoreMentees(sectionId, type, isCompleted) {
                 menteeSource = allMenteesData.menteesByStage.completed.postdoctoral;
             } else if (sectionId.includes('doctoral')) {
                 menteeSource = allMenteesData.menteesByStage.completed.doctoral;
+            } else if (sectionId.includes('mastersProjects')) {
+                menteeSource = allMenteesData.menteesByStage.completed.mastersProjects;
             } else {
                 menteeSource = allMenteesData.menteesByStage.completed.bachelors;
             }
@@ -2568,6 +2584,8 @@ function loadMoreMentees(sectionId, type, isCompleted) {
                 menteeSource = allMenteesData.menteesByStage.postdoctoral;
             } else if (sectionId.includes('doctoral')) {
                 menteeSource = allMenteesData.menteesByStage.doctoral;
+            } else if (sectionId.includes('mastersProjects')) {
+                menteeSource = allMenteesData.menteesByStage.mastersProjects;
             } else {
                 menteeSource = allMenteesData.menteesByStage.bachelors;
             }
