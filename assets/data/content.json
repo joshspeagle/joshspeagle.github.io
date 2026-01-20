@@ -622,6 +622,42 @@
                         "supervisionType": "Primary Supervisor",
                         "project": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
                         "myCareerStage": "Assistant Professor"
+                    },
+                    {
+                        "name": "<a href=\"https://www.linkedin.com/in/harry-peng1205/\">Zehao \"Harry\" Peng</a>",
+                        "timelinePeriod": "Summer 2024-Present",
+                        "program": "SURP",
+                        "fellowships": [
+                            "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>",
+                            "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
+                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
+                        ],
+                        "projects": [
+                            {
+                                "title": "Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning",
+                                "supervisionType": "Co-Supervisor",
+                                "coSupervisors": [
+                                    "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
+                                ]
+                            },
+                            {
+                                "title": "Infilling and Extending DESI Spectra with Masked Autoencoders",
+                                "supervisionType": "Co-Supervisor",
+                                "coSupervisors": [
+                                    "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                                ]
+                            },
+                            {
+                                "title": "Multimodal Astronomical Learning with DESI Images and Spectra",
+                                "supervisionType": "Co-Supervisor",
+                                "coSupervisors": [
+                                    "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                                    "<a href=\"https://www.cs.toronto.edu/~cmaddis/\">Chris Maddison</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                                ]
+                            }
+                        ],
+                        "myCareerStage": "Assistant Professor",
+                        "currentStatus": "Undergraduate researcher"
                     }
                 ],
                 "mastersProjects": [
@@ -801,34 +837,6 @@
                                 "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
                             ],
                             "project": "Estimating Stellar Abundances from DESI Spectra with Deep Learning",
-                            "myCareerStage": "Assistant Professor",
-                            "currentStatus": "Undergraduate researcher"
-                        },
-                        {
-                            "name": "<a href=\"https://www.linkedin.com/in/harry-peng1205/\">Zehao \"Harry\" Peng</a>",
-                            "timelinePeriod": "Summer 2024-Summer 2025",
-                            "program": "SURP",
-                            "fellowships": [
-                                "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>",
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
-                                "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
-                            ],
-                            "projects": [
-                                {
-                                    "title": "Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning",
-                                    "supervisionType": "Co-Supervisor",
-                                    "coSupervisors": [
-                                        "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
-                                    ]
-                                },
-                                {
-                                    "title": "Infilling and Extending DESI Spectra with Masked Autoencoders",
-                                    "supervisionType": "Co-Supervisor",
-                                    "coSupervisors": [
-                                        "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
-                                    ]
-                                }
-                            ],
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher"
                         },
