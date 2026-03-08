@@ -1,6 +1,113 @@
 /**
  * Talks page content - Chronological presentation list with category filtering
+ * and progressive "Load More" pagination within filtered results.
+ *
+ * Approach: filter first, then paginate. Changing filters resets the page.
+ * All talks remain in the DOM for SEO; JS controls visibility.
  */
+
+const TALKS_BATCH_SIZE = 20;
+let visibleLimit = TALKS_BATCH_SIZE;
+let enabledCategories = new Set();
+
+/**
+ * Unified visibility update — single source of truth for what's shown.
+ * 1. Filter by enabled categories
+ * 2. Among matching items, show only the first `visibleLimit`
+ * 3. Add/update/remove "Load More" button based on remaining count
+ */
+function updateVisibility() {
+    let matchCount = 0;
+    let shownCount = 0;
+
+    document.querySelectorAll('.talk-item').forEach(item => {
+        const catId = item.dataset.category;
+        if (!enabledCategories.has(catId)) {
+            item.style.display = 'none';
+            return;
+        }
+        matchCount++;
+        if (matchCount <= visibleLimit) {
+            item.style.display = '';
+            shownCount++;
+        } else {
+            item.style.display = 'none';
+        }
+    });
+
+    updateLoadMoreButton(matchCount, shownCount);
+    updateFilterStatus(shownCount, matchCount);
+}
+
+/**
+ * Add, update, or remove the "Load More" button based on remaining items
+ */
+function updateLoadMoreButton(totalMatching, shown) {
+    let container = document.getElementById('talks-load-more');
+    const remaining = totalMatching - shown;
+
+    if (remaining <= 0) {
+        if (container) container.remove();
+        return;
+    }
+
+    if (!container) {
+        const talksList = document.querySelector('.talks-list');
+        if (talksList) {
+            talksList.insertAdjacentHTML('afterend', `
+                <div class="publications-load-more" id="talks-load-more">
+                    <button class="load-more-btn" data-action="load-more-talks"></button>
+                </div>
+            `);
+            container = document.getElementById('talks-load-more');
+        }
+    }
+
+    if (container) {
+        const btn = container.querySelector('.load-more-btn');
+        if (btn) {
+            btn.textContent = `Show More Talks (${remaining} remaining)`;
+            btn.setAttribute('aria-label', `Show more talks, ${remaining} remaining`);
+        }
+    }
+}
+
+/**
+ * Update screen reader announcements and button aria states
+ */
+function updateFilterStatus(shownCount, matchCount) {
+    const filterStatus = document.getElementById('filter-status');
+    const categoryBtns = document.querySelectorAll('.filter-btn[data-filter]:not([data-filter="all"])');
+    const allCategoryIds = Array.from(categoryBtns).map(btn => btn.dataset.filter);
+
+    // Update button pressed states
+    categoryBtns.forEach(btn => {
+        btn.setAttribute('aria-pressed', enabledCategories.has(btn.dataset.filter) ? 'true' : 'false');
+    });
+
+    // Update "All" button
+    const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+    if (allBtn) {
+        const allEnabled = enabledCategories.size === allCategoryIds.length;
+        allBtn.classList.toggle('active', allEnabled);
+        allBtn.setAttribute('aria-pressed', allEnabled ? 'true' : 'false');
+    }
+
+    // Announce to screen readers
+    if (filterStatus) {
+        const enabledNames = Array.from(categoryBtns)
+            .filter(btn => enabledCategories.has(btn.dataset.filter))
+            .map(btn => btn.textContent.trim().split(' (')[0]);
+
+        if (enabledCategories.size === allCategoryIds.length) {
+            filterStatus.textContent = `Showing ${shownCount} of ${matchCount} talks`;
+        } else if (enabledCategories.size === 0) {
+            filterStatus.textContent = 'No categories selected, showing 0 talks';
+        } else {
+            filterStatus.textContent = `Showing ${shownCount} of ${matchCount} talks in ${enabledNames.join(', ')}`;
+        }
+    }
+}
 
 export function createTalksContent(data) {
     // Calculate total talks dynamically
@@ -66,7 +173,6 @@ export function createTalksContent(data) {
                          'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12 };
     allTalks.sort((a, b) => {
         if (b.year !== a.year) return b.year - a.year;
-        // Extract month from date string (e.g., "Sep 2025" -> "Sep")
         const monthA = a.date.split(' ')[0];
         const monthB = b.date.split(' ')[0];
         return (monthOrder[monthB] || 0) - (monthOrder[monthA] || 0);
@@ -121,7 +227,6 @@ export function createTalksContent(data) {
         </div>
     ` : '';
 
-    // After creating the HTML, we'll initialize the filtering
     const html = `
         ${data.tagline ? `<div class="page-intro">
             <p>${data.tagline}</p>
@@ -133,7 +238,7 @@ export function createTalksContent(data) {
         ${talksListHtml}
     `;
 
-    // Initialize filtering after DOM update
+    // Initialize after DOM update
     setTimeout(() => {
         initializeTalksFiltering();
     }, 100);
@@ -141,82 +246,67 @@ export function createTalksContent(data) {
     return html;
 }
 
-// Initialize talks filtering functionality with toggle behavior
+/**
+ * No-op kept for backward compatibility with content-loader.js.
+ * Pagination is now handled inside initializeTalksFiltering / updateVisibility.
+ */
+export function initializeTalksLazyLoading() {
+    // Lazy loading is integrated into the filtering system.
+    // The initial updateVisibility() call in initializeTalksFiltering() handles it.
+}
+
+/**
+ * Show more talks within the current filter. Increases the visible limit
+ * and re-runs the unified visibility update.
+ */
+export function loadMoreTalks() {
+    visibleLimit += TALKS_BATCH_SIZE;
+    updateVisibility();
+}
+
+// Expose globally for event delegation
+window.loadMoreTalks = loadMoreTalks;
+
+/**
+ * Initialize talks filtering and pagination.
+ * Sets up filter buttons, then runs initial updateVisibility() which
+ * also handles the "Load More" cutoff.
+ */
 export function initializeTalksFiltering() {
     const filterBtns = document.querySelectorAll('.filter-btn');
-    const filterStatus = document.getElementById('filter-status');
-    if (filterBtns.length === 0) return; // No filter buttons found
+    if (filterBtns.length === 0) return;
+
+    // Prevent double-initialization
+    if (filterBtns[0].dataset.initialized) return;
+    filterBtns[0].dataset.initialized = 'true';
 
     // Get all category IDs (excluding "all" button)
     const categoryBtns = Array.from(filterBtns).filter(btn => btn.dataset.filter !== 'all');
     const allCategoryIds = categoryBtns.map(btn => btn.dataset.filter);
 
-    // Track enabled categories - all enabled by default
-    const enabledCategories = new Set(allCategoryIds);
+    // All categories enabled by default
+    enabledCategories = new Set(allCategoryIds);
 
-    // Function to update visibility based on enabled categories
-    function updateVisibility() {
-        let visibleCount = 0;
-        document.querySelectorAll('.talk-item').forEach(item => {
-            const catId = item.dataset.category;
-            if (enabledCategories.has(catId)) {
-                item.style.display = '';
-                visibleCount++;
-            } else {
-                item.style.display = 'none';
-            }
-        });
-
-        // Update button states
-        categoryBtns.forEach(btn => {
-            const catId = btn.dataset.filter;
-            const isEnabled = enabledCategories.has(catId);
-            btn.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
-        });
-
-        // Update "All" button state - active only when all categories are enabled
-        const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
-        if (allBtn) {
-            const allEnabled = enabledCategories.size === allCategoryIds.length;
-            allBtn.classList.toggle('active', allEnabled);
-            allBtn.setAttribute('aria-pressed', allEnabled ? 'true' : 'false');
-        }
-
-        // Announce change to screen readers
-        if (filterStatus) {
-            const enabledNames = categoryBtns
-                .filter(btn => enabledCategories.has(btn.dataset.filter))
-                .map(btn => btn.textContent.trim().split(' (')[0]);
-
-            if (enabledCategories.size === allCategoryIds.length) {
-                filterStatus.textContent = `Showing all ${visibleCount} talks`;
-            } else if (enabledCategories.size === 0) {
-                filterStatus.textContent = 'No categories selected, showing 0 talks';
-            } else {
-                filterStatus.textContent = `Showing ${visibleCount} talks in ${enabledNames.join(', ')}`;
-            }
-        }
-    }
-
-    // Function to toggle a category
     function toggleCategory(categoryId) {
         if (enabledCategories.has(categoryId)) {
             enabledCategories.delete(categoryId);
         } else {
             enabledCategories.add(categoryId);
         }
+        // Reset pagination when filter changes
+        visibleLimit = TALKS_BATCH_SIZE;
         updateVisibility();
     }
 
-    // Function to reset all categories to enabled
     function resetAllCategories() {
         allCategoryIds.forEach(id => enabledCategories.add(id));
+        // Reset pagination when filter changes
+        visibleLimit = TALKS_BATCH_SIZE;
         updateVisibility();
     }
 
     // Add click and keyboard event listeners
     filterBtns.forEach((btn, index) => {
-        // Click handler
         btn.addEventListener('click', function() {
             const filter = this.dataset.filter;
             if (filter === 'all') {
@@ -226,7 +316,6 @@ export function initializeTalksFiltering() {
             }
         });
 
-        // Keyboard navigation
         btn.addEventListener('keydown', function(e) {
             let targetIndex = index;
 
@@ -264,15 +353,16 @@ export function initializeTalksFiltering() {
             }
         });
 
-        // Ensure proper tab order
         btn.setAttribute('tabindex', index === 0 ? '0' : '-1');
     });
 
-    // Update tabindex when focus changes
     filterBtns.forEach(btn => {
         btn.addEventListener('focus', function() {
             filterBtns.forEach(b => b.setAttribute('tabindex', '-1'));
             this.setAttribute('tabindex', '0');
         });
     });
+
+    // Initial visibility update — applies both filter and pagination
+    updateVisibility();
 }

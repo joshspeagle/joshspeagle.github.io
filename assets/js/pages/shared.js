@@ -88,8 +88,6 @@ export function populateQuickLinks(quickLinks) {
             return `<a href="${link.url}" class="quick-link-inline" aria-label="${link.ariaLabel}">${link.icon} ${link.text}</a>`;
         }
     }).join('');
-
-    initializeQuickLinkDropdowns();
 }
 
 /**
@@ -142,8 +140,13 @@ export function populateFooter(footer) {
 /**
  * Initialize quick link dropdown behavior
  */
-function initializeQuickLinkDropdowns() {
+export function initializeQuickLinkDropdowns() {
     const quickLinkDropdowns = document.querySelectorAll('.quick-link-dropdown');
+    if (quickLinkDropdowns.length === 0) return;
+    // Prevent double-initialization
+    if (quickLinkDropdowns[0].dataset.initialized) return;
+    quickLinkDropdowns[0].dataset.initialized = 'true';
+
     let scrollTimeout;
     let recentlyOpened = false;
 

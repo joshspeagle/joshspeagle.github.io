@@ -77,6 +77,7 @@ a:hover {
 /* Images */
 .profile-image {
     width: 100%;
+    height: auto;
     border-radius: 15px;
     box-shadow: 0 10px 30px var(--shadow-dark);
 }
@@ -94,6 +95,7 @@ a:hover {
 
 .dog-photo img {
     width: 100%;
+    height: auto;
     max-width: 300px;
     border-radius: 10px;
     box-shadow: 0 5px 15px var(--shadow-dark);

@@ -12,6 +12,7 @@ import {
     populateNavigation,
     populateFooter,
     initializeKeyboardNavigation,
+    initializeQuickLinkDropdowns,
     announceToScreenReader,
     updatePublicationIcons
 } from './pages/shared.js';
@@ -45,6 +46,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         populateHeader(data.header);
         populateQuickLinks(data.quickLinks);
         populateNavigation(data.navigation);
+
+        // Initialize dropdown behavior (needed even when static HTML is present)
+        initializeQuickLinkDropdowns();
 
         // Load page-specific content
         if (currentPage === 'home') {
@@ -158,16 +162,25 @@ async function loadPageContent(pageType, data) {
         case 'talks': {
             const contentEl = document.getElementById('talks-content');
             if (contentEl) {
-                const { createTalksContent } = await import('./pages/talks.js');
-                contentEl.innerHTML = createTalksContent(sectionData);
+                const talksModule = await import('./pages/talks.js');
+                if (contentEl.children.length === 0) {
+                    contentEl.innerHTML = talksModule.createTalksContent(sectionData);
+                } else {
+                    // Static HTML present — initialize lazy loading and filtering
+                    talksModule.initializeTalksLazyLoading();
+                    talksModule.initializeTalksFiltering();
+                }
             }
             break;
         }
         case 'teaching': {
             const contentEl = document.getElementById('teaching-content');
             if (contentEl) {
-                const { createTeachingContent, initializeTeachingFiltering } = await import('./pages/teaching.js');
-                contentEl.innerHTML = createTeachingContent(sectionData);
+                if (contentEl.children.length === 0) {
+                    const { createTeachingContent } = await import('./pages/teaching.js');
+                    contentEl.innerHTML = createTeachingContent(sectionData);
+                }
+                const { initializeTeachingFiltering } = await import('./pages/teaching.js');
                 requestAnimationFrame(() => {
                     requestAnimationFrame(() => {
                         initializeTeachingFiltering();
@@ -178,7 +191,7 @@ async function loadPageContent(pageType, data) {
         }
         case 'awards': {
             const contentEl = document.getElementById('awards-content');
-            if (contentEl) {
+            if (contentEl && contentEl.children.length === 0) {
                 const { createAwardsContent } = await import('./pages/awards.js');
                 contentEl.innerHTML = createAwardsContent(sectionData);
             }
@@ -186,7 +199,7 @@ async function loadPageContent(pageType, data) {
         }
         case 'service': {
             const contentEl = document.getElementById('service-content');
-            if (contentEl) {
+            if (contentEl && contentEl.children.length === 0) {
                 const { createServiceContent } = await import('./pages/service.js');
                 contentEl.innerHTML = createServiceContent(sectionData);
             }
@@ -214,6 +227,12 @@ document.addEventListener('click', function (e) {
         case 'load-more-publications':
             if (typeof window.loadMorePublications === 'function') {
                 window.loadMorePublications();
+            }
+            break;
+
+        case 'load-more-talks':
+            if (typeof window.loadMoreTalks === 'function') {
+                window.loadMoreTalks();
             }
             break;
 

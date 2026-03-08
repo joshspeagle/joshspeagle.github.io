@@ -77,7 +77,7 @@ function createTimelineItem(item) {
 export function populateSections(sections) {
     // About Section
     const aboutSection = document.getElementById('about');
-    if (aboutSection && sections.about) {
+    if (aboutSection && sections.about && aboutSection.querySelector('.intro-grid') === null) {
         const about = sections.about;
         aboutSection.innerHTML = `
             <div class="intro-grid" role="region" aria-labelledby="about-heading">
@@ -111,7 +111,7 @@ export function populateSections(sections) {
 
     // Team Section
     const teamSection = document.getElementById('team');
-    if (teamSection && sections.team) {
+    if (teamSection && sections.team && teamSection.querySelector('.art-showcase') === null) {
         const team = sections.team;
         teamSection.innerHTML = `
             <div class="art-showcase" role="region" aria-labelledby="team-heading">
@@ -149,7 +149,7 @@ export function populateSections(sections) {
 
     // Research Section
     const researchSection = document.getElementById('research');
-    if (researchSection && sections.research) {
+    if (researchSection && sections.research && researchSection.querySelector('.section-title') === null) {
         const research = sections.research;
         researchSection.innerHTML = `
             <section role="region" aria-labelledby="research-heading">
@@ -183,7 +183,7 @@ export function populateSections(sections) {
 
     // Collaboration Section
     const collaborationSection = document.getElementById('collaboration');
-    if (collaborationSection && sections.collaboration) {
+    if (collaborationSection && sections.collaboration && collaborationSection.querySelector('.section-title') === null) {
         const collab = sections.collaboration;
         collaborationSection.innerHTML = `
             <section role="region" aria-labelledby="collaboration-heading">
@@ -215,7 +215,7 @@ export function populateSections(sections) {
 
     // Biography Section
     const bioSection = document.getElementById('bio');
-    if (bioSection && sections.biography) {
+    if (bioSection && sections.biography && bioSection.querySelector('.timeline-container') === null) {
         const bio = sections.biography;
         bioSection.innerHTML = `
             <section role="region" aria-labelledby="bio-heading">
