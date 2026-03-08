@@ -216,9 +216,19 @@ export function initNavigation() {
         cleanupHandlers.push(() => item.removeEventListener('click', handleDropdownItemClick));
     });
 
-    // Scroll handler for active navigation
-    window.addEventListener('scroll', updateActiveNavigation);
-    cleanupHandlers.push(() => window.removeEventListener('scroll', updateActiveNavigation));
+    // Scroll handler for active navigation (throttled with rAF)
+    let scrollTicking = false;
+    const throttledScroll = () => {
+        if (!scrollTicking) {
+            requestAnimationFrame(() => {
+                updateActiveNavigation();
+                scrollTicking = false;
+            });
+            scrollTicking = true;
+        }
+    };
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    cleanupHandlers.push(() => window.removeEventListener('scroll', throttledScroll));
 
     // Resize handler
     window.addEventListener('resize', applyMobileNavState);

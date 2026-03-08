@@ -30,43 +30,6 @@ function initializeMainFunctionality() {
         });
     });
 
-    // Enhanced navigation link interactions (desktop only)
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('mouseenter', function () {
-            if (window.innerWidth > CONFIG.charts.mobileBreakpoint) {
-                this.style.transform = 'translateY(-2px) scale(1.05)';
-            }
-        });
-
-        link.addEventListener('mouseleave', function () {
-            if (window.innerWidth > CONFIG.charts.mobileBreakpoint) {
-                this.style.transform = 'translateY(-2px) scale(1)';
-            }
-        });
-    });
-
-    // Quick link hover effects
-    document.querySelectorAll('.quick-link').forEach(link => {
-        link.addEventListener('mouseenter', function () {
-            this.style.transform = 'translateY(-4px) scale(1.02)';
-        });
-
-        link.addEventListener('mouseleave', function () {
-            this.style.transform = 'translateY(-2px) scale(1)';
-        });
-    });
-
-    // Publication link hover effects
-    document.querySelectorAll('.publication-links li').forEach(item => {
-        item.addEventListener('mouseenter', function () {
-            this.style.transform = 'translateY(-3px)';
-        });
-
-        item.addEventListener('mouseleave', function () {
-            this.style.transform = 'translateY(-2px)';
-        });
-    });
-
     // Back to top on logo/name click
     const nameElement = document.querySelector('.name');
     if (nameElement) {

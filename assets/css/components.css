@@ -142,8 +142,14 @@
 .nav-link:hover {
     background: var(--border-accent);
     border-color: var(--accent-blue);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.05);
     color: var(--text-white);
+}
+
+@media (max-width: 768px) {
+    .nav-link:hover {
+        transform: translateY(-2px);
+    }
 }
 
 [data-theme="light"] .nav-link:hover {
@@ -276,7 +282,7 @@
 }
 
 .publication-links li:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
 }
 
 .publication-links li:nth-child(1) {
@@ -322,7 +328,7 @@
 }
 
 .quick-link:hover {
-    transform: translateY(-2px);
+    transform: translateY(-4px) scale(1.02);
     text-decoration: none;
     color: var(--text-primary);
 }
