@@ -111,12 +111,7 @@ function updateToggleIcon(theme) {
  * @param {string} theme - Current theme
  */
 function handleSpecialElements(theme) {
-    const circuitElements = document.querySelectorAll('.circuit-bg, .section::before, .section::after');
-    circuitElements.forEach(element => {
-        element.style.display = 'none';
-        element.offsetHeight; // Trigger reflow
-        element.style.display = '';
-    });
+    // Simplified - pseudo-elements update automatically via CSS custom properties
 }
 
 /**

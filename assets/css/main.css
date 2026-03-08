@@ -106,17 +106,6 @@ a:hover {
     color: var(--text-muted);
 }
 
-/* Animations */
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-
-    100% {
-        transform: translateY(-100px);
-    }
-}
-
 /* Smooth transitions */
 .section {
     opacity: 0;
