@@ -79,10 +79,8 @@ class PublicationsStats {
      * Set up theme change listener
      */
     setupThemeListener() {
-        // Listen for theme changes
-        window.addEventListener('themeChanged', (event) => {
-            this.updateTheme();
-        });
+        this._themeHandler = () => this.updateTheme();
+        window.addEventListener('themeChanged', this._themeHandler);
     }
     
     /**
@@ -1511,6 +1509,11 @@ class PublicationsStats {
      * Clean up chart instances
      */
     destroy() {
+        if (this._themeHandler) {
+            window.removeEventListener('themeChanged', this._themeHandler);
+            this._themeHandler = null;
+        }
+        if (this._updateTimer) clearTimeout(this._updateTimer);
         Object.values(this.charts).forEach(chart => {
             if (chart && chart.destroy) {
                 chart.destroy();
@@ -1518,16 +1521,22 @@ class PublicationsStats {
         });
         this.charts = {};
     }
-    
+
     /**
      * Update charts when theme changes
      */
     updateTheme() {
+        if (this._updateTimer) clearTimeout(this._updateTimer);
         this.updateColorScheme();
         this.setupChartDefaults();
         // Recreate charts with new theme
-        this.destroy();
-        setTimeout(() => this.createCharts(), 100);
+        Object.values(this.charts).forEach(chart => {
+            if (chart && chart.destroy) {
+                chart.destroy();
+            }
+        });
+        this.charts = {};
+        this._updateTimer = setTimeout(() => this.createCharts(), 100);
     }
 }
 

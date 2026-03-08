@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://joshspeagle.com/</loc>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/publications.html</loc>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/mentorship.html</loc>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/talks.html</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/teaching.html</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/awards.html</loc>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/service.html</loc>
+        <priority>0.6</priority>
+    </url>
+</urlset>

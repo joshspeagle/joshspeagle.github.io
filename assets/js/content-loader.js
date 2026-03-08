@@ -117,10 +117,6 @@ document.addEventListener('DOMContentLoaded', async function () {
                 initializeNavigation();
             }
 
-            // Listen for theme changes to update publication icons
-            window.addEventListener('themeChanged', () => {
-                updatePublicationIcons();
-            });
         });
 
     } catch (error) {
@@ -353,7 +349,10 @@ function populateSections(sections) {
                     </address>
                 </section>
                 <figure class="profile-figure" role="img" aria-labelledby="profile-caption">
-                    <img src="${about.profileImage.src}" alt="${about.profileImage.alt}" class="profile-image">
+                    <picture>
+                        <source srcset="${about.profileImage.src.replace(/\.(jpg|jpeg|png)$/i, '.webp')}" type="image/webp">
+                        <img src="${about.profileImage.src}" alt="${about.profileImage.alt}" class="profile-image" width="384" height="513">
+                    </picture>
                     <figcaption id="profile-caption" style="text-align: center; font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
                         ${about.profileImage.credit} <a href="${about.profileImage.creditLink}" aria-label="Photo credit link">${about.profileImage.creditName}</a>
                     </figcaption>
@@ -369,7 +368,7 @@ function populateSections(sections) {
         teamSection.innerHTML = `
             <div class="art-showcase" role="region" aria-labelledby="team-heading">
                 <figure class="art-logo" role="img" aria-labelledby="team-logo-caption">
-                    <img src="${team.logo.src}" alt="${team.logo.alt}" class="art-logo-img">
+                    <img src="${team.logo.src}" alt="${team.logo.alt}" class="art-logo-img" loading="lazy">
                     <figcaption id="team-logo-caption" class="sr-only">Astrostatistics Research Team logo</figcaption>
                 </figure>
                 <section class="art-content" aria-labelledby="team-heading">
@@ -485,7 +484,10 @@ function populateSections(sections) {
                     <h3 id="personal-photos-heading" class="sr-only">Personal Photos</h3>
                     ${bio.dogPhotos.map((photo, index) => `
                         <figure class="dog-photo" role="img" aria-labelledby="photo-${index}-caption">
-                            <img src="${photo.src}" alt="${photo.alt}">
+                            <picture>
+                                <source srcset="${photo.src.replace(/\.(jpg|jpeg|png|JPG)$/i, '.webp')}" type="image/webp">
+                                <img src="${photo.src}" alt="${photo.alt}" loading="lazy" width="800" height="533">
+                            </picture>
                             <figcaption id="photo-${index}-caption">
                                 ${photo.caption} ${photo.creditLink ? `<a href="${photo.creditLink}" aria-label="Photo credit link">${photo.creditName}</a>` : ''}
                             </figcaption>
