@@ -86,11 +86,27 @@ Four categories: Statistical Learning & AI, Interpretability & Insight, Inferenc
 
 ```bash
 cd scripts && python -X utf8 update_publications_unified.py    # -X utf8 required on Windows
+cd scripts && python postprocessing.py                         # Run post-processing standalone
+cd scripts && python postprocessing.py --dry-run               # Preview without saving
 ```
 
 **Before running**: Ask the user to update their ADS libraries first (primary, significant, student, postdoc authorship categories are pulled from manually curated ADS libraries).
 
-**Pipeline**: Backs up data → fetches from Scholar/ADS/OpenAlex → merges → post-processing (featured flags, category scoring, citation cleanup, ADS library sync, authorship categories) → deploys to `assets/data/publications_data.json`.
+**Pipeline**: Backs up data → fetches from Scholar/ADS/OpenAlex → merges → saves → runs `PostProcessor.run_all()` (featured flags, LLM categorization sync, citation timeline, ADS library cache, authorship categories, ADS bibliometric time series).
+
+**Scripts** (8 files in `scripts/`):
+| File | Purpose |
+|------|---------|
+| `config.py` | Config + path utilities (`get_data_path()`, `get_project_root()`) |
+| `fetch_google_scholar.py` | Google Scholar fetcher |
+| `fetch_ads.py` | ADS fetcher |
+| `fetch_openalex.py` | OpenAlex fetcher |
+| `merge_data.py` | Multi-source data merger |
+| `postprocessing.py` | Consolidated post-processing (6 steps, single load/save) |
+| `update_publications_unified.py` | Main pipeline orchestrator |
+| `llm_categorization_rubric.md` | LLM agent categorization instructions |
+
+**Data files**: `assets/data/publications_data.json` (main), `assets/data/ads_library_cache.json` (ADS library bibcodes).
 
 **Requirements**: `.env` with `ADS_API_KEY` (required), `OPENALEX_EMAIL` (optional).
 

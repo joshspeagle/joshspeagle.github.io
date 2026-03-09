@@ -2,6 +2,24 @@
 Configuration settings for publication data fetching.
 """
 
+from pathlib import Path
+
+
+def get_project_root():
+    """Return project root (parent of scripts/)."""
+    return Path(__file__).resolve().parent.parent
+
+
+def get_data_path(filename="publications_data.json"):
+    """Return path to a file in assets/data/."""
+    return get_project_root() / "assets" / "data" / filename
+
+
+def get_backup_dir():
+    """Return path to the backups directory."""
+    return get_project_root() / "assets" / "data" / "backups"
+
+
 CONFIG = {
     "google_scholar": {
         "author_id": "Z6dqXGoAAAAJ",
@@ -39,7 +57,6 @@ CONFIG = {
     },
     "output": {
         "full_data": "assets/data/publications_data.json",
-        "summary": "assets/data/publications_summary.json",
         "backup_dir": "assets/data/backups",
     },
     "categories": {

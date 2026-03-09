@@ -15,9 +15,9 @@ Much faster than the original pipeline by avoiding unnecessary detailed fetches.
 import json
 import logging
 import os
+import shutil
 import sys
 import time
-import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -28,27 +28,24 @@ from rich.progress import (
     TextColumn,
     BarColumn,
     TaskProgressColumn,
-    TimeRemainingColumn,
 )
 from rich.table import Table
-from rich.panel import Panel
 from dotenv import load_dotenv
 
+from config import CONFIG, get_project_root, get_data_path, get_backup_dir
+
 # Load environment variables from .env file
-# Try both current directory and parent directory
-if Path(".env").exists():
-    load_dotenv(dotenv_path=".env")
-elif Path("../.env").exists():
-    load_dotenv(dotenv_path="../.env")
+env_path = get_project_root() / ".env"
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
 else:
-    load_dotenv()  # Try default locations
+    load_dotenv()
 
 # Import the data fetchers and processors
 from fetch_google_scholar import GoogleScholarFetcher
 from fetch_ads import ADSFetcher
 from fetch_openalex import OpenAlexFetcher
 from merge_data import DataMerger
-from config import CONFIG
 
 # Set up logging
 logging.basicConfig(
@@ -130,23 +127,16 @@ class UnifiedPublicationPipeline:
         """Stage 0: Backup existing publications data before making any changes."""
         console.print("\n[bold green][0/7][/bold green] Backing up existing data...")
 
-        existing_file = Path("assets/data/publications_data.json")
-
-        if not existing_file.exists():
-            # Try parent directory (if running from scripts/)
-            existing_file = Path("../assets/data/publications_data.json")
+        existing_file = get_data_path()
 
         if existing_file.exists():
-            backup_dir = Path("assets/data/backups")
-            if not backup_dir.exists():
-                backup_dir = Path("../assets/data/backups")
+            backup_dir = get_backup_dir()
             backup_dir.mkdir(parents=True, exist_ok=True)
 
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             backup_path = backup_dir / f"publications_PRE_UPDATE_{timestamp}.json"
 
             try:
-                import shutil
                 shutil.copy2(existing_file, backup_path)
                 console.print(f"  ✓ Existing data backed up to {backup_path}")
             except Exception as e:
@@ -342,6 +332,55 @@ class UnifiedPublicationPipeline:
         else:
             console.print("  ✓ No papers need detailed Scholar fetch - skipping!")
 
+    def _carry_forward_existing_fields(self, merged_publications: List[Dict]) -> int:
+        """Carry forward fields from existing data that fetchers don't produce.
+
+        Fields like llm_categorization, categoryProbabilities, researchArea,
+        and featured are set by separate processes (LLM agents, post-processing)
+        and would be lost during the merge step since fetchers don't produce them.
+        """
+        # Load existing data from the canonical path
+        existing_path = get_data_path()
+        if not existing_path.exists():
+            return 0
+
+        try:
+            with open(existing_path, "r", encoding="utf-8") as f:
+                existing_data = json.load(f)
+        except Exception:
+            return 0
+
+        # Build lookup by normalized title
+        existing_lookup = {}
+        for pub in existing_data.get("publications", []):
+            key = pub.get("title", "").strip().lower()
+            if key:
+                existing_lookup[key] = pub
+
+        # Fields to preserve from existing data
+        preserve_fields = [
+            "llm_categorization",
+            "categoryProbabilities",
+            "researchArea",
+        ]
+
+        carried = 0
+        for pub in merged_publications:
+            key = pub.get("title", "").strip().lower()
+            existing = existing_lookup.get(key)
+            if not existing:
+                continue
+
+            for field in preserve_fields:
+                if field in existing and field not in pub:
+                    pub[field] = existing[field]
+
+            # Only count if we actually carried something
+            if any(field in pub for field in preserve_fields if field in existing):
+                carried += 1
+
+        return carried
+
     def _stage_5_merge_data(self):
         """Stage 5: Merge all data sources."""
         console.print(
@@ -352,6 +391,11 @@ class UnifiedPublicationPipeline:
         merged_publications = self.merger.merge_publications_multisource(
             self.paper_list, self.scholar_data, self.ads_data, self.openalex_data
         )
+
+        # Carry forward fields from existing data that fetchers don't produce
+        carried = self._carry_forward_existing_fields(merged_publications)
+        if carried:
+            console.print(f"  ✓ Carried forward LLM categorization for {carried} papers")
 
         console.print(f"  ✓ Merged into {len(merged_publications)} publications")
 
@@ -399,14 +443,8 @@ class UnifiedPublicationPipeline:
         """Stage 6: Save the scraped/merged data."""
         console.print("\n[bold green][6/7][/bold green] Saving scraped data...")
 
-        # Determine correct path (handle running from scripts/ or project root)
-        if Path("../assets/data").exists():
-            base_path = Path("../assets/data")
-        else:
-            base_path = Path("assets/data")
-
-        # Create backup
-        backup_dir = base_path / "backups"
+        output_path = get_data_path()
+        backup_dir = get_backup_dir()
         backup_dir.mkdir(parents=True, exist_ok=True)
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -421,81 +459,22 @@ class UnifiedPublicationPipeline:
             console.print(f"  ⚠️  Backup failed: {e}", style="yellow")
 
         # Save main file
-        output_path = base_path / "publications_data.json"
         output_path.parent.mkdir(parents=True, exist_ok=True)
-
         with open(output_path, "w", encoding="utf-8") as f:
             json.dump(self.merged_data, f, indent=2, ensure_ascii=False)
 
         console.print(f"  ✓ Data saved to {output_path}")
 
     def _stage_7_post_processing(self):
-        """Stage 7: Run post-processing scripts."""
+        """Stage 7: Run consolidated post-processing."""
         console.print("\n[bold green][7/7][/bold green] Running post-processing...")
 
-        scripts = [
-            ("flag_featured_publications.py", "Featured publications"),
-            ("apply_binary_priority_scoring.py", "Research categories"),
-            ("fix_citations_timeline.py", "Citations timeline"),
-            ("update_ads_library_cache.py", "ADS library cache"),
-            ("apply_authorship_categories.py", "Authorship categories"),
-        ]
+        from postprocessing import PostProcessor
 
-        for script_name, description in scripts:
-            script_path = Path(__file__).parent / script_name
+        processor = PostProcessor()
+        processor.run_all()
 
-            if not script_path.exists():
-                console.print(f"  ⚠️  {description}: Script not found", style="yellow")
-                continue
-
-            try:
-                # Run script from scripts directory to ensure relative paths work
-                result = subprocess.run(
-                    [sys.executable, str(script_path)],
-                    capture_output=True,
-                    text=True,
-                    timeout=30,
-                    cwd=Path(
-                        __file__
-                    ).parent,  # Set working directory to scripts folder
-                )
-
-                if result.returncode == 0:
-                    console.print(f"  ✓ {description}: Success")
-                    # Show important output for authorship categories
-                    if "authorship" in script_name.lower() and result.stdout:
-                        # Parse the output for the update count
-                        if "Updated" in result.stdout:
-                            for line in result.stdout.splitlines():
-                                if "Updated" in line and "publications" in line:
-                                    console.print(f"    {line.strip()}", style="dim")
-                                    break
-                else:
-                    console.print(
-                        f"  ⚠️  {description}: Failed (code {result.returncode})",
-                        style="yellow",
-                    )
-                    if result.stderr:
-                        logger.debug(f"Error: {result.stderr}")
-                    if result.stdout:
-                        logger.debug(f"Output: {result.stdout}")
-
-            except subprocess.TimeoutExpired:
-                console.print(f"  ⚠️  {description}: Timeout", style="yellow")
-            except Exception as e:
-                console.print(f"  ⚠️  {description}: Error - {e}", style="yellow")
-
-        # Deploy to website directory
-        console.print("\n  Deploying to website...")
-        source_file = Path("assets/data/publications_data.json")
-        target_file = Path("../assets/data/publications_data.json")
-
-        if source_file.exists():
-            target_file.parent.mkdir(parents=True, exist_ok=True)
-            import shutil
-
-            shutil.copy2(source_file, target_file)
-            console.print(f"  ✓ Deployed to {target_file}")
+        console.print("  ✓ Post-processing complete")
 
     def _calculate_citations_by_year(self, publications: List[Dict]) -> Dict:
         """Calculate citations by publication year."""
@@ -518,7 +497,7 @@ class UnifiedPublicationPipeline:
         console.print("\n[bold cyan]📊 FINAL STATISTICS[/bold cyan]")
 
         # Load the final processed data
-        with open("../assets/data/publications_data.json", "r") as f:
+        with open(get_data_path(), "r", encoding="utf-8") as f:
             final_data = json.load(f)
 
         metrics = final_data.get("metrics", {})
