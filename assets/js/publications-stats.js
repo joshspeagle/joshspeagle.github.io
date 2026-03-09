@@ -24,9 +24,17 @@ class PublicationsStats {
     }
     
     init() {
+        this.currentYear = new Date().getFullYear();
         this.categorizePublications();
         this.setupChartDefaults();
         this.setupThemeListener();
+    }
+
+    /**
+     * Check if a year is the current (partial) year
+     */
+    isPartialYear(year) {
+        return parseInt(year) === this.currentYear;
     }
     
     /**
@@ -423,17 +431,22 @@ class PublicationsStats {
         const isVerySmall = window.innerWidth <= 375;
         
         const citationsData = this.metrics.citationsPerYear || {};
-        
+
         // Create contiguous years from first to last year with data
-        const dataYears = Object.keys(citationsData).map(y => parseInt(y)).sort((a, b) => a - b);
+        // Exclude the current year since citations-received data is inherently partial
+        const dataYears = Object.keys(citationsData)
+            .map(y => parseInt(y))
+            .filter(y => !this.isPartialYear(y))
+            .sort((a, b) => a - b);
         if (dataYears.length === 0) return;
-        
+
         const startYear = Math.min(...dataYears);
         const endYear = Math.max(...dataYears);
         const allYears = [];
         const allCitations = [];
-        
+
         for (let year = startYear; year <= endYear; year++) {
+            if (this.isPartialYear(year)) continue;
             allYears.push(year.toString());
             allCitations.push(citationsData[year.toString()] || 0);
         }
@@ -617,43 +630,55 @@ class PublicationsStats {
             return Math.sqrt(val);
         });
         
+        // Label the current partial year
+        const displayLabels = allYears.map(y => this.isPartialYear(y) ? `${y} (YTD)` : y);
+
+        // Reduced opacity for partial year bars
+        const barOpacity = allYears.map(y => this.isPartialYear(y) ? 0.45 : 1);
+        const makeBarColors = (baseColor) => barOpacity.map(a => {
+            const r = parseInt(baseColor.slice(1, 3), 16);
+            const g = parseInt(baseColor.slice(3, 5), 16);
+            const b = parseInt(baseColor.slice(5, 7), 16);
+            return `rgba(${r},${g},${b},${a})`;
+        });
+
         this.charts.citationsByPubYear = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: allYears,
+                labels: displayLabels,
                 datasets: [
                     {
                         label: 'Primary Author',
                         data: primaryData,
-                        backgroundColor: this.colors.primary,
+                        backgroundColor: makeBarColors(this.colors.primary),
                         borderColor: this.colors.primary,
                         borderWidth: 1
                     },
                     {
                         label: 'Postdoc-Led',
                         data: postdocData,
-                        backgroundColor: this.colors.postdoc,
+                        backgroundColor: makeBarColors(this.colors.postdoc),
                         borderColor: this.colors.postdoc,
                         borderWidth: 1
                     },
                     {
                         label: 'Student-Led',
                         data: studentData,
-                        backgroundColor: this.colors.student,
+                        backgroundColor: makeBarColors(this.colors.student),
                         borderColor: this.colors.student,
                         borderWidth: 1
                     },
                     {
                         label: 'Contributor',
                         data: significantData,
-                        backgroundColor: this.colors.secondary,
+                        backgroundColor: makeBarColors(this.colors.secondary),
                         borderColor: this.colors.secondary,
                         borderWidth: 1
                     },
                     {
                         label: 'Other',
                         data: otherData,
-                        backgroundColor: this.colors.accent,
+                        backgroundColor: makeBarColors(this.colors.accent),
                         borderColor: this.colors.accent,
                         borderWidth: 1
                     }
@@ -748,17 +773,20 @@ class PublicationsStats {
             .filter(year => year !== 'Unknown')
             .map(y => parseInt(y))
             .sort((a, b) => a - b);
-        
+
         if (dataYears.length === 0) return;
-        
+
         const startYear = Math.min(...dataYears);
         const endYear = Math.max(...dataYears);
         const allYears = [];
-        
+
         for (let year = startYear; year <= endYear; year++) {
             allYears.push(year.toString());
         }
-        
+
+        // Label the current partial year
+        const displayLabels = allYears.map(y => this.isPartialYear(y) ? `${y} (YTD)` : y);
+
         // Apply square root scaling to match citations chart format
         const primaryData = allYears.map(year => {
             const val = this.categories.byYear[year]?.primary || 0;
@@ -780,44 +808,54 @@ class PublicationsStats {
             const val = this.categories.byYear[year]?.other || 0;
             return Math.sqrt(val);
         });
-        
+
+        // Use reduced opacity for the current partial year's bars
+        const barOpacity = allYears.map(y => this.isPartialYear(y) ? 0.45 : 1);
+        const makeBarColors = (baseColor) => barOpacity.map(a => {
+            // Convert hex to rgba
+            const r = parseInt(baseColor.slice(1, 3), 16);
+            const g = parseInt(baseColor.slice(3, 5), 16);
+            const b = parseInt(baseColor.slice(5, 7), 16);
+            return `rgba(${r},${g},${b},${a})`;
+        });
+
         this.charts.papersByYear = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: allYears,
+                labels: displayLabels,
                 datasets: [
                     {
                         label: 'Primary Author',
                         data: primaryData,
-                        backgroundColor: this.colors.primary,
+                        backgroundColor: makeBarColors(this.colors.primary),
                         borderColor: this.colors.primary,
                         borderWidth: 1
                     },
                     {
                         label: 'Postdoc-Led',
                         data: postdocData,
-                        backgroundColor: this.colors.postdoc,
+                        backgroundColor: makeBarColors(this.colors.postdoc),
                         borderColor: this.colors.postdoc,
                         borderWidth: 1
                     },
                     {
                         label: 'Student-Led',
                         data: studentData,
-                        backgroundColor: this.colors.student,
+                        backgroundColor: makeBarColors(this.colors.student),
                         borderColor: this.colors.student,
                         borderWidth: 1
                     },
                     {
                         label: 'Contributor',
                         data: significantData,
-                        backgroundColor: this.colors.secondary,
+                        backgroundColor: makeBarColors(this.colors.secondary),
                         borderColor: this.colors.secondary,
                         borderWidth: 1
                     },
                     {
                         label: 'Other',
                         data: otherData,
-                        backgroundColor: this.colors.accent,
+                        backgroundColor: makeBarColors(this.colors.accent),
                         borderColor: this.colors.accent,
                         borderWidth: 1
                     }
@@ -1350,11 +1388,13 @@ class PublicationsStats {
         const isMobile = window.innerWidth <= 768;
         const isVerySmall = window.innerWidth <= 375;
 
-        // Collect all years across all categories
+        // Collect all years across all categories, excluding the current partial year
         const allYears = new Set();
         Object.values(riqByCategory).forEach(cat => {
             if (cat.riq_series) {
-                Object.keys(cat.riq_series).forEach(y => allYears.add(y));
+                Object.keys(cat.riq_series).forEach(y => {
+                    if (!this.isPartialYear(y)) allYears.add(y);
+                });
             }
         });
         const years = Array.from(allYears).sort();
