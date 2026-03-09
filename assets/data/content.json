@@ -219,17 +219,27 @@
                             "intro": "Fellowship opportunities:",
                             "links": [
                                 {
-                                    "name": "NSERC",
-                                    "url": "https://www.nserc-crsng.gc.ca/Students-Etudiants/PD-NP/cpra-bprc_eng.asp"
+                                    "name": "CPRA",
+                                    "url": "https://nserc-crsng.canada.ca/en/funding-opportunity/canada-postdoctoral-research-award-program",
+                                    "note": "replaces NSERC/Banting"
                                 },
                                 {
-                                    "name": "Banting",
-                                    "url": "https://banting.fellowships-bourses.gc.ca/en/home-accueil.html",
-                                    "note": "previously"
+                                    "name": "CANSSI CDPF",
+                                    "url": "https://canssi.ca/program/distinguished-postdoctoral-fellowships/",
+                                    "note": "when available"
+                                },
+                                {
+                                    "name": "CANSSI Ontario",
+                                    "url": "https://canssiontario.utoronto.ca/canssi-ontario-postdoctoral-fellowship-in-statistics/",
+                                    "note": "when available"
                                 },
                                 {
                                     "name": "Arts & Science",
                                     "url": "https://www.sgs.utoronto.ca/awards/https-www-artsci-utoronto-ca-faculty-staff-research-supports-services-find-fundingas-postdoctoral-fellowship-program/"
+                                },
+                                {
+                                    "name": "Research Excellence",
+                                    "url": "https://www.sgs.utoronto.ca/awards/research-excellence-postdoctoral-fellows-program/"
                                 },
                                 {
                                     "name": "Provost",
@@ -315,20 +325,37 @@
                             {
                                 "name": "DSI SUDS",
                                 "url": "https://datasciences.utoronto.ca/suds/"
+                            },
+                            {
+                                "name": "NSERC USRA",
+                                "url": "https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp",
+                                "note": "supervisor-nominated"
                             }
                         ]
                     },
                     {
                         "title": "International Undergraduates",
-                        "content": "International undergraduate students can apply for research internships through the Mitacs program, which provides funding and support for research experiences at Canadian universities.",
+                        "content": "Several funded programs exist for international students to conduct research at Canadian universities. Eligibility varies by country of origin and program.",
                         "opportunities": [
                             {
                                 "name": "Mitacs Globalink Research Internship",
-                                "url": "https://www.mitacs.ca/our-programs/globalink-research-internship-students/"
+                                "url": "https://www.mitacs.ca/our-programs/globalink-research-internship-students/",
+                                "note": "12-week summer"
                             },
                             {
                                 "name": "Mitacs Globalink Research Award",
-                                "url": "https://www.mitacs.ca/our-programs/globalink-research-award/"
+                                "url": "https://www.mitacs.ca/our-programs/globalink-research-award/",
+                                "note": "12-48 weeks, year-round"
+                            },
+                            {
+                                "name": "ELAP",
+                                "url": "https://www.educanada.ca/scholarships-bourses/can/institutions/elap-pfla.aspx?lang=eng",
+                                "note": "Latin America & Caribbean"
+                            },
+                            {
+                                "name": "Study in Canada Scholarships",
+                                "url": "https://www.educanada.ca/scholarships-bourses/can/institutions/study-in-canada-sep-etudes-au-canada-pct.aspx?lang=eng",
+                                "note": "Africa, Middle East, Asia, & others"
                             }
                         ]
                     },
@@ -488,6 +515,20 @@
                     }
                 ],
                 "doctoral": [
+                    {
+                        "name": "Siyang Li",
+                        "timelinePeriod": "Spring 2026",
+                        "fellowships": [
+                            "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
+                        ],
+                        "supervisionType": "Secondary Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.ma.imperial.ac.uk/~dvandyk/\">David van Dyk</a> (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)"
+                        ],
+                        "project": "Developing an astrostatistics-oriented software package",
+                        "myCareerStage": "Assistant Professor",
+                        "currentStatus": "PhD candidate (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)"
+                    },
                     {
                         "name": "<a href=\"https://pinchen.fan/\">Pinchen Fan</a>",
                         "timelinePeriod": "Winter 2026-Present",
@@ -1612,6 +1653,14 @@
                     "color": "amber",
                     "talks": [
                         {
+                            "title": "AI for Scientists: Learning and Doing in the Era of VLMs",
+                            "event": "Language AI in the Space Sciences",
+                            "location": "Baltimore, USA",
+                            "date": "Mar 2026",
+                            "year": 2026,
+                            "type": "Invited Talk"
+                        },
+                        {
                             "title": "Astro-Statistical Learning and Uncertainty Quantification",
                             "event": "CFE-CMStatistics 2025: Starstruck Statistics",
                             "location": "London, UK",
@@ -1708,6 +1757,14 @@
                     "badge": "academic",
                     "color": "blue",
                     "talks": [
+                        {
+                            "title": "Learning and Doing Physics and Astronomy in the Age of AI",
+                            "event": "Wellesley College: Physics & Astronomy Colloquium",
+                            "location": "Wellesley, USA",
+                            "date": "TBD (rescheduled)",
+                            "year": 2026,
+                            "type": "Colloquium"
+                        },
                         {
                             "title": "A Conceptual Introduction to Deep Learning",
                             "event": "Cambridge: Astrophysics Data Science Seminar",
@@ -2750,7 +2807,7 @@
         }
     },
     "footer": {
-        "copyright": "© 2025 Joshua S. Speagle. This page was last updated on September 13, 2025.",
-        "credit": "Built and designed in collaboration with Claude Sonnet 4 & Claude Opus 4.1."
+        "copyright": "© 2026 Joshua S. Speagle. This page was last updated on March 9, 2026.",
+        "credit": "Built, designed, and maintained in collaboration with Claude (Sonnet 4+, Opus 4+)."
     }
 }
