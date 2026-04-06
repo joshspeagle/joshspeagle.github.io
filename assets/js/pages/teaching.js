@@ -128,39 +128,77 @@ export function createTeachingContent(data) {
         </div>
     ` : '';
 
-    // Short courses & workshops
-    const shortCoursesHtml = data.shortCourses && data.shortCourses.length > 0 ? `
-        <div class="highlight-box">
-            <h3>Short Courses & Workshops</h3>
-            <div class="course-history">
-                ${data.shortCourses.map((sc, index) => `
-                    <article class="course-card" aria-labelledby="short-course-${index}-title" role="article">
-                        <div class="course-header">
-                            <div class="course-title-section">
-                                <h4 class="course-title" id="short-course-${index}-title">
-                                    ${sc.title}
-                                </h4>
-                                <div class="course-badges">
-                                    <span class="dept-badge dept-badge-workshop">Workshop</span>
+    // Short courses & workshops with year filtering
+    let shortCoursesHtml = '';
+    if (data.shortCourses && data.shortCourses.length > 0) {
+        // Extract unique years, sorted descending
+        const allYears = [...new Set(
+            data.shortCourses.flatMap(sc => sc.terms.map(t => t.match(/\d{4}/)?.[0]).filter(Boolean))
+        )].sort((a, b) => b - a);
+        const totalOfferings = data.shortCourses.reduce((sum, sc) => sum + sc.terms.length, 0);
+
+        const yearFilterHtml = `
+            <nav class="workshop-filters" role="navigation" aria-label="Filter workshops by year">
+                <div class="filter-section">
+                    <h4 class="filter-section-title">By Year</h4>
+                    <div class="filter-buttons-row">
+                        <button class="filter-btn active" data-filter="all" data-filter-type="workshop-year"
+                                aria-pressed="true" aria-label="Show all workshops, ${totalOfferings} total">
+                            All (${totalOfferings})
+                        </button>
+                        ${allYears.map(year => {
+                            const count = data.shortCourses.reduce((sum, sc) =>
+                                sum + sc.terms.filter(t => t.includes(year)).length, 0);
+                            return `
+                                <button class="filter-btn active" data-filter="${year}" data-filter-type="workshop-year"
+                                        aria-pressed="true" aria-label="Toggle ${year} workshops, ${count} offerings">
+                                    ${year} (${count})
+                                </button>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            </nav>
+            <div aria-live="polite" aria-atomic="true" class="sr-only" id="workshop-filter-status"></div>
+        `;
+
+        shortCoursesHtml = `
+            <div class="highlight-box">
+                <h3>Short Courses & Workshops</h3>
+                ${yearFilterHtml}
+                <div class="course-history">
+                    ${data.shortCourses.map((sc, index) => {
+                        const scYears = [...new Set(sc.terms.map(t => t.match(/\d{4}/)?.[0]).filter(Boolean))].join(' ');
+                        return `
+                            <article class="course-card" data-years="${scYears}" aria-labelledby="short-course-${index}-title" role="article">
+                                <div class="course-header">
+                                    <div class="course-title-section">
+                                        <h4 class="course-title" id="short-course-${index}-title">
+                                            ${sc.title}
+                                        </h4>
+                                        <div class="course-badges">
+                                            <span class="dept-badge dept-badge-workshop">Workshop</span>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="course-details">
-                            <p class="course-description">${sc.program}${sc.location ? ' — ' + sc.location : ''}</p>
-                            <div class="course-terms">
-                                <strong>Dates:</strong>
-                                <div class="terms-list">
-                                    ${sortTermsChronologically(sc.terms).map(term => `
-                                        <span class="term-badge">${term}</span>
-                                    `).join('')}
+                                <div class="course-details">
+                                    <p class="course-description">${sc.program}${sc.location ? ' — ' + sc.location : ''}</p>
+                                    <div class="course-terms">
+                                        <strong>Dates:</strong>
+                                        <div class="terms-list">
+                                            ${sortTermsChronologically(sc.terms).map(term => `
+                                                <span class="term-badge">${term}</span>
+                                            `).join('')}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </article>
-                `).join('')}
+                            </article>
+                        `;
+                    }).join('')}
+                </div>
             </div>
-        </div>
-    ` : '';
+        `;
+    }
 
     const html = `
         <div class="page-intro">
@@ -343,6 +381,95 @@ export function initializeTeachingFiltering() {
     filterBtns.forEach(btn => {
         btn.addEventListener('focus', function() {
             filterBtns.forEach(b => b.setAttribute('tabindex', '-1'));
+            this.setAttribute('tabindex', '0');
+        });
+    });
+
+    // Workshop year filtering
+    const workshopBtns = document.querySelectorAll('.workshop-filters .filter-btn');
+    const workshopStatus = document.getElementById('workshop-filter-status');
+    if (workshopBtns.length === 0) return;
+
+    const yearBtns = Array.from(workshopBtns).filter(btn => btn.dataset.filterType === 'workshop-year' && btn.dataset.filter !== 'all');
+    const allYearIds = yearBtns.map(btn => btn.dataset.filter);
+    const enabledYears = new Set(allYearIds);
+
+    function updateWorkshopVisibility() {
+        let visibleCount = 0;
+        document.querySelectorAll('.workshop-filters ~ .course-history .course-card').forEach(card => {
+            const cardYears = (card.dataset.years || '').split(' ');
+            const matches = cardYears.some(y => enabledYears.has(y));
+            card.style.display = matches ? 'block' : 'none';
+            if (matches) visibleCount++;
+        });
+
+        yearBtns.forEach(btn => {
+            const isEnabled = enabledYears.has(btn.dataset.filter);
+            btn.classList.toggle('active', isEnabled);
+            btn.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+        });
+
+        const allBtn = document.querySelector('.workshop-filters .filter-btn[data-filter="all"]');
+        if (allBtn) {
+            const allEnabled = enabledYears.size === allYearIds.length;
+            allBtn.classList.toggle('active', allEnabled);
+            allBtn.setAttribute('aria-pressed', allEnabled ? 'true' : 'false');
+        }
+
+        if (workshopStatus) {
+            if (enabledYears.size === allYearIds.length) {
+                workshopStatus.textContent = `Showing all ${visibleCount} workshops`;
+            } else {
+                const years = [...enabledYears].sort((a, b) => b - a).join(', ');
+                workshopStatus.textContent = `Showing ${visibleCount} workshops (${years})`;
+            }
+        }
+    }
+
+    workshopBtns.forEach((btn, index) => {
+        btn.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            if (filter === 'all') {
+                allYearIds.forEach(id => enabledYears.add(id));
+            } else {
+                if (enabledYears.has(filter)) {
+                    enabledYears.delete(filter);
+                } else {
+                    enabledYears.add(filter);
+                }
+            }
+            updateWorkshopVisibility();
+        });
+
+        btn.addEventListener('keydown', function(e) {
+            let targetIndex = index;
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                    e.preventDefault();
+                    targetIndex = (index + 1) % workshopBtns.length;
+                    workshopBtns[targetIndex].focus();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                    e.preventDefault();
+                    targetIndex = (index - 1 + workshopBtns.length) % workshopBtns.length;
+                    workshopBtns[targetIndex].focus();
+                    break;
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    this.click();
+                    break;
+            }
+        });
+
+        btn.setAttribute('tabindex', index === 0 ? '0' : '-1');
+    });
+
+    workshopBtns.forEach(btn => {
+        btn.addEventListener('focus', function() {
+            workshopBtns.forEach(b => b.setAttribute('tabindex', '-1'));
             this.setAttribute('tabindex', '0');
         });
     });

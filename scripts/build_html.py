@@ -981,14 +981,60 @@ def generate_teaching(data):
     short_courses = section.get("shortCourses", [])
     short_courses_html = ""
     if short_courses:
-        short_courses_html = '<div class="course-history">\n'
+        # Extract unique years from terms, sorted descending
+        all_years = set()
+        for sc in short_courses:
+            for term in sc["terms"]:
+                match = re.search(r"\d{4}", term)
+                if match:
+                    all_years.add(int(match.group()))
+        sorted_years = sorted(all_years, reverse=True)
+
+        # Year filter buttons
+        total_offerings = sum(len(sc["terms"]) for sc in short_courses)
+        sc_filter_html = (
+            '<nav class="workshop-filters" role="navigation" '
+            'aria-label="Filter workshops by year">\n'
+            '<div class="filter-section">\n'
+            '<h4 class="filter-section-title">By Year</h4>\n'
+            '<div class="filter-buttons-row">\n'
+            f'<button class="filter-btn active" data-filter="all" '
+            f'data-filter-type="workshop-year" aria-pressed="true" '
+            f'aria-label="Show all workshops, {total_offerings} total">'
+            f'All ({total_offerings})</button>\n'
+        )
+        for year in sorted_years:
+            count = sum(
+                1 for sc in short_courses
+                for t in sc["terms"] if str(year) in t
+            )
+            sc_filter_html += (
+                f'<button class="filter-btn active" data-filter="{year}" '
+                f'data-filter-type="workshop-year" aria-pressed="true" '
+                f'aria-label="Toggle {year} workshops, {count} offerings">'
+                f'{year} ({count})</button>\n'
+            )
+        sc_filter_html += (
+            "</div>\n</div>\n</nav>\n"
+            '<div aria-live="polite" aria-atomic="true" class="sr-only" '
+            'id="workshop-filter-status"></div>\n'
+        )
+
+        # Workshop cards
+        short_courses_html = sc_filter_html + '<div class="course-history">\n'
         for idx, sc in enumerate(short_courses):
             sorted_terms = sort_terms_chronologically(sc["terms"])
+            sc_years = set()
+            for term in sc["terms"]:
+                match = re.search(r"\d{4}", term)
+                if match:
+                    sc_years.add(match.group())
+            years_attr = " ".join(sorted(sc_years, reverse=True))
             terms_badges = "".join(
                 f'<span class="term-badge">{term}</span>\n' for term in sorted_terms
             )
             short_courses_html += (
-                f'<article class="course-card" '
+                f'<article class="course-card" data-years="{years_attr}" '
                 f'aria-labelledby="short-course-{idx}-title" role="article">\n'
                 f'<div class="course-header">\n'
                 f'<div class="course-title-section">\n'

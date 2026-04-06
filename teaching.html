@@ -275,8 +275,22 @@ Module: Introduction to Sampling
 
 <div class="highlight-box">
 <h3>Short Courses &amp; Workshops</h3>
+<nav class="workshop-filters" role="navigation" aria-label="Filter workshops by year">
+<div class="filter-section">
+<h4 class="filter-section-title">By Year</h4>
+<div class="filter-buttons-row">
+<button class="filter-btn active" data-filter="all" data-filter-type="workshop-year" aria-pressed="true" aria-label="Show all workshops, 9 total">All (9)</button>
+<button class="filter-btn active" data-filter="2026" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2026 workshops, 1 offerings">2026 (1)</button>
+<button class="filter-btn active" data-filter="2025" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2025 workshops, 2 offerings">2025 (2)</button>
+<button class="filter-btn active" data-filter="2024" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2024 workshops, 1 offerings">2024 (1)</button>
+<button class="filter-btn active" data-filter="2023" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2023 workshops, 4 offerings">2023 (4)</button>
+<button class="filter-btn active" data-filter="2020" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2020 workshops, 1 offerings">2020 (1)</button>
+</div>
+</div>
+</nav>
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="workshop-filter-status"></div>
 <div class="course-history">
-<article class="course-card" aria-labelledby="short-course-0-title" role="article">
+<article class="course-card" data-years="2026" aria-labelledby="short-course-0-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-0-title">
@@ -298,7 +312,7 @@ Bayesian Inference
 </div>
 </div>
 </article>
-<article class="course-card" aria-labelledby="short-course-1-title" role="article">
+<article class="course-card" data-years="2025" aria-labelledby="short-course-1-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-1-title">
@@ -320,7 +334,7 @@ A Conceptual Introduction to Deep Learning
 </div>
 </div>
 </article>
-<article class="course-card" aria-labelledby="short-course-2-title" role="article">
+<article class="course-card" data-years="2025 2024" aria-labelledby="short-course-2-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-2-title">
@@ -343,7 +357,7 @@ Nested Sampling: Past, Present, and Future
 </div>
 </div>
 </article>
-<article class="course-card" aria-labelledby="short-course-3-title" role="article">
+<article class="course-card" data-years="2023" aria-labelledby="short-course-3-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-3-title">
@@ -365,7 +379,7 @@ Machine Learning for Star Cluster Science (with Steffani Grondin)
 </div>
 </div>
 </article>
-<article class="course-card" aria-labelledby="short-course-4-title" role="article">
+<article class="course-card" data-years="2023" aria-labelledby="short-course-4-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-4-title">
@@ -387,7 +401,7 @@ Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Gr
 </div>
 </div>
 </article>
-<article class="course-card" aria-labelledby="short-course-5-title" role="article">
+<article class="course-card" data-years="2023" aria-labelledby="short-course-5-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-5-title">
@@ -409,7 +423,7 @@ Uncertainty and Interpretability in Machine Learning Models (with Alex Gagliano)
 </div>
 </div>
 </article>
-<article class="course-card" aria-labelledby="short-course-6-title" role="article">
+<article class="course-card" data-years="2023" aria-labelledby="short-course-6-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-6-title">
@@ -431,7 +445,7 @@ A Tutorial of (Dynamic) Nested Sampling
 </div>
 </div>
 </article>
-<article class="course-card" aria-labelledby="short-course-7-title" role="article">
+<article class="course-card" data-years="2020" aria-labelledby="short-course-7-title" role="article">
 <div class="course-header">
 <div class="course-title-section">
 <h4 class="course-title" id="short-course-7-title">
