@@ -128,6 +128,40 @@ export function createTeachingContent(data) {
         </div>
     ` : '';
 
+    // Short courses & workshops
+    const shortCoursesHtml = data.shortCourses && data.shortCourses.length > 0 ? `
+        <div class="highlight-box">
+            <h3>Short Courses & Workshops</h3>
+            <div class="course-history">
+                ${data.shortCourses.map((sc, index) => `
+                    <article class="course-card" aria-labelledby="short-course-${index}-title" role="article">
+                        <div class="course-header">
+                            <div class="course-title-section">
+                                <h4 class="course-title" id="short-course-${index}-title">
+                                    ${sc.title}
+                                </h4>
+                                <div class="course-badges">
+                                    <span class="dept-badge dept-badge-workshop">Workshop</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="course-details">
+                            <p class="course-description">${sc.program}${sc.location ? ' — ' + sc.location : ''}</p>
+                            <div class="course-terms">
+                                <strong>Dates:</strong>
+                                <div class="terms-list">
+                                    ${sortTermsChronologically(sc.terms).map(term => `
+                                        <span class="term-badge">${term}</span>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                `).join('')}
+            </div>
+        </div>
+    ` : '';
+
     const html = `
         <div class="page-intro">
             <div class="highlight-box">
@@ -141,6 +175,8 @@ export function createTeachingContent(data) {
             ${filterButtons}
             ${courseHistoryHtml}
         </div>
+
+        ${shortCoursesHtml}
     `;
 
     return html;

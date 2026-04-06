@@ -92,11 +92,8 @@
                 "office": "UY 9134 (Statistical Sciences) and AB 206 (Astronomy & Astrophysics)"
             },
             "profileImage": {
-                "src": "assets/images/NSERC_Speagle_Joshua_thumbnail.jpg",
-                "alt": "Josh Speagle",
-                "credit": "Photo courtesy of",
-                "creditLink": "https://sgomez.org/",
-                "creditName": "Sebastian Gomez"
+                "src": "assets/images/speagle_doss_2025.jpg",
+                "alt": "Josh Speagle"
             }
         },
         "team": {
@@ -621,116 +618,8 @@
                         "currentStatus": "PhD candidate"
                     }
                 ],
-                "bachelors": [
-                    {
-                        "name": "Mehmet Bükücü",
-                        "timelinePeriod": "Winter 2026-Present",
-                        "currentStatus": "Undergraduate student",
-                        "supervisionType": "Primary Supervisor",
-                        "project": "Galaxy evolution with a single star?",
-                        "myCareerStage": "Assistant Professor"
-                    },
-                    {
-                        "name": "Isabella Rivera",
-                        "timelinePeriod": "Winter 2026-Present",
-                        "currentStatus": "Undergraduate student",
-                        "supervisionType": "Secondary Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
-                        ],
-                        "project": "Tracing Star Formation Histories and Evolution in Rho Ophiuchi",
-                        "myCareerStage": "Assistant Professor"
-                    },
-                    {
-                        "name": "Diego Martinez Noriega",
-                        "timelinePeriod": "Fall 2025-Present",
-                        "program": "Co-op Program",
-                        "fellowships": [
-                            "Co-op Program"
-                        ],
-                        "currentStatus": "Undergraduate student (<a href=\"https://uwaterloo.ca/\">University of Waterloo</a>)",
-                        "supervisionType": "Co-Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
-                        ],
-                        "project": "Estimating Stellar Abundances Across Surveys using Probabilistic Deep Learning",
-                        "myCareerStage": "Assistant Professor"
-                    },
-                    {
-                        "name": "Chuxuan Ai",
-                        "timelinePeriod": "Fall 2025-Present",
-                        "currentStatus": "Undergraduate student",
-                        "supervisionType": "Primary Supervisor",
-                        "project": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
-                        "myCareerStage": "Assistant Professor"
-                    },
-                    {
-                        "name": "<a href=\"https://www.linkedin.com/in/harry-peng1205/\">Zehao \"Harry\" Peng</a>",
-                        "timelinePeriod": "Summer 2024-Present",
-                        "program": "SURP",
-                        "fellowships": [
-                            "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>",
-                            "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
-                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
-                        ],
-                        "projects": [
-                            {
-                                "title": "Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning",
-                                "supervisionType": "Co-Supervisor",
-                                "coSupervisors": [
-                                    "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
-                                ]
-                            },
-                            {
-                                "title": "Infilling and Extending DESI Spectra with Masked Autoencoders",
-                                "supervisionType": "Co-Supervisor",
-                                "coSupervisors": [
-                                    "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
-                                ]
-                            },
-                            {
-                                "title": "Multimodal Astronomical Learning with DESI Images and Spectra",
-                                "supervisionType": "Co-Supervisor",
-                                "coSupervisors": [
-                                    "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
-                                    "<a href=\"https://www.cs.toronto.edu/~cmaddis/\">Chris Maddison</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
-                                ]
-                            }
-                        ],
-                        "myCareerStage": "Assistant Professor",
-                        "currentStatus": "Undergraduate researcher"
-                    }
-                ],
-                "mastersProjects": [
-                    {
-                        "name": "Philip Loewen",
-                        "timelinePeriod": "Winter 2026-Present",
-                        "currentStatus": "MSc Statistics student",
-                        "supervisionType": "Primary Supervisor",
-                        "project": "Understanding Architectural Biases in Neural Time Series Models",
-                        "myCareerStage": "Assistant Professor"
-                    },
-                    {
-                        "name": "Isabelle Huang",
-                        "timelinePeriod": "Fall 2025-Present",
-                        "currentStatus": "MSc Statistics student",
-                        "supervisionType": "Primary Supervisor",
-                        "project": "Time Series Forecasting with Deep Markov Models",
-                        "myCareerStage": "Assistant Professor"
-                    },
-                    {
-                        "name": "Alex Brisebois",
-                        "timelinePeriod": "Fall 2025-Present",
-                        "currentStatus": "PhD student (AST 1501)",
-                        "supervisionType": "Co-Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.dunlap.utoronto.ca/~hlozek/\">Renée Hložek</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)",
-                            "<a href=\"https://tanveerkarim.com/\">Tanveer Karim</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
-                        ],
-                        "project": "Exploring the Feasibility of Detecting a Time-Dependent σ<sub>8</sub> with LSST",
-                        "myCareerStage": "Assistant Professor"
-                    }
-                ],
+                "bachelors": [],
+                "mastersProjects": [],
                 "completed": {
                     "postdoctoral": [
                         {
@@ -825,6 +714,84 @@
                         }
                     ],
                     "bachelors": [
+                        {
+                            "name": "<a href=\"https://www.linkedin.com/in/harry-peng1205/\">Zehao \"Harry\" Peng</a>",
+                            "timelinePeriod": "Summer 2024-Winter 2026",
+                            "program": "SURP",
+                            "fellowships": [
+                                "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>",
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
+                                "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
+                            ],
+                            "projects": [
+                                {
+                                    "title": "Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning",
+                                    "supervisionType": "Co-Supervisor",
+                                    "coSupervisors": [
+                                        "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
+                                    ]
+                                },
+                                {
+                                    "title": "Infilling and Extending DESI Spectra with Masked Autoencoders",
+                                    "supervisionType": "Co-Supervisor",
+                                    "coSupervisors": [
+                                        "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                                    ]
+                                },
+                                {
+                                    "title": "Multimodal Astronomical Learning with DESI Images and Spectra",
+                                    "supervisionType": "Co-Supervisor",
+                                    "coSupervisors": [
+                                        "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
+                                        "<a href=\"https://www.cs.toronto.edu/~cmaddis/\">Chris Maddison</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                                    ]
+                                }
+                            ],
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate researcher"
+                        },
+                        {
+                            "name": "Chuxuan Ai",
+                            "timelinePeriod": "Fall 2025-Winter 2026",
+                            "currentStatus": "Undergraduate student",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
+                            "myCareerStage": "Assistant Professor"
+                        },
+                        {
+                            "name": "Diego Martinez Noriega",
+                            "timelinePeriod": "Fall 2025-Winter 2026",
+                            "program": "Co-op Program",
+                            "fellowships": [
+                                "Co-op Program"
+                            ],
+                            "currentStatus": "Undergraduate student (<a href=\"https://uwaterloo.ca/\">University of Waterloo</a>)",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                            ],
+                            "project": "Estimating Stellar Abundances Across Surveys using Probabilistic Deep Learning",
+                            "myCareerStage": "Assistant Professor"
+                        },
+                        {
+                            "name": "Isabella Rivera",
+                            "timelinePeriod": "Winter 2026",
+                            "currentStatus": "Undergraduate student",
+                            "supervisionType": "Secondary Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                            ],
+                            "project": "Tracing Star Formation Histories and Evolution in Rho Ophiuchi",
+                            "myCareerStage": "Assistant Professor"
+                        },
+                        {
+                            "name": "Mehmet Bükücü",
+                            "timelinePeriod": "Winter 2026",
+                            "currentStatus": "Undergraduate student",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Galaxy evolution with a single star?",
+                            "myCareerStage": "Assistant Professor"
+                        },
                         {
                             "name": "Mayesha Rahaman",
                             "timelinePeriod": "Fall 2025",
@@ -1583,7 +1550,36 @@
                             "outcome": "Joined PhD program in Astrophysics at <a href=\"https://www.caltech.edu/\">Caltech</a>"
                         }
                     ],
-                    "mastersProjects": []
+                    "mastersProjects": [
+                        {
+                            "name": "Philip Loewen",
+                            "timelinePeriod": "Winter 2026",
+                            "currentStatus": "MSc Statistics student",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Understanding Architectural Biases in Neural Time Series Models",
+                            "myCareerStage": "Assistant Professor"
+                        },
+                        {
+                            "name": "Isabelle Huang",
+                            "timelinePeriod": "Fall 2025-Winter 2026",
+                            "currentStatus": "MSc Statistics student",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Time Series Forecasting with Deep Markov Models",
+                            "myCareerStage": "Assistant Professor"
+                        },
+                        {
+                            "name": "Alex Brisebois",
+                            "timelinePeriod": "Fall 2025-Winter 2026",
+                            "currentStatus": "PhD student (AST 1501)",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.dunlap.utoronto.ca/~hlozek/\">Renée Hložek</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)",
+                                "<a href=\"https://tanveerkarim.com/\">Tanveer Karim</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                            ],
+                            "project": "Exploring the Feasibility of Detecting a Time-Dependent σ<sub>8</sub> with LSST",
+                            "myCareerStage": "Assistant Professor"
+                        }
+                    ]
                 }
             }
         },
@@ -2168,6 +2164,14 @@
                     "color": "purple",
                     "talks": [
                         {
+                            "title": "Bayesian Inference",
+                            "event": "University of Toronto Statistical Sciences Research Program (UTSSRP 2026)",
+                            "location": "Toronto, ON",
+                            "date": "Jun 2026",
+                            "year": 2026,
+                            "type": "Tutorial"
+                        },
+                        {
                             "title": "A Conceptual Introduction to Deep Learning",
                             "event": "Penn State: Summer School in Statistics for Astronomers (2025)",
                             "location": "Virtual",
@@ -2526,7 +2530,57 @@
             "workshops": {
                 "title": "Workshops & Training",
                 "content": "I regularly conduct workshops on Bayesian methods, Python for astronomy, and statistical computing for various audiences including graduate students, postdocs, and faculty."
-            }
+            },
+            "shortCourses": [
+                {
+                    "title": "Bayesian Inference",
+                    "program": "University of Toronto Statistical Sciences Research Program (UTSSRP)",
+                    "location": "Toronto, ON",
+                    "terms": ["Jun 2026"]
+                },
+                {
+                    "title": "A Conceptual Introduction to Deep Learning",
+                    "program": "Penn State: Summer School in Statistics for Astronomers",
+                    "location": "Virtual",
+                    "terms": ["Jun 2025"]
+                },
+                {
+                    "title": "Nested Sampling: Past, Present, and Future",
+                    "program": "Penn State: Summer School in Statistics for Astronomers",
+                    "location": "Virtual",
+                    "terms": ["Jun 2025", "Jun 2024"]
+                },
+                {
+                    "title": "Machine Learning for Star Cluster Science (with Steffani Grondin)",
+                    "program": "2023 ESO Conference: Two in a million",
+                    "location": "Garching, Germany",
+                    "terms": ["Sep 2023"]
+                },
+                {
+                    "title": "Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Grondin)",
+                    "program": "University of Michigan: 2023 Clusters & Streams Workshop",
+                    "location": "Ann Arbor, MI",
+                    "terms": ["Aug 2023"]
+                },
+                {
+                    "title": "Uncertainty and Interpretability in Machine Learning Models (with Alex Gagliano)",
+                    "program": "NSF IAIFI Summer School",
+                    "location": "Boston, MA",
+                    "terms": ["Aug 2023"]
+                },
+                {
+                    "title": "A Tutorial of (Dynamic) Nested Sampling",
+                    "program": "Statistical Challenges in Modern Astronomy VIII",
+                    "location": "State College, PA",
+                    "terms": ["Jun 2023"]
+                },
+                {
+                    "title": "Introduction to Bayesian Inference with Linear Regression",
+                    "program": "Astro Hack Week 2020",
+                    "location": "Virtual",
+                    "terms": ["Aug 2020"]
+                }
+            ]
         },
         "awards": {
             "title": "Awards & Honors",
@@ -2656,6 +2710,7 @@
                                 {
                                     "role": "Summer Undergraduate Research Program (SURP) Committee",
                                     "periods": [
+                                        "2026",
                                         "2021-2022"
                                     ]
                                 },
@@ -2807,7 +2862,7 @@
         }
     },
     "footer": {
-        "copyright": "© 2026 Joshua S. Speagle. This page was last updated on March 9, 2026.",
+        "copyright": "© 2026 Joshua S. Speagle. This page was last updated on April 6, 2026.",
         "credit": "Built, designed, and maintained in collaboration with Claude (Sonnet 4+, Opus 4+)."
     }
 }

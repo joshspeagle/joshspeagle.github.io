@@ -323,11 +323,14 @@ def generate_about(data):
         f'<img src="{profile["src"]}" alt="{profile["alt"]}" '
         f'class="profile-image" width="384" height="513">\n'
         f"</picture>\n"
-        f'<figcaption id="profile-caption" style="text-align: center; font-size: 0.8rem; '
-        f'margin-top: 0.5rem; opacity: 0.8;">\n'
-        f'{profile["credit"]} <a href="{profile["creditLink"]}" '
-        f'aria-label="Photo credit link">{profile["creditName"]}</a>\n'
-        f"</figcaption>\n"
+        + (
+            f'<figcaption id="profile-caption" style="text-align: center; font-size: 0.8rem; '
+            f'margin-top: 0.5rem; opacity: 0.8;">\n'
+            f'{profile["credit"]} <a href="{profile["creditLink"]}" '
+            f'aria-label="Photo credit link">{profile["creditName"]}</a>\n'
+            f"</figcaption>\n"
+            if profile.get("credit") else ""
+        ) +
         f"</figure>\n"
         f"</div>"
     )
@@ -974,6 +977,44 @@ def generate_teaching(data):
         )
     course_html += "</div>\n"
 
+    # Short courses & workshops
+    short_courses = section.get("shortCourses", [])
+    short_courses_html = ""
+    if short_courses:
+        short_courses_html = '<div class="course-history">\n'
+        for idx, sc in enumerate(short_courses):
+            sorted_terms = sort_terms_chronologically(sc["terms"])
+            terms_badges = "".join(
+                f'<span class="term-badge">{term}</span>\n' for term in sorted_terms
+            )
+            short_courses_html += (
+                f'<article class="course-card" '
+                f'aria-labelledby="short-course-{idx}-title" role="article">\n'
+                f'<div class="course-header">\n'
+                f'<div class="course-title-section">\n'
+                f'<h4 class="course-title" id="short-course-{idx}-title">\n'
+                f'{sc["title"]}\n'
+                f"</h4>\n"
+                f'<div class="course-badges">\n'
+                f'<span class="dept-badge dept-badge-workshop">Workshop</span>\n'
+                f"</div>\n"
+                f"</div>\n"
+                f"</div>\n"
+                f'\n'
+                f'<div class="course-details">\n'
+                f'<p class="course-description">{sc["program"]}'
+                f'{" — " + sc["location"] if sc.get("location") else ""}</p>\n'
+                f'<div class="course-terms">\n'
+                f"<strong>Dates:</strong>\n"
+                f'<div class="terms-list">\n'
+                f"{terms_badges}"
+                f"</div>\n"
+                f"</div>\n"
+                f"</div>\n"
+                f"</article>\n"
+            )
+        short_courses_html += "</div>\n"
+
     return (
         f'<div class="page-intro">\n'
         f'<div class="highlight-box">\n'
@@ -986,7 +1027,14 @@ def generate_teaching(data):
         f"<h3>Teaching History</h3>\n"
         f"{filter_html}"
         f"{course_html}"
-        f"</div>"
+        f"</div>\n"
+        + (
+            f'\n<div class="highlight-box">\n'
+            f"<h3>Short Courses &amp; Workshops</h3>\n"
+            f"{short_courses_html}"
+            f"</div>"
+            if short_courses else ""
+        )
     )
 
 

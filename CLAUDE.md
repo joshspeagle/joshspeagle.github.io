@@ -67,19 +67,19 @@ When the user asks to "update the website", walk through each category below and
 
 | # | Category | What to review | Last edited |
 |---|----------|---------------|-------------|
-| 1 | **Home — About Me** | Title, affiliations, highlight box, contact info, profile image | 2026-03-08 |
+| 1 | **Home — About Me** | Title, affiliations, highlight box, contact info, profile image | 2026-04-06 |
 | 2 | **Home — Team** | ART description, highlights, CTAs | 2026-03-08 |
 | 3 | **Home — Research Areas** | Four area descriptions, publication link meta stats (citations, h-index, paper count) | 2026-03-08 |
 | 4 | **Home — Opportunities** | Postdoc/grad/undergrad cards, fellowship links | 2026-03-08 |
 | 5 | **Home — Biography** | Career timeline entries, personal note | 2026-03-08 |
-| 6 | **Mentorship — Current** | Postdocs, doctoral, masters, undergrad mentees | 2026-03-08 |
-| 7 | **Mentorship — Completed** | Former mentees and their outcomes (TODO: verify current jobs/outcomes) | 2026-03-08 |
-| 8 | **Talks** | Invited, contributed, colloquia, panels, public, interviews, workshops | 2026-03-08 |
-| 9 | **Teaching** | Course history, teaching stats | 2026-03-08 |
+| 6 | **Mentorship — Current** | Postdocs, doctoral, masters, undergrad mentees | 2026-04-06 |
+| 7 | **Mentorship — Completed** | Former mentees and their outcomes (TODO: verify current jobs/outcomes) | 2026-04-06 |
+| 8 | **Talks** | Invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-04-06 |
+| 9 | **Teaching** | Course history, short courses & workshops, teaching stats | 2026-04-06 |
 | 10 | **Awards** | New awards or honors | 2026-03-09 |
-| 11 | **Service** | Society roles, committee memberships, conference org, referee list | 2026-03-09 |
+| 11 | **Service** | Society roles, committee memberships, conference org, referee list | 2026-04-06 |
 | 12 | **Publications** | Automated pipeline — see "Publication Pipeline" section | 2026-03-09 |
-| 13 | **Footer** | Copyright year and "last updated" date | 2026-03-09 |
+| 13 | **Footer** | Copyright year and "last updated" date | 2026-04-06 |
 
 Update the "Last edited" column each time a category is modified.
 

@@ -101,9 +101,9 @@ export function populateSections(sections) {
                         <source srcset="${about.profileImage.src.replace(/\.(jpg|jpeg|png)$/i, '.webp')}" type="image/webp">
                         <img src="${about.profileImage.src}" alt="${about.profileImage.alt}" class="profile-image" width="384" height="513">
                     </picture>
-                    <figcaption id="profile-caption" style="text-align: center; font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
+                    ${about.profileImage.credit ? `<figcaption id="profile-caption" style="text-align: center; font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.8;">
                         ${about.profileImage.credit} <a href="${about.profileImage.creditLink}" aria-label="Photo credit link">${about.profileImage.creditName}</a>
-                    </figcaption>
+                    </figcaption>` : ''}
                 </figure>
             </div>
         `;
