@@ -12,8 +12,8 @@
   const lerp = (a, b, t) => a + (b - a) * t;
 
   const PAL = {
-    dark:  { star: '226,233,255', edge: '150,170,235', node: '190,200,240', v: [150,128,255], c: [70,224,238], img: 'assets/images/hero-posterior-dark.png',  starMax: 0.7, edgeMax: 0.22 },
-    light: { star: '70,66,120',   edge: '80,78,130',   node: '70,66,120',  v: [91,67,214],  c: [14,154,168], img: 'assets/images/hero-posterior-light.png', starMax: 0.5, edgeMax: 0.26 },
+    dark:  { star: '226,233,255', edge: '150,170,235', node: '190,200,240', v: [150,128,255], c: [70,224,238], img: 'assets/images/hero-posterior-dark.webp',  starMax: 0.7, edgeMax: 0.22 },
+    light: { star: '70,66,120',   edge: '80,78,130',   node: '70,66,120',  v: [91,67,214],  c: [14,154,168], img: 'assets/images/hero-posterior-light.webp', starMax: 0.5, edgeMax: 0.26 },
   };
 
   let W = 0, H = 0, DPR = 1, FX = 0, FY = 0;
