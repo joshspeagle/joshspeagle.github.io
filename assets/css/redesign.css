@@ -424,3 +424,19 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .d-bachelors{background:var(--cat-du)}
 
 .install { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-2); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: var(--space-3); overflow-x: auto; }
+
+/* ---------------- Mobile nav (hamburger) ---------------- */
+@media (max-width: 860px) {
+  .nav-open .nav-links { display: flex; flex-direction: column; align-items: stretch; gap: 2px;
+    position: absolute; left: 0; right: 0; top: 100%; background: var(--bg-1);
+    border-bottom: 1px solid var(--border); padding: var(--space-4) var(--space-5);
+    max-height: 80vh; overflow-y: auto; }
+  .nav-open .nav-group { position: static; }
+  .nav-open .menu { display: block; position: static; border: 0; box-shadow: none; background: transparent;
+    padding: 0 0 var(--space-3) var(--space-4); margin: 0; min-width: 0; }
+  .nav-open .nav-trigger { width: 100%; justify-content: flex-start; pointer-events: none;
+    color: var(--text-3); text-transform: uppercase; font-size: var(--fs-label); letter-spacing: .12em; }
+  .nav-open .nav-item { width: 100%; padding: 10px 12px; }
+  .nav-open .menu a { padding: 10px 12px; }
+  .nav-open .cv-btn { display: inline-flex; margin-top: var(--space-3); width: max-content; }
+}
