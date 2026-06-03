@@ -28,6 +28,7 @@
 
     /* Accent Colors - These remain vibrant in both themes */
     --accent-blue: #64b5f6;
+    --accent-blue-hover: #42A5F5;
     --accent-green: #81c784;
     --accent-purple: #b388ff;
     --accent-orange: #ffb74d;
@@ -137,10 +138,11 @@
     /* Maps to primary text in light mode */
 
     /* Accent Colors - Adjusted for light mode contrast */
-    --accent-blue: #1976D2;
-    --accent-green: #388E3C;
+    --accent-blue: #1565C0;
+    --accent-blue-hover: #0D47A1;
+    --accent-green: #2E7D32;
     --accent-purple: #7c4dff;
-    --accent-orange: #F57C00;
+    --accent-orange: #B25A00;
     --accent-red: #C62828;
     --accent-yellow: #FFA000;
     --accent-yellow-border: rgba(255, 152, 0, 0.4);
