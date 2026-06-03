@@ -255,6 +255,22 @@ export function initializeTeachingFiltering() {
             }
         });
 
+        // Show or hide a visible empty-state inside the teaching course list
+        const courseHistory = document.querySelector('.teaching-filters ~ .course-history');
+        if (courseHistory) {
+            let block = document.getElementById('teaching-no-results');
+            if (visibleCount === 0 && !block) {
+                courseHistory.insertAdjacentHTML('afterend', `
+                    <div class="no-results" id="teaching-no-results" role="status">
+                        <p>No courses match the selected filters.</p>
+                        <button class="load-more-btn" data-action="show-all-teaching">Show all courses</button>
+                    </div>
+                `);
+            } else if (visibleCount > 0 && block) {
+                block.remove();
+            }
+        }
+
         // Update department button states
         deptBtns.forEach(btn => {
             const isEnabled = enabledDepartments.has(btn.dataset.filter);
@@ -320,6 +336,9 @@ export function initializeTeachingFiltering() {
         allLevelIds.forEach(id => enabledLevels.add(id));
         updateVisibility();
     }
+
+    // Expose for the no-results "Show all" button (event delegation in content-loader.js)
+    window.showAllTeaching = resetAllFilters;
 
     // Add click and keyboard event listeners
     filterBtns.forEach((btn, index) => {

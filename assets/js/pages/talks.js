@@ -35,8 +35,33 @@ function updateVisibility() {
         }
     });
 
+    updateNoResults(matchCount);
     updateLoadMoreButton(matchCount, shownCount);
     updateFilterStatus(shownCount, matchCount);
+}
+
+/**
+ * Show or hide a visible empty-state block inside the talks list when
+ * no talks match the current filters (e.g. all categories deselected).
+ */
+function updateNoResults(matchCount) {
+    const talksList = document.querySelector('.talks-list');
+    if (!talksList) return;
+    let block = document.getElementById('talks-no-results');
+
+    if (matchCount > 0) {
+        if (block) block.remove();
+        return;
+    }
+
+    if (!block) {
+        talksList.insertAdjacentHTML('afterend', `
+            <div class="no-results" id="talks-no-results" role="status">
+                <p>No talks match the selected categories.</p>
+                <button class="load-more-btn" data-action="show-all-talks">Show all talks</button>
+            </div>
+        `);
+    }
 }
 
 /**
@@ -304,6 +329,9 @@ export function initializeTalksFiltering() {
         visibleLimit = TALKS_BATCH_SIZE;
         updateVisibility();
     }
+
+    // Expose for the no-results "Show all" button (event delegation in content-loader.js)
+    window.showAllTalks = resetAllCategories;
 
     // Add click and keyboard event listeners
     filterBtns.forEach((btn, index) => {

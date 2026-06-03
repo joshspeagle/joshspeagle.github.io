@@ -245,5 +245,17 @@ document.addEventListener('click', function (e) {
             }
             break;
         }
+
+        case 'show-all-talks':
+            if (typeof window.showAllTalks === 'function') {
+                window.showAllTalks();
+            }
+            break;
+
+        case 'show-all-teaching':
+            if (typeof window.showAllTeaching === 'function') {
+                window.showAllTeaching();
+            }
+            break;
     }
 });
