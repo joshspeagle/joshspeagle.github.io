@@ -422,3 +422,5 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .d-doctoral{background:var(--cat-ii)}
 .d-masters{background:var(--cat-ic)}
 .d-bachelors{background:var(--cat-du)}
+
+.install { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-2); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: var(--space-3); overflow-x: auto; }

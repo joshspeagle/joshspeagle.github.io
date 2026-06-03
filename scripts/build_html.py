@@ -26,6 +26,8 @@ from pages_teaching import generate_content as gen_teaching
 from pages_mentorship import generate_content as gen_mentorship
 from pages_awards import generate_content as gen_awards
 from pages_service import generate_content as gen_service
+from pages_software import generate_content as gen_software
+from pages_news import generate_content as gen_news
 
 # HTML files to process
 HTML_FILES = {
@@ -36,6 +38,8 @@ HTML_FILES = {
     "teaching": PROJECT_ROOT / "teaching.html",
     "awards": PROJECT_ROOT / "awards.html",
     "service": PROJECT_ROOT / "service.html",
+    "software": PROJECT_ROOT / "software.html",
+    "news": PROJECT_ROOT / "news.html",
 }
 
 # GitHub SVG icon used in quick links
@@ -2217,6 +2221,12 @@ def build_page(page_name, html, data):
 
     elif page_name == "mentorship":
         html = replace_container_content(html, "id", "mentorship-content", gen_mentorship(data))
+
+    elif page_name == "software":
+        html = replace_container_content(html, "id", "software-content", gen_software(data))
+
+    elif page_name == "news":
+        html = replace_container_content(html, "id", "news-content", gen_news(data))
 
     elif page_name == "publications":
         html = replace_container_content(

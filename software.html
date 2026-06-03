@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Software &amp; Code · Joshua S. Speagle</title>
+  <meta name="description" content="Open-source software by Joshua S. Speagle — dynesty (dynamic nested sampling), brutus, frankenz, and more tools for Bayesian inference and astronomy.">
+  <link rel="canonical" href="https://joshspeagle.com/software.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Joshua S. Speagle">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Software &amp; Code · Joshua S. Speagle">
+  <meta property="og:description" content="Open-source tools for inference, discovery, and keeping up with the literature.">
+  <meta property="og:url" content="https://joshspeagle.com/software.html">
+  <meta property="og:image" content="https://joshspeagle.com/assets/images/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://joshspeagle.com/assets/images/og-card.png">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="favicon-16x16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#0d1421">
+
+  <script>(function () { var t = localStorage.getItem('preferred-theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
+
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/redesign.css">
+</head>
+
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="index.html"><span class="star" aria-hidden="true">✦</span>Joshua S. Speagle</a>
+    <div class="nav-links">
+      <a class="nav-item" href="index.html">Home</a>
+      <div class="nav-group"><button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Research <span aria-hidden="true">▾</span></button>
+        <div class="menu"><a href="publications.html">Publications</a><a href="software.html" aria-current="page">Software</a><a href="talks.html">Talks</a></div></div>
+      <div class="nav-group"><button class="nav-trigger" aria-haspopup="true" aria-expanded="false">People <span aria-hidden="true">▾</span></button>
+        <div class="menu"><a href="mentorship.html">Group / ART</a><a href="mentorship.html">Mentorship</a><a href="teaching.html">Teaching</a></div></div>
+      <div class="nav-group"><button class="nav-trigger" aria-haspopup="true" aria-expanded="false">About <span aria-hidden="true">▾</span></button>
+        <div class="menu"><a href="index.html#bio">Biography</a><a href="news.html">News</a><a href="awards.html">Awards</a><a href="service.html">Service</a></div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a class="cv-btn" href="https://joshspeagle.com/bio-cv/CV_speagle.pdf">Curriculum Vitae</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode">☾</button>
+      <button class="theme-toggle hamburger" id="hamburger" type="button" aria-label="Open menu">☰</button>
+    </div>
+  </nav>
+
+  <main id="main-content" tabindex="-1">
+    <section class="pub-header">
+      <div class="pub-header-glow" aria-hidden="true"></div>
+      <div class="container">
+        <p class="section-kicker">Open source</p>
+        <h1 class="pub-h1">Software &amp; Code</h1>
+        <p class="pub-sub">Open-source tools for inference, discovery, and keeping up with the literature.</p>
+      </div>
+    </section>
+    <section class="section section--flush"><div id="software-content">
+<div class="container">
+<div data-listview data-lv-batch="0" data-lv-sort="default">
+<div class="pub-controls">
+<input type="search" class="pub-search" data-lv-search placeholder="Search tools…" aria-label="Search tools…">
+
+<div class="pub-filters" data-lv-filters role="group" aria-label="Filter"><button class="chip is-active" data-cat="all" aria-pressed="true">All <span class="ct">6</span></button><button class="chip" data-cat="python" aria-pressed="false"><span class="dot d-python"></span>Python <span class="ct">5</span></button><button class="chip" data-cat="javascript" aria-pressed="false"><span class="dot d-javascript"></span>JavaScript <span class="ct">1</span></button></div>
+</div>
+<div class="pub-list" data-lv-list><article class="item accent-violet" data-lv-item data-cat="python" data-search="dynesty dynamic nested sampling for bayesian posteriors &amp; evidence python" data-title="dynesty"><div class="item-head"><h3 class="item-title">dynesty</h3><span class="item-when">Python · ★400+</span></div><div class="item-meta">Dynamic nested sampling for Bayesian posteriors &amp; evidence</div><div class="install">$ pip install dynesty</div><div class="item-tags"><span class="tag feat">★ Featured</span><span class="item-links"><a class="reslink" href="https://github.com/joshspeagle/dynesty" target="_blank" rel="noopener">GitHub</a><a class="reslink" href="https://dynesty.readthedocs.io" target="_blank" rel="noopener">Docs</a><a class="reslink" href="https://doi.org/10.1093/mnras/staa278" target="_blank" rel="noopener">Paper</a></span></div></article><article class="item accent-violet" data-lv-item data-cat="python" data-search="brutus stellar photometry, distances &amp; extinction via brute-force bayesian inference python" data-title="brutus"><div class="item-head"><h3 class="item-title">brutus</h3><span class="item-when">Python · ★50+</span></div><div class="item-meta">Stellar photometry, distances &amp; extinction via brute-force Bayesian inference</div><div class="install">$ pip install astro-brutus</div><div class="item-tags"><span class="tag feat">★ Featured</span><span class="item-links"><a class="reslink" href="https://github.com/joshspeagle/brutus" target="_blank" rel="noopener">GitHub</a></span></div></article><article class="item accent-violet" data-lv-item data-cat="python" data-search="frankenz photometric redshift estimation (a photo-z monstrosity) python" data-title="frankenz"><div class="item-head"><h3 class="item-title">frankenz</h3><span class="item-when">Python</span></div><div class="item-meta">Photometric redshift estimation (a photo-z monstrosity)</div><div class="item-tags"><span class="item-links"><a class="reslink" href="https://github.com/joshspeagle/frankenz" target="_blank" rel="noopener">GitHub</a></span></div></article><article class="item accent-violet" data-lv-item data-cat="python" data-search="dorothy data-driven stellar abundances python" data-title="dorothy"><div class="item-head"><h3 class="item-title">dorothy</h3><span class="item-when">Python</span></div><div class="item-meta">Data-driven stellar abundances</div><div class="item-tags"><span class="item-links"><a class="reslink" href="https://github.com/joshspeagle/dorothy" target="_blank" rel="noopener">GitHub</a></span></div></article><article class="item accent-violet" data-lv-item data-cat="javascript" data-search="aparture llm-powered tool to sift through the arxiv javascript" data-title="aparture"><div class="item-head"><h3 class="item-title">aparture</h3><span class="item-when">JavaScript · ★19</span></div><div class="item-meta">LLM-powered tool to sift through the arXiv</div><div class="item-tags"><span class="item-links"><a class="reslink" href="https://github.com/joshspeagle/aparture" target="_blank" rel="noopener">GitHub</a></span></div></article><article class="item accent-violet" data-lv-item data-cat="python" data-search="arxivy helping keep up with the arxiv python" data-title="arxivy"><div class="item-head"><h3 class="item-title">arxivy</h3><span class="item-when">Python</span></div><div class="item-meta">Helping keep up with the arXiv</div><div class="item-tags"><span class="item-links"><a class="reslink" href="https://github.com/joshspeagle/arxivy" target="_blank" rel="noopener">GitHub</a></span></div></article></div>
+<p class="pub-empty" data-lv-empty hidden>No items match your search or filters. <button type="button" class="linkbtn" data-lv-reset>Show all</button></p>
+
+</div>
+</div>
+</div></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© 2026 Joshua S. Speagle · 沈佳士</span>
+      <span>Built with open, accessible, reproducible science</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var b = document.getElementById('theme-toggle');
+      function icon() { b.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀'; }
+      b.addEventListener('click', function () {
+        var nx = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nx);
+        try { localStorage.setItem('preferred-theme', nx); } catch (e) {}
+        icon();
+      });
+      icon();
+    })();
+  </script>
+  <script src="assets/js/redesign/listview.js" defer></script>
+</body>
+</html>
