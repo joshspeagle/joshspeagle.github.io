@@ -240,6 +240,32 @@ class DataMerger:
         logger.info(f"Merged into {len(merged_publications)} unique publications")
         return sorted(merged_publications, key=lambda x: x.get("year", 0), reverse=True)
 
+    @staticmethod
+    def _norm_doi(doi) -> str:
+        """Normalize a DOI for use as a join key (lowercase, strip URL/`doi:` prefixes)."""
+        doi = (doi or "").strip().lower()
+        for pre in ("https://doi.org/", "http://doi.org/",
+                    "https://dx.doi.org/", "http://dx.doi.org/", "doi:"):
+            if doi.startswith(pre):
+                doi = doi[len(pre):]
+                break
+        return doi.strip()
+
+    @staticmethod
+    def _norm_arxiv(arxiv) -> str:
+        """Normalize an arXiv id (drop `arxiv:` prefix and any trailing version, e.g. v2)."""
+        import re
+        arxiv = (arxiv or "").strip().lower()
+        if arxiv.startswith("arxiv:"):
+            arxiv = arxiv[len("arxiv:"):]
+        arxiv = re.sub(r"v\d+$", "", arxiv.strip())
+        return arxiv.strip()
+
+    @staticmethod
+    def _norm_bibcode(bibcode) -> str:
+        """Normalize an ADS bibcode for comparison (strip only; bibcodes are case-sensitive)."""
+        return (bibcode or "").strip()
+
     def _calculate_similarity(self, pub1: Dict, pub2: Dict) -> float:
         """Calculate similarity score between two publications."""
         title1 = self._normalize_title(pub1.get("title", ""))
@@ -253,14 +279,20 @@ class DataMerger:
         year2 = pub2.get("year")
         year_score = 1.0 if year1 == year2 else 0.0
 
-        # DOI/arXiv matching (if available)
+        # Identifier matching (if available). Identifiers are normalized so that
+        # differing source conventions (URL-prefixed DOIs, "arXiv:" prefixes,
+        # version suffixes, stray case/whitespace) still join. Any single exact
+        # identifier match is treated as a definitive join key. Note the `or ""`
+        # guards: a source may carry the key with an explicit None value, which
+        # would otherwise raise AttributeError on .lower()/.strip().
         identifier_score = 0.0
-        doi1 = pub1.get("doi", "").lower()
-        doi2 = pub2.get("doi", "").lower()
-        arxiv1 = pub1.get("arxivId", "").lower()
-        arxiv2 = pub2.get("arxivId", "").lower()
+        doi1, doi2 = self._norm_doi(pub1.get("doi")), self._norm_doi(pub2.get("doi"))
+        arxiv1, arxiv2 = self._norm_arxiv(pub1.get("arxivId")), self._norm_arxiv(pub2.get("arxivId"))
+        bib1, bib2 = self._norm_bibcode(pub1.get("bibcode")), self._norm_bibcode(pub2.get("bibcode"))
 
         if doi1 and doi2 and doi1 == doi2:
+            identifier_score = 1.0
+        elif bib1 and bib2 and bib1 == bib2:
             identifier_score = 1.0
         elif arxiv1 and arxiv2 and arxiv1 == arxiv2:
             identifier_score = 1.0
