@@ -1776,6 +1776,128 @@ def _create_static_category_badges(paper):
 # Main build function
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Redesign Home generators (new index.html structure -> content.json driven)
+# ---------------------------------------------------------------------------
+
+def _esc(s):
+    """Escape bare & in plain-text fields without double-encoding existing entities."""
+    return re.sub(r"&(?!(?:amp|lt|gt|quot|#\d+);)", "&amp;", str(s or ""))
+
+_HOME_ICONS = [
+    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="13" cy="12" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="20" cy="18" r="2"/><path d="M7 6.6 11 11M7 17.4 11 13M15 11l4-4M15 13l4 4"/></svg>', "sla"),
+    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5 20 20"/><path d="M10 7.5v5M7.5 10h5"/></svg>', "ii"),
+    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18"/><path d="M3 19c4 0 4-12 9-12s5 12 9 12"/></svg>', "ic"),
+    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c5-3 9-1 9-1s-3 5-9 4-9 1-9 1 4-1 9-4z"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M3 16c2 0 3-1 3-1M21 8s-1 1-3 1"/></svg>', "du"),
+]
+
+
+def generate_home_about(data):
+    about = data["sections"]["about"]
+    return (
+        '<div class="container">\n'
+        '<p class="section-kicker">Who I am</p>\n'
+        '<h2 class="section-title">Astrostatistics at the University of Toronto</h2>\n'
+        f'<p class="about">{about.get("content", "")}</p>\n'
+        "</div>"
+    )
+
+
+def generate_home_research(data):
+    areas = data["sections"]["research"]["areas"][:4]
+    cards = []
+    for i, area in enumerate(areas):
+        icon, cls = _HOME_ICONS[i] if i < len(_HOME_ICONS) else _HOME_ICONS[-1]
+        cards.append(
+            f'<article class="research-card {cls}">{icon}'
+            f'<h3>{_esc(area.get("title", ""))}</h3>'
+            f'<p>{_esc(area.get("description", ""))}</p></article>'
+        )
+    intro = ("I develop statistical &amp; machine-learning methods and apply them to the largest "
+             "astronomical surveys — from billions of stars and galaxies down to individual objects.")
+    return (
+        '<div class="container">\n'
+        '<p class="section-kicker">What I do</p>\n'
+        '<h2 class="section-title">Four research areas</h2>\n'
+        f'<p class="section-intro">{intro}</p>\n'
+        f'<div class="research-grid">{"".join(cards)}</div>\n'
+        "</div>"
+    )
+
+
+def generate_home_team(data):
+    team = data["sections"]["team"]
+    hls = "".join(
+        f'<div class="card"><h3>{_esc(h.get("title", ""))}</h3><p>{_esc(h.get("content", ""))}</p></div>'
+        for h in team.get("highlights", [])
+    )
+    btns = []
+    for c in team.get("cta", []):
+        cls = "btn-primary" if c.get("type") == "primary" else "btn-ghost"
+        btns.append(f'<a class="btn {cls}" href="{c.get("url", "#")}">{_esc(c.get("text", ""))}</a>')
+    return (
+        '<div class="container">\n'
+        '<p class="section-kicker">The team</p>\n'
+        f'<h2 class="section-title">{_esc(team.get("title", ""))}</h2>\n'
+        f'<p class="team-tagline">{_esc(team.get("tagline", ""))}</p>\n'
+        f'<p class="lead">{team.get("content", "")}</p>\n'
+        f'<div class="grid-2" style="margin-top:var(--space-5)">{hls}</div>\n'
+        f'<div class="cta" style="margin-top:var(--space-6)">{"".join(btns)}</div>\n'
+        "</div>"
+    )
+
+
+def generate_home_collab(data):
+    collab = data["sections"]["collaboration"]
+    cards = []
+    for c in collab.get("opportunities", {}).get("cards", []):
+        fel = ""
+        f = c.get("fellowships")
+        if f and f.get("links"):
+            links = " · ".join(
+                f'<a href="{l.get("url", "#")}">{_esc(l.get("name", ""))}</a>' for l in f["links"]
+            )
+            fel = f'<p class="fellowships">{_esc(f.get("intro", "Fellowships:"))} {links}</p>'
+        cards.append(
+            f'<div class="card"><h3>{_esc(c.get("title", ""))}</h3>'
+            f'<p>{_esc(c.get("content", ""))}</p>{fel}</div>'
+        )
+    vals = "".join(
+        f'<div class="card"><h3>{_esc(v.get("title", ""))}</h3><p>{_esc(v.get("content", ""))}</p></div>'
+        for v in collab.get("values", {}).get("items", [])
+    )
+    return (
+        '<div class="container">\n'
+        '<p class="section-kicker">Join us</p>\n'
+        f'<h2 class="section-title">{_esc(collab.get("title", ""))}</h2>\n'
+        f'<p class="section-intro">{_esc(collab.get("intro", ""))}</p>\n'
+        f'<div class="grid-3">{"".join(cards)}</div>\n'
+        f'<div class="grid-2" style="margin-top:var(--space-6)">{vals}</div>\n'
+        "</div>"
+    )
+
+
+def generate_home_bio(data):
+    bio = data["sections"]["biography"]
+    items = "".join(
+        '<div class="tl-item">'
+        f'<div class="tl-date">{_esc(t.get("date", ""))}</div>'
+        f'<div class="tl-title">{_esc(t.get("title", ""))}</div>'
+        f'<div class="tl-loc">{_esc(t.get("location", ""))}</div>'
+        f'<div class="tl-content">{t.get("content", "")}</div>'
+        "</div>"
+        for t in bio.get("timeline", [])
+    )
+    return (
+        '<div class="container">\n'
+        '<p class="section-kicker">Short biography</p>\n'
+        f'<h2 class="section-title">{_esc(bio.get("title", ""))}</h2>\n'
+        f'<div class="timeline">{items}</div>\n'
+        f'<p class="personal-note">{_esc(bio.get("personalNote", ""))}</p>\n'
+        "</div>"
+    )
+
+
 def build_page(page_name, html, data):
     """Apply all content injections to an HTML page and return updated HTML."""
 
@@ -1815,13 +1937,14 @@ def build_page(page_name, html, data):
 
     # -- Page-specific content --
     if page_name == "index":
-        html = replace_container_content(html, "id", "about", generate_about(data))
-        html = replace_container_content(html, "id", "team", generate_team(data))
-        html = replace_container_content(html, "id", "research", generate_research(data))
-        html = replace_container_content(
-            html, "id", "collaboration", generate_collaboration(data)
-        )
-        html = replace_container_content(html, "id", "bio", generate_biography(data))
+        # Redesign Home: regenerate content sections from content.json into the
+        # new structure (hero/nav/footer are static design and have no matching
+        # legacy containers, so the common injections above simply no-op here).
+        html = replace_container_content(html, "id", "about", generate_home_about(data))
+        html = replace_container_content(html, "id", "research", generate_home_research(data))
+        html = replace_container_content(html, "id", "team", generate_home_team(data))
+        html = replace_container_content(html, "id", "join", generate_home_collab(data))
+        html = replace_container_content(html, "id", "bio", generate_home_bio(data))
 
     elif page_name == "awards":
         section_data = data["sections"].get("awards", {})
