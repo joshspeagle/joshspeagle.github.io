@@ -69,6 +69,9 @@ notes.txt
 TODO.txt
 drafts/
 
+# Stray duplicate of assets/data/ads_library_cache.json — the live copy is the only one
+/ads_library_cache.json
+
 # Python
 __pycache__/
 *.py[cod]

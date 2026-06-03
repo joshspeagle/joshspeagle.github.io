@@ -1,7 +1,8 @@
 """Generate a 1200x630 OpenGraph/Twitter social card (assets/images/og-card.png).
 
 Run once (or after rebranding):  python scripts/make_og_card.py
-Palette copied verbatim from assets/css/theme-variables.css.
+Palette is hardcoded below and predates the June 2026 redesign; the current design
+tokens live in assets/data/tokens.json -> assets/css/tokens.css.
 """
 from pathlib import Path
 
@@ -10,7 +11,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-# Brand palette (theme-variables.css)
+# Brand palette (hardcoded; see module docstring — predates the redesign tokens)
 BG = "#0a0a2c"
 BG2 = "#1a0a2c"
 BLUE = "#64b5f6"

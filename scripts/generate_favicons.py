@@ -11,7 +11,8 @@ import os
 
 from PIL import Image, ImageDraw
 
-# Brand colors (from assets/css/theme-variables.css)
+# Brand colors (hardcoded; predate the June 2026 redesign — current design tokens
+# live in assets/data/tokens.json -> assets/css/tokens.css. Re-tune here on rebrand.)
 BG = (13, 20, 33, 255)        # #0d1421 dark background
 STAR = (167, 139, 250, 255)   # violet accent (#a78bfa)
 

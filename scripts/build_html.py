@@ -2,8 +2,9 @@
 """
 Build script to inject static HTML content into page templates.
 
-Reads content.json and generates static HTML for SEO and performance.
-JS content-loader.js acts as progressive enhancement (skips populated containers).
+Reads content.json and pre-renders all page content into static HTML for SEO and
+performance. JS only adds interactivity (theme toggle, hero canvas, listview); it
+does not populate content. Idempotent.
 
 Usage: python scripts/build_html.py
 """
@@ -490,7 +491,9 @@ def generate_publications_redesign(data):
 
 def build_page(page_name, html, data):
     """Fill each page's content container(s) from content.json. Redesign pages are
-    static shells (head/nav/hero/footer); only the #<page>-content area is generated."""
+    static shells (head/nav/hero/footer); only the content area is generated — the
+    `#<page>-content` container for the eight secondary pages, and the per-section
+    ids #about/#research/#team/#join/#bio for Home (404.html is not handled here)."""
 
     if page_name == "index":
         # Redesign Home: regenerate content sections from content.json.

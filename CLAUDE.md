@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Personal academic website for Joshua S. Speagle (joshspeagle.github.io). Static HTML/CSS/JS on GitHub Pages. **Redesigned June 2026** onto a design-token system with self-hosted fonts and an animated hero. All HTML is pre-rendered from `content.json` by `build_html.py` for SEO; lightweight JS adds interactivity (theme toggle, the hero canvas, and a generic search/filter/sort/load-more list).
+Personal academic website for Joshua S. Speagle — live at **joshspeagle.com** (custom apex domain via the tracked `CNAME`; the repo `joshspeagle.github.io` is the GitHub Pages source). Static HTML/CSS/JS on GitHub Pages. **Redesigned June 2026** onto a design-token system with self-hosted fonts and an animated hero. All HTML is pre-rendered from `content.json` by `build_html.py` for SEO; lightweight JS adds interactivity (theme toggle, the hero canvas, and a generic search/filter/sort/load-more list).
 
 ## Development Workflow
 
@@ -15,15 +15,16 @@ python -m http.server 8000       # local dev server
 ```
 
 - **Content edits go in `assets/data/content.json`, not HTML files.** Then run `build_html.py`.
-- **Full rebuild**: `npm run build` (runs tokens → fonts → `build_html.py`).
-- **Python packages**: use `uv pip install` instead of `pip install`.
-- **Deployment**: push to `master`, GitHub Pages auto-deploys.
+- **Full rebuild**: `npm run build` (runs tokens → fonts → `build_html.py`). (`npm run fonts` runs just the font vendoring step.)
+- **Python packages**: use `uv pip install`. The publication-pipeline deps are pinned in `requirements.txt` (`uv pip install -r requirements.txt`); the front-end build scripts (`build_html.py`/`build_tokens.py`/`setup_fonts.py`) use only the stdlib.
+- **Deployment**: push to `master`; GitHub Pages auto-deploys to **joshspeagle.com** (custom domain via `CNAME`). Keep `sitemap.xml`/`robots.txt` URLs on that domain.
+- **CI gate**: `.github/workflows/build-check.yml` reruns the full build (`setup_fonts.py` + `build_tokens.py` + `build_html.py`) on every push to `master`, every PR, and manual dispatch, then **fails the run if the committed static build is stale** (`git diff --quiet` → "Static build is out of date. Run npm run build locally and commit the result."). Always `npm run build` and commit the regenerated HTML/CSS before pushing.
 
 ## Architecture
 
 ### Build system (content.json → static HTML)
 
-`scripts/build_html.py` reads `assets/data/content.json` and fills each page's `#<page>-content` container(s). The **9 HTML pages** (Home, Publications, Talks, Teaching, Mentorship, Awards, Service, Software, News) are **static shells** (head, nav, hero/header band, footer); only the content area is generated — so the static HTML *is* the SEO layer and JS only adds interactivity. Idempotent.
+`scripts/build_html.py` reads `assets/data/content.json` and fills each page's content container(s): `#<page>-content` for the eight secondary pages, and the per-section ids `#about`/`#research`/`#team`/`#join`/`#bio` for Home (there is no `#home-content`). The **9 HTML pages** (Home, Publications, Talks, Teaching, Mentorship, Awards, Service, Software, News) are **static shells** (head, nav, hero/header band, footer); only the content area is generated — so the static HTML *is* the SEO layer and JS only adds interactivity. Idempotent. *(A 10th shell, `404.html`, is also a redesign static shell but is hand-maintained — it's absent from build_html.py's `HTML_FILES` map and is not regenerated. Footers are likewise static in each shell; the `footer` key in content.json is currently unused.)*
 
 - Home sections: `generate_home_*` in `build_html.py`.
 - Publications: `generate_publications_redesign` pre-renders **all ~130 papers** from `publications_data.json` (no Chart.js, no runtime JSON fetch).
@@ -43,11 +44,15 @@ python -m http.server 8000       # local dev server
 | `assets/data/tokens.json` | Design tokens (source) |
 | `scripts/build_html.py` | Build: fills page content from content.json |
 | `scripts/build_tokens.py` · `scripts/setup_fonts.py` | tokens → CSS · vendor fonts |
-| `scripts/pages_shared.py` + `scripts/pages_<page>.py` | per-page content generators |
+| `scripts/pages_shared.py` + `scripts/pages_<page>.py` | per-page content generators (talks/teaching/mentorship/awards/service/software/news) |
+| `scripts/generate_favicons.py` · `scripts/make_og_card.py` | asset generation: favicon set + `site.webmanifest` · OG/Twitter social card (`assets/images/og-card.png`). Re-run on rebrand. |
 | `assets/css/{fonts,tokens,redesign}.css` | the only stylesheets |
 | `assets/js/redesign/hero.js` | animated inference-field hero (decorative, `aria-hidden`) |
 | `assets/js/redesign/listview.js` | generic search/filter/sort/load-more (data-attr driven) |
 | `assets/js/redesign/publications.js` | publications list interactivity |
+| `requirements.txt` | Python deps for the publication pipeline only |
+| `.github/workflows/build-check.yml` | CI — fails the build if the committed static output is stale |
+| `CNAME` | custom apex domain (`joshspeagle.com`) |
 | `robots.txt`, `sitemap.xml` | SEO — update `sitemap.xml` when adding pages |
 
 ### CSS Load Order
@@ -67,21 +72,23 @@ When the user asks to "update the website", walk through each category below and
 
 | # | Category | What to review | Last edited |
 |---|----------|---------------|-------------|
-| 1 | **Home — About Me** | Title, affiliations, highlight box, contact info, profile image | 2026-04-06 |
-| 2 | **Home — Team** | ART description, highlights, CTAs | 2026-03-08 |
-| 3 | **Home — Research Areas** | Four area descriptions, publication link meta stats (citations, h-index, paper count) | 2026-03-08 |
-| 4 | **Home — Opportunities** | Postdoc/grad/undergrad cards, fellowship links | 2026-03-08 |
-| 5 | **Home — Biography** | Career timeline entries, personal note | 2026-03-08 |
-| 6 | **Mentorship — Current** | Postdocs, doctoral, masters, undergrad mentees | 2026-04-06 |
-| 7 | **Mentorship — Completed** | Former mentees and their outcomes (TODO: verify current jobs/outcomes) | 2026-04-06 |
-| 8 | **Talks** | Invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-04-06 |
-| 9 | **Teaching** | Course history, short courses & workshops, teaching stats | 2026-04-06 |
-| 10 | **Awards** | New awards or honors | 2026-03-09 |
-| 11 | **Service** | Society roles, committee memberships, conference org, referee list | 2026-04-06 |
+| 1 | **Home — About Me** | `sections.about` — title, affiliations, highlight box, contact info, profile image | 2026-04-06 |
+| 2 | **Home — Team** | `sections.team` — ART description, highlights, CTAs | 2026-03-08 |
+| 3 | **Home — Research Areas** | `sections.research` — four area descriptions; `sections.research.publications.links` meta stats (citations, h-index, paper count) | 2026-03-08 |
+| 4 | **Home — Collaboration** | `sections.collaboration` — `opportunities` (postdoc/grad/undergrad cards, fellowship links) **and** `values` (EDI, Open Science) | 2026-03-08 |
+| 5 | **Home — Biography** | `sections.biography` — career timeline entries, personal note, dog photos | 2026-03-08 |
+| 6 | **Mentorship — Current** | `sections.mentorship.menteesByStage` (`postdoctoral`/`doctoral`/`bachelors`/`mastersProjects`) | 2026-04-06 |
+| 7 | **Mentorship — Completed** | `sections.mentorship.menteesByStage.completed.<stage>` — former mentees & outcomes (TODO: verify current jobs/outcomes) | 2026-04-06 |
+| 8 | **Talks** | `sections.talks` — invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-04-06 |
+| 9 | **Teaching** | `sections.teaching` — course history, short courses & workshops, teaching stats | 2026-04-06 |
+| 10 | **Awards** | `sections.awards` — new awards or honors | 2026-03-09 |
+| 11 | **Service** | `sections.service` — society roles, committee memberships, conference org, referee list | 2026-04-06 |
 | 12 | **Software** | `sections.software.tools` — packages (dynesty/brutus/…), install, links | 2026-06-03 |
 | 13 | **News** | `sections.news.items` — recent papers/talks/awards/milestones | 2026-06-03 |
 | 14 | **Publications** | Pre-rendered from `publications_data.json`; automated pipeline — see "Publication Pipeline" | 2026-03-09 |
-| 15 | **Footer** | Static in each page shell (copyright year, "last updated") | 2026-06-03 |
+| 15 | **Footer** | Static in each page shell (copyright year, "last updated"); the `footer` key in content.json is unused | 2026-06-03 |
+
+> Page **header bands** (title/tagline/intro above the listview) for the secondary pages live in the top-level `pages.<page>` object (`mentorship`/`publications`/`talks`/`teaching`/`awards`/`service`), separate from `sections.*`.
 
 Update the "Last edited" column each time a category is modified.
 
@@ -89,18 +96,20 @@ Update the "Last edited" column each time a category is modified.
 
 ### Adding Mentees
 
-Add to the appropriate array (`currentMentees` or `formerMentees`) in `content.json`:
+Mentees live under `sections.mentorship.menteesByStage` in `content.json`. Add a **current** mentee to the relevant stage array — `postdoctoral`, `doctoral`, `bachelors`, or `mastersProjects`; add a **former** mentee to the corresponding `menteesByStage.completed.<stage>` array. A current entry:
 ```json
 {
   "name": "Name",
-  "timeline": "Season Year-Season Year",
-  "supervision": "Primary Supervisor",
-  "status": "Graduate student (<a href='url'>Institution</a>)",
-  "cosupervisors": "<a href='url'>Name</a> (<a href='dept'>Dept</a>)",
+  "timelinePeriod": "Season Year-Season Year",
+  "supervisionType": "Primary Supervisor",
+  "coSupervisors": "<a href='url'>Name</a> (<a href='dept'>Dept</a>)",
   "project": "Project description",
+  "myCareerStage": "Assistant Professor",
+  "currentStatus": "Graduate student (<a href='url'>Institution</a>)",
   "fellowships": ["Fellowship Name"]
 }
 ```
+Variations by stage: **completed** entries add an `outcome` field; completed **doctoral** use `scholarships` instead of `fellowships`; **bachelors** entries use `program` and `projects` (plural). Match the field names of a sibling entry exactly — misspelled keys silently fail to render.
 
 ### Publication Categories
 
@@ -118,7 +127,7 @@ cd scripts && python postprocessing.py --dry-run               # Preview without
 
 **Pipeline**: Backs up data → fetches from Scholar/ADS/OpenAlex → merges → saves → runs `PostProcessor.run_all()` (featured flags, LLM categorization sync, citation timeline, ADS library cache, authorship categories, ADS bibliometric time series).
 
-**Scripts** (8 files in `scripts/`):
+**Pipeline scripts** (8 of the ~20 files in `scripts/`; the rest are the front-end build + page generators + asset utilities):
 | File | Purpose |
 |------|---------|
 | `config.py` | Config + path utilities (`get_data_path()`, `get_project_root()`) |
@@ -130,9 +139,9 @@ cd scripts && python postprocessing.py --dry-run               # Preview without
 | `update_publications_unified.py` | Main pipeline orchestrator |
 | `llm_categorization_rubric.md` | LLM agent categorization instructions |
 
-**Data files**: `assets/data/publications_data.json` (main), `assets/data/ads_library_cache.json` (ADS library bibcodes).
+**Data files**: `assets/data/publications_data.json` (main), `assets/data/ads_library_cache.json` (ADS library bibcodes; the only live copy — resolved via `config.get_data_path()`), `assets/data/publications.bib` (BibTeX export, manual artifact — not produced by these scripts).
 
-**Requirements**: `.env` with `ADS_API_KEY` (required), `OPENALEX_EMAIL` (optional).
+**Requirements**: `uv pip install -r requirements.txt` (scholarly, ads, pyalex, beautifulsoup4, rich, tqdm, …), plus a `.env` with `ADS_API_KEY` (required) and `OPENALEX_EMAIL` (optional).
 
 ## LLM Paper Categorization
 

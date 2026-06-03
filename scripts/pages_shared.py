@@ -1,5 +1,5 @@
-"""Shared helpers for the redesigned per-page content generators
-(pages_talks.py, pages_teaching.py, pages_mentorship.py, pages_awards.py, pages_service.py).
+"""Shared helpers for the redesigned per-page content generators (pages_<page>.py:
+talks, teaching, mentorship, awards, service, software, news).
 
 Each page module exposes `generate_content(data) -> str` returning the inner HTML for that
 page's `#<page>-content` container. Use `scaffold(...)` to wrap the page's pre-rendered

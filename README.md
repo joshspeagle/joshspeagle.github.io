@@ -1,32 +1,52 @@
-# Joshua S. Speagle - Personal Academic Website
+# Joshua S. Speagle — Personal Academic Website
 
-Source code for [joshspeagle.github.io](https://joshspeagle.github.io).
+Source for **[joshspeagle.com](https://joshspeagle.com)** (served via GitHub Pages from
+[`joshspeagle.github.io`](https://joshspeagle.github.io), custom domain set by `CNAME`).
+
+A token-based static site (redesigned June 2026): the HTML is **pre-rendered** from
+`assets/data/content.json` by a small Python build, with design tokens
+(`tokens.json` → `tokens.css`), self-hosted [@fontsource](https://fontsource.org)
+fonts, and an animated hero canvas. The static HTML *is* the SEO layer; JavaScript only
+adds interactivity (theme toggle, hero, search/filter/sort lists).
+
+> **Do not hand-edit the `*.html` files** — they are generated. Edit `content.json` and
+> rebuild. CI (`.github/workflows/build-check.yml`) fails any push whose committed build
+> is stale.
 
 ## Structure
 
-Static website built with HTML, CSS, and JavaScript:
-
-```bash
-├── index.html                 # Main HTML structure
-├── assets/
-│   ├── css/                   # Stylesheets
-│   ├── js/                    # JavaScript modules
-│   ├── data/content.json      # Site content
-│   └── images/                # Image assets
+```text
+*.html                         # 9 pre-rendered pages + 404.html (static shells)
+assets/
+  css/                         # fonts.css, tokens.css, redesign.css (the only stylesheets)
+  js/redesign/                 # hero.js, listview.js, publications.js
+  fonts/                       # self-hosted woff2 (vendored from @fontsource)
+  data/
+    content.json               # all site content (source of truth for pages)
+    tokens.json                # design tokens (source -> tokens.css)
+    publications_data.json     # publication metadata (pipeline output)
+  images/
+scripts/                       # build (build_html/build_tokens/setup_fonts),
+                               # per-page generators (pages_*.py), and the
+                               # publication pipeline (fetch_*/merge_data/postprocessing)
 ```
 
 ## Development
 
-No build process required. Open `index.html` in a browser or run a local server:
-
 ```bash
-python -m http.server 8000
+npm install                    # one-time: fetch self-hosted fonts (@fontsource)
+npm run build                  # tokens -> fonts -> regenerate all HTML from content.json
+python -m http.server 8000     # local dev server
 ```
 
-## Content
+Edit content in `assets/data/content.json`, then re-run `npm run build` (or just
+`python scripts/build_html.py`) to regenerate the pages.
 
-Edit `assets/data/content.json` to update site content. Styles are in `assets/css/` and functionality in `assets/js/`.
+## More
+
+See **[CLAUDE.md](CLAUDE.md)** for the full architecture, the content-update checklist,
+and the publication pipeline (Google Scholar / NASA ADS / OpenAlex → `publications_data.json`).
 
 ## License
 
-MIT
+[MIT](LICENSE)
