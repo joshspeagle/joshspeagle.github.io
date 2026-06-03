@@ -1898,6 +1898,255 @@ def generate_home_bio(data):
     )
 
 
+# ---------------------------------------------------------------------------
+# Publications page generator (redesign)
+# ---------------------------------------------------------------------------
+
+# researchArea label -> (key, badge label with escaped &)
+_PUB_CAT_MAP = {
+    "Statistical Learning & AI": ("sla", "Statistical Learning &amp; AI"),
+    "Interpretability & Insight": ("ii", "Interpretability &amp; Insight"),
+    "Inference & Computation": ("ic", "Inference &amp; Computation"),
+    "Discovery & Understanding": ("du", "Discovery &amp; Understanding"),
+}
+
+# Stable order for emitting category badges (matches the 4 areas)
+_PUB_CAT_ORDER = [
+    "Statistical Learning & AI",
+    "Interpretability & Insight",
+    "Inference & Computation",
+    "Discovery & Understanding",
+]
+
+
+def _attr_esc(s):
+    """Lowercase and attribute-escape a value for data-* attributes (escape & and ")."""
+    s = str(s or "").lower()
+    s = s.replace("&", "&amp;")
+    s = s.replace('"', "&quot;")
+    return s
+
+
+def _format_author(author):
+    """Convert an author string to 'F. Last' initials form.
+
+    Handles 'Last, First M.' and 'First M. Last' formats. Returns (display, is_speagle).
+    """
+    is_speagle = "speagle" in author.lower()
+    if "," in author:
+        last, _, first = author.partition(",")
+        last = last.strip()
+        first = first.strip()
+    else:
+        parts = author.strip().split()
+        if len(parts) >= 2:
+            last = parts[-1]
+            first = " ".join(parts[:-1])
+        else:
+            last = author.strip()
+            first = ""
+    initial = ""
+    fp = first.strip()
+    if fp:
+        # Use the first alphabetic character of the first name as the initial
+        for ch in fp:
+            if ch.isalpha():
+                initial = ch.upper() + ". "
+                break
+    display = _esc(f"{initial}{last}".strip())
+    if is_speagle:
+        display = f"<strong>{display}</strong>"
+    return display
+
+
+def _format_authors_html(authors):
+    """Show first 3 authors as 'F. Last', append ' et al.' if more than 3."""
+    if not authors:
+        return ""
+    shown = [_format_author(a) for a in authors[:3]]
+    html = ", ".join(shown)
+    if len(authors) > 3:
+        html += " et al."
+    return html
+
+
+def _generate_paper_card(pub):
+    """Build a single .paper article card per the contract."""
+    title = pub.get("title", "")
+    year = pub.get("year", "")
+    journal = pub.get("journal", "")
+    authors = pub.get("authors", []) or []
+    cites_int = int(pub.get("citations", 0) or 0)
+    cites_comma = f"{cites_int:,}"
+
+    research_area = pub.get("researchArea", "")
+    catkey = _PUB_CAT_MAP.get(research_area, ("du", "Discovery &amp; Understanding"))[0]
+
+    is_student = pub.get("authorshipCategory") == "student"
+    is_featured = bool(pub.get("featured"))
+
+    # Class list and student tag
+    cls = f"paper {catkey}"
+    if is_student:
+        cls += " student"
+
+    tags = ""
+    if is_featured:
+        tags += '<span class="tag feat">★ Featured</span>'
+    if is_student:
+        tags += '<span class="tag stu">Student-led</span>'
+
+    # Category badges for any category >= 0.20
+    probs = pub.get("categoryProbabilities", {}) or {}
+    badges = ""
+    for cat in _PUB_CAT_ORDER:
+        prob = probs.get(cat, 0)
+        try:
+            prob = float(prob)
+        except (TypeError, ValueError):
+            prob = 0
+        if prob >= 0.20:
+            key, label = _PUB_CAT_MAP[cat]
+            badges += f'<span class="badge b-{key}">{label}</span>'
+
+    # Links
+    links = ""
+    if pub.get("adsUrl"):
+        links += (
+            f'<a class="reslink" href="{pub["adsUrl"]}" '
+            f'target="_blank" rel="noopener">ADS</a>'
+        )
+    if pub.get("doi"):
+        links += (
+            f'<a class="reslink" href="https://doi.org/{pub["doi"]}" '
+            f'target="_blank" rel="noopener">DOI</a>'
+        )
+
+    authors_html = _format_authors_html(authors)
+    meta = " · ".join(
+        part for part in [authors_html, _esc(journal), str(year)] if part
+    )
+
+    return (
+        f'<article class="{cls}" data-cat="{catkey}" data-year="{year}" '
+        f'data-cites="{cites_int}" data-title="{_attr_esc(title)}" '
+        f'data-authors="{_attr_esc(" ".join(authors))}">'
+        f'<div class="paper-main">'
+        f'<h3 class="paper-title">{_esc(title)}</h3>'
+        f'<div class="paper-meta">{meta}</div>'
+        f'<div class="paper-badges">{tags}{badges}'
+        f'<span class="paper-links">{links}</span></div>'
+        f'</div>'
+        f'<div class="paper-cite"><span class="n">{cites_comma}</span>'
+        f'<span class="l">citations</span></div>'
+        f'</article>'
+    )
+
+
+def generate_publications_redesign(data):
+    """Generate the inner HTML for #publications-content (redesign).
+
+    Reads publications_data.json directly and emits the dashboard, controls,
+    filter chips, and all paper cards pre-sorted newest-first then most-cited.
+    """
+    pub_data = json.loads(PUBLICATIONS_JSON.read_text(encoding="utf-8"))
+    metrics = pub_data.get("metrics", {})
+    pubs = pub_data.get("publications", [])
+
+    total_papers = metrics.get("totalPapers", len(pubs))
+    total_citations = metrics.get("totalCitations", 0)
+    h_index = metrics.get("hIndex", 0)
+    i10_index = metrics.get("i10Index", 0)
+
+    # Per-category counts (by argmax researchArea)
+    cat_counts = {"sla": 0, "ii": 0, "ic": 0, "du": 0}
+    papers_with_year = []
+    for p in pubs:
+        if not p.get("year"):
+            continue
+        papers_with_year.append(p)
+        key = _PUB_CAT_MAP.get(p.get("researchArea", ""), ("du", ""))[0]
+        cat_counts[key] += 1
+
+    all_count = len(papers_with_year)
+
+    # Pre-sort: newest year first, then most cited
+    papers_with_year.sort(
+        key=lambda p: (-int(p.get("year", 0) or 0), -int(p.get("citations", 0) or 0))
+    )
+
+    cards = "".join(_generate_paper_card(p) for p in papers_with_year)
+
+    dashboard = (
+        '<div class="pub-dashboard">'
+        '<div class="pub-stats">'
+        f'<div class="pub-stat"><span class="n">{total_papers:,}</span>'
+        '<span class="l">Papers</span></div>'
+        f'<div class="pub-stat"><span class="n">{total_citations:,}</span>'
+        '<span class="l">Citations</span></div>'
+        f'<div class="pub-stat"><span class="n">{h_index}</span>'
+        '<span class="l">h-index</span></div>'
+        f'<div class="pub-stat"><span class="n">{i10_index}</span>'
+        '<span class="l">i10-index</span></div>'
+        '</div>'
+        '<figure class="pub-chart">'
+        '<figcaption class="pub-chart-head">'
+        '<span class="t">Citations per year</span>'
+        '<span class="m">peak 3,804 in 2025 · 16,908 total</span>'
+        '</figcaption>'
+        '<img class="chart-dark" src="assets/images/pubchart-dark.png" '
+        'alt="Citations per year, 2015 to 2026" width="1000" height="330">'
+        '<img class="chart-light" src="assets/images/pubchart-light.png" '
+        'alt="Citations per year, 2015 to 2026" width="1000" height="330">'
+        '</figure>'
+        '</div>'
+    )
+
+    controls = (
+        '<div class="pub-controls">'
+        '<input type="search" id="pub-search" class="pub-search" '
+        'placeholder="Search title or author…" aria-label="Search publications">'
+        '<select id="pub-sort" class="pub-sort" aria-label="Sort publications">'
+        '<option value="year">Newest first</option>'
+        '<option value="cites">Most cited</option></select>'
+        '<div class="pub-filters" id="pub-filters" role="group" '
+        'aria-label="Filter by research area">'
+        f'<button class="chip is-active" data-cat="all" aria-pressed="true">'
+        f'All <span class="ct">{all_count}</span></button>'
+        f'<button class="chip" data-cat="du" aria-pressed="false">'
+        f'<span class="dot d-du"></span>Discovery &amp; Understanding '
+        f'<span class="ct">{cat_counts["du"]}</span></button>'
+        f'<button class="chip" data-cat="ic" aria-pressed="false">'
+        f'<span class="dot d-ic"></span>Inference &amp; Computation '
+        f'<span class="ct">{cat_counts["ic"]}</span></button>'
+        f'<button class="chip" data-cat="sla" aria-pressed="false">'
+        f'<span class="dot d-sla"></span>Statistical Learning &amp; AI '
+        f'<span class="ct">{cat_counts["sla"]}</span></button>'
+        f'<button class="chip" data-cat="ii" aria-pressed="false">'
+        f'<span class="dot d-ii"></span>Interpretability &amp; Insight '
+        f'<span class="ct">{cat_counts["ii"]}</span></button>'
+        '</div>'
+        '</div>'
+    )
+
+    list_section = (
+        f'<div id="pub-list" class="pub-list">{cards}</div>'
+        '<p id="pub-empty" class="pub-empty" hidden>'
+        'No papers match your search/filters. '
+        '<button type="button" class="linkbtn" id="pub-reset">Show all</button></p>'
+        '<div class="pub-loadmore-wrap">'
+        '<button type="button" id="pub-loadmore" class="btn btn-ghost">Load more</button></div>'
+    )
+
+    return (
+        '<div class="container">'
+        + dashboard
+        + controls
+        + list_section
+        + '</div>'
+    )
+
+
 def build_page(page_name, html, data):
     """Apply all content injections to an HTML page and return updated HTML."""
 
@@ -1993,11 +2242,8 @@ def build_page(page_name, html, data):
         )
 
     elif page_name == "publications":
-        section_data = data["sections"].get("publications", {})
-        html = replace_element_text(html, "page-title", section_data.get("title", ""))
-        html = replace_element_text(html, "page-tagline", section_data.get("tagline", ""))
         html = replace_container_content(
-            html, "id", "publications-content", generate_publications(data)
+            html, "id", "publications-content", generate_publications_redesign(data)
         )
 
     return html
