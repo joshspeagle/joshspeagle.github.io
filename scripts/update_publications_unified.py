@@ -458,6 +458,38 @@ class UnifiedPublicationPipeline:
         except Exception as e:
             console.print(f"  ⚠️  Backup failed: {e}", style="yellow")
 
+        # Data-loss guard: refuse to overwrite the live file with a shrunken/empty merge.
+        new_count = len(self.merged_data.get("publications", []))
+        existing_count = 0
+        if output_path.exists():
+            try:
+                with open(output_path, "r", encoding="utf-8") as f:
+                    existing_count = len(json.load(f).get("publications", []))
+            except Exception as e:
+                console.print(
+                    f"  ⚠️  Could not read existing data for safety check: {e}",
+                    style="yellow",
+                )
+
+        min_required = max(50, int(0.7 * existing_count))
+        if new_count == 0 or new_count < min_required:
+            console.print(
+                f"  ❌ REFUSING TO SAVE: merged data has {new_count} publications, "
+                f"but the existing file has {existing_count} "
+                f"(minimum required to overwrite: {min_required}).",
+                style="bold red",
+            )
+            console.print(
+                "  ❌ This usually means a fetch was blocked or returned partial data. "
+                f"The live file at {output_path} was NOT modified.",
+                style="bold red",
+            )
+            console.print(
+                f"  ❌ The merged result is preserved in the backup: {backup_path}",
+                style="bold red",
+            )
+            return
+
         # Save main file
         output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_path, "w", encoding="utf-8") as f:
