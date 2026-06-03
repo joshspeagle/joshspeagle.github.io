@@ -1,0 +1,15 @@
+{
+  "name": "joshspeagle-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Self-hosted webfonts for joshspeagle.github.io. Fonts are vendored from node_modules into assets/fonts/ by scripts/setup_fonts.py; tokens + HTML are built in Python. (esbuild/PostCSS minification + CI is a later build-hardening pass.)",
+  "scripts": {
+    "fonts": "python scripts/setup_fonts.py",
+    "build": "python scripts/build_tokens.py && python scripts/setup_fonts.py && python scripts/build_html.py"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/source-serif-4": "^5.1.0",
+    "@fontsource/jetbrains-mono": "^5.1.0"
+  }
+}

@@ -1,0 +1,78 @@
+/* Design tokens — generated from assets/data/tokens.json by scripts/build_tokens.py. Do NOT hand-edit. */
+
+:root {
+  /* base (theme-independent) */
+  --font-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-cjk: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+  --fs-display: clamp(3rem, 6vw, 5rem);
+  --fs-h1: clamp(2.2rem, 4vw, 3.25rem);
+  --fs-h2: clamp(1.6rem, 2.6vw, 2rem);
+  --fs-h3: 1.25rem;
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9rem;
+  --fs-label: 0.78rem;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 80px;
+  --radius-sm: 8px;
+  --radius-card: 14px;
+  --radius-panel: 20px;
+  --radius-pill: 40px;
+  --maxw: 1200px;
+  /* color — dark (default) */
+  --bg-0: #06080f;
+  --bg-1: #0a0e20;
+  --bg-2: #0a1228;
+  --surface: rgba(255,255,255,0.04);
+  --surface-2: rgba(255,255,255,0.06);
+  --border: rgba(255,255,255,0.08);
+  --text: #eef1fb;
+  --text-2: #aeb6d6;
+  --text-3: #8a97c2;
+  --violet: #8b7bff;
+  --violet-bright: #a99bff;
+  --cyan: #34d3e0;
+  --cyan-bright: #5be0ee;
+  --blue: #5aa9ff;
+  --grad: linear-gradient(95deg,#a99bff,#6fd2ff);
+  --grad-text: linear-gradient(95deg,#bda9ff,#7cc9ff 55%,#5be0ee);
+  --cat-sla: #8b7bff;
+  --cat-ii: #34d3e0;
+  --cat-ic: #5aa9ff;
+  --cat-du: #ffb454;
+  --shadow-card: 0 8px 30px rgba(0,0,0,0.35);
+  --shadow-glow: 0 8px 32px rgba(124,92,255,0.45);
+}
+
+[data-theme="light"] {
+  --bg-0: #f6f6f1;
+  --bg-1: #eef0f5;
+  --bg-2: #e9ecf4;
+  --surface: #fffefb;
+  --surface-2: #f4f3ee;
+  --border: #e4e2d7;
+  --text: #14161d;
+  --text-2: #46444c;
+  --text-3: #7a7768;
+  --violet: #5b43d6;
+  --violet-bright: #7c5cff;
+  --cyan: #0e9aa8;
+  --cyan-bright: #0e9aa8;
+  --blue: #1565c0;
+  --grad: linear-gradient(95deg,#5b43d6,#0e9aa8);
+  --grad-text: linear-gradient(95deg,#5b43d6,#1565c0 55%,#0e9aa8);
+  --cat-sla: #5b43d6;
+  --cat-ii: #0e9aa8;
+  --cat-ic: #1565c0;
+  --cat-du: #b25a00;
+  --shadow-card: 0 10px 30px rgba(40,38,28,0.10);
+  --shadow-glow: 0 8px 26px rgba(91,67,214,0.30);
+}
