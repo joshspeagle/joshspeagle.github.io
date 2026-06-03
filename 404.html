@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found | Joshua S. Speagle</title>
+    <meta name="description" content="The page you requested could not be found.">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://joshspeagle.com/404.html">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/css/theme-variables.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
+    <link rel="stylesheet" href="/assets/css/circuit-components.css">
+    <link rel="stylesheet" href="/assets/css/mobile.css">
+
+    <script>
+        (function() {
+            const theme = localStorage.getItem('preferred-theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.classList.add('no-transition');
+        })();
+    </script>
+
+    <style>
+        .notfound-wrap {
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4rem 1.5rem;
+        }
+        .notfound-code {
+            font-size: clamp(4rem, 18vw, 9rem);
+            font-weight: 700;
+            line-height: 1;
+            margin: 0;
+            background: var(--gradient-title);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .notfound-title {
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            color: var(--text-primary);
+            margin: 1rem 0 0.5rem;
+        }
+        .notfound-text {
+            color: var(--text-primary);
+            opacity: 0.8;
+            max-width: 32rem;
+            margin: 0 auto 2rem;
+        }
+        .notfound-home {
+            display: inline-block;
+            padding: 0.75rem 1.75rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--bg-primary-1);
+            background: var(--accent-blue);
+            transition: opacity 0.2s ease;
+        }
+        .notfound-home:hover { opacity: 0.85; }
+    </style>
+</head>
+
+<body class="gradient-bg-main">
+    <main class="notfound-wrap" role="main">
+        <p class="notfound-code">404</p>
+        <h1 class="notfound-title">Page Not Found</h1>
+        <p class="notfound-text">The page you are looking for may have moved or no longer exists.</p>
+        <a class="notfound-home" href="/">Return to homepage</a>
+    </main>
+</body>
+
+</html>
