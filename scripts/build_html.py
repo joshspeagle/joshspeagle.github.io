@@ -19,6 +19,14 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 CONTENT_JSON = PROJECT_ROOT / "assets" / "data" / "content.json"
 PUBLICATIONS_JSON = PROJECT_ROOT / "assets" / "data" / "publications_data.json"
 
+# Redesign per-page content generators (scripts/ on path so they import cleanly)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from pages_talks import generate_content as gen_talks
+from pages_teaching import generate_content as gen_teaching
+from pages_mentorship import generate_content as gen_mentorship
+from pages_awards import generate_content as gen_awards
+from pages_service import generate_content as gen_service
+
 # HTML files to process
 HTML_FILES = {
     "index": PROJECT_ROOT / "index.html",
@@ -2196,50 +2204,19 @@ def build_page(page_name, html, data):
         html = replace_container_content(html, "id", "bio", generate_home_bio(data))
 
     elif page_name == "awards":
-        section_data = data["sections"].get("awards", {})
-        html = replace_element_text(html, "page-title", section_data.get("title", ""))
-        html = replace_element_text(html, "page-tagline", section_data.get("tagline", ""))
-        html = replace_container_content(
-            html, "id", "awards-content", generate_awards(data)
-        )
+        html = replace_container_content(html, "id", "awards-content", gen_awards(data))
 
     elif page_name == "service":
-        section_data = data["sections"].get("service", {})
-        html = replace_element_text(html, "page-title", section_data.get("title", ""))
-        html = replace_element_text(html, "page-tagline", section_data.get("tagline", ""))
-        html = replace_container_content(
-            html, "id", "service-content", generate_service(data)
-        )
+        html = replace_container_content(html, "id", "service-content", gen_service(data))
 
     elif page_name == "talks":
-        section_data = data["sections"].get("talks", {})
-        html = replace_element_text(html, "page-title", section_data.get("title", ""))
-        html = replace_element_text(html, "page-tagline", section_data.get("tagline", ""))
-        html = replace_container_content(
-            html, "id", "talks-content", generate_talks(data)
-        )
+        html = replace_container_content(html, "id", "talks-content", gen_talks(data))
 
     elif page_name == "teaching":
-        section_data = data["sections"].get("teaching", {})
-        html = replace_element_text(html, "page-title", section_data.get("title", ""))
-        html = replace_element_text(html, "page-tagline", section_data.get("tagline", ""))
-        html = replace_container_content(
-            html, "id", "teaching-content", generate_teaching(data)
-        )
+        html = replace_container_content(html, "id", "teaching-content", gen_teaching(data))
 
     elif page_name == "mentorship":
-        section_data = data["sections"].get("mentorship", {})
-        html = replace_element_text(html, "page-title", section_data.get("title", ""))
-        html = replace_element_text(html, "page-tagline", section_data.get("tagline", ""))
-        html = replace_container_content(
-            html, "id", "mentorship-overview", generate_mentorship_overview(data)
-        )
-        html = replace_container_content(
-            html, "id", "mentorship-current", generate_mentorship_current(data)
-        )
-        html = replace_container_content(
-            html, "id", "mentorship-former", generate_mentorship_former(data)
-        )
+        html = replace_container_content(html, "id", "mentorship-content", gen_mentorship(data))
 
     elif page_name == "publications":
         html = replace_container_content(

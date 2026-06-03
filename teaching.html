@@ -1,507 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teaching | Joshua S. Speagle</title>
-    <meta name="description" content="Courses, workshops, and educational resources by Joshua S. Speagle">
-    <meta property="og:title" content="Teaching | Joshua S. Speagle">
-    <meta property="og:description" content="Courses, workshops, and educational resources by Joshua S. Speagle.">
-    <meta property="og:type" content="website">
-    <meta property="og:site_name" content="Joshua S. Speagle">
-    <meta property="og:locale" content="en_US">
-    <meta property="og:url" content="https://joshspeagle.com/teaching.html">
-    <meta property="og:image" content="https://joshspeagle.com/assets/images/og-card.png">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://joshspeagle.com/assets/images/og-card.png">
-    <link rel="canonical" href="https://joshspeagle.com/teaching.html">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teaching · Joshua S. Speagle</title>
+  <meta name="description" content="Courses, short courses, and workshops taught by Joshua S. Speagle — statistical methods and computational thinking for scientific discovery at the University of Toronto.">
+  <link rel="canonical" href="https://joshspeagle.com/teaching.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Joshua S. Speagle">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="Teaching · Joshua S. Speagle">
+  <meta property="og:description" content="Courses, short courses, and workshops — statistical methods and computational thinking for scientific discovery.">
+  <meta property="og:url" content="https://joshspeagle.com/teaching.html">
+  <meta property="og:image" content="https://joshspeagle.com/assets/images/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://joshspeagle.com/assets/images/og-card.png">
 
-    <!-- Favicons, web manifest, theme color -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <meta name="theme-color" content="#0d1421">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon-32x32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="favicon-16x16.png" sizes="16x16" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="site.webmanifest">
+  <meta name="theme-color" content="#0d1421">
 
-    <!-- Optimized font loading -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>(function () { var t = localStorage.getItem('preferred-theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
 
-    <!-- Theme Variables (must load first for CSS custom properties) -->
-    <link rel="stylesheet" href="assets/css/theme-variables.css">
-
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/components.css">
-    <link rel="stylesheet" href="assets/css/circuit-components.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
-
-    <!-- Immediate theme detection (prevents flash of wrong theme) -->
-    <script>
-        (function() {
-            const theme = localStorage.getItem('preferred-theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', theme);
-            document.documentElement.classList.add('no-transition');
-        })();
-    </script>
+  <link rel="stylesheet" href="assets/css/fonts.css">
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/redesign.css">
 </head>
 
-<body class="gradient-bg-main">
-    <!-- Skip link for accessibility -->
-    <a href="#main-content" class="skip-link">Skip to main content</a>
-    
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-<h1 class="name">Joshua S. Speagle</h1>
-<p class="chinese-name">(沈佳士)</p>
-<p class="tagline">Statistical AI for Cosmic Discovery</p>
-</div>
-    </header>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
-    <!-- Quick Links Bar -->
-    <div class="quick-links-bar">
-        <div class="container">
-            <div class="quick-links-inline">
-<a href="https://joshspeagle.com/bio-cv/CV_speagle.pdf" class="quick-link-inline" aria-label="Download CV PDF">📄 CV</a><a href="https://astrostatuoft.com/" class="quick-link-inline" aria-label="Visit Astrostatistics Research Team website">✨ Research Group</a><a href="https://github.com/joshspeagle/" class="quick-link-inline" aria-label="Visit GitHub profile"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="vertical-align: middle; margin-right: 4px;"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> GitHub</a><div class="quick-link-dropdown"><button class="quick-link-inline dropdown-toggle" aria-expanded="false" aria-haspopup="true" aria-label="Academic pages and resources">📋 Academic<span class="dropdown-arrow">▼</span></button><div class="dropdown-menu"><a href="mentorship.html" class="dropdown-item">Mentorship</a><a href="publications.html" class="dropdown-item">Publications</a><a href="talks.html" class="dropdown-item">Talks</a><a href="teaching.html" class="dropdown-item">Teaching</a><a href="awards.html" class="dropdown-item">Awards</a><a href="service.html" class="dropdown-item">Service</a></div></div>
-</div>
-        </div>
+  <nav class="nav" aria-label="Primary">
+    <a class="brand" href="index.html"><span class="star" aria-hidden="true">✦</span>Joshua S. Speagle</a>
+    <div class="nav-links">
+      <a class="nav-item" href="index.html">Home</a>
+      <div class="nav-group"><button class="nav-trigger" aria-haspopup="true" aria-expanded="false">Research <span aria-hidden="true">▾</span></button>
+        <div class="menu"><a href="publications.html">Publications</a><a href="index.html#software">Software</a><a href="talks.html">Talks</a></div></div>
+      <div class="nav-group"><button class="nav-trigger" aria-haspopup="true" aria-expanded="false">People <span aria-hidden="true">▾</span></button>
+        <div class="menu"><a href="mentorship.html">Group / ART</a><a href="mentorship.html">Mentorship</a><a href="teaching.html" aria-current="page">Teaching</a></div></div>
+      <div class="nav-group"><button class="nav-trigger" aria-haspopup="true" aria-expanded="false">About <span aria-hidden="true">▾</span></button>
+        <div class="menu"><a href="index.html#bio">Biography</a><a href="index.html#news">News</a><a href="awards.html">Awards</a><a href="service.html">Service</a></div></div>
     </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <a class="cv-btn" href="https://joshspeagle.com/bio-cv/CV_speagle.pdf">Curriculum Vitae</a>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode">☾</button>
+      <button class="theme-toggle hamburger" id="hamburger" type="button" aria-label="Open menu">☰</button>
+    </div>
+  </nav>
 
-    <!-- Navigation -->
-    <nav class="nav">
-        <div class="nav-container">
-<a href="index.html" class="nav-link home-button"><span class="home-icon">🏠</span> Home</a><button class="nav-link top-button" data-action="scroll-top" type="button" aria-label="Scroll to top"><span class="top-icon">⬆️</span> Top</button>
+  <main id="main-content" tabindex="-1">
+    <section class="pub-header">
+      <div class="pub-header-glow" aria-hidden="true"></div>
+      <div class="container">
+        <p class="section-kicker">Teaching &amp; education</p>
+        <h1 class="pub-h1">Teaching</h1>
+        <p class="pub-sub">Statistical methods and computational thinking for scientific discovery — courses, short courses, and hands-on workshops.</p>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <!-- build_html.py fills this from content.json (sections.teaching) via scripts/pages_teaching.py -->
+      <div id="teaching-content">
+<div class="container">
+<div data-listview data-lv-batch="0" data-lv-sort="year">
+<div class="pub-controls">
+<input type="search" class="pub-search" data-lv-search placeholder="Search courses…" aria-label="Search courses…">
+<select class="pub-sort" data-lv-sort-control aria-label="Sort"><option value="year">Most recent</option><option value="az">A–Z</option></select>
+<div class="pub-filters" data-lv-filters role="group" aria-label="Filter"><button class="chip is-active" data-cat="all" aria-pressed="true">All <span class="ct">6</span></button><button class="chip" data-cat="astronomy" aria-pressed="false"><span class="dot d-astronomy"></span>Astronomy <span class="ct">4</span></button><button class="chip" data-cat="statistics" aria-pressed="false"><span class="dot d-statistics"></span>Statistics <span class="ct">3</span></button></div>
 </div>
-    </nav>
+<div class="pub-list" data-lv-list><article class="item accent-violet" data-lv-item data-cat="astronomy" data-search="ast424 introduction to astrophysical research undergraduate astronomy research methods and project-based learning in astrophysics fall 2025 full year 2023-2024" data-year="2025" data-num="2025" data-title="ast424 · introduction to astrophysical research"><div class="item-head"><h3 class="item-title">AST424 · Introduction to Astrophysical Research</h3><span class="item-when">Fall 2025 · Full Year 2023-2024</span></div><p class="item-meta">Undergraduate · Astronomy — Research methods and project-based learning in astrophysics</p><div class="item-tags"><span class="badge">Undergraduate</span></div></article><article class="item accent-violet" data-lv-item data-cat="statistics" data-search="sta437 methods for multivariate data undergraduate statistics practical techniques for multivariate data analysis including dimensionality reduction, classification, and inference winter 2026" data-year="2026" data-num="2026" data-title="sta437 · methods for multivariate data"><div class="item-head"><h3 class="item-title">STA437 · Methods for Multivariate Data</h3><span class="item-when">Winter 2026</span></div><p class="item-meta">Undergraduate · Statistics — Practical techniques for multivariate data analysis including dimensionality reduction, classification, and inference</p><div class="item-tags"><span class="badge">Undergraduate</span></div></article><article class="item accent-violet" data-lv-item data-cat="statistics" data-search="sta130 introduction to statistical reasoning and data science undergraduate statistics foundational course in statistical thinking and data analysis winter 2024 winter 2023" data-year="2024" data-num="2024" data-title="sta130 · introduction to statistical reasoning and data science"><div class="item-head"><h3 class="item-title">STA130 · Introduction to Statistical Reasoning and Data Science</h3><span class="item-when">Winter 2024 · Winter 2023</span></div><p class="item-meta">Undergraduate · Statistics — Foundational course in statistical thinking and data analysis</p><div class="item-tags"><span class="badge">Undergraduate</span></div></article><article class="item accent-violet" data-lv-item data-cat="astronomy" data-search="ast3101 module: ethics and practice in astronomy graduate astronomy research ethics and professional practice in astronomy winter 2024 winter 2022" data-year="2024" data-num="2024" data-title="ast3101 · module: ethics and practice in astronomy"><div class="item-head"><h3 class="item-title">AST3101 · Module: Ethics and Practice in Astronomy</h3><span class="item-when">Winter 2024 · Winter 2022</span></div><p class="item-meta">Graduate · Astronomy — Research ethics and professional practice in astronomy</p><div class="item-tags"><span class="badge">Graduate</span></div></article><article class="item accent-violet" data-lv-item data-cat="astronomy statistics" data-search="jas1101 introduction to astrostatistics graduate astronomy / statistics statistical methods for astronomical research fall 2022 winter 2022 (partial)" data-year="2022" data-num="2022" data-title="jas1101 · introduction to astrostatistics"><div class="item-head"><h3 class="item-title">JAS1101 · Introduction to Astrostatistics</h3><span class="item-when">Fall 2022 · Winter 2022 (partial)</span></div><p class="item-meta">Graduate · Astronomy / Statistics — Statistical methods for astronomical research</p><div class="item-tags"><span class="badge">Graduate</span></div></article><article class="item accent-violet" data-lv-item data-cat="astronomy" data-search="ast3101 module: introduction to sampling graduate astronomy advanced sampling techniques in astronomical data analysis fall 2021" data-year="2021" data-num="2021" data-title="ast3101 · module: introduction to sampling"><div class="item-head"><h3 class="item-title">AST3101 · Module: Introduction to Sampling</h3><span class="item-when">Fall 2021</span></div><p class="item-meta">Graduate · Astronomy — Advanced sampling techniques in astronomical data analysis</p><div class="item-tags"><span class="badge">Graduate</span></div></article></div>
+<p class="pub-empty" data-lv-empty hidden>No items match your search or filters. <button type="button" class="linkbtn" data-lv-reset>Show all</button></p>
 
-    <!-- Main Content -->
+</div>
+</div><div class="container"><h2 class="item-section-title">Short courses &amp; workshops</h2><div class="pub-list"><article class="item accent-violet"><div class="item-head"><h3 class="item-title">Bayesian Inference</h3><span class="item-when">Jun 2026</span></div><p class="item-meta">University of Toronto Statistical Sciences Research Program (UTSSRP) · Toronto, ON</p></article><article class="item accent-violet"><div class="item-head"><h3 class="item-title">A Conceptual Introduction to Deep Learning</h3><span class="item-when">Jun 2025</span></div><p class="item-meta">Penn State: Summer School in Statistics for Astronomers · Virtual</p></article><article class="item accent-violet"><div class="item-head"><h3 class="item-title">Nested Sampling: Past, Present, and Future</h3><span class="item-when">Jun 2025 · Jun 2024</span></div><p class="item-meta">Penn State: Summer School in Statistics for Astronomers · Virtual</p></article><article class="item accent-violet"><div class="item-head"><h3 class="item-title">Machine Learning for Star Cluster Science (with Steffani Grondin)</h3><span class="item-when">Sep 2023</span></div><p class="item-meta">2023 ESO Conference: Two in a million · Garching, Germany</p></article><article class="item accent-violet"><div class="item-head"><h3 class="item-title">Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Grondin)</h3><span class="item-when">Aug 2023</span></div><p class="item-meta">University of Michigan: 2023 Clusters &amp; Streams Workshop · Ann Arbor, MI</p></article><article class="item accent-violet"><div class="item-head"><h3 class="item-title">Uncertainty and Interpretability in Machine Learning Models (with Alex Gagliano)</h3><span class="item-when">Aug 2023</span></div><p class="item-meta">NSF IAIFI Summer School · Boston, MA</p></article><article class="item accent-violet"><div class="item-head"><h3 class="item-title">A Tutorial of (Dynamic) Nested Sampling</h3><span class="item-when">Jun 2023</span></div><p class="item-meta">Statistical Challenges in Modern Astronomy VIII · State College, PA</p></article><article class="item accent-violet"><div class="item-head"><h3 class="item-title">Introduction to Bayesian Inference with Linear Regression</h3><span class="item-when">Aug 2020</span></div><p class="item-meta">Astro Hack Week 2020 · Virtual</p></article></div></div>
+</div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
     <div class="container">
-        <main id="main-content" tabindex="-1">
-            <!-- Page Header -->
-            <section class="page-header section">
-                <h1 id="page-title">Teaching & Education</h1>
-                <p id="page-tagline" class="tagline">Statistical methods and computational thinking for scientific discovery</p>
-            </section>
-
-            <!-- Main Content Section -->
-            <section id="teaching-content" class="section">
-<div class="page-intro">
-<div class="highlight-box">
-<h3>Teaching Philosophy</h3>
-<p>I believe in hands-on learning that connects theoretical concepts to real-world applications. My courses emphasize computational skills, critical thinking, and the ability to communicate complex ideas clearly.</p>
-</div>
-</div>
-
-<div class="highlight-box">
-<h3>Teaching History</h3>
-<nav class="teaching-filters" role="navigation" aria-label="Filter courses by department and level">
-<div class="filter-section">
-<h4 class="filter-section-title">All Courses</h4>
-<button class="filter-btn active" data-filter="all" data-filter-type="general" aria-pressed="true" aria-label="Reset to show all courses, 10 total">
-All Courses (10)
-</button>
-</div>
-
-<div class="filter-section">
-<h4 class="filter-section-title">By Department</h4>
-<div class="filter-buttons-row">
-<button class="filter-btn active dept-badge dept-badge-astronomy" data-filter="astronomy" data-filter-type="department" aria-pressed="true" aria-label="Toggle Astronomy courses, 7 offerings">
-Astronomy (7)
-</button>
-<button class="filter-btn active dept-badge dept-badge-statistics" data-filter="statistics" data-filter-type="department" aria-pressed="true" aria-label="Toggle Statistics courses, 5 offerings">
-Statistics (5)
-</button>
-</div>
-</div>
-
-<div class="filter-section">
-<h4 class="filter-section-title">By Level</h4>
-<div class="filter-buttons-row">
-<button class="filter-btn active level-badge level-badge-undergraduate" data-filter="undergraduate" data-filter-type="level" aria-pressed="true" aria-label="Toggle Undergraduate courses, 5 offerings">
-Undergraduate (5)
-</button>
-<button class="filter-btn active level-badge level-badge-graduate" data-filter="graduate" data-filter-type="level" aria-pressed="true" aria-label="Toggle Graduate courses, 5 offerings">
-Graduate (5)
-</button>
-</div>
-</div>
-</nav>
-<div aria-live="polite" aria-atomic="true" class="sr-only" id="teaching-filter-status"></div>
-<div class="course-history">
-<article class="course-card" data-departments="astronomy" data-level="undergraduate" aria-labelledby="course-0-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="course-0-title">
-<span class="course-code">AST424</span>
-Introduction to Astrophysical Research
-</h4>
-<div class="course-badges">
-<span class="level-badge level-badge-undergraduate">Undergraduate</span>
-<span class="dept-badge dept-badge-astronomy">Astronomy</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Research methods and project-based learning in astrophysics</p>
-<div class="course-terms">
-<strong>Terms Taught:</strong>
-<div class="terms-list">
-<span class="term-badge">Fall 2025</span>
-<span class="term-badge">Full Year 2023-2024</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-departments="statistics" data-level="undergraduate" aria-labelledby="course-1-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="course-1-title">
-<span class="course-code">STA437</span>
-Methods for Multivariate Data
-</h4>
-<div class="course-badges">
-<span class="level-badge level-badge-undergraduate">Undergraduate</span>
-<span class="dept-badge dept-badge-statistics">Statistics</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Practical techniques for multivariate data analysis including dimensionality reduction, classification, and inference</p>
-<div class="course-terms">
-<strong>Terms Taught:</strong>
-<div class="terms-list">
-<span class="term-badge">Winter 2026</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-departments="statistics" data-level="undergraduate" aria-labelledby="course-2-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="course-2-title">
-<span class="course-code">STA130</span>
-Introduction to Statistical Reasoning and Data Science
-</h4>
-<div class="course-badges">
-<span class="level-badge level-badge-undergraduate">Undergraduate</span>
-<span class="dept-badge dept-badge-statistics">Statistics</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Foundational course in statistical thinking and data analysis</p>
-<div class="course-terms">
-<strong>Terms Taught:</strong>
-<div class="terms-list">
-<span class="term-badge">Winter 2024</span>
-<span class="term-badge">Winter 2023</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-departments="astronomy" data-level="graduate" aria-labelledby="course-3-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="course-3-title">
-<span class="course-code">AST3101</span>
-Module: Ethics and Practice in Astronomy
-</h4>
-<div class="course-badges">
-<span class="level-badge level-badge-graduate">Graduate</span>
-<span class="dept-badge dept-badge-astronomy">Astronomy</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Research ethics and professional practice in astronomy</p>
-<div class="course-terms">
-<strong>Terms Taught:</strong>
-<div class="terms-list">
-<span class="term-badge">Winter 2024</span>
-<span class="term-badge">Winter 2022</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-departments="astronomy statistics" data-level="graduate" aria-labelledby="course-4-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="course-4-title">
-<span class="course-code">JAS1101</span>
-Introduction to Astrostatistics
-</h4>
-<div class="course-badges">
-<span class="level-badge level-badge-graduate">Graduate</span>
-<span class="dept-badge dept-badge-astronomy">Astronomy</span>
-<span class="dept-badge dept-badge-statistics">Statistics</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Statistical methods for astronomical research</p>
-<div class="course-terms">
-<strong>Terms Taught:</strong>
-<div class="terms-list">
-<span class="term-badge">Winter 2022 (partial)</span>
-<span class="term-badge">Fall 2022</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-departments="astronomy" data-level="graduate" aria-labelledby="course-5-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="course-5-title">
-<span class="course-code">AST3101</span>
-Module: Introduction to Sampling
-</h4>
-<div class="course-badges">
-<span class="level-badge level-badge-graduate">Graduate</span>
-<span class="dept-badge dept-badge-astronomy">Astronomy</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Advanced sampling techniques in astronomical data analysis</p>
-<div class="course-terms">
-<strong>Terms Taught:</strong>
-<div class="terms-list">
-<span class="term-badge">Fall 2021</span>
-</div>
-</div>
-</div>
-</article>
-</div>
-</div>
-
-<div class="highlight-box">
-<h3>Short Courses &amp; Workshops</h3>
-<nav class="workshop-filters" role="navigation" aria-label="Filter workshops by year">
-<div class="filter-section">
-<h4 class="filter-section-title">By Year</h4>
-<div class="filter-buttons-row">
-<button class="filter-btn active" data-filter="all" data-filter-type="workshop-year" aria-pressed="true" aria-label="Show all workshops, 9 total">All (9)</button>
-<button class="filter-btn active" data-filter="2026" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2026 workshops, 1 offerings">2026 (1)</button>
-<button class="filter-btn active" data-filter="2025" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2025 workshops, 2 offerings">2025 (2)</button>
-<button class="filter-btn active" data-filter="2024" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2024 workshops, 1 offerings">2024 (1)</button>
-<button class="filter-btn active" data-filter="2023" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2023 workshops, 4 offerings">2023 (4)</button>
-<button class="filter-btn active" data-filter="2020" data-filter-type="workshop-year" aria-pressed="true" aria-label="Toggle 2020 workshops, 1 offerings">2020 (1)</button>
-</div>
-</div>
-</nav>
-<div aria-live="polite" aria-atomic="true" class="sr-only" id="workshop-filter-status"></div>
-<div class="course-history">
-<article class="course-card" data-years="2026" aria-labelledby="short-course-0-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-0-title">
-Bayesian Inference
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">University of Toronto Statistical Sciences Research Program (UTSSRP) — Toronto, ON</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Jun 2026</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-years="2025" aria-labelledby="short-course-1-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-1-title">
-A Conceptual Introduction to Deep Learning
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Penn State: Summer School in Statistics for Astronomers — Virtual</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Jun 2025</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-years="2025 2024" aria-labelledby="short-course-2-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-2-title">
-Nested Sampling: Past, Present, and Future
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Penn State: Summer School in Statistics for Astronomers — Virtual</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Jun 2025</span>
-<span class="term-badge">Jun 2024</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-years="2023" aria-labelledby="short-course-3-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-3-title">
-Machine Learning for Star Cluster Science (with Steffani Grondin)
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">2023 ESO Conference: Two in a million — Garching, Germany</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Sep 2023</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-years="2023" aria-labelledby="short-course-4-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-4-title">
-Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Grondin)
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">University of Michigan: 2023 Clusters & Streams Workshop — Ann Arbor, MI</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Aug 2023</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-years="2023" aria-labelledby="short-course-5-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-5-title">
-Uncertainty and Interpretability in Machine Learning Models (with Alex Gagliano)
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">NSF IAIFI Summer School — Boston, MA</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Aug 2023</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-years="2023" aria-labelledby="short-course-6-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-6-title">
-A Tutorial of (Dynamic) Nested Sampling
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Statistical Challenges in Modern Astronomy VIII — State College, PA</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Jun 2023</span>
-</div>
-</div>
-</div>
-</article>
-<article class="course-card" data-years="2020" aria-labelledby="short-course-7-title" role="article">
-<div class="course-header">
-<div class="course-title-section">
-<h4 class="course-title" id="short-course-7-title">
-Introduction to Bayesian Inference with Linear Regression
-</h4>
-<div class="course-badges">
-<span class="dept-badge dept-badge-workshop">Workshop</span>
-</div>
-</div>
-</div>
-
-<div class="course-details">
-<p class="course-description">Astro Hack Week 2020 — Virtual</p>
-<div class="course-terms">
-<strong>Dates:</strong>
-<div class="terms-list">
-<span class="term-badge">Aug 2020</span>
-</div>
-</div>
-</div>
-</article>
-</div>
-</div>
-</section>
-        </main>
+      <span>© 2026 Joshua S. Speagle · 沈佳士</span>
+      <span>Updated March 2026 · data from SAO/NASA ADS &amp; Google Scholar</span>
     </div>
+  </footer>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-<p>© 2026 Joshua S. Speagle. This page was last updated on April 6, 2026.</p>
-<p style="font-size: 0.9rem; opacity: 0.7; margin-top: 0.5rem;">Built, designed, and maintained in collaboration with Claude (Sonnet 4+, Opus 4+).</p>
-</div>
-    </footer>
-
-    <!-- Page Configuration -->
-    <script>
-        window.currentPage = 'teaching';
-    </script>
-
-    <!-- Content Loader (loads before modules for content rendering) -->
-    <script type="module" src="assets/js/content-loader.js"></script>
-
-    <!-- Main Application Module (ES6 - imports theme, navigation, animations) -->
-    <script type="module" src="assets/js/main.js"></script>
+  <script>
+    (function () {
+      var b = document.getElementById('theme-toggle');
+      function icon() { b.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☾' : '☀'; }
+      b.addEventListener('click', function () {
+        var nx = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nx);
+        try { localStorage.setItem('preferred-theme', nx); } catch (e) {}
+        icon();
+      });
+      icon();
+    })();
+  </script>
+  <script src="assets/js/redesign/listview.js" defer></script>
 </body>
-
 </html>

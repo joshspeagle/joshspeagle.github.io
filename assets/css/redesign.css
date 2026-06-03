@@ -149,6 +149,25 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 @media (max-width: 920px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 620px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
+/* ---------------- Generic interactive list (talks/teaching/mentorship/awards/service) ---------------- */
+/* reuses .pub-header/.pub-h1/.pub-sub, .pub-controls/.pub-search/.pub-sort/.pub-filters,
+   .chip/.badge/.tag/.is-hidden/.pub-empty/.pub-loadmore-wrap/.linkbtn from the Publications block. */
+.item { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--border); border-radius: var(--radius-card); padding: var(--space-5); }
+.item.accent-sla { border-left-color: var(--cat-sla); }
+.item.accent-ii  { border-left-color: var(--cat-ii); }
+.item.accent-ic  { border-left-color: var(--cat-ic); }
+.item.accent-du  { border-left-color: var(--cat-du); }
+.item.accent-violet { border-left-color: var(--violet); }
+.item.student { border-left-color: #ff9d4d; background: linear-gradient(90deg, color-mix(in srgb, #ff9d4d 7%, transparent), var(--surface) 42%); }
+.item-head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: baseline; flex-wrap: wrap; }
+.item-title { font-family: var(--font-serif); font-size: var(--fs-h3); margin: 0 0 4px; color: var(--text); }
+.item-when { font-family: var(--font-mono); font-size: var(--fs-label); color: var(--text-3); white-space: nowrap; }
+.item-meta { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; }
+.item-meta strong { color: var(--text); font-weight: 600; }
+.item-meta a, .item-links a { color: var(--blue); }
+.item-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-3); align-items: center; }
+.item-section-title { font-family: var(--font-serif); font-size: var(--fs-h3); color: var(--text); margin: var(--space-7) 0 var(--space-4); }
+
 /* ---------------- Footer ---------------- */
 .site-footer { border-top: 1px solid var(--border); padding: var(--space-7) 0; color: var(--text-3); font-size: var(--fs-small); }
 .site-footer .container { display: flex; justify-content: space-between; gap: var(--space-5); flex-wrap: wrap; }
@@ -397,3 +416,9 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
   }
   .paper-cite { text-align: left; align-items: flex-start; flex-direction: row; gap: var(--space-2); align-items: baseline; }
 }
+
+/* mentorship stage chip dots (match item accents) */
+.d-postdoc{background:var(--cat-sla)}
+.d-doctoral{background:var(--cat-ii)}
+.d-masters{background:var(--cat-ic)}
+.d-bachelors{background:var(--cat-du)}
