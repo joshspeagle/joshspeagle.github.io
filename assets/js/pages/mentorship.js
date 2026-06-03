@@ -396,29 +396,20 @@ export function loadMoreMentees(sectionId, type, isCompleted) {
         // Get the current mentees count
         const currentMentees = container.children.length;
 
-        // Find the right mentee data source
-        let menteeSource;
-        if (isCompleted) {
-            if (sectionId.includes('postdoctoral')) {
-                menteeSource = allMenteesData.menteesByStage.completed.postdoctoral;
-            } else if (sectionId.includes('doctoral')) {
-                menteeSource = allMenteesData.menteesByStage.completed.doctoral;
-            } else if (sectionId.includes('mastersProjects')) {
-                menteeSource = allMenteesData.menteesByStage.completed.mastersProjects;
-            } else {
-                menteeSource = allMenteesData.menteesByStage.completed.bachelors;
-            }
-        } else {
-            if (sectionId.includes('postdoctoral')) {
-                menteeSource = allMenteesData.menteesByStage.postdoctoral;
-            } else if (sectionId.includes('doctoral')) {
-                menteeSource = allMenteesData.menteesByStage.doctoral;
-            } else if (sectionId.includes('mastersProjects')) {
-                menteeSource = allMenteesData.menteesByStage.mastersProjects;
-            } else {
-                menteeSource = allMenteesData.menteesByStage.bachelors;
-            }
-        }
+        // Find the right mentee data source.
+        // Map the reliable `type` value (from data-type) to its data key.
+        // Note: postdocs use type 'postdoc' but the data key is 'postdoctoral'.
+        const typeToKey = {
+            postdoc: 'postdoctoral',
+            doctoral: 'doctoral',
+            mastersProjects: 'mastersProjects',
+            bachelors: 'bachelors'
+        };
+        const dataKey = typeToKey[type] || 'bachelors';
+        const stageData = isCompleted
+            ? (allMenteesData.menteesByStage.completed || {})
+            : allMenteesData.menteesByStage;
+        const menteeSource = stageData[dataKey];
 
         if (!menteeSource) {
             return;
