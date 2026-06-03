@@ -20,8 +20,9 @@ function formatDataSources(sources) {
 
 export async function loadPublicationsContent(publicationsSection, staticData) {
     try {
-        // Show loading state
-        publicationsSection.innerHTML = '<div class="loading-indicator">Loading publication data...</div>';
+        // Do NOT clear publicationsSection here: the pre-rendered static HTML
+        // (featured + recent papers) must stay visible until the dynamic content
+        // is ready, then we swap once. This avoids a spinner flash on every visit.
 
         // Try to fetch dynamic publication data and mentorship data in parallel
         const [publicationsResponse, mentorshipResponse] = await Promise.all([
