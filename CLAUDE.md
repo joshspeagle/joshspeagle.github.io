@@ -2,64 +2,64 @@
 
 ## Project Overview
 
-Personal academic website for Joshua S. Speagle (joshspeagle.github.io). Static HTML/CSS/JS site hosted on GitHub Pages. Static HTML is pre-rendered from `content.json` for SEO; JavaScript adds progressive enhancement (animations, filtering, lazy loading).
+Personal academic website for Joshua S. Speagle (joshspeagle.github.io). Static HTML/CSS/JS on GitHub Pages. **Redesigned June 2026** onto a design-token system with self-hosted fonts and an animated hero. All HTML is pre-rendered from `content.json` by `build_html.py` for SEO; lightweight JS adds interactivity (theme toggle, the hero canvas, and a generic search/filter/sort/load-more list).
 
 ## Development Workflow
 
 ```bash
-python scripts/build_html.py    # Regenerate static HTML after editing content.json
-python -m http.server 8000      # Local development server
+npm install                      # one-time: fetch self-hosted fonts (@fontsource)
+python scripts/setup_fonts.py    # vendor fonts -> assets/fonts/ + fonts.css
+python scripts/build_tokens.py   # tokens.json -> assets/css/tokens.css
+python scripts/build_html.py     # regenerate all pages from content.json
+python -m http.server 8000       # local dev server
 ```
 
-- **Content edits go in `content.json`, not HTML files.** Then run the build script.
-- **Python packages**: Use `uv pip install` instead of `pip install`
-- **Deployment**: Push to `master`, GitHub Pages auto-deploys
+- **Content edits go in `assets/data/content.json`, not HTML files.** Then run `build_html.py`.
+- **Full rebuild**: `npm run build` (runs tokens → fonts → `build_html.py`).
+- **Python packages**: use `uv pip install` instead of `pip install`.
+- **Deployment**: push to `master`, GitHub Pages auto-deploys.
 
 ## Architecture
 
-### Two-Layer Content System
+### Build system (content.json → static HTML)
 
-1. **Static HTML** (SEO): `scripts/build_html.py` reads `assets/data/content.json` and injects content into all 7 HTML page templates. Idempotent.
-2. **JS Enhancement**: `content-loader.js` (ES6 module) fetches `content.json` and delegates to page modules in `assets/js/pages/`. All populate functions have **"skip if populated" guards** so they preserve static HTML.
+`scripts/build_html.py` reads `assets/data/content.json` and fills each page's `#<page>-content` container(s). The **9 HTML pages** (Home, Publications, Talks, Teaching, Mentorship, Awards, Service, Software, News) are **static shells** (head, nav, hero/header band, footer); only the content area is generated — so the static HTML *is* the SEO layer and JS only adds interactivity. Idempotent.
+
+- Home sections: `generate_home_*` in `build_html.py`.
+- Publications: `generate_publications_redesign` pre-renders **all ~130 papers** from `publications_data.json` (no Chart.js, no runtime JSON fetch).
+- Other pages: one generator each in `scripts/pages_<page>.py` (talks/teaching/mentorship/awards/service/software/news), sharing `scripts/pages_shared.py` (`scaffold()`, `esc`, `attr_esc`).
+
+### Design tokens & fonts
+
+- `assets/data/tokens.json` → `scripts/build_tokens.py` → `assets/css/tokens.css` (single source of truth: `:root` dark + `[data-theme="light"]`).
+- Self-hosted fonts: `npm install` (`@fontsource/*`) → `scripts/setup_fonts.py` vendors woff2 into `assets/fonts/` + writes `assets/css/fonts.css`. **Source Serif 4** (serif) · **Inter** (sans) · **JetBrains Mono** (mono); CJK (沈佳士) falls back to system fonts.
 
 ### Key Files
 
 | File | Purpose |
 |------|---------|
-| `assets/data/content.json` | All site content (~2,600 lines) |
-| `assets/data/publications_data.json` | Publication metadata with categories |
-| `scripts/build_html.py` | Static HTML build script |
-| `assets/js/main.js` | ES6 module entry point (theme, nav, animations) |
-| `assets/js/content-loader.js` | ES6 module orchestrator — dynamic imports to `pages/` modules |
-| `assets/js/pages/*.js` | Page-specific modules: shared, home, publications, mentorship, talks, teaching, awards, service |
-| `assets/css/theme-variables.css` | CSS custom properties (**must load first**) |
-| `robots.txt`, `sitemap.xml` | SEO — update `sitemap.xml` when adding new pages |
+| `assets/data/content.json` | All site content (incl. `software` + `news` sections) |
+| `assets/data/publications_data.json` | Publication metadata (pipeline output) |
+| `assets/data/tokens.json` | Design tokens (source) |
+| `scripts/build_html.py` | Build: fills page content from content.json |
+| `scripts/build_tokens.py` · `scripts/setup_fonts.py` | tokens → CSS · vendor fonts |
+| `scripts/pages_shared.py` + `scripts/pages_<page>.py` | per-page content generators |
+| `assets/css/{fonts,tokens,redesign}.css` | the only stylesheets |
+| `assets/js/redesign/hero.js` | animated inference-field hero (decorative, `aria-hidden`) |
+| `assets/js/redesign/listview.js` | generic search/filter/sort/load-more (data-attr driven) |
+| `assets/js/redesign/publications.js` | publications list interactivity |
+| `robots.txt`, `sitemap.xml` | SEO — update `sitemap.xml` when adding pages |
 
-### Page Modules
+### CSS Load Order
 
-Each HTML file sets `window.currentPage` (e.g., `window.currentPage = 'talks'`), which `content-loader.js` uses to dynamically import the correct page module. Both `content-loader.js` and `main.js` are loaded as `<script type="module">`.
+`fonts.css` → `tokens.css` → `redesign.css`. *(The legacy `theme-variables/main/components/circuit-components/mobile/publications-stats` CSS and the old `content-loader.js`/`main.js`/`pages/*.js`/`utils/*` JS were removed in the redesign.)*
 
-| Page | Module | Key Features |
-|------|--------|-------------|
-| **Home** | `home.js` | Profile, team, research cards, opportunity cards, biography timeline |
-| **Publications** | `publications.js` | Chart.js stats dashboard, category badges, batch loading (20/page) |
-| **Mentorship** | `mentorship.js` | Overview charts, mentee cards, batch loading (20/page) |
-| **Talks** | `talks.js` | Category filtering + pagination (filter first, then paginate within results) |
-| **Teaching** | `teaching.js` | Department/level filtering |
-| **Awards** | `awards.js` | Static card grid |
-| **Service** | `service.js` | Static organizational hierarchy |
+### Interactivity & patterns
 
-### CSS Load Order (Critical)
-
-`theme-variables.css` → `main.css` → `components.css` → `circuit-components.css` → `mobile.css`
-
-### JS Patterns
-
-- **Event delegation**: `data-action` attributes (e.g., `load-more-publications`, `load-more-talks`, `load-more-mentees`). Handler in `content-loader.js` calls global functions set by page modules.
-- **Images**: `<picture>` with WebP `<source>` and JPG fallback. Always set `width`/`height` attributes and `height: auto` in CSS.
-- **Theme colors**: Use CSS custom properties from `theme-variables.css`
-- **Accessibility**: WCAG 2.1 AA, keyboard navigation, ARIA labels
-- **Card layouts**: Use `.research-card` and `.research-grid`
+- **Lists** (`listview.js`): wrap in `<div data-listview data-lv-batch="N">` with `[data-lv-search]`, optional `[data-lv-sort-control]`, `[data-lv-filters]` (`.chip[data-cat]`), and `[data-lv-list]` of `[data-lv-item]` cards carrying `data-cat/data-search/data-year/data-num/data-title`. `pages_shared.scaffold()` emits this; `listview.js` wires it.
+- **Theme**: `data-theme` on `<html>` (inline script per page; toggle persists to `localStorage['preferred-theme']`).
+- **Accessibility**: WCAG 2.1 AA contrast in both themes; visible focus; skip link to focusable `<main>`.
+- **Category colors**: `--cat-sla/ii/ic/du`; papers badge categories with ≥20% probability; student-led get an amber accent.
 
 ## Content Update Checklist
 
@@ -78,8 +78,10 @@ When the user asks to "update the website", walk through each category below and
 | 9 | **Teaching** | Course history, short courses & workshops, teaching stats | 2026-04-06 |
 | 10 | **Awards** | New awards or honors | 2026-03-09 |
 | 11 | **Service** | Society roles, committee memberships, conference org, referee list | 2026-04-06 |
-| 12 | **Publications** | Automated pipeline — see "Publication Pipeline" section | 2026-03-09 |
-| 13 | **Footer** | Copyright year and "last updated" date | 2026-04-06 |
+| 12 | **Software** | `sections.software.tools` — packages (dynesty/brutus/…), install, links | 2026-06-03 |
+| 13 | **News** | `sections.news.items` — recent papers/talks/awards/milestones | 2026-06-03 |
+| 14 | **Publications** | Pre-rendered from `publications_data.json`; automated pipeline — see "Publication Pipeline" | 2026-03-09 |
+| 15 | **Footer** | Static in each page shell (copyright year, "last updated") | 2026-06-03 |
 
 Update the "Last edited" column each time a category is modified.
 
