@@ -1,0 +1,43 @@
+name: build-check
+
+# Fails if the committed static HTML / tokens / fonts are stale relative to a
+# fresh build from content.json + tokens.json + @fontsource. Catches the common
+# "edited content.json but forgot to run the build" mistake.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install self-hosted fonts (@fontsource)
+        run: npm ci
+
+      - name: Rebuild assets + HTML from sources
+        run: |
+          python scripts/setup_fonts.py
+          python scripts/build_tokens.py
+          python scripts/build_html.py
+
+      - name: Fail if the committed build is stale
+        run: |
+          if ! git diff --quiet; then
+            echo "::error::Static build is out of date. Run 'npm run build' locally and commit the result."
+            git --no-pager diff --stat
+            exit 1
+          fi
+          echo "Build is up to date. ✓"
