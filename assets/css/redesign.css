@@ -83,6 +83,9 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .cta { margin-top: var(--space-7); display: flex; gap: var(--space-4); flex-wrap: wrap; }
 .btn { font-weight: 600; font-size: var(--fs-small); padding: 14px 28px; border-radius: var(--radius-pill); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
 .btn-primary { color: #0a0a14; background: var(--grad); box-shadow: var(--shadow-glow); border: 0; }
+/* Light theme: the accent gradient is dark, so use a solid violet + white text for AA contrast. */
+[data-theme="light"] .btn-primary { background: var(--violet); color: #fff; box-shadow: 0 8px 26px color-mix(in srgb, var(--violet) 32%, transparent); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .btn-ghost { color: var(--text); border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 60%, transparent); }
 .btn-ghost:hover { border-color: var(--violet); }
 .hero-cap { position: absolute; right: var(--space-7); bottom: var(--space-4); z-index: 2; font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.16em; color: var(--text-3); }
@@ -366,7 +369,7 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
   background: var(--surface-2);
 }
 .tag.stu {
-  color: #b25a00;
+  color: #ffce8f;
   border: 1px solid color-mix(in srgb, #ff9d4d 50%, transparent);
   background: color-mix(in srgb, #ff9d4d 16%, var(--surface));
 }

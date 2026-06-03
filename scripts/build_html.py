@@ -480,6 +480,7 @@ def generate_publications_redesign(data):
 
     return (
         '<div class="container">'
+        '<h2 class="sr-only">Publications</h2>'
         + dashboard
         + controls
         + list_section

@@ -34,7 +34,7 @@ def _chip(cat, label, count, active=False):
     return f'<button class="{cls}" data-cat="{cat}" aria-pressed="{ap}">{dot}{esc(label)}{ct}</button>'
 
 def scaffold(items_html, filters, total, sorts=None, batch=20,
-             search_ph="Search…", default_sort="default",
+             search_ph="Search…", default_sort="default", heading="Results",
              empty_msg="No items match your search or filters."):
     """Wrap pre-rendered cards in the interactive listview root.
 
@@ -56,6 +56,7 @@ def scaffold(items_html, filters, total, sorts=None, batch=20,
 
     return (
         '<div class="container">\n'
+        f'<h2 class="sr-only">{esc(heading)}</h2>\n'
         f'<div data-listview data-lv-batch="{batch}" data-lv-sort="{default_sort}">\n'
         '<div class="pub-controls">\n'
         f'<input type="search" class="pub-search" data-lv-search placeholder="{esc(search_ph)}" aria-label="{esc(search_ph)}">\n'

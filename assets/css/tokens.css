@@ -61,7 +61,7 @@
   --border: #e4e2d7;
   --text: #14161d;
   --text-2: #46444c;
-  --text-3: #7a7768;
+  --text-3: #67645d;
   --violet: #5b43d6;
   --violet-bright: #7c5cff;
   --cyan: #0e9aa8;
@@ -70,9 +70,9 @@
   --grad: linear-gradient(95deg,#5b43d6,#0e9aa8);
   --grad-text: linear-gradient(95deg,#5b43d6,#1565c0 55%,#0e9aa8);
   --cat-sla: #5b43d6;
-  --cat-ii: #0e9aa8;
+  --cat-ii: #0a7280;
   --cat-ic: #1565c0;
-  --cat-du: #b25a00;
+  --cat-du: #8f4d00;
   --shadow-card: 0 10px 30px rgba(40,38,28,0.10);
   --shadow-glow: 0 8px 26px rgba(91,67,214,0.30);
 }
