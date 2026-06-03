@@ -203,7 +203,7 @@ export function createTalksContent(data) {
                                     talk.date.split(' ')[0] === 'Sep' ? '09' :
                                     talk.date.split(' ')[0] === 'Oct' ? '10' :
                                     talk.date.split(' ')[0] === 'Nov' ? '11' : '12'}">${talk.date}</time>
-                                <span class="talk-type talk-badge talk-badge-${talk.categoryColor}" role="text">${talk.type}</span>
+                                <span class="talk-type talk-badge talk-badge-${talk.categoryColor}">${talk.type}</span>
                             </div>
                         </div>
 

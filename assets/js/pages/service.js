@@ -24,8 +24,7 @@ export function createServiceContent(data) {
                         ${category.organizations ? category.organizations.filter(org => !org.hidden).map((org, orgIndex) => `
                             <div class="service-organization-group"
                                  role="listitem"
-                                 aria-labelledby="org-${categoryIndex}-${orgIndex}"
-                                 tabindex="0">
+                                 aria-labelledby="org-${categoryIndex}-${orgIndex}">
                                 <h4 class="organization-name" id="org-${categoryIndex}-${orgIndex}">${org.name}</h4>
                                 <div class="organization-positions"
                                      role="list"
@@ -56,8 +55,7 @@ export function createServiceContent(data) {
                         category.items ? category.items.map((item, itemIndex) => `
                             <div class="service-item"
                                  role="listitem"
-                                 aria-labelledby="item-${categoryIndex}-${itemIndex}"
-                                 tabindex="0">
+                                 aria-labelledby="item-${categoryIndex}-${itemIndex}">
                                 <div class="service-item-header">
                                     <h4 class="service-role" id="item-${categoryIndex}-${itemIndex}">${item.role}</h4>
                                     <div class="service-period" aria-label="Service period">${item.period}</div>

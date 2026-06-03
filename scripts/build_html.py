@@ -584,7 +584,7 @@ def generate_awards(data):
     cards_html = "".join(
         f'<div class="research-card award-item" role="listitem" '
         f'aria-labelledby="award-title-{i}" '
-        f'aria-describedby="award-desc-{i} award-meta-{i}" tabindex="0">\n'
+        f'aria-describedby="award-desc-{i} award-meta-{i}">\n'
         f'<div class="award-header">\n'
         f'<h4 id="award-title-{i}">{award["title"]}</h4>\n'
         f'<div class="award-meta" id="award-meta-{i}" aria-label="Award details">\n'
@@ -646,7 +646,7 @@ def generate_service(data):
                 )
                 org_parts.append(
                     f'<div class="service-organization-group" role="listitem" '
-                    f'aria-labelledby="org-{cat_idx}-{org_idx}" tabindex="0">\n'
+                    f'aria-labelledby="org-{cat_idx}-{org_idx}">\n'
                     f'<h4 class="organization-name" id="org-{cat_idx}-{org_idx}">'
                     f'{org["name"]}</h4>\n'
                     f'<div class="organization-positions" role="list" '
@@ -661,7 +661,7 @@ def generate_service(data):
             for item_idx, item in enumerate(category["items"]):
                 item_parts.append(
                     f'<div class="service-item" role="listitem" '
-                    f'aria-labelledby="item-{cat_idx}-{item_idx}" tabindex="0">\n'
+                    f'aria-labelledby="item-{cat_idx}-{item_idx}">\n'
                     f'<div class="service-item-header">\n'
                     f'<h4 class="service-role" id="item-{cat_idx}-{item_idx}">'
                     f'{item["role"]}</h4>\n'
@@ -801,8 +801,8 @@ def generate_talks(data):
             f'<div class="talk-meta">\n'
             f'<time class="talk-date" datetime="{talk.get("year", "")}-{month_num}">'
             f'{talk["date"]}</time>\n'
-            f'<span class="talk-type talk-badge talk-badge-{talk["categoryColor"]}" '
-            f'role="text">{talk["type"]}</span>\n'
+            f'<span class="talk-type talk-badge talk-badge-{talk["categoryColor"]}">'
+            f'{talk["type"]}</span>\n'
             f"</div>\n"
             f"</div>\n"
             f'\n'

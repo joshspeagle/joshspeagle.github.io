@@ -14,8 +14,7 @@ export function createAwardsContent(data) {
                     <div class="research-card award-item"
                          role="listitem"
                          aria-labelledby="award-title-${index}"
-                         aria-describedby="award-desc-${index} award-meta-${index}"
-                         tabindex="0">
+                         aria-describedby="award-desc-${index} award-meta-${index}">
                         <div class="award-header">
                             <h4 id="award-title-${index}">${award.title}</h4>
                             <div class="award-meta" id="award-meta-${index}" aria-label="Award details">
