@@ -11,10 +11,10 @@ import os
 
 from PIL import Image, ImageDraw
 
-# Brand colors (hardcoded; predate the June 2026 redesign — current design tokens
-# live in assets/data/tokens.json -> assets/css/tokens.css. Re-tune here on rebrand.)
-BG = (13, 20, 33, 255)        # #0d1421 dark background
-STAR = (167, 139, 250, 255)   # violet accent (#a78bfa)
+# Brand colors — kept in sync with the redesign design tokens
+# (assets/data/tokens.json -> assets/css/tokens.css). Re-tune here on rebrand.
+BG = (6, 8, 15, 255)          # --bg-0 dark background (#06080f)
+STAR = (169, 155, 255, 255)   # --violet-bright accent (#a99bff)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -50,9 +50,16 @@ def render_png(size, path, supersample=8):
     print(f"wrote {path} ({size}x{size})")
 
 
+# SVG favicon: the star uses the signature violet->cyan gradient (--grad).
 SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <rect x="0" y="0" width="64" height="64" rx="14" ry="14" fill="#0d1421"/>
-  <path d="M32 6 L37.1 26.9 L58 32 L37.1 37.1 L32 58 L26.9 37.1 L6 32 L26.9 26.9 Z" fill="#a78bfa"/>
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a99bff"/>
+      <stop offset="1" stop-color="#6fd2ff"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="64" height="64" rx="14" ry="14" fill="#06080f"/>
+  <path d="M32 6 L37.1 26.9 L58 32 L37.1 37.1 L32 58 L26.9 37.1 L6 32 L26.9 26.9 Z" fill="url(#g)"/>
 </svg>
 """
 
@@ -64,8 +71,8 @@ MANIFEST = """{
     { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" },
     { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
   ],
-  "theme_color": "#0d1421",
-  "background_color": "#0d1421",
+  "theme_color": "#06080f",
+  "background_color": "#06080f",
   "display": "browser"
 }
 """
