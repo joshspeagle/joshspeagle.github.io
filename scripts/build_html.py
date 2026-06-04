@@ -129,23 +129,64 @@ _HOME_ICONS = [
     ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="13" cy="12" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="20" cy="18" r="2"/><path d="M7 6.6 11 11M7 17.4 11 13M15 11l4-4M15 13l4 4"/></svg>', "sla"),
     ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5 20 20"/><path d="M10 7.5v5M7.5 10h5"/></svg>', "ii"),
     ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18"/><path d="M3 19c4 0 4-12 9-12s5 12 9 12"/></svg>', "ic"),
-    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c5-3 9-1 9-1s-3 5-9 4-9 1-9 1 4-1 9-4z"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><path d="M3 16c2 0 3-1 3-1M21 8s-1 1-3 1"/></svg>', "du"),
+    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(-24 12 12)"/><path d="M12 12c2.6-1.1 5.2 0 6 2.2M12 12c-2.6 1.1-5.2 0-6-2.2"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>', "du"),
 ]
+
+
+def _webp(src):
+    """Return the .webp sibling path for a raster image src."""
+    return re.sub(r"\.(jpe?g|png)$", ".webp", src, flags=re.I)
 
 
 def generate_home_about(data):
     about = data["sections"]["about"]
+    pi = about.get("profileImage", {})
+    hb = about.get("highlightBox", {})
+    ci = about.get("contactInfo", {})
+
+    photo = ""
+    if pi.get("src"):
+        photo = (
+            '<figure class="profile-figure">'
+            '<picture>'
+            f'<source srcset="{_webp(pi["src"])}" type="image/webp">'
+            f'<img class="profile-image" src="{pi["src"]}" alt="{_esc(pi.get("alt", ""))}" '
+            'width="384" height="513" loading="lazy">'
+            '</picture></figure>'
+        )
+    highlight = ""
+    if hb.get("content"):
+        highlight = (
+            '<aside class="callout">'
+            f'<h3>{_esc(hb.get("title", ""))}</h3>'
+            f'<p>{hb.get("content", "")}</p></aside>'
+        )
+    contact = ""
+    if ci.get("email"):
+        contact = (
+            '<div class="contact-info">'
+            f'<h3>{_esc(ci.get("title", "Contact"))}</h3>'
+            f'<p><strong>Email:</strong> <a href="mailto:{ci["email"]}">{ci["email"]}</a></p>'
+            f'<p><strong>Office:</strong> {_esc(ci.get("office", ""))}</p></div>'
+        )
     return (
         '<div class="container">\n'
         '<p class="section-kicker">Who I am</p>\n'
-        '<h2 class="section-title">Astrostatistics at the University of Toronto</h2>\n'
-        f'<p class="about">{about.get("content", "")}</p>\n'
+        f'<h2 class="section-title">{_esc(about.get("title", "About"))}</h2>\n'
+        '<div class="intro-grid">\n'
+        '<div class="intro-body">'
+        f'<p class="about">{about.get("content", "")}</p>'
+        f'{highlight}{contact}'
+        '</div>\n'
+        f'{photo}\n'
+        '</div>\n'
         "</div>"
     )
 
 
 def generate_home_research(data):
-    areas = data["sections"]["research"]["areas"][:4]
+    research = data["sections"]["research"]
+    areas = research["areas"][:4]
     cards = []
     for i, area in enumerate(areas):
         icon, cls = _HOME_ICONS[i] if i < len(_HOME_ICONS) else _HOME_ICONS[-1]
@@ -156,64 +197,138 @@ def generate_home_research(data):
         )
     intro = ("I develop statistical &amp; machine-learning methods and apply them to the largest "
              "astronomical surveys — from billions of stars and galaxies down to individual objects.")
+    additional = research.get("additionalContent", "")
+    pubs = research.get("publications", {})
+    publinks = " · ".join(
+        f'<a href="{l.get("url", "#")}" target="_blank" rel="noopener">{_esc(l.get("name", ""))}</a>'
+        for l in pubs.get("links", [])
+    )
+    pubbox = ""
+    if publinks:
+        pubbox = (
+            '<aside class="callout pub-callout">'
+            f'<h3>{_esc(pubs.get("title", "Publications"))}</h3>'
+            f'<p>{_esc(pubs.get("intro", ""))} {publinks}</p></aside>'
+        )
+    context = f'<p class="research-context">{_esc(additional)}</p>' if additional else ""
     return (
         '<div class="container">\n'
         '<p class="section-kicker">What I do</p>\n'
         '<h2 class="section-title">Four research areas</h2>\n'
         f'<p class="section-intro">{intro}</p>\n'
         f'<div class="research-grid">{"".join(cards)}</div>\n'
+        f'{context}\n'
+        f'{pubbox}\n'
         "</div>"
     )
 
 
+def _inline_logo(logo):
+    """Inline the ART logo SVG with fill->currentColor so it can be themed via CSS."""
+    src = (logo or {}).get("src", "")
+    if not src.endswith(".svg"):
+        return ""
+    try:
+        svg = (PROJECT_ROOT / src).read_text(encoding="utf-8")
+    except OSError:
+        return ""
+    svg = re.sub(r"<\?xml[^>]*\?>\s*", "", svg)
+    svg = svg.replace('fill="#2f559d"', 'fill="currentColor"')
+    svg = svg.replace("<svg ", '<svg class="art-logo-svg" aria-hidden="true" ', 1)
+    return svg
+
+
 def generate_home_team(data):
     team = data["sections"]["team"]
+    logo = _inline_logo(team.get("logo"))
+    logo_html = f'<figure class="art-logo" aria-label="{_esc(team.get("logo", {}).get("alt", ""))}">{logo}</figure>' if logo else ""
     hls = "".join(
-        f'<div class="card"><h3>{_esc(h.get("title", ""))}</h3><p>{_esc(h.get("content", ""))}</p></div>'
+        '<div class="art-highlight">'
+        f'<span class="art-hl-icon" aria-hidden="true">{h.get("icon", "")}</span>'
+        f'<div><h3>{_esc(h.get("title", ""))}</h3><p>{_esc(h.get("content", ""))}</p></div></div>'
         for h in team.get("highlights", [])
     )
     btns = []
     for c in team.get("cta", []):
         cls = "btn-primary" if c.get("type") == "primary" else "btn-ghost"
-        btns.append(f'<a class="btn {cls}" href="{c.get("url", "#")}">{_esc(c.get("text", ""))}</a>')
+        url = c.get("url", "#")
+        ext = url.startswith("http")
+        attrs = ' target="_blank" rel="noopener"' if ext else ""
+        arrow = ' <span aria-hidden="true">↗</span>' if ext else ""
+        btns.append(f'<a class="btn {cls}" href="{url}"{attrs}>{_esc(c.get("text", ""))}{arrow}</a>')
     return (
         '<div class="container">\n'
-        '<p class="section-kicker">The team</p>\n'
+        '<div class="art-panel">\n'
+        f'{logo_html}\n'
+        '<div class="art-body">\n'
+        '<p class="art-eyebrow"><span class="art-badge">✦ Research Group</span>'
+        '<a class="art-ext" href="https://astrostatuoft.com/" target="_blank" rel="noopener">astrostatuoft.com <span aria-hidden="true">↗</span></a></p>\n'
         f'<h2 class="section-title">{_esc(team.get("title", ""))}</h2>\n'
         f'<p class="team-tagline">{_esc(team.get("tagline", ""))}</p>\n'
         f'<p class="lead">{team.get("content", "")}</p>\n'
-        f'<div class="grid-2" style="margin-top:var(--space-5)">{hls}</div>\n'
-        f'<div class="cta" style="margin-top:var(--space-6)">{"".join(btns)}</div>\n'
+        f'<div class="art-highlights">{hls}</div>\n'
+        f'<div class="cta">{"".join(btns)}</div>\n'
+        '</div>\n'
+        '</div>\n'
         "</div>"
     )
 
 
+def _opp_link(l):
+    name = _esc(l.get("name", ""))
+    out = f'<a href="{l["url"]}" target="_blank" rel="noopener">{name}</a>' if l.get("url") else name
+    if l.get("abbr"):
+        out += f' ({_esc(l["abbr"])})'
+    elif l.get("note"):
+        out += f' <span class="opp-note">({_esc(l["note"])})</span>'
+    return out
+
+
+def _opp_links_html(card):
+    """Render whatever link groups a card has: fellowships, programs, or opportunities."""
+    out = ""
+    for key, default in (("fellowships", "Fellowships:"), ("programs", "Programs:")):
+        grp = card.get(key)
+        if grp and grp.get("links"):
+            links = ", ".join(_opp_link(l) for l in grp["links"])
+            out += f'<p class="opp-links"><strong>{_esc(grp.get("intro", default))}</strong> {links}</p>'
+    opps = card.get("opportunities")
+    if isinstance(opps, list) and opps:
+        links = ", ".join(_opp_link(o) for o in opps)
+        out += f'<p class="opp-links"><strong>Programs:</strong> {links}</p>'
+    return out
+
+
 def generate_home_collab(data):
     collab = data["sections"]["collaboration"]
-    cards = []
-    for c in collab.get("opportunities", {}).get("cards", []):
-        fel = ""
-        f = c.get("fellowships")
-        if f and f.get("links"):
-            links = " · ".join(
-                f'<a href="{l.get("url", "#")}">{_esc(l.get("name", ""))}</a>' for l in f["links"]
-            )
-            fel = f'<p class="fellowships">{_esc(f.get("intro", "Fellowships:"))} {links}</p>'
-        cards.append(
-            f'<div class="card"><h3>{_esc(c.get("title", ""))}</h3>'
-            f'<p>{_esc(c.get("content", ""))}</p>{fel}</div>'
-        )
-    vals = "".join(
-        f'<div class="card"><h3>{_esc(v.get("title", ""))}</h3><p>{_esc(v.get("content", ""))}</p></div>'
-        for v in collab.get("values", {}).get("items", [])
+    vals = collab.get("values", {})
+    val_items = "".join(
+        f'<div class="value-item"><h4>{_esc(v.get("title", ""))}</h4>'
+        f'<p>{_esc(v.get("content", ""))}</p></div>'
+        for v in vals.get("items", [])
     )
+    values_html = ""
+    if val_items:
+        values_html = (
+            '<aside class="callout values-callout">'
+            f'<h3>{_esc(vals.get("title", "Our Values"))}</h3>'
+            f'<div class="values-grid">{val_items}</div></aside>'
+        )
+    opp = collab.get("opportunities", {})
+    cards = "".join(
+        f'<div class="card opp-card"><h3>{_esc(c.get("title", ""))}</h3>'
+        f'<p>{_esc(c.get("content", ""))}</p>{_opp_links_html(c)}</div>'
+        for c in opp.get("cards", [])
+    )
+    opp_heading = f'<h3 class="opp-heading">{_esc(opp.get("title", "Opportunities"))}</h3>' if cards else ""
     return (
         '<div class="container">\n'
         '<p class="section-kicker">Join us</p>\n'
         f'<h2 class="section-title">{_esc(collab.get("title", ""))}</h2>\n'
         f'<p class="section-intro">{_esc(collab.get("intro", ""))}</p>\n'
-        f'<div class="grid-3">{"".join(cards)}</div>\n'
-        f'<div class="grid-2" style="margin-top:var(--space-6)">{vals}</div>\n'
+        f'{values_html}\n'
+        f'{opp_heading}\n'
+        f'<div class="grid-3 opp-grid">{cards}</div>\n'
         "</div>"
     )
 
@@ -221,20 +336,41 @@ def generate_home_collab(data):
 def generate_home_bio(data):
     bio = data["sections"]["biography"]
     items = "".join(
-        '<div class="tl-item">'
+        f'<div class="tl-item{" current" if t.get("current") else ""}">'
         f'<div class="tl-date">{_esc(t.get("date", ""))}</div>'
-        f'<div class="tl-title">{_esc(t.get("title", ""))}</div>'
+        f'<div class="tl-title">{_esc(t.get("title", ""))}'
+        + ('<span class="tl-now">Now</span>' if t.get("current") else "")
+        + '</div>'
         f'<div class="tl-loc">{_esc(t.get("location", ""))}</div>'
         f'<div class="tl-content">{t.get("content", "")}</div>'
         "</div>"
         for t in bio.get("timeline", [])
     )
+    photos = ""
+    for ph in bio.get("dogPhotos", []):
+        if not ph.get("src"):
+            continue
+        if ph.get("creditLink"):
+            credit = f' <a href="{ph["creditLink"]}" target="_blank" rel="noopener">{_esc(ph.get("creditName", ""))}</a>'
+        elif ph.get("creditName"):
+            credit = f' {_esc(ph["creditName"])}'
+        else:
+            credit = ""
+        photos += (
+            '<figure class="dog-photo"><picture>'
+            f'<source srcset="{_webp(ph["src"])}" type="image/webp">'
+            f'<img src="{ph["src"]}" alt="{_esc(ph.get("alt", ""))}" loading="lazy" width="800" height="533">'
+            '</picture>'
+            f'<figcaption>{_esc(ph.get("caption", ""))}{credit}</figcaption></figure>'
+        )
+    photos_html = f'<div class="dog-photos">{photos}</div>' if photos else ""
     return (
         '<div class="container">\n'
         '<p class="section-kicker">Short biography</p>\n'
         f'<h2 class="section-title">{_esc(bio.get("title", ""))}</h2>\n'
         f'<div class="timeline">{items}</div>\n'
         f'<p class="personal-note">{_esc(bio.get("personalNote", ""))}</p>\n'
+        f'{photos_html}\n'
         "</div>"
     )
 

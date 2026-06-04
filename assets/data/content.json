@@ -124,7 +124,7 @@
                 },
                 {
                     "text": "Join Our Team",
-                    "url": "#collaboration",
+                    "url": "#join",
                     "type": "secondary"
                 }
             ]
@@ -151,7 +151,7 @@
                 {
                     "icon": "🌌",
                     "title": "Discovery & Understanding",
-                    "description": "Applying these methods to large-scale astronomical surveys to uncover new insights about the universe, with a focus on how galaxies like our own Milky Way form, behave, and evolve over time."
+                    "description": "Applying these methods to large-scale astronomical surveys to uncover new insights about the universe."
                 }
             ],
             "additionalContent": "This work often involves working with massive datasets from wide-field imaging and spectroscopic surveys containing observations ranging from billions of stars and galaxies to interstellar gas and dust, but can also include smaller datasets from targeted observations of individual objects along with everything in between.",

@@ -169,6 +169,65 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .tl-content { color: var(--text-2); font-size: var(--fs-small); margin-top: 6px; line-height: 1.55; max-width: 70ch; }
 .personal-note { margin-top: var(--space-6); color: var(--text-2); font-style: italic; max-width: 72ch; }
 
+/* ---- Home content restores (About intro, callouts, opportunities, dog photos) ---- */
+.intro-grid { display: grid; grid-template-columns: 1fr minmax(240px, 330px); gap: var(--space-7); align-items: start; }
+.intro-body .about { color: var(--text-2); font-size: 1.1rem; max-width: 65ch; margin-top: 0; }
+.profile-figure { margin: 0; }
+.profile-image { width: 100%; height: auto; display: block; border-radius: var(--radius-card); border: 1px solid var(--border); box-shadow: var(--shadow-card); }
+.callout { margin-top: var(--space-6); padding: var(--space-5); border: 1px solid var(--border); border-left: 3px solid var(--violet); border-radius: var(--radius-card); background: var(--surface); }
+.callout h3 { font-size: var(--fs-h3); margin: 0 0 var(--space-2); }
+.callout p { color: var(--text-2); font-size: var(--fs-small); margin: 0; line-height: 1.65; }
+.callout a { color: var(--blue); border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+.pub-callout p a { white-space: nowrap; }
+.contact-info { margin-top: var(--space-5); font-size: var(--fs-small); color: var(--text-2); }
+.contact-info h3 { font-size: var(--fs-h3); margin: 0 0 var(--space-2); }
+.contact-info p { margin: 2px 0; }
+.contact-info a { color: var(--blue); }
+.research-context { color: var(--text-2); max-width: 80ch; margin: var(--space-6) 0 0; font-size: var(--fs-small); line-height: 1.65; }
+/* Collaboration: values highlight near the top + opportunity links restored */
+.values-callout { border-left-color: var(--cyan); margin-bottom: var(--space-7); }
+.values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-3); }
+.value-item h4 { font-size: 1.02rem; margin: 0 0 4px; color: var(--text); }
+.value-item p { color: var(--text-2); font-size: var(--fs-small); margin: 0; line-height: 1.55; }
+.opp-heading { font-size: var(--fs-h3); margin: 0 0 var(--space-5); }
+.opp-card .opp-links { margin: var(--space-3) 0 0; font-size: var(--fs-small); color: var(--text-3); line-height: 1.85; }
+.opp-card .opp-links strong { color: var(--text-2); }
+.opp-card .opp-links a { color: var(--blue); border-bottom: 0; }
+.opp-note { color: var(--text-3); }
+/* Biography: current-role highlight + dog photos */
+.tl-item.current::before { background: var(--violet); box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 22%, transparent); }
+.tl-now { display: inline-block; margin-left: var(--space-3); font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.12em; text-transform: uppercase; color: var(--violet); background: color-mix(in srgb, var(--violet) 15%, transparent); border: 1px solid color-mix(in srgb, var(--violet) 40%, transparent); padding: 1px 8px; border-radius: var(--radius-pill); vertical-align: middle; }
+.dog-photos { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-7); max-width: 760px; }
+.dog-photo { margin: 0; }
+.dog-photo img { width: 100%; height: auto; display: block; border-radius: var(--radius-card); border: 1px solid var(--border); }
+.dog-photo figcaption { margin-top: var(--space-2); font-size: var(--fs-label); color: var(--text-3); }
+.dog-photo figcaption a { color: var(--blue); }
+@media (max-width: 760px) { .intro-grid { grid-template-columns: 1fr; } .profile-figure { max-width: 280px; } }
+@media (max-width: 620px) { .values-grid, .dog-photos { grid-template-columns: 1fr; } }
+
+/* ---- ART feature section: a distinct "research group" band that links out ---- */
+.art-section { background:
+    radial-gradient(60% 130% at 88% -10%, color-mix(in srgb, var(--cyan) 12%, transparent), transparent 55%),
+    radial-gradient(55% 130% at 6% 110%, color-mix(in srgb, var(--violet) 12%, transparent), transparent 55%); }
+.art-panel { position: relative; display: grid; grid-template-columns: minmax(150px, 230px) 1fr; gap: var(--space-7); align-items: center;
+    padding: var(--space-7); border: 1px solid var(--border); border-radius: var(--radius-panel); background: var(--surface); overflow: hidden; }
+.art-panel::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; background: var(--grad); }
+.art-logo { margin: 0; display: flex; justify-content: center; }
+.art-logo-svg { width: 100%; max-width: 215px; height: auto; color: #2f559d; }
+[data-theme="dark"] .art-logo-svg { color: #9fb6ef; }
+.art-eyebrow { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); margin: 0 0 var(--space-4); }
+.art-badge { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--violet); background: color-mix(in srgb, var(--violet) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--violet) 38%, transparent); padding: 3px 10px; border-radius: var(--radius-pill); }
+.art-ext { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; color: var(--cyan); border-bottom: 0; }
+.art-body .team-tagline { margin: 0 0 var(--space-3); }
+.art-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin: var(--space-5) 0 var(--space-6); }
+.art-highlight { display: flex; gap: var(--space-3); align-items: flex-start; }
+.art-hl-icon { font-size: 1.4rem; line-height: 1.1; }
+.art-highlight h3 { font-size: 1.02rem; margin: 0 0 2px; }
+.art-highlight p { color: var(--text-2); font-size: var(--fs-small); margin: 0; line-height: 1.5; }
+@media (max-width: 760px) { .art-panel { grid-template-columns: 1fr; gap: var(--space-5); padding: var(--space-6); } .art-logo-svg { max-width: 160px; } .art-highlights { grid-template-columns: 1fr; } }
+
 @media (max-width: 920px) { .grid-3 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 620px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
 
