@@ -71,8 +71,19 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
   background:
     radial-gradient(58% 50% at 72% 42%, color-mix(in srgb, var(--violet) 22%, transparent), transparent 70%),
     radial-gradient(52% 50% at 88% 64%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 70%); }
+/* Scrim hugging the headline: keeps the copy readable while the galaxy data-field
+   (top-left/bottom-left) and the inference pipeline (right) show through. */
 .hero .vignette { position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background: radial-gradient(46% 60% at 22% 50%, color-mix(in srgb, var(--bg-0) 92%, transparent) 0%, color-mix(in srgb, var(--bg-0) 55%, transparent) 50%, transparent 80%); }
+  background:
+    radial-gradient(52% 38% at 24% 50%, var(--bg-0) 0%, color-mix(in srgb, var(--bg-0) 80%, transparent) 50%, transparent 78%); }
+/* Early-universe glow: warm bloom from the far-left edge (the hot early cosmos),
+   layered ABOVE the scrim so it isn't washed out; cools rightward into the network. */
+.hero .dawn { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(46% 80% at -4% 50%,
+    rgba(255, 150, 88, 0.34), rgba(255, 150, 88, 0.13) 38%, transparent 70%); }
+[data-theme="light"] .hero .dawn {
+  background: radial-gradient(46% 80% at -4% 50%,
+    rgba(232, 126, 52, 0.30), rgba(232, 126, 52, 0.12) 38%, transparent 70%); }
 .hero-inner { position: relative; z-index: 2; padding-top: var(--space-7); padding-bottom: var(--space-7); max-width: 620px; }
 .kicker { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.32em; text-transform: uppercase; color: var(--text-3); margin-bottom: var(--space-5); }
 .hero h1 { font-size: var(--fs-display); margin: 0; text-shadow: 0 0 46px color-mix(in srgb, var(--violet) 45%, transparent); }
@@ -81,14 +92,17 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .tagline .m { color: var(--text); font-weight: 600; }
 .tagline .g { font-weight: 600; background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .cta { margin-top: var(--space-7); display: flex; gap: var(--space-4); flex-wrap: wrap; }
-.btn { font-weight: 600; font-size: var(--fs-small); padding: 14px 28px; border-radius: var(--radius-pill); cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+/* Cut-corner buttons: angled notch (top-left + bottom-right) for a technical/sci feel. */
+.btn { font-weight: 600; font-size: var(--fs-small); padding: 14px 30px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; border-radius: 2px;
+  clip-path: polygon(11px 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%, 0 11px);
+  transition: transform .16s ease, filter .16s ease, border-color .16s ease; }
+.btn:hover { transform: translateY(-1px); }
 .btn-primary { color: #0a0a14; background: var(--grad); box-shadow: var(--shadow-glow); border: 0; }
 /* Light theme: the accent gradient is dark, so use a solid violet + white text for AA contrast. */
 [data-theme="light"] .btn-primary { background: var(--violet); color: #fff; box-shadow: 0 8px 26px color-mix(in srgb, var(--violet) 32%, transparent); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 .btn-ghost { color: var(--text); border: 1px solid var(--border); background: color-mix(in srgb, var(--surface) 60%, transparent); }
 .btn-ghost:hover { border-color: var(--violet); }
-.hero-cap { position: absolute; right: var(--space-7); bottom: var(--space-4); z-index: 2; font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.16em; color: var(--text-3); }
 
 /* focus visibility */
 :focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
@@ -101,7 +115,13 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
   .hamburger { display: inline-flex; }
   .hero { min-height: 0; padding: var(--space-6) 0 var(--space-7); }
   .hero-inner { max-width: 100%; }
-  .hero-cap { display: none; }
+  /* Narrow screens: the copy wraps full-width over the pipeline, so dim the
+     canvas and lay a near-uniform veil to keep text readable. */
+  .hero canvas { opacity: 0.5; }
+  .hero .vignette { background: linear-gradient(180deg,
+    color-mix(in srgb, var(--bg-0) 78%, transparent),
+    color-mix(in srgb, var(--bg-0) 60%, transparent) 55%,
+    color-mix(in srgb, var(--bg-0) 80%, transparent)); }
 }
 
 /* ---------------- Sections ---------------- */
