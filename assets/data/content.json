@@ -163,29 +163,25 @@
                         "name": "SAO/NASA ADS",
                         "url": "https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0",
                         "icon": "ads",
-                        "description": "Citations and references",
-                        "meta": "10,000+ citations • h-index: 40+"
+                        "description": "Citations and references"
                     },
                     {
                         "name": "Google Scholar",
                         "url": "https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ",
                         "icon": "scholar",
-                        "description": "Complete bibliography",
-                        "meta": "100+ peer-reviewed papers"
+                        "description": "Complete bibliography"
                     },
                     {
                         "name": "arXiv",
                         "url": "https://arxiv.org/search/?query=speagle%2C+j&searchtype=author&abstracts=show&order=-announced_date_first&size=50",
                         "icon": "arxiv",
-                        "description": "Preprints and early access papers",
-                        "meta": "Open access research"
+                        "description": "Preprints and early access papers"
                     },
                     {
                         "name": "ORCID",
                         "url": "https://orcid.org/0000-0003-2573-9832",
                         "icon": "orcid",
-                        "description": "Persistent digital identifier",
-                        "meta": "0000-0003-2573-9832"
+                        "description": "Persistent digital identifier"
                     }
                 ]
             }

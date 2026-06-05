@@ -212,6 +212,14 @@ def generate_home_about(data):
     )
 
 
+def _pub_metrics():
+    """Pipeline-computed publication metrics (totalPapers/totalCitations/hIndex/i10Index)."""
+    try:
+        return json.loads(PUBLICATIONS_JSON.read_text(encoding="utf-8")).get("metrics", {}) or {}
+    except (OSError, ValueError):
+        return {}
+
+
 def generate_home_research(data):
     research = data["sections"]["research"]
     areas = research["areas"][:4]
@@ -231,11 +239,23 @@ def generate_home_research(data):
         f'<a href="{l.get("url", "#")}" target="_blank" rel="noopener">{_esc(l.get("name", ""))}</a>'
         for l in pubs.get("links", [])
     )
+    # Auto-computed metric cards (from the pipeline-maintained publication metrics)
+    m = _pub_metrics()
+    metric_defs = [(m.get("totalPapers"), "Papers"),
+                   (m.get("totalCitations"), "Citations"),
+                   (m.get("hIndex"), "h-index")]
+    metrics_html = "".join(
+        f'<div class="pub-metric"><span class="n">{v:,}</span><span class="l">{_esc(l)}</span></div>'
+        for v, l in metric_defs if v
+    )
+    metrics_box = f'<div class="pub-metrics">{metrics_html}</div>' if metrics_html else ""
+
     pubbox = ""
     if publinks:
         pubbox = (
             '<aside class="callout pub-callout">'
             f'<h3>{_esc(pubs.get("title", "Publications"))}</h3>'
+            f'{metrics_box}'
             f'<p>{_esc(pubs.get("intro", ""))} {publinks}</p>'
             '<p class="callout-cta"><a href="publications.html">Browse all publications, metrics &amp; figures →</a></p>'
             '</aside>'

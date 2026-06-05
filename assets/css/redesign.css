@@ -190,6 +190,11 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .about-personal { color: var(--text-2); max-width: 70ch; margin: var(--space-6) 0 0; line-height: 1.6; }
 .callout-cta { margin: var(--space-3) 0 0; font-size: var(--fs-small); }
 .callout-cta a { color: var(--violet); font-weight: 600; border-bottom: 0; }
+/* Home: auto-computed publication metric cards inside the publications callout */
+.pub-metrics { display: flex; flex-wrap: wrap; gap: var(--space-5); margin: 0 0 var(--space-3); }
+.pub-metric { display: flex; flex-direction: column; gap: 2px; }
+.pub-metric .n { font-family: var(--font-mono); font-weight: 700; font-size: var(--fs-h3); line-height: 1; background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.pub-metric .l { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
 /* Teaching: 3-up stat strip */
 .teach-stats { grid-template-columns: repeat(3, 1fr); }
 /* Reusable highlight box (Teaching Philosophy, Mentorship intro) — distinct from the plain .callout */
