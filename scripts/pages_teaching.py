@@ -91,15 +91,19 @@ def generate_content(data):
         data_search = attr_esc(search_src)
         data_title = attr_esc(_strip_tags(title_display))
 
-        meta_left = " · ".join(p for p in [esc(level), esc(dept_display)] if p)
-        meta = meta_left
-        if description:
-            meta = f"{meta} — {esc(description)}" if meta else esc(description)
+        # Description carries the meta line; level + department(s) become badges.
+        meta = esc(description) if description else ""
 
-        tags = f'<span class="badge">{esc(level)}</span>' if level else ""
+        level_badge = f'<span class="badge">{esc(level)}</span>' if level else ""
+        dept_badges = "".join(
+            f'<span class="badge talk-badge"><span class="dot d-{_slug(d)}"></span>{esc(d)}</span>'
+            for d in depts
+        )
+        tags = level_badge + dept_badges
+        accent = _slug(depts[0]) if depts else "violet"   # left-stripe color = primary dept
 
         cards.append(
-            f'<article class="item accent-violet" data-lv-item '
+            f'<article class="item accent-{accent}" data-lv-item '
             f'data-cat="{cat}" data-search="{data_search}" '
             f'data-year="{year}" data-num="{year}" data-title="{data_title}">'
             f'<div class="item-head">'
@@ -136,13 +140,14 @@ def generate_content(data):
         meta = " · ".join(meta_parts)
 
         sc_items.append(
-            f'<article class="item accent-violet">'
+            f'<article class="item accent-workshop">'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title)}</h3>'
             f'<span class="item-when">{when}</span>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
-            f'<div class="item-tags"><span class="badge talk-badge">Workshop</span></div>'
+            f'<div class="item-tags"><span class="badge talk-badge">'
+            f'<span class="dot d-workshop"></span>Workshop</span></div>'
             f'</article>'
         )
 
@@ -162,13 +167,13 @@ def generate_content(data):
         f'<div class="pub-stat"><span class="n">{v}</span><span class="l">{esc(l)}</span></div>'
         for v, l in stat_defs if v is not None
     )
-    stats_html = f'<div class="pub-stats">{tiles}</div>' if tiles else ""
+    stats_html = f'<div class="pub-stats teach-stats">{tiles}</div>' if tiles else ""
 
     phil = teaching.get("philosophy") or {}
     phil_html = ""
     if phil.get("content"):
         phil_html = (
-            f'<aside class="callout"><h3>{esc(phil.get("title", "Teaching Philosophy"))}</h3>'
+            f'<aside class="teach-philosophy"><h3>{esc(phil.get("title", "Teaching Philosophy"))}</h3>'
             f'<p>{esc(phil["content"])}</p></aside>'
         )
     top_html = f'<div class="container">{stats_html}{phil_html}</div>' if (stats_html or phil_html) else ""

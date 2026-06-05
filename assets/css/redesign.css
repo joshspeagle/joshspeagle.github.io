@@ -188,6 +188,20 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .about-personal { color: var(--text-2); max-width: 70ch; margin: var(--space-6) 0 0; line-height: 1.6; }
 .callout-cta { margin: var(--space-3) 0 0; font-size: var(--fs-small); }
 .callout-cta a { color: var(--violet); font-weight: 600; border-bottom: 0; }
+/* Teaching: 3-up stat strip + philosophy highlight (distinct from the plain .callout) */
+.teach-stats { grid-template-columns: repeat(3, 1fr); }
+.teach-philosophy {
+  margin: var(--space-7) 0 var(--space-8);
+  padding: var(--space-6) var(--space-7);
+  border: 1px solid color-mix(in srgb, var(--violet) 34%, var(--border));
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(135% 130% at 100% 0%, color-mix(in srgb, var(--violet) 15%, transparent), transparent 58%),
+    var(--surface);
+}
+.teach-philosophy h3 { display: flex; align-items: baseline; gap: 10px; font-size: var(--fs-h3); margin: 0 0 var(--space-3); color: var(--text); }
+.teach-philosophy h3::before { content: "\2726"; color: var(--violet); font-size: 0.85em; }
+.teach-philosophy p { color: var(--text); font-size: var(--fs-body); line-height: 1.7; margin: 0; max-width: 78ch; }
 /* Collaboration: values highlight near the top + opportunity links restored */
 .values-callout { border-left-color: var(--cyan); margin-bottom: var(--space-7); }
 .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-3); }
@@ -255,6 +269,10 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .item.accent-media { border-left-color: #ff6b6b; } .d-media { background: #ff6b6b; }
 .talk-badge { color: var(--text-2); border: 1px solid var(--border); background: var(--surface-2); gap: 6px; }
 .badge .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
+/* Teaching: department + workshop accent colors (cards + chip/badge dots) */
+.item.accent-astronomy  { border-left-color: #5aa9ff; } .d-astronomy  { background: #5aa9ff; }
+.item.accent-statistics { border-left-color: #a78bff; } .d-statistics { background: #a78bff; }
+.item.accent-workshop   { border-left-color: #34d3e0; } .d-workshop   { background: #34d3e0; }
 .item.student { border-left-color: #ff9d4d; background: linear-gradient(90deg, color-mix(in srgb, #ff9d4d 7%, transparent), var(--surface) 42%); }
 .item-head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: baseline; flex-wrap: wrap; }
 .item-title { font-family: var(--font-serif); font-size: var(--fs-h3); margin: 0 0 4px; color: var(--text); }
