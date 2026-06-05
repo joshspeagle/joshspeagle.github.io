@@ -24,9 +24,10 @@ A <position> may be:
     - an object with "role" and one of "term" / "period" / "periods"
       (periods is a list of period strings).
 
-Some categories (e.g. "Manuscript Referee Service") carry "items" instead of
-"organizations"; those contribute zero organizations (and zero cards) but still
-appear as a filter chip with a count of 0, per the page contract.
+Some categories (e.g. "Manuscript Referee Service") carry "items"
+({role, organization, period}) instead of "organizations"; both shapes render.
+Categories and organizations flagged "hidden": true are skipped, and categories
+with no visible rows produce no chip.
 """
 import re
 
@@ -84,35 +85,41 @@ def generate_content(data):
     total = 0
 
     for category in categories:
+        if category.get("hidden"):
+            continue
         cat_title = category.get("title", "") or ""
         cat_slug = _slug(cat_title)
-        orgs = _organizations(category)
-        filters.append((cat_slug, cat_title, len(orgs)))
+        orgs = [o for o in _organizations(category) if not (isinstance(o, dict) and o.get("hidden"))]
+        extra = [it for it in (category.get("items") or []) if not (isinstance(it, dict) and it.get("hidden"))]
 
+        # Unify the two shapes into (title_html, meta_text) rows.
+        rows = []
         for org in orgs:
-            org_name = org.get("name", "") or ""          # may contain HTML (<a>)
-            org_name_plain = _strip_tags(org_name)
+            pos_texts = [t for t in (_position_text(p) for p in (org.get("positions") or [])) if t]
+            rows.append((org.get("name", "") or "", " · ".join(pos_texts)))
+        for it in extra:
+            meta = " · ".join(p for p in [(it.get("role") or "").strip(),
+                                          (it.get("period") or it.get("term") or "").strip()] if p)
+            rows.append((it.get("organization", "") or "", meta))
 
-            positions = org.get("positions", []) or []
-            pos_texts = [t for t in (_position_text(p) for p in positions) if t]
-            meta_text = " · ".join(pos_texts)
+        if not rows:
+            continue
+        filters.append((cat_slug, cat_title, len(rows)))
 
-            search_src = (org_name_plain + " " + " ".join(pos_texts)).strip()
-
-            card = (
+        for title_html, meta_text in rows:
+            title_plain = _strip_tags(title_html)
+            search_src = (title_plain + " " + meta_text).strip()
+            items_html.append(
                 f'<article class="item accent-ic" data-lv-item '
                 f'data-cat="{attr_esc(cat_slug)}" '
                 f'data-search="{attr_esc(search_src)}" '
                 f'data-year="0" data-num="0" '
-                f'data-title="{attr_esc(org_name_plain)}">'
-                f'<div class="item-head">'
-                f'<h3 class="item-title">{org_name}</h3>'
-                f'</div>'
+                f'data-title="{attr_esc(title_plain)}">'
+                f'<div class="item-head"><h3 class="item-title">{title_html}</h3></div>'
                 f'<p class="item-meta">{esc(meta_text)}</p>'
                 f'<div class="item-tags"><span class="badge">{esc(cat_title)}</span></div>'
                 f'</article>'
             )
-            items_html.append(card)
             total += 1
 
     return scaffold(
