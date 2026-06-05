@@ -101,17 +101,25 @@ Update the "Last edited" column each time a category is modified.
 Mentees live under `sections.mentorship.menteesByStage` in `content.json`. Add a **current** mentee to the relevant stage array — `postdoctoral`, `doctoral`, `bachelors`, or `mastersProjects`; add a **former** mentee to the corresponding `menteesByStage.completed.<stage>` array. A current entry:
 ```json
 {
-  "name": "Name",
+  "name": "<a href='url'>Name</a>",
   "timelinePeriod": "Season Year-Season Year",
   "supervisionType": "Primary Supervisor",
-  "coSupervisors": "<a href='url'>Name</a> (<a href='dept'>Dept</a>)",
+  "coSupervisors": ["<a href='url'>Name</a> (<a href='dept'>Dept</a>)"],
   "project": "Project description",
   "myCareerStage": "Assistant Professor",
   "currentStatus": "Graduate student (<a href='url'>Institution</a>)",
-  "fellowships": ["Fellowship Name"]
+  "programs": ["A&A SURP"],
+  "awards": ["NSERC PGS-D"],
+  "courses": ["Senior Thesis"]
 }
 ```
-Variations by stage: **completed** entries add an `outcome` field; completed **doctoral** use `scholarships` instead of `fellowships`; **bachelors** entries use `program` and `projects` (plural). Match the field names of a sibling entry exactly — misspelled keys silently fail to render.
+**Tagging** (all rendered as badges on the card and included in search):
+- `supervisionType` — one of `Primary Supervisor` / `Co-Supervisor` / `Secondary Supervisor` / `Informal Supervisor` (formal = on paper; **informal** = involved but not on paper). Rendered as a role badge (formal tinted, informal muted).
+- `programs` — list of research programs/opportunities (e.g. `A&A SURP`, `DSI SUDS`, `A&S ROP`, `NSERC USRA`, `Co-op Program`, `MITACS Globalink`). Cyan badge.
+- `awards` — list of fellowships/scholarships/honors (e.g. `Dunlap Fellow`, `Banting Fellow`, `NSERC CGS-M`). Amber badge. (Replaces the old `fellowships`/`scholarships` fields.)
+- `courses` — academic-credit context; values are exactly `Research Course`, `Junior Thesis`, or `Senior Thesis` (avoid raw course codes). Neutral badge.
+
+Variations: **bachelors** with several stints may use a `projects` array (`title`/`supervisionType`/`coSupervisors`). For **former** mentees the `currentStatus`/`outcome` fields are no longer displayed (too hard to keep current), though the data may persist. Award/program/course strings may be plain text or `<a>`-linked HTML (`esc()` preserves links). Match the field names of a sibling entry exactly — misspelled keys silently fail to render.
 
 ### Publication Categories
 

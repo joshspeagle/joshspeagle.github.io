@@ -82,10 +82,11 @@ def _card(rec, cat, label, color, completed):
     cosup = _cosupervisors(rec)
     current_status = rec.get("currentStatus") or ""
     career = rec.get("myCareerStage") or ""
-    program = rec.get("program") or ""
+    tag_vals = list(rec.get("programs") or []) + list(rec.get("awards") or []) + list(rec.get("courses") or [])
 
-    # data-* keys (plain text for search/sort) — include the supervisory role
-    search_src = " ".join(_strip_tags(x) for x in (name_plain, sup, proj, current_status, " ".join(cosup)))
+    # data-* keys (plain text for search/sort) — include role + all tag text
+    search_src = " ".join(_strip_tags(x) for x in
+                          (name_plain, sup, proj, current_status, " ".join(cosup), " ".join(tag_vals)))
     data_search = attr_esc(search_src)
     data_title = attr_esc(name_plain)
     data_year = _parse_year(period)
@@ -105,7 +106,7 @@ def _card(rec, cat, label, color, completed):
         subs.append(f'<span class="faint">My career stage then: {esc(career)}</span>')
     subs_html = "".join(f'<p class="item-sub">{x}</p>' for x in subs)
 
-    # tags: supervisory role (formal vs informal) + stage badge + Alum + program + awards
+    # tags: role (formal/informal) + stage + Alum + programs + course/thesis + awards
     tags = []
     if sup:
         role_cls = "role-badge role-informal" if "informal" in sup.lower() else "role-badge"
@@ -113,15 +114,13 @@ def _card(rec, cat, label, color, completed):
     tags.append(f'<span class="badge b-{color}">{esc(label)}</span>')
     if completed:
         tags.append('<span class="tag feat">Alum</span>')
-    seen_badges = set()
-    if program:
-        seen_badges.add(_strip_tags(program).strip().lower())
-        tags.append(f'<span class="badge talk-badge">{esc(program)}</span>')
-    for a in (list(rec.get("fellowships") or []) + list(rec.get("scholarships") or [])):
-        key = _strip_tags(a).strip().lower()
-        if a and key not in seen_badges:          # avoid duplicate badges (e.g. program also listed as a fellowship)
-            seen_badges.add(key)
-            tags.append(f'<span class="badge talk-badge">{a}</span>')   # award strings already HTML (<a>)
+    # Three distinct, searchable tag families: programs, course/thesis context, awards.
+    for prog in (rec.get("programs") or []):
+        tags.append(f'<span class="badge tag-program">{esc(prog)}</span>')   # esc keeps links intact
+    for crs in (rec.get("courses") or []):
+        tags.append(f'<span class="badge tag-course">{esc(crs)}</span>')
+    for aw in (rec.get("awards") or []):
+        tags.append(f'<span class="badge tag-award">{esc(aw)}</span>')
     tags_html = "".join(tags)
     meta_html = f'<p class="item-meta">{meta}</p>' if meta else ""
 

@@ -236,6 +236,11 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 /* Mentorship: supervisory-role badge — formal (on paper) tinted, informal muted */
 .role-badge { color: var(--text); border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--border)); background: color-mix(in srgb, var(--violet) 12%, transparent); }
 .role-badge.role-informal { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
+/* Mentorship tag families: program (opportunity) · course/thesis · fellowship/award */
+.tag-program { color: var(--text); border: 1px solid color-mix(in srgb, var(--cyan) 45%, var(--border)); background: color-mix(in srgb, var(--cyan) 12%, transparent); }
+.tag-award   { color: var(--text); border: 1px solid color-mix(in srgb, #efa73a 50%, var(--border)); background: color-mix(in srgb, #efa73a 14%, transparent); }
+.tag-course  { color: var(--text-2); border: 1px solid var(--border); background: var(--surface-2); }
+.tag-program a, .tag-award a { color: inherit; text-decoration: underline; }
 /* Collaboration: values highlight near the top + opportunity links restored */
 .values-callout { border-left-color: var(--cyan); margin-bottom: var(--space-7); }
 .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-3); }
