@@ -155,8 +155,9 @@ def generate_content(data):
 
     # ---- Intro: teaching stats + philosophy ----
     ts = teaching.get("teachingStats") or {}
+    # "Departments" intentionally omitted from the topline stats (still used for course filter chips).
     stat_defs = [(ts.get("uniqueCourses"), "Courses"), (ts.get("totalOfferings"), "Offerings"),
-                 (ts.get("yearsTeaching"), "Years teaching"), (ts.get("departments"), "Departments")]
+                 (ts.get("yearsTeaching"), "Years teaching")]
     tiles = "".join(
         f'<div class="pub-stat"><span class="n">{v}</span><span class="l">{esc(l)}</span></div>'
         for v, l in stat_defs if v is not None
