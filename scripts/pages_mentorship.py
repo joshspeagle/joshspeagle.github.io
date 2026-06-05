@@ -107,11 +107,12 @@ def _card(rec, cat, label, color, completed):
     subs_html = "".join(f'<p class="item-sub">{x}</p>' for x in subs)
 
     # tags: role (formal/informal) + stage + Alum + programs + course/thesis + awards
-    tags = []
+    # Supervisory role sits up on the title row (see below), not in the tag cluster.
+    role_html = ""
     if sup:
         role_cls = "role-badge role-informal" if "informal" in sup.lower() else "role-badge"
-        tags.append(f'<span class="badge {role_cls}">{esc(sup)}</span>')
-    tags.append(f'<span class="badge b-{color}">{esc(label)}</span>')
+        role_html = f'<span class="badge {role_cls}">{esc(sup)}</span>'
+    tags = [f'<span class="badge b-{color}">{esc(label)}</span>']
     if completed:
         tags.append('<span class="tag feat">Alum</span>')
     # Three distinct, searchable tag families: programs, course/thesis context, awards.
@@ -129,7 +130,7 @@ def _card(rec, cat, label, color, completed):
         f'data-cat="{cat}" data-search="{data_search}" data-year="{data_year}" '
         f'data-num="{data_year}" data-title="{data_title}">'
         '<div class="item-head">'
-        f'<h3 class="item-title">{name_html}</h3>'
+        f'<div class="item-headline"><h3 class="item-title">{name_html}</h3>{role_html}</div>'
         f'<span class="item-when">{esc(period)}</span>'
         '</div>'
         f'{meta_html}'

@@ -234,6 +234,9 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .mentor-count { color: var(--text-3); }
 .mentor-sec-count { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-3); font-weight: 400; }
 /* Mentorship: supervisory-role badge — formal (on paper) tinted, informal muted */
+/* Mentorship: supervisory role badge sits on the title row, right after the name */
+.item-headline { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.item-headline .item-title { margin: 0; }
 .role-badge { color: var(--text); border: 1px solid color-mix(in srgb, var(--violet) 45%, var(--border)); background: color-mix(in srgb, var(--violet) 12%, transparent); }
 .role-badge.role-informal { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
 /* Mentorship tag families: program (opportunity) · course/thesis · fellowship/award */
