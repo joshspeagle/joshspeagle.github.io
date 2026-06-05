@@ -487,8 +487,8 @@
                         "currentStatus": "",
                         "myCareerStage": "Assistant Professor",
                         "awards": [
-                            "<a href=\"https://www.artsci.utoronto.ca/faculty-staff/research-supports-services/find-funding/past-recipients-postdoctoral-fellowships\">Arts & Science Fellow</a> (2023-2025)",
-                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a> (Fall 2025-Present)"
+                            "<a href=\"https://www.artsci.utoronto.ca/faculty-staff/research-supports-services/find-funding/past-recipients-postdoctoral-fellowships\">Arts & Science Fellow</a>",
+                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"
                         ]
                     },
                     {
@@ -502,8 +502,8 @@
                         "currentStatus": "",
                         "myCareerStage": "Assistant Professor",
                         "awards": [
-                            "<a href=\"https://banting.fellowships-bourses.gc.ca\">Banting Fellow</a> (2023-2025)",
-                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a> (Fall 2025-Present)"
+                            "<a href=\"https://banting.fellowships-bourses.gc.ca\">Banting Fellow</a>",
+                            "<a href=\"https://www.dunlap.utoronto.ca/dunlap-fellowship\">Dunlap Fellow</a>"
                         ]
                     }
                 ],
