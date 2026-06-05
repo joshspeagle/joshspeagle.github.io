@@ -50,6 +50,7 @@ python -m http.server 8000       # local dev server
 | `assets/js/redesign/hero.js` | animated inference-field hero (decorative, `aria-hidden`) |
 | `assets/js/redesign/listview.js` | generic search/filter/sort/load-more (data-attr driven) |
 | `assets/js/redesign/publications.js` | publications list interactivity |
+| `assets/js/redesign/pubchart.js` | tooltip enhancement for the inline-SVG publication figures (built in `build_html.py`: `_citations_svg`/`_roles_svg`/`_riq_svg`) |
 | `requirements.txt` | Python deps for the publication pipeline only |
 | `.github/workflows/build-check.yml` | CI — fails the build if the committed static output is stale |
 | `CNAME` | custom apex domain (`joshspeagle.com`) |

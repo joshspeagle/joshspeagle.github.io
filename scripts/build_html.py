@@ -547,6 +547,188 @@ def _generate_paper_card(pub, board=False):
     )
 
 
+_ROLE_META = [
+    ("primary", "Primary author"), ("postdoc", "Postdoc-led"),
+    ("student", "Student-led"), ("significant", "Contributor"), ("other", "Other"),
+]
+
+
+def _nice_ticks(maxv, target=4):
+    import math
+    if maxv <= 0:
+        return [0, 1]
+    raw = maxv / target
+    mag = 10 ** math.floor(math.log10(raw))
+    step = next((mag * m for m in (1, 2, 2.5, 5, 10) if mag * m >= raw), mag * 10)
+    step = max(1, int(round(step)))
+    return list(range(0, int(maxv) + step, step))
+
+
+def _roles_svg(pubs):
+    """Hand-rolled, theme-aware, accessible inline SVG: publications/year by role.
+
+    Each segment carries data-tip (styled JS tooltip on hover); each year has a
+    focusable transparent overlay with an aria-label summary (keyboard + screen
+    reader). Colors come from CSS classes so one SVG adapts to both themes.
+    """
+    from collections import defaultdict, Counter
+    by_year = defaultdict(Counter)
+    for p in pubs:
+        y = p.get("year")
+        if y:
+            by_year[int(y)][p.get("authorshipCategory") or "other"] += 1
+    if not by_year:
+        return ""
+    years = list(range(min(by_year), max(by_year) + 1))
+    maxstack = max((sum(by_year[y].values()) for y in years), default=1)
+    ticks = _nice_ticks(maxstack)
+    scale = max(maxstack, ticks[-1])
+
+    esc_attr = lambda x: _esc(x).replace('"', "&quot;")
+    W, H, ml, mr, mt, mb = 820, 300, 46, 14, 40, 30
+    pw, ph, n = W - ml - mr, H - mt - mb, len(years)
+    bw = pw / n * 0.64
+    xc = lambda i: ml + (i + 0.5) * pw / n
+    yv = lambda v: mt + ph - (v / scale) * ph
+
+    s = [f'<svg class="pf-svg" viewBox="0 0 {W} {H}" role="group" '
+         f'aria-label="Publications per year by my authorship role" preserveAspectRatio="xMinYMin meet">']
+    for t in ticks:
+        s.append(f'<line class="pf-grid" x1="{ml}" y1="{yv(t):.1f}" x2="{W - mr}" y2="{yv(t):.1f}"/>')
+        s.append(f'<text class="pf-axis" x="{ml - 6}" y="{yv(t) + 3:.1f}" text-anchor="end">{t}</text>')
+    for i, y in enumerate(years):
+        col = by_year[y]
+        base = 0
+        for key, label in _ROLE_META:
+            v = col.get(key, 0)
+            if not v:
+                continue
+            y1, h = yv(base + v), (yv(base) - yv(base + v))
+            tip = f"{y} · {label}: {v} publication" + ("s" if v != 1 else "")
+            s.append(f'<rect class="pf-seg seg-{key}" x="{xc(i) - bw / 2:.1f}" y="{y1:.1f}" '
+                     f'width="{bw:.1f}" height="{h:.1f}" data-tip="{esc_attr(tip)}"/>')
+            base += v
+        if base:
+            parts = ", ".join(f"{col[k]} {lab.lower()}" for k, lab in _ROLE_META if col.get(k))
+            summ = f"{y}: {base} publication" + ("s" if base != 1 else "") + f" — {parts}"
+            s.append(f'<rect class="pf-col" x="{xc(i) - bw / 2 - 2:.1f}" y="{mt}" width="{bw + 4:.1f}" '
+                     f'height="{ph}" tabindex="0" role="img" aria-label="{esc_attr(summ)}" data-tip="{esc_attr(summ)}"/>')
+        if y % 2 == 0:
+            s.append(f'<text class="pf-axis" x="{xc(i):.1f}" y="{H - mb + 16}" text-anchor="middle">{y}</text>')
+    lx = ml
+    for key, label in _ROLE_META:
+        s.append(f'<rect class="pf-sw seg-{key}" x="{lx:.0f}" y="14" width="10" height="10" rx="2"/>')
+        s.append(f'<text class="pf-legend" x="{lx + 14:.0f}" y="23">{label}</text>')
+        lx += 14 + len(label) * 6.4 + 16
+    s.append("</svg>")
+    return "".join(s)
+
+
+def _citations_svg(metrics):
+    """Inline SVG: citations received per year (√ scale), with per-year hover/focus bands."""
+    import math
+    cpy = {int(y): v for y, v in (metrics.get("citationsPerYear") or {}).items()}
+    if not cpy:
+        return ""
+    cur = max(cpy)
+    years = [y for y in sorted(cpy) if y < cur] or sorted(cpy)
+    vmax = max(cpy[y] for y in years)
+    ticks = [t for t in (100, 500, 1000, 2000, 3000, 5000) if t <= vmax * 1.05] or [vmax]
+    smax = math.sqrt(max(vmax, ticks[-1])) * 1.06
+    W, H, ml, mr, mt, mb = 820, 290, 52, 14, 18, 30
+    pw, ph, n = W - ml - mr, H - mt - mb, len(years)
+    xc = lambda i: ml + (i * pw / (n - 1) if n > 1 else pw / 2)
+    yv = lambda v: mt + ph - (math.sqrt(max(v, 0)) / smax) * ph
+    esc_attr = lambda x: _esc(x).replace('"', "&quot;")
+    s = [f'<svg class="pf-svg" viewBox="0 0 {W} {H}" role="group" aria-label="Citations received per year" preserveAspectRatio="xMinYMin meet">']
+    for t in ticks:
+        s.append(f'<line class="pf-grid" x1="{ml}" y1="{yv(t):.1f}" x2="{W - mr}" y2="{yv(t):.1f}"/>')
+        s.append(f'<text class="pf-axis" x="{ml - 6}" y="{yv(t) + 3:.1f}" text-anchor="end">{t:,}</text>')
+    pts = [(xc(i), yv(cpy[y])) for i, y in enumerate(years)]
+    area = f"M{pts[0][0]:.1f},{mt + ph:.1f} " + " ".join(f"L{x:.1f},{y:.1f}" for x, y in pts) + f" L{pts[-1][0]:.1f},{mt + ph:.1f} Z"
+    s.append(f'<path class="pf-area" d="{area}"/>')
+    s.append(f'<path class="pf-cit-line" d="M' + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts) + '"/>')
+    for x, y in pts:
+        s.append(f'<circle class="pf-dot" cx="{x:.1f}" cy="{y:.1f}" r="3"/>')
+    for i, y in enumerate(years):
+        if y % 2 == 0:
+            s.append(f'<text class="pf-axis" x="{xc(i):.1f}" y="{H - mb + 16}" text-anchor="middle">{y}</text>')
+    step = pw / (n - 1) if n > 1 else pw
+    for i, y in enumerate(years):
+        tip = f"{y}: {cpy[y]:,} citations"
+        s.append(f'<rect class="pf-band" x="{xc(i) - step / 2:.1f}" y="{mt}" width="{step:.1f}" height="{ph}" '
+                 f'tabindex="0" role="img" aria-label="{esc_attr(tip)}" data-tip="{esc_attr(tip)}"/>')
+    s.append("</svg>")
+    return "".join(s)
+
+
+_RIQ_SERIES = [
+    ("all", "All papers"), ("primary", "Primary author"),
+    ("significant", "Contributor"), ("student", "Student-led"), ("postdoc", "Postdoc-led"),
+]
+
+
+def _riq_svg(metrics):
+    """Inline SVG: RIQ over time by authorship role, with the typical-range band."""
+    riq = metrics.get("riqByCategory") or {}
+    data = {}
+    for key, _ in _RIQ_SERIES:
+        ser = (riq.get(key) or {}).get("riq_series") or {}
+        pts = sorted((int(y), float(v)) for y, v in ser.items())
+        if pts:
+            c = max(y for y, _ in pts)
+            pts = [(y, v) for y, v in pts if y < c]
+        data[key] = pts
+    years = sorted({y for pts in data.values() for y, _ in pts})
+    if not years:
+        return ""
+    vmax = max((v for pts in data.values() for _, v in pts), default=1)
+    ticks = _nice_ticks(vmax)
+    smax = max(vmax, ticks[-1]) * 1.06
+    W, H, ml, mr, mt, mb = 820, 300, 46, 14, 40, 30
+    pw, ph = W - ml - mr, H - mt - mb
+    y0, y1 = years[0], years[-1]
+    xc = lambda yr: ml + ((yr - y0) / (y1 - y0) * pw if y1 > y0 else pw / 2)
+    yv = lambda v: mt + ph - (v / smax) * ph
+    esc_attr = lambda x: _esc(x).replace('"', "&quot;")
+    s = [f'<svg class="pf-svg" viewBox="0 0 {W} {H}" role="group" aria-label="Research Impact Quotient over time by authorship role" preserveAspectRatio="xMinYMin meet">']
+    s.append(f'<rect class="pf-band-typ" x="{ml}" y="{yv(150):.1f}" width="{pw:.1f}" height="{yv(60) - yv(150):.1f}"/>')
+    s.append(f'<line class="pf-mean" x1="{ml}" y1="{yv(100):.1f}" x2="{W - mr}" y2="{yv(100):.1f}"/>')
+    s.append(f'<text class="pf-axis" x="{ml + 4}" y="{yv(100) - 4:.1f}">typical range</text>')
+    for t in ticks:
+        s.append(f'<line class="pf-grid" x1="{ml}" y1="{yv(t):.1f}" x2="{W - mr}" y2="{yv(t):.1f}"/>')
+        s.append(f'<text class="pf-axis" x="{ml - 6}" y="{yv(t) + 3:.1f}" text-anchor="end">{t}</text>')
+    for key, _ in _RIQ_SERIES:
+        pts = data[key]
+        if len(pts) < 2:
+            continue
+        s.append(f'<path class="pf-ln ln-{key}" d="M' + " L".join(f"{xc(yr):.1f},{yv(v):.1f}" for yr, v in pts) + '"/>')
+    for yr in years:
+        if yr % 2 == 0:
+            s.append(f'<text class="pf-axis" x="{xc(yr):.1f}" y="{H - mb + 16}" text-anchor="middle">{yr}</text>')
+    step = pw / (len(years) - 1) if len(years) > 1 else pw
+    for yr in years:
+        bits = []
+        for key, label in _RIQ_SERIES:
+            dy = {y: v for y, v in data[key]}
+            if yr in dy:
+                bits.append(f"{label} {round(dy[yr])}")
+        if not bits:
+            continue
+        tip = f"{yr} — " + " · ".join(bits)
+        s.append(f'<rect class="pf-band" x="{xc(yr) - step / 2:.1f}" y="{mt}" width="{step:.1f}" height="{ph}" '
+                 f'tabindex="0" role="img" aria-label="{esc_attr(tip)}" data-tip="{esc_attr(tip)}"/>')
+    lx = ml
+    for key, label in _RIQ_SERIES:
+        cur = (riq.get(key) or {}).get("current")
+        lab = f"{label} ({cur})" if cur is not None else label
+        s.append(f'<rect class="pf-sw seg-{key}" x="{lx:.0f}" y="14" width="10" height="10" rx="2"/>')
+        s.append(f'<text class="pf-legend" x="{lx + 14:.0f}" y="23">{lab}</text>')
+        lx += 14 + len(lab) * 6.2 + 16
+    s.append("</svg>")
+    return "".join(s)
+
+
 def generate_publications_redesign(data):
     """Generate the inner HTML for #publications-content (redesign).
 
@@ -599,26 +781,20 @@ def generate_publications_redesign(data):
         py = max(complete, key=complete.get)
         peak_txt = f"{total_citations:,} total · peak {complete[py]:,} in {py}"
 
-    def _fig(name, title, meta, alt, wide=False):
+    def _fig(title, meta, svg, wide=False):
         cls = "pub-fig wide" if wide else "pub-fig"
         return (
             f'<figure class="{cls}">'
             f'<figcaption class="pub-fig-head"><span class="t">{title}</span>'
             f'<span class="m">{meta}</span></figcaption>'
-            f'<img class="fig-dark" src="assets/images/pubfig-{name}-dark.svg" alt="{alt}" loading="lazy">'
-            f'<img class="fig-light" src="assets/images/pubfig-{name}-light.svg" alt="{alt}" loading="lazy">'
-            '</figure>'
+            f'{svg}</figure>'
         )
 
     figures = (
         '<div class="pub-figures">'
-        + _fig("citations", "Citations received per year", peak_txt,
-               "Citations received per year, square-root scale", wide=True)
-        + _fig("roles", "Publications by year &amp; my role",
-               "primary · postdoc-led · student-led · contributor",
-               "Publications per year, stacked by my authorship role")
-        + _fig("riq", "Research impact by role", "RIQ vs. the typical astronomer range",
-               "Research Impact Quotient over time by authorship role")
+        + _fig("Citations received per year", peak_txt, _citations_svg(metrics), wide=True)
+        + _fig("Publications by year &amp; my role", "hover or tab through the bars", _roles_svg(papers_with_year))
+        + _fig("Research impact by role", "RIQ vs. the typical astronomer range", _riq_svg(metrics))
         + '</div>'
         '<p class="pub-fig-note">A note on reading these: I separate work I led (primary author) from '
         'work led by my postdocs and students and from larger collaborations, so these show how much of '
