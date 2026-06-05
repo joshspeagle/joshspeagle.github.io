@@ -133,7 +133,8 @@ def generate_content(data):
             for d in depts
         )
         tags = level_badge + dept_badges
-        accent = _slug(depts[0]) if depts else "violet"   # left-stripe color = primary dept
+        # left stripe: split blue/purple for joint (multi-dept) courses, else dept color
+        accent = "astrostat" if len(depts) >= 2 else (_slug(depts[0]) if depts else "violet")
 
         cards.append(
             f'<article class="item accent-{accent}" data-lv-item '

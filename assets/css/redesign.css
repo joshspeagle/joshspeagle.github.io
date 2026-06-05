@@ -273,6 +273,13 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .item.accent-astronomy  { border-left-color: #5aa9ff; } .d-astronomy  { background: #5aa9ff; }
 .item.accent-statistics { border-left-color: #a78bff; } .d-statistics { background: #a78bff; }
 .item.accent-workshops  { border-left-color: #34d3e0; } .d-workshops  { background: #34d3e0; }
+/* Joint Astronomy + Statistics course: split left stripe (blue over purple) */
+.item.accent-astrostat {
+  border-left-color: transparent;
+  background:
+    linear-gradient(180deg, #5aa9ff 0 50%, #a78bff 50% 100%) left / 3px 100% no-repeat,
+    var(--surface);
+}
 .item.student { border-left-color: #ff9d4d; background: linear-gradient(90deg, color-mix(in srgb, #ff9d4d 7%, transparent), var(--surface) 42%); }
 .item-head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: baseline; flex-wrap: wrap; }
 .item-title { font-family: var(--font-serif); font-size: var(--fs-h3); margin: 0 0 4px; color: var(--text); }
