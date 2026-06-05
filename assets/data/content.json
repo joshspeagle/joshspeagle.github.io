@@ -618,16 +618,27 @@
                     },
                     {
                         "name": "Chuxuan Ai",
-                        "timelinePeriod": "Summer 2026",
-                        "supervisionType": "Primary Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
-                        ],
-                        "project": "Hamiltonian Optimization and Sampling for Deep Learning",
-                        "currentStatus": "Undergraduate student",
+                        "timelinePeriod": "Fall 2025-Present",
                         "myCareerStage": "Assistant Professor",
+                        "currentStatus": "Undergraduate student",
+                        "projects": [
+                            {
+                                "title": "Hamiltonian Optimization and Sampling for Deep Learning",
+                                "supervisionType": "Primary Supervisor",
+                                "coSupervisors": [
+                                    "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
+                                ]
+                            },
+                            {
+                                "title": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
+                                "supervisionType": "Primary Supervisor"
+                            }
+                        ],
                         "programs": [
                             "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
+                        ],
+                        "courses": [
+                            "Senior Thesis"
                         ]
                     },
                     {
@@ -792,15 +803,10 @@
                             ],
                             "awards": [
                                 "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
+                            ],
+                            "courses": [
+                                "Junior Thesis"
                             ]
-                        },
-                        {
-                            "name": "Chuxuan Ai",
-                            "timelinePeriod": "Fall 2025-Winter 2026",
-                            "currentStatus": "Undergraduate student",
-                            "supervisionType": "Primary Supervisor",
-                            "project": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
-                            "myCareerStage": "Assistant Professor"
                         },
                         {
                             "name": "Diego Martinez Noriega",
@@ -826,7 +832,10 @@
                                 "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
                             ],
                             "project": "Tracing Star Formation Histories and Evolution in Rho Ophiuchi",
-                            "myCareerStage": "Assistant Professor"
+                            "myCareerStage": "Assistant Professor",
+                            "courses": [
+                                "Research Course"
+                            ]
                         },
                         {
                             "name": "Mehmet Bükücü",
@@ -834,7 +843,10 @@
                             "currentStatus": "Undergraduate student",
                             "supervisionType": "Primary Supervisor",
                             "project": "Galaxy evolution with a single star?",
-                            "myCareerStage": "Assistant Professor"
+                            "myCareerStage": "Assistant Professor",
+                            "courses": [
+                                "Research Course"
+                            ]
                         },
                         {
                             "name": "Mayesha Rahaman",
@@ -845,7 +857,10 @@
                             ],
                             "project": "Kinematic and Demographic Analysis of the SCYA-89 Stellar Association",
                             "myCareerStage": "Assistant Professor",
-                            "currentStatus": "Undergraduate student"
+                            "currentStatus": "Undergraduate student",
+                            "courses": [
+                                "Research Course"
+                            ]
                         },
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/alejandro-ortega-cruz-prieto-/\">Alejandro Ortega Cruz Prieto</a>",
@@ -874,6 +889,9 @@
                             ],
                             "awards": [
                                 "Aurora Borealis Fellow"
+                            ],
+                            "courses": [
+                                "Research Course"
                             ]
                         },
                         {
@@ -936,7 +954,6 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Software Engineer at <a href=\"https://www.veeva.com/\">Veeva Systems</a>",
                             "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ]
                         },
@@ -967,7 +984,6 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>"
                             ]
                         },
@@ -983,7 +999,6 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Master's Program in Science Technology at <a href=\"https://www.upenn.edu/\">UPenn</a>",
                             "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ]
                         },
@@ -997,9 +1012,6 @@
                             "project": "Identifying Strong Lenses in Euclid Data with Active Learning",
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
-                            "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
-                            ],
                             "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
@@ -1016,9 +1028,6 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Master's program in Data Science and AI at the <a href=\"https://uwaterloo.ca/\">University of Waterloo</a>",
-                            "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
-                            ],
                             "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.registrar.utoronto.ca/financial-aid-awards/utea/\">UTEA</a>"
@@ -1035,9 +1044,6 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined the MScAC program at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>",
-                            "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
-                            ],
                             "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.registrar.utoronto.ca/financial-aid-awards/utea/\">UTEA</a>"
@@ -1068,7 +1074,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "courses": [
-                                "Research Course"
+                                "Junior Thesis"
                             ]
                         },
                         {
@@ -1079,7 +1085,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "courses": [
-                                "Research Course"
+                                "Junior Thesis"
                             ]
                         },
                         {
@@ -1090,7 +1096,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "courses": [
-                                "Research Course"
+                                "Junior Thesis"
                             ]
                         },
                         {
@@ -1101,7 +1107,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "courses": [
-                                "Research Course"
+                                "Junior Thesis"
                             ]
                         },
                         {
@@ -1112,7 +1118,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "courses": [
-                                "Research Course"
+                                "Junior Thesis"
                             ]
                         },
                         {
@@ -1137,7 +1143,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "courses": [
-                                "Research Course"
+                                "Senior Thesis"
                             ]
                         },
                         {
@@ -1156,7 +1162,7 @@
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ],
                             "courses": [
-                                "Research Course"
+                                "Senior Thesis"
                             ]
                         },
                         {
@@ -1170,7 +1176,6 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "Co-op Program"
                             ],
                             "institution": "<a href=\"https://www.georgebrown.ca/\">George Brown College</a>"
@@ -1319,7 +1324,6 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined PhD program at <a href=\"https://www.caltech.edu/\">Caltech</a>",
                             "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ],
                             "courses": [
@@ -1371,7 +1375,6 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Masters program at <a href=\"https://www.cam.ac.uk/\">University of Cambridge</a>, then PhD program at <a href=\"https://www.cuhk.edu.hk/\">CUHK</a>",
                             "programs": [
-                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://www.cita.utoronto.ca/opportunities/surf-at-cita/\">CITA SURF</a>"
                             ]
                         },
@@ -1607,7 +1610,10 @@
                             "currentStatus": "MSc Statistics student",
                             "supervisionType": "Primary Supervisor",
                             "project": "Understanding Architectural Biases in Neural Time Series Models",
-                            "myCareerStage": "Assistant Professor"
+                            "myCareerStage": "Assistant Professor",
+                            "courses": [
+                                "Research Course"
+                            ]
                         },
                         {
                             "name": "Isabelle Huang",
@@ -1615,7 +1621,10 @@
                             "currentStatus": "MSc Statistics student",
                             "supervisionType": "Primary Supervisor",
                             "project": "Time Series Forecasting with Deep Markov Models",
-                            "myCareerStage": "Assistant Professor"
+                            "myCareerStage": "Assistant Professor",
+                            "courses": [
+                                "Research Course"
+                            ]
                         },
                         {
                             "name": "Alex Brisebois",
@@ -1627,7 +1636,10 @@
                                 "<a href=\"https://tanveerkarim.com/\">Tanveer Karim</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
                             ],
                             "project": "Exploring the Feasibility of Detecting a Time-Dependent σ<sub>8</sub> with LSST",
-                            "myCareerStage": "Assistant Professor"
+                            "myCareerStage": "Assistant Professor",
+                            "courses": [
+                                "Research Course"
+                            ]
                         },
                         {
                             "name": "<a href=\"https://yunyishen.github.io/\">Yunyi Shen</a>",

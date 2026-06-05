@@ -48,6 +48,24 @@ def _parse_year(period):
     return max(int(y) for y in full) if full else 0
 
 
+_SEASON_ORD = {"winter": 1, "spring": 2, "summer": 3, "fall": 4, "autumn": 4}
+
+
+def _end_key(period):
+    """Sort key for ordering a list by END date, newest first (use reverse=True).
+
+    Takes the text after the last dash as the end ('Present' sorts above all),
+    then (year, season) so e.g. Fall 2024 > Summer 2024 > 2023.
+    """
+    end = re.split(r"\s*[-–]\s*", str(period or "").strip())[-1].strip().lower()
+    if "present" in end:
+        return (9999, 9)
+    years = re.findall(r"(?:19|20)\d{2}", end)
+    year = int(years[-1]) if years else 0
+    season = next((o for s, o in _SEASON_ORD.items() if s in end), 0)
+    return (year, season)
+
+
 def _supervision_and_project(rec):
     """Return (supervisionType, project) handling both single-project records and
     the bachelors-style records that carry a projects[] array."""
@@ -116,8 +134,6 @@ def _card(rec, cat, label, color, completed):
         role_cls = "role-badge role-informal" if "informal" in sup.lower() else "role-badge"
         role_html = f'<span class="badge {role_cls}">{esc(sup)}</span>'
     tags = [f'<span class="badge b-{color}">{esc(label)}</span>']
-    if completed:
-        tags.append('<span class="tag feat">Alum</span>')
     institution = rec.get("institution") or ""
     if institution:                                  # home institution for non-Toronto students
         tags.append(f'<span class="badge tag-institution">{esc(institution)}</span>')
@@ -194,6 +210,8 @@ def _stage_groups(source, completed_flag):
         recs = source.get(stage_key) or []
         if not recs:
             continue
+        # Order each group by end date automatically (newest first).
+        recs = sorted(recs, key=lambda r: _end_key(r.get("timelinePeriod")), reverse=True)
         cards = "".join(_card(rec, cat, label, color, completed=completed_flag) for rec in recs)
         groups.append(
             '<div class="mentor-group" data-mentor-group>'
