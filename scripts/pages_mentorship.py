@@ -84,19 +84,14 @@ def _card(rec, cat, label, color, completed):
     career = rec.get("myCareerStage") or ""
     program = rec.get("program") or ""
 
-    # data-* keys (plain text for search/sort)
-    search_src = " ".join(_strip_tags(x) for x in (name_plain, proj, current_status, " ".join(cosup)))
+    # data-* keys (plain text for search/sort) — include the supervisory role
+    search_src = " ".join(_strip_tags(x) for x in (name_plain, sup, proj, current_status, " ".join(cosup)))
     data_search = attr_esc(search_src)
     data_title = attr_esc(name_plain)
     data_year = _parse_year(period)
 
-    # meta line: supervision role · project / research interests
-    if sup and proj:
-        meta = f"<strong>{esc(sup)}</strong> · {esc(proj)}"
-    elif sup:
-        meta = f"<strong>{esc(sup)}</strong>"
-    else:
-        meta = esc(proj)
+    # meta line: just the project / research interests (the role is now a badge below)
+    meta = esc(proj)
 
     # detail lines: co-supervisors, current status (current mentees only), my career stage
     subs = []
@@ -110,16 +105,25 @@ def _card(rec, cat, label, color, completed):
         subs.append(f'<span class="faint">My career stage then: {esc(career)}</span>')
     subs_html = "".join(f'<p class="item-sub">{x}</p>' for x in subs)
 
-    # tags: stage badge + Alum + program + each fellowship/scholarship
-    tags = [f'<span class="badge b-{color}">{esc(label)}</span>']
+    # tags: supervisory role (formal vs informal) + stage badge + Alum + program + awards
+    tags = []
+    if sup:
+        role_cls = "role-badge role-informal" if "informal" in sup.lower() else "role-badge"
+        tags.append(f'<span class="badge {role_cls}">{esc(sup)}</span>')
+    tags.append(f'<span class="badge b-{color}">{esc(label)}</span>')
     if completed:
         tags.append('<span class="tag feat">Alum</span>')
+    seen_badges = set()
     if program:
+        seen_badges.add(_strip_tags(program).strip().lower())
         tags.append(f'<span class="badge talk-badge">{esc(program)}</span>')
     for a in (list(rec.get("fellowships") or []) + list(rec.get("scholarships") or [])):
-        if a:
+        key = _strip_tags(a).strip().lower()
+        if a and key not in seen_badges:          # avoid duplicate badges (e.g. program also listed as a fellowship)
+            seen_badges.add(key)
             tags.append(f'<span class="badge talk-badge">{a}</span>')   # award strings already HTML (<a>)
     tags_html = "".join(tags)
+    meta_html = f'<p class="item-meta">{meta}</p>' if meta else ""
 
     return (
         f'<article class="item accent-{color}" data-lv-item '
@@ -129,7 +133,7 @@ def _card(rec, cat, label, color, completed):
         f'<h3 class="item-title">{name_html}</h3>'
         f'<span class="item-when">{esc(period)}</span>'
         '</div>'
-        f'<p class="item-meta">{meta}</p>'
+        f'{meta_html}'
         f'{subs_html}'
         f'<div class="item-tags">{tags_html}</div>'
         '</article>'

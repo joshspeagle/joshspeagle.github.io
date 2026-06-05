@@ -514,7 +514,7 @@
                         "fellowships": [
                             "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
                         ],
-                        "supervisionType": "Secondary Supervisor",
+                        "supervisionType": "Informal Supervisor",
                         "coSupervisors": [
                             "<a href=\"https://www.ma.imperial.ac.uk/~dvandyk/\">David van Dyk</a> (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)"
                         ],
@@ -528,7 +528,7 @@
                         "fellowships": [
                             "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
                         ],
-                        "supervisionType": "Secondary Supervisor",
+                        "supervisionType": "Informal Supervisor",
                         "coSupervisors": [
                             "<a href=\"https://sites.psu.edu/astrowright/\">Jason Wright</a> (<a href=\"https://science.psu.edu/astro\">Penn State</a>)",
                             "<a href=\"https://www.dunlap.utoronto.ca/~vanderlinde/\">Keith Vanderlinde</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
@@ -584,22 +584,6 @@
                         "currentStatus": "PhD candidate"
                     },
                     {
-                        "name": "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>",
-                        "timelinePeriod": "Fall 2022-Present",
-                        "scholarships": [
-                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/cgsm-bescm_eng.asp\">NSERC CGS-M</a>",
-                            "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
-                        ],
-                        "supervisionType": "Secondary Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://bartripperda.com/\">Bart Ripperda</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)",
-                            "<a href=\"https://www.cita.utoronto.ca/~murray/\">Norm Murray</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
-                        ],
-                        "project": "Hot plasma simulations in AGN accretion disks and Milky Way analogues in cosmological simulations",
-                        "myCareerStage": "Assistant Professor",
-                        "currentStatus": "PhD candidate"
-                    },
-                    {
                         "name": "Mairead Heiger",
                         "timelinePeriod": "Fall 2022-Present",
                         "scholarships": [
@@ -614,7 +598,45 @@
                         "currentStatus": "PhD candidate"
                     }
                 ],
-                "bachelors": [],
+                "bachelors": [
+                    {
+                        "name": "Leo (Hanbang) Wu",
+                        "timelinePeriod": "Summer 2026",
+                        "supervisionType": "Primary Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://biprateep.de/\">Biprateep Dey</a>",
+                            "<a href=\"https://nolank.ca/\">Nolan Koblischke</a>"
+                        ],
+                        "project": "alphaUniverse: The AI Virtual Observatory",
+                        "program": "A&A SURP",
+                        "currentStatus": "Undergraduate student",
+                        "myCareerStage": "Assistant Professor"
+                    },
+                    {
+                        "name": "Chuxuan Ai",
+                        "timelinePeriod": "Summer 2026",
+                        "supervisionType": "Primary Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
+                        ],
+                        "project": "Hamiltonian Optimization and Sampling for Deep Learning",
+                        "program": "DSI SUDS",
+                        "currentStatus": "Undergraduate student",
+                        "myCareerStage": "Assistant Professor"
+                    },
+                    {
+                        "name": "Yasir Alsugair",
+                        "timelinePeriod": "Summer 2026",
+                        "supervisionType": "Primary Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
+                        ],
+                        "project": "Hamiltonian Optimization and Sampling for Deep Learning",
+                        "program": "DSI SUDS",
+                        "currentStatus": "Undergraduate student (KAUST)",
+                        "myCareerStage": "Assistant Professor"
+                    }
+                ],
                 "mastersProjects": [],
                 "completed": {
                     "postdoctoral": [
@@ -654,7 +676,7 @@
                             "scholarships": [
                                 "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
                             ],
-                            "supervisionType": "Secondary Supervisor",
+                            "supervisionType": "Informal Supervisor",
                             "coSupervisors": [
                                 "<a href=\"https://www.astro.utoronto.ca/~drout/\">Maria Drout</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "<a href=\"https://www.yorku.ca/professor/jeremywebb/\">Jeremy Webb</a> (<a href=\"https://www.yorku.ca/\">York University</a>)"
@@ -697,7 +719,7 @@
                             "scholarships": [
                                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
                             ],
-                            "supervisionType": "Secondary Supervisor",
+                            "supervisionType": "Informal Supervisor",
                             "coSupervisors": [
                                 "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)",
                                 "<a href=\"https://www.astro.utoronto.ca/~bovy/\">Jo Bovy</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
@@ -707,13 +729,29 @@
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
                             "currentStatus": "PhD candidate",
                             "outcome": "<a href=\"https://lsstdiscoveryalliance.org/programs/catalyst-fellowship/\">LSST Discovery Alliance Catalyst Postdoctoral Fellow</a> at <a href=\"https://www.mpia.de\">Max Planck Institute for Astronomy</a>; Incoming Assistant Professor at <a href=\"https://www.psu.edu\">Penn State University</a>"
+                        },
+                        {
+                            "name": "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>",
+                            "timelinePeriod": "Fall 2022-Spring 2026",
+                            "scholarships": [
+                                "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/cgsm-bescm_eng.asp\">NSERC CGS-M</a>",
+                                "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
+                            ],
+                            "supervisionType": "Informal Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://bartripperda.com/\">Bart Ripperda</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)",
+                                "<a href=\"https://www.cita.utoronto.ca/~murray/\">Norm Murray</a> (<a href=\"https://www.cita.utoronto.ca/\">CITA</a>)"
+                            ],
+                            "project": "Hot plasma simulations in AGN accretion disks and Milky Way analogues in cosmological simulations",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "PhD candidate"
                         }
                     ],
                     "bachelors": [
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/harry-peng1205/\">Zehao \"Harry\" Peng</a>",
                             "timelinePeriod": "Summer 2024-Winter 2026",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>",
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
@@ -802,7 +840,7 @@
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/alejandro-ortega-cruz-prieto-/\">Alejandro Ortega Cruz Prieto</a>",
                             "timelinePeriod": "Summer 2024-Summer 2025",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "Aurora Borealis Fellow",
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
@@ -830,7 +868,7 @@
                         {
                             "name": "Isabelle Laing",
                             "timelinePeriod": "Summer 2024-Summer 2025",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
@@ -879,7 +917,7 @@
                         {
                             "name": "Zack Steine",
                             "timelinePeriod": "Summer 2024-Fall 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ],
@@ -896,7 +934,7 @@
                         {
                             "name": "Michelle Denny",
                             "timelinePeriod": "Summer 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
@@ -912,7 +950,7 @@
                         {
                             "name": "Cissy Kuang",
                             "timelinePeriod": "Summer 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>"
                             ],
@@ -927,7 +965,7 @@
                         {
                             "name": "Weizhi \"Luke\" Shen",
                             "timelinePeriod": "Summer 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ],
@@ -943,7 +981,7 @@
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/khalid-edris-081229244/\">Khalid Edris</a>",
                             "timelinePeriod": "Summer 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
@@ -959,7 +997,7 @@
                         {
                             "name": "Junbo \"Felix\" Li",
                             "timelinePeriod": "Summer 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.registrar.utoronto.ca/financial-aid-awards/utea/\">UTEA</a>"
@@ -976,7 +1014,7 @@
                         {
                             "name": "Seo Won \"Sean\" Yi",
                             "timelinePeriod": "Summer 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.registrar.utoronto.ca/financial-aid-awards/utea/\">UTEA</a>"
@@ -993,7 +1031,7 @@
                         {
                             "name": "Semoore Tijani",
                             "timelinePeriod": "Summer 2024",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "Aurora Borealis Fellow",
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
@@ -1095,7 +1133,7 @@
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/belle-pensamiento-9752ba107/\">Belle Pensamiento</a>",
                             "timelinePeriod": "Summer 2023-Fall 2023",
-                            "program": "SURP/DATA SCIENCE",
+                            "program": "A&A SURP/DATA SCIENCE",
                             "fellowships": [
                                 "Co-op Program"
                             ],
@@ -1110,7 +1148,7 @@
                         {
                             "name": "Guiping Zhao",
                             "timelinePeriod": "Summer 2023",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">SURA</a>"
                             ],
@@ -1122,7 +1160,7 @@
                         {
                             "name": "Shu Yan \"Alice\" Wang",
                             "timelinePeriod": "Summer 2023",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">SURA</a>"
                             ],
@@ -1139,7 +1177,7 @@
                         {
                             "name": "Stephanie Lee",
                             "timelinePeriod": "Summer 2023",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
@@ -1155,7 +1193,7 @@
                         {
                             "name": "Eshal Ahmed",
                             "timelinePeriod": "Summer 2023",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
@@ -1246,7 +1284,7 @@
                         {
                             "name": "<a href=\"https://grace-fengqing-yu.github.io/\">Fengqing \"Grace\" Yu</a>",
                             "timelinePeriod": "Summer 2022-Summer 2023",
-                            "program": "SURP/AST430H1",
+                            "program": "A&A SURP/AST430H1",
                             "fellowships": [
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ],
@@ -1262,7 +1300,7 @@
                         {
                             "name": "Jinoo Kim",
                             "timelinePeriod": "Summer 2022-Summer 2023",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
@@ -1279,7 +1317,7 @@
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/robin-wen-229676166/\">Robin Wen</a>",
                             "timelinePeriod": "Summer 2022-Summer 2023",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
@@ -1296,7 +1334,7 @@
                         {
                             "name": "<a href=\"https://porpose.github.io/\">Feiyu Quan</a>",
                             "timelinePeriod": "Summer 2022-Winter 2023",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.cita.utoronto.ca/opportunities/surf-at-cita/\">CITA SURF</a>"
                             ],
@@ -1419,7 +1457,7 @@
                         {
                             "name": "<a href=\"https://aliciasavelli.github.io\">Alicia Savelli</a>",
                             "timelinePeriod": "Summer 2021-Summer 2022",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
@@ -1503,7 +1541,7 @@
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/sina-babaei-zadeh-2bab91158/\">Sina Babaei Zadeh</a>",
                             "timelinePeriod": "Summer 2021",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "fellowships": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "Aurora Borealis Fellow"
@@ -1521,7 +1559,7 @@
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/atwo/\">Alan Tu</a>",
                             "timelinePeriod": "Summer 2020-Summer 2021",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
                                 "<a href=\"https://catherinezucker.github.io/\">Catherine Zucker</a> (<a href=\"https://www.harvard.edu/\">Harvard University</a>)",
@@ -1535,7 +1573,7 @@
                         {
                             "name": "Kaustav Das",
                             "timelinePeriod": "Summer 2019-Fall 2020",
-                            "program": "SURP",
+                            "program": "A&A SURP",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
                                 "<a href=\"https://catherinezucker.github.io/\">Catherine Zucker</a> (<a href=\"https://www.harvard.edu/\">Harvard University</a>)"
