@@ -240,6 +240,17 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .item.accent-ic  { border-left-color: var(--cat-ic); }
 .item.accent-du  { border-left-color: var(--cat-du); }
 .item.accent-violet { border-left-color: var(--violet); }
+/* Talks: per-type accent + matching chip/badge dots */
+.item.accent-invited { border-left-color: #efa73a; } .d-invited { background: #efa73a; }
+.item.accent-colloquia { border-left-color: #5aa9ff; } .d-colloquia { background: #5aa9ff; }
+.item.accent-contributed { border-left-color: #44c98a; } .d-contributed { background: #44c98a; }
+.item.accent-lectures { border-left-color: #a78bff; } .d-lectures { background: #a78bff; }
+.item.accent-panels { border-left-color: #34d3e0; } .d-panels { background: #34d3e0; }
+.item.accent-posters { border-left-color: #ff9d4d; } .d-posters { background: #ff9d4d; }
+.item.accent-public { border-left-color: #ff7eb6; } .d-public { background: #ff7eb6; }
+.item.accent-media { border-left-color: #ff6b6b; } .d-media { background: #ff6b6b; }
+.talk-badge { color: var(--text-2); border: 1px solid var(--border); background: var(--surface-2); gap: 6px; }
+.badge .dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; }
 .item.student { border-left-color: #ff9d4d; background: linear-gradient(90deg, color-mix(in srgb, #ff9d4d 7%, transparent), var(--surface) 42%); }
 .item-head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: baseline; flex-wrap: wrap; }
 .item-title { font-family: var(--font-serif); font-size: var(--fs-h3); margin: 0 0 4px; color: var(--text); }

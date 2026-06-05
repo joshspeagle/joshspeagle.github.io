@@ -9,6 +9,17 @@ Talk records (sections.talks.categories[].talks[]) have these fields:
 """
 from pages_shared import scaffold, esc, attr_esc
 
+_MONTHS = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+
+
+def _iso_date(date, year):
+    """Best-effort ISO date for <time datetime>: 'Mon YYYY' -> 'YYYY-MM', else the year."""
+    parts = str(date or "").split()
+    if len(parts) >= 2 and parts[0][:3].lower() in _MONTHS and parts[1].isdigit():
+        return f"{parts[1]}-{_MONTHS[parts[0][:3].lower()]:02d}"
+    return str(year) if year else ""
+
 
 def _talk_item(talk, cat_id, cat_name):
     """Render one talk as a listview item card."""
@@ -40,10 +51,17 @@ def _talk_item(talk, cat_id, cat_name):
         meta_bits.append(esc(ttype))
     meta_html = " · ".join(meta_bits)
 
-    when_html = f'<span class="item-when">{esc(when)}</span>' if when else ""
+    if when:
+        iso = _iso_date(date, year)
+        when_html = (
+            f'<time class="item-when" datetime="{esc(iso)}">{esc(when)}</time>' if iso
+            else f'<span class="item-when">{esc(when)}</span>'
+        )
+    else:
+        when_html = ""
 
     return (
-        f'<article class="item accent-violet" data-lv-item'
+        f'<article class="item accent-{esc(cat_id)}" data-lv-item'
         f' data-cat="{esc(cat_id)}"'
         f' data-search="{data_search}"'
         f' data-year="{data_year}"'
@@ -54,7 +72,8 @@ def _talk_item(talk, cat_id, cat_name):
         f'{when_html}'
         f'</div>'
         f'<p class="item-meta">{meta_html}</p>'
-        f'<div class="item-tags"><span class="badge">{esc(cat_name)}</span></div>'
+        f'<div class="item-tags"><span class="badge talk-badge">'
+        f'<span class="dot d-{esc(cat_id)}"></span>{esc(cat_name)}</span></div>'
         f'</article>'
     )
 
