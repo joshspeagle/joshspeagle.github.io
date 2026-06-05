@@ -142,6 +142,7 @@ def generate_content(data):
             f'<span class="item-when">{when}</span>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
+            f'<div class="item-tags"><span class="badge talk-badge">Workshop</span></div>'
             f'</article>'
         )
 
@@ -152,4 +153,23 @@ def generate_content(data):
         '</div>'
     )
 
-    return listview + short_block
+    # ---- Intro: teaching stats + philosophy ----
+    ts = teaching.get("teachingStats") or {}
+    stat_defs = [(ts.get("uniqueCourses"), "Courses"), (ts.get("totalOfferings"), "Offerings"),
+                 (ts.get("yearsTeaching"), "Years teaching"), (ts.get("departments"), "Departments")]
+    tiles = "".join(
+        f'<div class="pub-stat"><span class="n">{v}</span><span class="l">{esc(l)}</span></div>'
+        for v, l in stat_defs if v is not None
+    )
+    stats_html = f'<div class="pub-stats">{tiles}</div>' if tiles else ""
+
+    phil = teaching.get("philosophy") or {}
+    phil_html = ""
+    if phil.get("content"):
+        phil_html = (
+            f'<aside class="callout"><h3>{esc(phil.get("title", "Teaching Philosophy"))}</h3>'
+            f'<p>{esc(phil["content"])}</p></aside>'
+        )
+    top_html = f'<div class="container">{stats_html}{phil_html}</div>' if (stats_html or phil_html) else ""
+
+    return top_html + listview + short_block
