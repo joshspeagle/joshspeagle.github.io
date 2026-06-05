@@ -580,7 +580,10 @@
         "arxiv_id": "2408.15909",
         "model": "claude-opus-4-6",
         "timestamp": "2026-03-08T12:00:00Z"
-      }
+      },
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025JCAP...02..045K",
+      "arxivId": "2408.15909",
+      "doi": "10.1088/1475-7516/2025/02/045"
     },
     {
       "title": "Discovery of Two Ultra-diffuse Galaxies with Unusually Bright Globular Cluster Luminosity Functions via a Mark-dependently Thinned Point Process (MATHPOP)",
@@ -1996,7 +1999,10 @@
         "Inference & Computation": 0.05,
         "Discovery & Understanding": 0.35
       },
-      "researchArea": "Interpretability & Insight"
+      "researchArea": "Interpretability & Insight",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025ApJ...984..195S",
+      "arxivId": "2410.07244",
+      "doi": "10.3847/1538-4357/adc38c"
     },
     {
       "title": "A parsec-scale Galactic 3D dust map out to 1.25 kpc from the Sun",
@@ -3158,7 +3164,10 @@
         "Interpretability & Insight": 0.25,
         "Inference & Computation": 0.17,
         "Discovery & Understanding": 0.55
-      }
+      },
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024ApJ...972..104B",
+      "arxivId": "2407.04764",
+      "doi": "10.3847/1538-4357/ad6147"
     },
     {
       "title": "Hierarchical Bayesian inference of globular cluster properties",
@@ -5961,7 +5970,10 @@
         "Inference & Computation": 0.6,
         "Discovery & Understanding": 0.05
       },
-      "researchArea": "Inference & Computation"
+      "researchArea": "Inference & Computation",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2022NRvMP...2...39A",
+      "doi": "10.1038/s43586-022-00121-x",
+      "arxivId": "2205.15570"
     },
     {
       "title": "Wide binaries from the H3 survey: the thick disc and halo have similar wide binary fractions",
@@ -6438,7 +6450,10 @@
         "Inference & Computation": 0.65,
         "Discovery & Understanding": 0.1
       },
-      "researchArea": "Inference & Computation"
+      "researchArea": "Inference & Computation",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024AJ....168..193P",
+      "arxivId": "2209.15027",
+      "doi": "10.3847/1538-3881/ad7029"
     },
     {
       "title": "Stellar Population Inference with Prospector",
