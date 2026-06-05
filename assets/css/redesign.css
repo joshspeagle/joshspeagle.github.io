@@ -258,6 +258,10 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .item-meta { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; }
 .item-meta strong { color: var(--text); font-weight: 600; }
 .item-meta a, .item-links a { color: var(--blue); }
+.item-sub { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; margin: 3px 0 0; }
+.item-sub a { color: var(--blue); }
+.item-sub .md-label { color: var(--text); font-weight: 600; }
+.item-sub .faint { color: var(--text-3); }
 .item-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: var(--space-3); align-items: center; }
 .item-section-title { font-family: var(--font-serif); font-size: var(--fs-h3); color: var(--text); margin: var(--space-7) 0 var(--space-4); }
 

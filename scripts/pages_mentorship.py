@@ -60,32 +60,68 @@ def _supervision_and_project(rec):
     return sup, proj
 
 
+def _cosupervisors(rec):
+    """All co-supervisor HTML strings (record-level + any inside bachelors projects[])."""
+    cs = list(rec.get("coSupervisors") or [])
+    for p in (rec.get("projects") or []):
+        cs += list(p.get("coSupervisors") or [])
+    seen, out = set(), []
+    for c in cs:
+        if c and c not in seen:
+            seen.add(c)
+            out.append(c)
+    return out
+
+
 def _card(rec, cat, label, color, completed):
     name_html = rec.get("name") or ""          # already HTML (may contain <a>)
     name_plain = _strip_tags(name_html).strip()
     period = rec.get("timelinePeriod") or ""
     sup, proj = _supervision_and_project(rec)
+    cosup = _cosupervisors(rec)
+    current_status = rec.get("currentStatus") or ""
+    outcome = rec.get("outcome") or ""
+    career = rec.get("myCareerStage") or ""
+    program = rec.get("program") or ""
 
-    # data-* keys
-    search_src = (name_plain + " " + _strip_tags(proj)).strip()
+    # data-* keys (plain text for search/sort)
+    search_src = " ".join(_strip_tags(x) for x in (name_plain, proj, current_status, outcome, " ".join(cosup)))
     data_search = attr_esc(search_src)
     data_title = attr_esc(name_plain)
     data_year = _parse_year(period)
 
-    # meta line: "{supervisionType} — {project}"
+    # meta line: supervision role · project / research interests
     if sup and proj:
-        meta = f"{esc(sup)} — {esc(proj)}"
+        meta = f"<strong>{esc(sup)}</strong> · {esc(proj)}"
+    elif sup:
+        meta = f"<strong>{esc(sup)}</strong>"
     else:
-        meta = esc(sup or proj or "")
+        meta = esc(proj)
 
-    # tags: stage badge + Alum (if completed) + each fellowship/scholarship as a badge
+    # detail lines: co-supervisors, current status / outcome, my career stage
+    subs = []
+    if cosup:
+        subs.append(f'<span class="md-label">Co-supervised with</span> {", ".join(cosup)}')
+    if completed:
+        if outcome:
+            subs.append(f'<span class="md-label">Now:</span> {outcome}')
+        elif current_status:
+            subs.append(current_status)
+    elif current_status:
+        subs.append(current_status)
+    if career:
+        subs.append(f'<span class="faint">My career stage then: {esc(career)}</span>')
+    subs_html = "".join(f'<p class="item-sub">{x}</p>' for x in subs)
+
+    # tags: stage badge + Alum + program + each fellowship/scholarship
     tags = [f'<span class="badge b-{color}">{esc(label)}</span>']
     if completed:
         tags.append('<span class="tag feat">Alum</span>')
-    awards = list(rec.get("fellowships") or []) + list(rec.get("scholarships") or [])
-    for a in awards:
+    if program:
+        tags.append(f'<span class="badge talk-badge">{esc(program)}</span>')
+    for a in (list(rec.get("fellowships") or []) + list(rec.get("scholarships") or [])):
         if a:
-            tags.append(f'<span class="badge">{a}</span>')   # award strings already HTML (<a>)
+            tags.append(f'<span class="badge talk-badge">{a}</span>')   # award strings already HTML (<a>)
     tags_html = "".join(tags)
 
     return (
@@ -97,6 +133,7 @@ def _card(rec, cat, label, color, completed):
         f'<span class="item-when">{esc(period)}</span>'
         '</div>'
         f'<p class="item-meta">{meta}</p>'
+        f'{subs_html}'
         f'<div class="item-tags">{tags_html}</div>'
         '</article>'
     )
