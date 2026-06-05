@@ -102,9 +102,9 @@ def _card(rec, cat, label, color, completed):
     # too hard to keep accurate, so the status/outcome line is intentionally omitted.
     if not completed and current_status:
         subs.append(current_status)
-    if career:
-        subs.append(f'<span class="faint">My career stage then: {esc(career)}</span>')
     subs_html = "".join(f'<p class="item-sub">{x}</p>' for x in subs)
+    # "My career stage then" is a quiet footnote at the very bottom of the card.
+    foot_html = f'<p class="item-foot">My career stage then: {esc(career)}</p>' if career else ""
 
     # tags: role (formal/informal) + stage + Alum + programs + course/thesis + awards
     # Supervisory role sits up on the title row (see below), not in the tag cluster.
@@ -136,6 +136,7 @@ def _card(rec, cat, label, color, completed):
         f'{meta_html}'
         f'{subs_html}'
         f'<div class="item-tags">{tags_html}</div>'
+        f'{foot_html}'
         '</article>'
     )
 
