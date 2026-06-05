@@ -248,6 +248,10 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 /* External-institution badge (home institution for non-Toronto students) */
 .tag-institution { color: var(--text-2); border: 1px solid color-mix(in srgb, var(--text-3) 45%, var(--border)); background: transparent; }
 .tag-institution a { color: inherit; text-decoration: underline; }
+/* Service categories: per-type accent stripe + chip/badge dot */
+.item.accent-professional-societies { border-left-color: var(--cat-sla); } .d-professional-societies { background: var(--cat-sla); }
+.item.accent-university-of-toronto  { border-left-color: var(--cat-ii); }  .d-university-of-toronto  { background: var(--cat-ii); }
+.item.accent-workshops-conferences  { border-left-color: var(--cat-du); }  .d-workshops-conferences  { background: var(--cat-du); }
 /* Secondary-school career stage (5th stage): badge, accent stripe, dot, chart bar */
 .b-sec { color: var(--cat-sec); border: 1px solid color-mix(in srgb, var(--cat-sec) 40%, transparent); background: color-mix(in srgb, var(--cat-sec) 14%, var(--surface)); }
 .item.accent-sec { border-left-color: var(--cat-sec); }
@@ -378,8 +382,9 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .pub-h1 { font-family: var(--font-serif); font-size: var(--fs-h1); margin: 0; }
 .pub-sub { color: var(--text-2); max-width: 60ch; margin: var(--space-4) 0 0; font-size: 1.1rem; }
 
-/* flush section: drop top padding so dashboard sits under header band */
-.section--flush { padding-top: 0; }
+/* flush section: sits under the header band — small gap for breathing room, and
+   no top border (the header's bottom border is the separator; two would double up) */
+.section--flush { padding-top: var(--space-7); border-top: 0; }
 
 /* ---- Dashboard (stats + chart) ---- */
 .pub-figures { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin: var(--space-6) 0 var(--space-5); }

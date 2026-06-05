@@ -108,16 +108,18 @@ def generate_content(data):
 
         for title_html, meta_text in rows:
             title_plain = _strip_tags(title_html)
-            search_src = (title_plain + " " + meta_text).strip()
+            # include the category (type) in the search text so it's filterable by type
+            search_src = (title_plain + " " + meta_text + " " + _strip_tags(cat_title)).strip()
             items_html.append(
-                f'<article class="item accent-ic" data-lv-item '
+                f'<article class="item accent-{attr_esc(cat_slug)}" data-lv-item '
                 f'data-cat="{attr_esc(cat_slug)}" '
                 f'data-search="{attr_esc(search_src)}" '
                 f'data-year="0" data-num="0" '
                 f'data-title="{attr_esc(title_plain)}">'
                 f'<div class="item-head"><h3 class="item-title">{title_html}</h3></div>'
                 f'<p class="item-meta">{esc(meta_text)}</p>'
-                f'<div class="item-tags"><span class="badge">{esc(cat_title)}</span></div>'
+                f'<div class="item-tags"><span class="badge talk-badge">'
+                f'<span class="dot d-{attr_esc(cat_slug)}"></span>{esc(cat_title)}</span></div>'
                 f'</article>'
             )
             total += 1
