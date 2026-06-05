@@ -814,14 +814,24 @@ def generate_publications_redesign(data):
 
     cards = "".join(_generate_paper_card(p) for p in papers_with_year)
 
-    dashboard = (
-        '<div class="pub-stats">'
-        f'<div class="pub-stat"><span class="n">{total_papers:,}</span><span class="l">Papers</span></div>'
-        f'<div class="pub-stat"><span class="n">{total_citations:,}</span><span class="l">Citations</span></div>'
-        f'<div class="pub-stat"><span class="n">{h_index}</span><span class="l">h-index</span></div>'
-        f'<div class="pub-stat"><span class="n">{i10_index}</span><span class="l">i10-index</span></div>'
-        '</div>'
-    )
+    # Top summary: authorship-role buttons linking to the curated ADS libraries
+    from collections import Counter
+    role_counts = Counter(p.get("authorshipCategory") for p in pubs)
+    _ADS_LIB = "https://ui.adsabs.harvard.edu/user/libraries/"
+    role_buttons = [
+        ("Total papers",   total_papers,                     "YiaebBefTHKZdblrny2Vsw"),
+        ("Primary author", role_counts.get("primary", 0),    "Jy98AvjOQXqykOSJ-bn96Q"),
+        ("Postdoc-led",    role_counts.get("postdoc", 0),    "6-JKiyOATdqEzuDGuUMWwg"),
+        ("Student-led",    role_counts.get("student", 0),    "yyWDBaVwS0GIrIkz2GKltg"),
+        ("Contributor",    role_counts.get("significant", 0), "X5RfsxxzRXC-BWjU11xa4A"),
+    ]
+    dashboard = '<div class="pub-stats pub-authorship">' + "".join(
+        f'<a class="pub-stat pub-statlink" href="{_ADS_LIB}{lib}" target="_blank" rel="noopener" '
+        f'aria-label="{label}: {cnt} papers (opens the ADS library)">'
+        f'<span class="n">{cnt:,}</span><span class="l">{label}</span>'
+        f'<span class="pub-stat-go" aria-hidden="true">ADS ↗</span></a>'
+        for label, cnt, lib in role_buttons
+    ) + '</div>'
 
     # peak citation year (excluding the current partial year)
     cpy = {int(y): v for y, v in metrics.get("citationsPerYear", {}).items()}
@@ -848,8 +858,9 @@ def generate_publications_redesign(data):
         + _fig("Publications by year &amp; role", "hover or tab through the bars", _roles_svg(papers_with_year))
         + _fig("Research impact by role", "RIQ vs. the typical astronomer range", _riq_svg(metrics))
         + '</div>'
-        '<p class="pub-fig-note"><strong>Why these figures?</strong> Raw paper and citation totals are easy '
-        'to over- or under-read, so these break the record down in more meaningful ways. <strong>Research '
+        '<p class="pub-fig-note"><strong>Why these figures?</strong> I find it easier to see what I work on '
+        'and the impact it’s had as a picture than as a list — so rather than just enumerate papers, these '
+        'summarize the record a few ways. <strong>Research '
         'mix</strong> shows what the work is about, weighting each paper by its classification across the four '
         'areas. The <strong>role breakdowns</strong> separate work led as primary author from work led by '
         'postdocs, students, and larger collaborations. (Citations use a square-root scale so the '
