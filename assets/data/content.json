@@ -518,7 +518,7 @@
                         "project": "Developing an astrostatistics-oriented software package",
                         "myCareerStage": "Assistant Professor",
                         "currentStatus": "PhD candidate (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)",
-                        "programs": [
+                        "awards": [
                             "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
                         ]
                     },
@@ -533,7 +533,7 @@
                         "project": "SETI, biosignature detection, exoplanet characterization, and gravitational waves",
                         "myCareerStage": "Assistant Professor",
                         "currentStatus": "PhD candidate (<a href=\"https://science.psu.edu/astro\">Penn State</a>)",
-                        "programs": [
+                        "awards": [
                             "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
                         ]
                     },
@@ -785,7 +785,9 @@
                             "currentStatus": "Undergraduate researcher",
                             "programs": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
-                                "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>",
+                                "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>"
+                            ],
+                            "awards": [
                                 "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
                             ]
                         },
@@ -897,7 +899,7 @@
                             "project": "Identifying and Characterizing Strong Gravitational Lensing Systems Using Probabilistic Machine Learning",
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate student (<a href=\"https://www.ukma.edu.ua/eng/\">UKMA</a>)",
-                            "programs": [
+                            "awards": [
                                 "<a href=\"https://www.mitacs.ca/our-programs/globalink-research-internship-students/\">MITACS Globalink</a>"
                             ]
                         },
@@ -990,7 +992,9 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "programs": [
-                                "A&A SURP",
+                                "A&A SURP"
+                            ],
+                            "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp\">NSERC USRA</a>"
                             ]
@@ -1007,7 +1011,9 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Master's program in Data Science and AI at the <a href=\"https://uwaterloo.ca/\">University of Waterloo</a>",
                             "programs": [
-                                "A&A SURP",
+                                "A&A SURP"
+                            ],
+                            "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.registrar.utoronto.ca/financial-aid-awards/utea/\">UTEA</a>"
                             ]
@@ -1024,7 +1030,9 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined the MScAC program at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>",
                             "programs": [
-                                "A&A SURP",
+                                "A&A SURP"
+                            ],
+                            "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
                                 "<a href=\"https://www.registrar.utoronto.ca/financial-aid-awards/utea/\">UTEA</a>"
                             ]
@@ -1168,7 +1176,9 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "programs": [
-                                "A&A SURP",
+                                "A&A SURP"
+                            ],
+                            "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">SURA</a>"
                             ]
                         },
@@ -1185,7 +1195,9 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Master's program at <a href=\"https://www.stanford.edu/\">Stanford University</a>",
                             "programs": [
-                                "A&A SURP",
+                                "A&A SURP"
+                            ],
+                            "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">SURA</a>"
                             ]
                         },
