@@ -2866,23 +2866,6 @@
                             ]
                         },
                         {
-                            "name": "Conference Organization",
-                            "positions": [
-                                {
-                                    "role": "Globular Clusters & Their Tidal Tails: SOC Co-Chair, LOC Co-Chair",
-                                    "periods": [
-                                        "2024"
-                                    ]
-                                },
-                                {
-                                    "role": "CASCA Annual General Meeting: SOC Co-Chair, LOC",
-                                    "periods": [
-                                        "2024"
-                                    ]
-                                }
-                            ]
-                        },
-                        {
                             "name": "Center for Astrophysics | Harvard & Smithsonian",
                             "hidden": true,
                             "positions": [
@@ -2893,6 +2876,18 @@
                                     ]
                                 }
                             ]
+                        }
+                    ],
+                    "items": [
+                        {
+                            "organization": "Globular Clusters & Their Tidal Tails",
+                            "role": "SOC Co-Chair, LOC Co-Chair",
+                            "period": "2024"
+                        },
+                        {
+                            "organization": "CASCA Annual General Meeting",
+                            "role": "SOC Co-Chair, LOC",
+                            "period": "2024"
                         }
                     ]
                 },
