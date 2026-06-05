@@ -194,10 +194,16 @@ def generate_content(data):
     )
 
     # ---- Intro: teaching stats + philosophy ----
-    ts = teaching.get("teachingStats") or {}
-    # "Departments" intentionally omitted from the topline stats (still used for course filter chips).
-    stat_defs = [(ts.get("uniqueCourses"), "Courses"), (ts.get("totalOfferings"), "Offerings"),
-                 (ts.get("yearsTeaching"), "Years teaching")]
+    # Auto-compute the topline stats from courseHistory rather than trusting the
+    # hand-entered teachingStats (which had a stale departments count). "Years
+    # teaching" is the span of years taught; departments drive the chips, not a tile.
+    _years = sorted({int(y) for c in courses for t in (c.get("terms") or [])
+                     for y in re.findall(r"(?:19|20)\d{2}", str(t))})
+    stat_defs = [
+        (len(courses), "Courses"),
+        (sum(len(c.get("terms") or []) for c in courses), "Offerings"),
+        ((_years[-1] - _years[0]) if _years else 0, "Years teaching"),
+    ]
     tiles = "".join(
         f'<div class="pub-stat"><span class="n">{v}</span><span class="l">{esc(l)}</span></div>'
         for v, l in stat_defs if v is not None
