@@ -2856,10 +2856,12 @@
                             "name": "University of Toronto",
                             "positions": [
                                 {
-                                    "role": "Annual UofT STATSTRO Workshop: Co-Organizer",
+                                    "title": "STATSTRO Workshop",
+                                    "role": "Co-Organizer",
                                     "periods": [
                                         "2021-Present"
-                                    ]
+                                    ],
+                                    "note": "Formerly Stellar Stats (2021–2024)"
                                 }
                             ]
                         },

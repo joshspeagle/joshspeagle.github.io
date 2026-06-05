@@ -1,8 +1,9 @@
 """Redesigned content generator for the Service page (#service-content).
 
-Flattens each ORGANIZATION within the service categories into a single list
-card, wrapped in the generic interactive listview (search + category chips)
-enhanced by assets/js/redesign/listview.js.
+Emits ONE card per role/position (not per organization), wrapped in the generic
+interactive listview (search + color-coded category chips) enhanced by
+assets/js/redesign/listview.js. Card: title = the role; byline = the parent org;
+the period shows as the date and an optional `note` as a sub-line.
 
 Section shape (content.json -> sections.service):
     {
@@ -21,13 +22,14 @@ Section shape (content.json -> sections.service):
 
 A <position> may be:
     - a plain string (rendered as-is), OR
-    - an object with "role" and one of "term" / "period" / "periods"
-      (periods is a list of period strings).
+    - an object with "role", one of "term" / "period" / "periods", and optionally
+      an explicit "title" (then the role moves into the byline) and a "note".
 
 Some categories (e.g. "Manuscript Referee Service") carry "items"
 ({role, organization, period}) instead of "organizations"; both shapes render.
 Categories and organizations flagged "hidden": true are skipped, and categories
-with no visible rows produce no chip.
+with no visible cards produce no chip. Each category is color-coded via its slug
+(see .item.accent-<slug> / .d-<slug> in redesign.css).
 """
 import re
 
@@ -46,28 +48,13 @@ def _strip_tags(s):
     return re.sub(r"<[^>]+>", "", str(s or ""))
 
 
-def _position_text(pos):
-    """Render a single position as 'Role (period[, period])' (or just the string)."""
-    if isinstance(pos, str):
-        return pos.strip()
+def _period_text(pos):
+    """Joined period string for a position dict ('' if none)."""
     if not isinstance(pos, dict):
-        return str(pos or "").strip()
-
-    role = (pos.get("role") or "").strip()
-
-    # Gather period(s) from the various shapes the data may use.
-    periods = []
+        return ""
     if isinstance(pos.get("periods"), list):
-        periods = [str(p).strip() for p in pos["periods"] if str(p).strip()]
-    elif pos.get("term"):
-        periods = [str(pos["term"]).strip()]
-    elif pos.get("period"):
-        periods = [str(pos["period"]).strip()]
-
-    when = ", ".join(periods)
-    if role and when:
-        return f"{role} ({when})"
-    return role or when
+        return ", ".join(str(p).strip() for p in pos["periods"] if str(p).strip())
+    return str(pos.get("term") or pos.get("period") or "").strip()
 
 
 def _organizations(category):
@@ -92,32 +79,47 @@ def generate_content(data):
         orgs = [o for o in _organizations(category) if not (isinstance(o, dict) and o.get("hidden"))]
         extra = [it for it in (category.get("items") or []) if not (isinstance(it, dict) and it.get("hidden"))]
 
-        # Unify the two shapes into (title_html, meta_text) rows.
-        rows = []
+        # One card per role/position. title = the role (or an explicit `title`, in
+        # which case the role drops into the byline); byline = parent org; the
+        # period shows as the date, an optional `note` as a sub-line.
+        cards = []   # (title, byline, period, note)
         for org in orgs:
-            pos_texts = [t for t in (_position_text(p) for p in (org.get("positions") or [])) if t]
-            rows.append((org.get("name", "") or "", " · ".join(pos_texts)))
-        for it in extra:
-            meta = " · ".join(p for p in [(it.get("role") or "").strip(),
-                                          (it.get("period") or it.get("term") or "").strip()] if p)
-            rows.append((it.get("organization", "") or "", meta))
+            org_name = (org.get("name", "") or "").strip()
+            for pos in (org.get("positions") or []):
+                if isinstance(pos, str):
+                    cards.append((pos.strip(), org_name, "", ""))
+                    continue
+                role = (pos.get("role") or "").strip()
+                period = _period_text(pos)
+                note = (pos.get("note") or "").strip()
+                if pos.get("title"):
+                    title = pos["title"].strip()
+                    byline = " · ".join(x for x in (role, org_name) if x)
+                else:
+                    title, byline = role, org_name
+                cards.append((title, byline, period, note))
+        for it in extra:                                   # {role, organization, period} shape
+            cards.append(((it.get("organization", "") or "").strip(),
+                          (it.get("role") or "").strip(),
+                          (it.get("period") or it.get("term") or "").strip(), ""))
 
-        if not rows:
+        if not cards:
             continue
-        filters.append((cat_slug, cat_title, len(rows)))
+        filters.append((cat_slug, cat_title, len(cards)))
 
-        for title_html, meta_text in rows:
-            title_plain = _strip_tags(title_html)
-            # include the category (type) in the search text so it's filterable by type
-            search_src = (title_plain + " " + meta_text + " " + _strip_tags(cat_title)).strip()
+        for title, byline, period, note in cards:
+            search_src = " ".join(_strip_tags(x) for x in (title, byline, period, note, cat_title)).strip()
+            when_html = f'<span class="item-when">{esc(period)}</span>' if period else ""
+            meta_html = f'<p class="item-meta">{esc(byline)}</p>' if byline else ""
+            note_html = f'<p class="item-sub">{esc(note)}</p>' if note else ""
             items_html.append(
                 f'<article class="item accent-{attr_esc(cat_slug)}" data-lv-item '
                 f'data-cat="{attr_esc(cat_slug)}" '
                 f'data-search="{attr_esc(search_src)}" '
                 f'data-year="0" data-num="0" '
-                f'data-title="{attr_esc(title_plain)}">'
-                f'<div class="item-head"><h3 class="item-title">{title_html}</h3></div>'
-                f'<p class="item-meta">{esc(meta_text)}</p>'
+                f'data-title="{attr_esc(_strip_tags(title))}">'
+                f'<div class="item-head"><h3 class="item-title">{esc(title)}</h3>{when_html}</div>'
+                f'{meta_html}{note_html}'
                 f'<div class="item-tags"><span class="badge talk-badge">'
                 f'<span class="dot d-{attr_esc(cat_slug)}"></span>{esc(cat_title)}</span></div>'
                 f'</article>'
