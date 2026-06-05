@@ -1,10 +1,12 @@
 """Pre-render module for the Teaching page (#teaching-content).
 
 Exposes generate_content(data) -> str, returning the inner HTML for the
-#teaching-content container. The interactive list of courses is built from
-sections.teaching.courseHistory and wrapped with the generic listview scaffold
-(search + department filter chips + sort) enhanced by assets/js/redesign/listview.js.
-A static "Short courses & workshops" block is appended after the scaffold.
+#teaching-content container. Formal courses (sections.teaching.courseHistory)
+and short courses/workshops (sections.teaching.shortCourses) are rendered into
+a single interactive listview wrapped by the generic scaffold (search + sort +
+filter chips) enhanced by assets/js/redesign/listview.js. Chips are the course
+departments (Astronomy/Statistics, color-coded) plus a "Workshops" chip; each
+card's left stripe + badge dot is colored to match its chip.
 
 Per-item card contract is documented in pages_shared.py.
 """
@@ -46,6 +48,35 @@ def _latest_year(terms):
     return max(years) if years else 0
 
 
+_MONTHS3 = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+_SEASONS = {"winter": 1, "spring": 4, "summer": 6, "fall": 9, "autumn": 9}
+
+
+def _term_month(term):
+    """Representative month (1-12) for a term/date string; month names win over
+    season words (winter/spring/summer/fall). 0 if nothing is recognized."""
+    t = str(term or "").lower()
+    for name, num in _MONTHS3.items():
+        if name in t:
+            return num
+    for season, num in _SEASONS.items():
+        if season in t:
+            return num
+    return 0
+
+
+def _sort_key(terms):
+    """YYYYMM-style key so same-year items order by recency: latest year, with the
+    month/season of the term(s) carrying that year. 0 if no year present."""
+    terms = terms or []
+    year = _latest_year(terms)
+    if not year:
+        return 0
+    month = max((_term_month(t) for t in terms if str(year) in str(t)), default=0)
+    return year * 100 + month
+
+
 def generate_content(data):
     """Build the inner HTML for #teaching-content."""
     teaching = (data or {}).get("sections", {}).get("teaching", {}) or {}
@@ -66,6 +97,8 @@ def generate_content(data):
             dept_counts[slug] += 1
 
     filters = [(slug, dept_label[slug], dept_counts[slug]) for slug in dept_order]
+    if short_courses:
+        filters.append(("workshops", "Workshops", len(short_courses)))
 
     # ---- Course cards ----
     cards = []
@@ -105,7 +138,7 @@ def generate_content(data):
         cards.append(
             f'<article class="item accent-{accent}" data-lv-item '
             f'data-cat="{cat}" data-search="{data_search}" '
-            f'data-year="{year}" data-num="{year}" data-title="{data_title}">'
+            f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title_display)}</h3>'
             f'<span class="item-when">{when}</span>'
@@ -115,47 +148,48 @@ def generate_content(data):
             f'</article>'
         )
 
-    items_html = "".join(cards)
-
-    listview = scaffold(
-        items_html,
-        filters,
-        total=len(courses),
-        sorts=[("year", "Most recent"), ("az", "A–Z")],
-        batch=0,
-        search_ph="Search courses…",
-        default_sort="year",
-    )
-
-    # ---- Static "Short courses & workshops" block ----
-    sc_items = []
+    # ---- Workshop / short-course cards (same unified listview, "workshops" chip) ----
     for sc in short_courses:
         title = sc.get("title", "")
         program = sc.get("program", "")
         location = sc.get("location", "")
         terms = sc.get("terms", []) or []
         when = esc(" · ".join(terms))
+        year = _latest_year(terms)
 
-        meta_parts = [p for p in [esc(program), esc(location)] if p]
-        meta = " · ".join(meta_parts)
+        meta = " · ".join(p for p in [esc(program), esc(location)] if p)
 
-        sc_items.append(
-            f'<article class="item accent-workshop">'
+        search_src = " ".join([
+            _strip_tags(title), _strip_tags(program), _strip_tags(location),
+            _strip_tags(" ".join(terms)), "workshop short course",
+        ])
+        data_search = attr_esc(search_src)
+        data_title = attr_esc(_strip_tags(title))
+
+        cards.append(
+            f'<article class="item accent-workshops" data-lv-item '
+            f'data-cat="workshops" data-search="{data_search}" '
+            f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title)}</h3>'
             f'<span class="item-when">{when}</span>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
             f'<div class="item-tags"><span class="badge talk-badge">'
-            f'<span class="dot d-workshop"></span>Workshop</span></div>'
+            f'<span class="dot d-workshops"></span>Workshop</span></div>'
             f'</article>'
         )
 
-    short_block = (
-        '<div class="container">'
-        '<h2 class="item-section-title">Short courses &amp; workshops</h2>'
-        f'<div class="pub-list">{"".join(sc_items)}</div>'
-        '</div>'
+    items_html = "".join(cards)
+
+    listview = scaffold(
+        items_html,
+        filters,
+        total=len(courses) + len(short_courses),
+        sorts=[("year", "Most recent"), ("az", "A–Z")],
+        batch=0,
+        search_ph="Search courses & workshops…",
+        default_sort="year",
     )
 
     # ---- Intro: teaching stats + philosophy ----
@@ -178,4 +212,4 @@ def generate_content(data):
         )
     top_html = f'<div class="container">{stats_html}{phil_html}</div>' if (stats_html or phil_html) else ""
 
-    return top_html + listview + short_block
+    return top_html + listview
