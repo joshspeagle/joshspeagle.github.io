@@ -1,17 +1,18 @@
 """Pre-render module for the redesigned Mentorship page (#mentorship-content).
 
-Flattens every mentee in sections.mentorship.menteesByStage (current + completed,
-across postdoctoral / doctoral / mastersProjects / bachelors) into a single
-interactive listview of .item cards, then wraps them with pages_shared.scaffold().
+Renders an Overview (Total/Current/Former stats + a career-stage breakdown
+chart), then mentees split into Current and Former sections, each grouped by
+stage (postdoctoral / doctoral / mastersProjects / bachelors). A group-aware
+search box (assets/js/redesign/mentorgroups.js) filters cards live and collapses
+empty groups/sections.
 
-Each stage is mapped to one of the four redesign category colors for the item
-accent and the stage badge (postdoc->sla, doctoral->ii, masters->ic,
-bachelors->du). The filter-chip category keys are the stage keys themselves
-(postdoc/doctoral/masters/bachelors) per the page contract.
+Each stage maps to one of the four redesign category colors (postdoc->sla,
+doctoral->ii, masters->ic, bachelors->du) used for the card accent, stage badge,
+group-heading dot, and the breakdown chart bars.
 """
 import re
 
-from pages_shared import scaffold, esc, attr_esc
+from pages_shared import esc, attr_esc
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
 _STAGES = [
@@ -135,51 +136,119 @@ def _card(rec, cat, label, color, completed):
     )
 
 
+def _breakdown_chart(mbs, completed):
+    """Career-stage breakdown: one horizontal bar per stage, split into a solid
+    'current' segment and a faded 'former' segment, scaled to the largest stage."""
+    stats = []
+    for stage_key, cat, label, color in _STAGES:
+        cur = len(mbs.get(stage_key) or [])
+        former = len(completed.get(stage_key) or [])
+        stats.append((cat, color, cur, former, cur + former))
+    max_total = max((t for *_, t in stats), default=1) or 1
+
+    rows = []
+    for cat, color, cur, former, tot in stats:
+        seg_cur = (f'<span class="mc-seg mc-{color}" style="width:{cur / max_total * 100:.2f}%"></span>'
+                   if cur else "")
+        seg_for = (f'<span class="mc-seg mc-{color} mc-faded" style="width:{former / max_total * 100:.2f}%"></span>'
+                   if former else "")
+        title = f"{_CHIP_LABEL[cat]}: {cur} current, {former} former ({tot} total)"
+        rows.append(
+            '<div class="mc-row">'
+            f'<span class="mc-label">{esc(_CHIP_LABEL[cat])}</span>'
+            f'<span class="mc-track" role="img" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
+            f'{seg_cur}{seg_for}</span>'
+            f'<span class="mc-total">{tot}</span>'
+            '</div>'
+        )
+
+    legend = (
+        '<div class="mc-legend" aria-hidden="true">'
+        '<span class="mc-key">Current</span>'
+        '<span class="mc-key mc-faded-key">Former</span>'
+        '</div>'
+    )
+    return (
+        '<figure class="mentor-chart">'
+        '<figcaption class="mc-cap">Mentees by career stage</figcaption>'
+        f'{legend}{"".join(rows)}'
+        '</figure>'
+    )
+
+
+def _stage_groups(source, completed_flag):
+    """Render the per-stage card groups for one section (Current or Former)."""
+    groups = []
+    for stage_key, cat, label, color in _STAGES:
+        recs = source.get(stage_key) or []
+        if not recs:
+            continue
+        cards = "".join(_card(rec, cat, label, color, completed=completed_flag) for rec in recs)
+        groups.append(
+            '<div class="mentor-group" data-mentor-group>'
+            f'<h3 class="mentor-group-head"><span class="dot d-{color}"></span>'
+            f'{esc(_CHIP_LABEL[cat])} <span class="mentor-count" data-mentor-count>{len(recs)}</span></h3>'
+            f'<div class="pub-list">{cards}</div>'
+            '</div>'
+        )
+    return "".join(groups)
+
+
 def generate_content(data):
     section = (data.get("sections") or {}).get("mentorship") or {}
     mbs = section.get("menteesByStage") or {}
     completed = mbs.get("completed") or {}
 
-    items = []
-    counts = {"postdoc": 0, "doctoral": 0, "masters": 0, "bachelors": 0}
-    n_current = 0
-    n_former = 0
+    n_current = sum(len(mbs.get(sk) or []) for sk, _, _, _ in _STAGES)
+    n_former = sum(len(completed.get(sk) or []) for sk, _, _, _ in _STAGES)
+    total = n_current + n_former
 
-    for stage_key, cat, label, color in _STAGES:
-        # current
-        for rec in (mbs.get(stage_key) or []):
-            items.append(_card(rec, cat, label, color, completed=False))
-            counts[cat] += 1
-            n_current += 1
-        # completed
-        for rec in (completed.get(stage_key) or []):
-            items.append(_card(rec, cat, label, color, completed=True))
-            counts[cat] += 1
-            n_former += 1
-
-    items_html = "".join(items)
-    total = len(items)
-
-    filters = [(cat, _CHIP_LABEL[cat], counts[cat]) for _, cat, _, _ in _STAGES]
-
+    # ---- Overview: intro highlight + stats + breakdown chart ----
     prose = (section.get("introduction") or {}).get("content") or ""
-    intro_box = f'<aside class="highlight-box"><p>{esc(prose)}</p></aside>' if prose else ""
-    intro = (
+    intro_box = (f'<aside class="highlight-box"><h3>On Mentorship</h3><p>{esc(prose)}</p></aside>'
+                 if prose else "")
+    stats = (
+        '<div class="pub-stats teach-stats">'
+        f'<div class="pub-stat"><span class="n">{total}</span><span class="l">Total mentees</span></div>'
+        f'<div class="pub-stat"><span class="n">{n_current}</span><span class="l">Current</span></div>'
+        f'<div class="pub-stat"><span class="n">{n_former}</span><span class="l">Former</span></div>'
+        '</div>'
+    )
+    top = (
         '<div class="container">'
-        f'<p class="section-intro">{n_current} current and {n_former} former mentees '
-        f"across postdocs, doctoral, master's, and undergraduates.</p>"
-        f'{intro_box}'
+        f'{intro_box}{stats}{_breakdown_chart(mbs, completed)}'
         '</div>'
     )
 
-    body = scaffold(
-        items_html,
-        filters,
-        total,
-        sorts=[("az", "Name A–Z")],
-        batch=20,
-        search_ph="Search mentees…",
-        default_sort="default",
+    # ---- Current / Former sections (grouped by stage) + group-aware search ----
+    sections_html = ""
+    cur_groups = _stage_groups(mbs, completed_flag=False)
+    if cur_groups:
+        sections_html += (
+            '<section class="mentor-block" data-mentor-section>'
+            '<h2 class="item-section-title">Current mentees '
+            f'<span class="mentor-sec-count" data-mentor-seccount>{n_current}</span></h2>'
+            f'{cur_groups}</section>'
+        )
+    former_groups = _stage_groups(completed, completed_flag=True)
+    if former_groups:
+        sections_html += (
+            '<section class="mentor-block" data-mentor-section>'
+            '<h2 class="item-section-title">Former mentees '
+            f'<span class="mentor-sec-count" data-mentor-seccount>{n_former}</span></h2>'
+            f'{former_groups}</section>'
+        )
+
+    body = (
+        '<div class="container" data-mentor-root>'
+        '<div class="pub-controls">'
+        '<input type="search" class="pub-search" data-mentor-search '
+        'placeholder="Search mentees by name, project, or co-supervisor…" aria-label="Search mentees">'
+        '</div>'
+        f'{sections_html}'
+        '<p class="pub-empty" data-mentor-empty hidden>No mentees match your search. '
+        '<button type="button" class="linkbtn" data-mentor-reset>Show all</button></p>'
+        '</div>'
     )
 
-    return intro + "\n" + body
+    return top + body

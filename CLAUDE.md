@@ -51,6 +51,7 @@ python -m http.server 8000       # local dev server
 | `assets/js/redesign/listview.js` | generic search/filter/sort/load-more (data-attr driven) |
 | `assets/js/redesign/publications.js` | publications list interactivity |
 | `assets/js/redesign/pubchart.js` | tooltip enhancement for the inline-SVG publication figures (built in `build_html.py`: `_citations_svg`/`_roles_svg`/`_riq_svg`) |
+| `assets/js/redesign/mentorgroups.js` | group-aware live search for the Mentorship page (filters cards within `[data-mentor-group]`/`[data-mentor-section]`, collapses empty groups, updates live counts) |
 | `requirements.txt` | Python deps for the publication pipeline only |
 | `.github/workflows/build-check.yml` | CI — fails the build if the committed static output is stale |
 | `CNAME` | custom apex domain (`joshspeagle.com`) |

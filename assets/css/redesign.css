@@ -206,6 +206,28 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .highlight-box h3::before { content: "\2726"; color: var(--violet); font-size: 0.85em; }
 .highlight-box p { color: var(--text); font-size: var(--fs-body); line-height: 1.7; margin: 0; max-width: 78ch; }
 .highlight-box p + p { margin-top: var(--space-3); }
+/* Mentorship: overview breakdown chart (current vs former by career stage) */
+.mentor-chart { margin: var(--space-6) 0 var(--space-7); max-width: 640px; }
+.mc-cap { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); margin-bottom: var(--space-3); }
+.mc-legend { display: flex; gap: var(--space-4); margin-bottom: var(--space-3); font-size: var(--fs-label); color: var(--text-3); font-family: var(--font-mono); }
+.mc-key { display: inline-flex; align-items: center; gap: 6px; }
+.mc-key::before { content: ""; width: 12px; height: 12px; border-radius: 3px; background: var(--text-2); }
+.mc-faded-key::before { opacity: 0.38; }
+.mc-row { display: grid; grid-template-columns: 90px 1fr 2.5ch; align-items: center; gap: var(--space-3); margin: 7px 0; }
+.mc-label { font-size: var(--fs-small); color: var(--text-2); }
+.mc-track { display: flex; height: 16px; border-radius: 4px; overflow: hidden; background: var(--surface-2); }
+.mc-seg { height: 100%; }
+.mc-faded { opacity: 0.38; }
+.mc-sla { background: var(--cat-sla); } .mc-ii { background: var(--cat-ii); }
+.mc-ic { background: var(--cat-ic); } .mc-du { background: var(--cat-du); }
+.mc-total { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-3); text-align: right; }
+/* Mentorship: grouped Current / Former sections */
+.mentor-block { margin-top: var(--space-7); }
+.mentor-group { margin-top: var(--space-5); }
+.mentor-group-head { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); margin: 0 0 var(--space-3); }
+.mentor-group-head .dot { width: 9px; height: 9px; border-radius: 50%; flex: 0 0 auto; }
+.mentor-count { color: var(--text-3); }
+.mentor-sec-count { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-3); font-weight: 400; }
 /* Collaboration: values highlight near the top + opportunity links restored */
 .values-callout { border-left-color: var(--cyan); margin-bottom: var(--space-7); }
 .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-3); }
