@@ -41,6 +41,7 @@ HTML_FILES = {
     "service": PROJECT_ROOT / "service.html",
     "software": PROJECT_ROOT / "software.html",
     "news": PROJECT_ROOT / "news.html",
+    "biography": PROJECT_ROOT / "biography.html",
 }
 
 # GitHub SVG icon used in quick links
@@ -383,7 +384,12 @@ def generate_home_collab(data):
     )
 
 
-def generate_home_bio(data):
+def generate_biography(data):
+    """Career timeline for the dedicated Biography page (#biography-content).
+
+    The page shell supplies the title/tagline header band, so this emits only the
+    timeline. (Personal note + dog photos live in the Home 'About' section.)
+    """
     bio = data["sections"]["biography"]
     items = "".join(
         f'<div class="tl-item{" current" if t.get("current") else ""}">'
@@ -396,13 +402,7 @@ def generate_home_bio(data):
         "</div>"
         for t in bio.get("timeline", [])
     )
-    return (
-        '<div class="container">\n'
-        '<p class="section-kicker">Short biography</p>\n'
-        f'<h2 class="section-title">{_esc(bio.get("title", ""))}</h2>\n'
-        f'<div class="timeline">{items}</div>\n'
-        "</div>"
-    )
+    return f'<div class="container">\n<div class="timeline">{items}</div>\n</div>'
 
 
 # ---------------------------------------------------------------------------
@@ -954,8 +954,8 @@ def generate_publications_redesign(data):
 def build_page(page_name, html, data):
     """Fill each page's content container(s) from content.json. Redesign pages are
     static shells (head/nav/hero/footer); only the content area is generated — the
-    `#<page>-content` container for the eight secondary pages, and the per-section
-    ids #about/#research/#team/#join/#bio for Home (404.html is not handled here)."""
+    `#<page>-content` container for the nine secondary pages, and the per-section
+    ids #about/#research/#team/#join for Home (404.html is not handled here)."""
 
     if page_name == "index":
         # Redesign Home: regenerate content sections from content.json.
@@ -963,7 +963,9 @@ def build_page(page_name, html, data):
         html = replace_container_content(html, "id", "research", generate_home_research(data))
         html = replace_container_content(html, "id", "team", generate_home_team(data))
         html = replace_container_content(html, "id", "join", generate_home_collab(data))
-        html = replace_container_content(html, "id", "bio", generate_home_bio(data))
+
+    elif page_name == "biography":
+        html = replace_container_content(html, "id", "biography-content", generate_biography(data))
 
     elif page_name == "awards":
         html = replace_container_content(html, "id", "awards-content", gen_awards(data))
