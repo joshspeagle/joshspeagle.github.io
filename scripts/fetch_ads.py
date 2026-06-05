@@ -375,13 +375,22 @@ class ADSFetcher:
             if hasattr(paper, "doi") and paper.doi:
                 doi = paper.doi[0] if isinstance(paper.doi, list) else paper.doi
 
-            # Extract arXiv ID
-            if hasattr(paper, "eprint_id") and paper.eprint_id:
-                arxiv_id = (
-                    paper.eprint_id[0]
-                    if isinstance(paper.eprint_id, list)
-                    else paper.eprint_id
-                )
+            # Extract arXiv ID from the ADS identifier list (e.g. "arXiv:2301.12345"
+            # or the arXiv DOI "10.48550/arXiv.2301.12345"). ADS has no "eprint_id" field.
+            idents = getattr(paper, "identifier", None) or []
+            if isinstance(idents, str):
+                idents = [idents]
+            for ident in idents:
+                s = str(ident)
+                if s.lower().startswith("arxiv:"):
+                    arxiv_id = s.split(":", 1)[1].strip()
+                    break
+            if not arxiv_id:
+                for ident in idents:
+                    s = str(ident).lower()
+                    if "arxiv." in s:
+                        arxiv_id = str(ident).split("arXiv.")[-1].split("arxiv.")[-1].strip()
+                        break
 
             # Extract abstract
             abstract = getattr(paper, "abstract", "") or ""

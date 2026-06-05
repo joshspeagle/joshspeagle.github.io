@@ -36,7 +36,7 @@ CONFIG = {
             "year",
             "doi",
             "arxiv_class",
-            "eprint_id",
+            "identifier",
             "citation_count",
             "abstract",
             "keyword",
