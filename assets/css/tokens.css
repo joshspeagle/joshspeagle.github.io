@@ -48,6 +48,7 @@
   --cat-ii: #34d3e0;
   --cat-ic: #5aa9ff;
   --cat-du: #ffb454;
+  --cat-sec: #ff85c0;
   --shadow-card: 0 8px 30px rgba(0,0,0,0.35);
   --shadow-glow: 0 8px 32px rgba(124,92,255,0.45);
 }
@@ -73,6 +74,7 @@
   --cat-ii: #0a7280;
   --cat-ic: #1565c0;
   --cat-du: #8f4d00;
+  --cat-sec: #b1257a;
   --shadow-card: 0 10px 30px rgba(40,38,28,0.10);
   --shadow-glow: 0 8px 26px rgba(91,67,214,0.30);
 }

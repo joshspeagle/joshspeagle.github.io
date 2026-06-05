@@ -16,18 +16,20 @@ from pages_shared import esc, attr_esc
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
 _STAGES = [
-    ("postdoctoral",    "postdoc",   "Postdoc",       "sla"),
-    ("doctoral",        "doctoral",  "Doctoral",      "ii"),
-    ("mastersProjects", "masters",   "Master's",      "ic"),
-    ("bachelors",       "bachelors", "Undergraduate", "du"),
+    ("postdoctoral",    "postdoc",   "Postdoc",          "sla"),
+    ("doctoral",        "doctoral",  "Doctoral",         "ii"),
+    ("mastersProjects", "masters",   "Master's",         "ic"),
+    ("bachelors",       "bachelors", "Undergraduate",    "du"),
+    ("secondary",       "secondary", "Secondary school", "sec"),
 ]
 
-# Plain labels (singular/contextual) for the chips
+# Plain labels (singular/contextual) for chips, group headings, and chart rows
 _CHIP_LABEL = {
     "postdoc":   "Postdocs",
     "doctoral":  "Doctoral",
     "masters":   "Master's",
     "bachelors": "Undergrad",
+    "secondary": "Secondary school",
 }
 
 
@@ -82,7 +84,8 @@ def _card(rec, cat, label, color, completed):
     cosup = _cosupervisors(rec)
     current_status = rec.get("currentStatus") or ""
     career = rec.get("myCareerStage") or ""
-    tag_vals = list(rec.get("programs") or []) + list(rec.get("awards") or []) + list(rec.get("courses") or [])
+    tag_vals = (list(rec.get("programs") or []) + list(rec.get("awards") or [])
+                + list(rec.get("courses") or []) + [rec.get("institution") or ""])
 
     # data-* keys (plain text for search/sort) — include role + all tag text
     search_src = " ".join(_strip_tags(x) for x in
@@ -115,6 +118,9 @@ def _card(rec, cat, label, color, completed):
     tags = [f'<span class="badge b-{color}">{esc(label)}</span>']
     if completed:
         tags.append('<span class="tag feat">Alum</span>')
+    institution = rec.get("institution") or ""
+    if institution:                                  # home institution for non-Toronto students
+        tags.append(f'<span class="badge tag-institution">{esc(institution)}</span>')
     # Three distinct, searchable tag families: programs, course/thesis context, awards.
     for prog in (rec.get("programs") or []):
         tags.append(f'<span class="badge tag-program">{esc(prog)}</span>')   # esc keeps links intact

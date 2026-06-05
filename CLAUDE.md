@@ -98,7 +98,7 @@ Update the "Last edited" column each time a category is modified.
 
 ### Adding Mentees
 
-Mentees live under `sections.mentorship.menteesByStage` in `content.json`. Add a **current** mentee to the relevant stage array — `postdoctoral`, `doctoral`, `bachelors`, or `mastersProjects`; add a **former** mentee to the corresponding `menteesByStage.completed.<stage>` array. A current entry:
+Mentees live under `sections.mentorship.menteesByStage` in `content.json`. Add a **current** mentee to the relevant stage array — `postdoctoral`, `doctoral`, `mastersProjects`, `bachelors`, or `secondary` (high school); add a **former** mentee to the corresponding `menteesByStage.completed.<stage>` array. Each stage has its own color (sla/ii/ic/du/sec) used for the badge, group-heading dot, accent stripe, and breakdown-chart bar. A current entry:
 ```json
 {
   "name": "<a href='url'>Name</a>",
@@ -118,6 +118,7 @@ Mentees live under `sections.mentorship.menteesByStage` in `content.json`. Add a
 - `programs` — list of research programs/opportunities (e.g. `A&A SURP`, `DSI SUDS`, `A&S ROP`, `NSERC USRA`, `Co-op Program`, `MITACS Globalink`). Cyan badge.
 - `awards` — list of fellowships/scholarships/honors (e.g. `Dunlap Fellow`, `Banting Fellow`, `NSERC CGS-M`). Amber badge. (Replaces the old `fellowships`/`scholarships` fields.)
 - `courses` — academic-credit context; values are exactly `Research Course`, `Junior Thesis`, or `Senior Thesis` (avoid raw course codes). Neutral badge.
+- `institution` — home institution for **non-Toronto** students (e.g. visiting/external undergrads); outline badge. Omit for U of T students.
 
 Variations: **bachelors** with several stints may use a `projects` array (`title`/`supervisionType`/`coSupervisors`). For **former** mentees the `currentStatus`/`outcome` fields are no longer displayed (too hard to keep current), though the data may persist. Award/program/course strings may be plain text or `<a>`-linked HTML (`esc()` preserves links). Match the field names of a sibling entry exactly — misspelled keys silently fail to render.
 

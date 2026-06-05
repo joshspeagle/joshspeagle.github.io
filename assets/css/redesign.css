@@ -245,6 +245,14 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .tag-award   { color: var(--text); border: 1px solid color-mix(in srgb, #efa73a 50%, var(--border)); background: color-mix(in srgb, #efa73a 14%, transparent); }
 .tag-course  { color: var(--text-2); border: 1px solid var(--border); background: var(--surface-2); }
 .tag-program a, .tag-award a { color: inherit; text-decoration: underline; }
+/* External-institution badge (home institution for non-Toronto students) */
+.tag-institution { color: var(--text-2); border: 1px solid color-mix(in srgb, var(--text-3) 45%, var(--border)); background: transparent; }
+.tag-institution a { color: inherit; text-decoration: underline; }
+/* Secondary-school career stage (5th stage): badge, accent stripe, dot, chart bar */
+.b-sec { color: var(--cat-sec); border: 1px solid color-mix(in srgb, var(--cat-sec) 40%, transparent); background: color-mix(in srgb, var(--cat-sec) 14%, var(--surface)); }
+.item.accent-sec { border-left-color: var(--cat-sec); }
+.d-sec { background: var(--cat-sec); }
+.mc-sec { background: var(--cat-sec); }
 /* Collaboration: values highlight near the top + opportunity links restored */
 .values-callout { border-left-color: var(--cyan); margin-bottom: var(--space-7); }
 .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-3); }

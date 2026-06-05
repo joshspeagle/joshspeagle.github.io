@@ -517,10 +517,11 @@
                         ],
                         "project": "Developing an astrostatistics-oriented software package",
                         "myCareerStage": "Assistant Professor",
-                        "currentStatus": "PhD candidate (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)",
+                        "currentStatus": "PhD candidate",
                         "awards": [
                             "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
-                        ]
+                        ],
+                        "institution": "<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>"
                     },
                     {
                         "name": "<a href=\"https://pinchen.fan/\">Pinchen Fan</a>",
@@ -532,10 +533,11 @@
                         ],
                         "project": "SETI, biosignature detection, exoplanet characterization, and gravitational waves",
                         "myCareerStage": "Assistant Professor",
-                        "currentStatus": "PhD candidate (<a href=\"https://science.psu.edu/astro\">Penn State</a>)",
+                        "currentStatus": "PhD candidate",
                         "awards": [
                             "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
-                        ]
+                        ],
+                        "institution": "<a href=\"https://science.psu.edu/astro\">Penn State</a>"
                     },
                     {
                         "name": "Leo Watson",
@@ -611,7 +613,7 @@
                         "currentStatus": "Undergraduate student",
                         "myCareerStage": "Assistant Professor",
                         "programs": [
-                            "A&A SURP"
+                            "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                         ]
                     },
                     {
@@ -625,7 +627,7 @@
                         "currentStatus": "Undergraduate student",
                         "myCareerStage": "Assistant Professor",
                         "programs": [
-                            "DSI SUDS"
+                            "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                         ]
                     },
                     {
@@ -636,11 +638,12 @@
                             "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
                         ],
                         "project": "Hamiltonian Optimization and Sampling for Deep Learning",
-                        "currentStatus": "Undergraduate student (KAUST)",
+                        "currentStatus": "Undergraduate student",
                         "myCareerStage": "Assistant Professor",
                         "programs": [
-                            "DSI SUDS"
-                        ]
+                            "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
+                        ],
+                        "institution": "<a href=\"https://www.kaust.edu.sa/\">KAUST</a>"
                     }
                 ],
                 "mastersProjects": [],
@@ -802,7 +805,7 @@
                         {
                             "name": "Diego Martinez Noriega",
                             "timelinePeriod": "Fall 2025-Winter 2026",
-                            "currentStatus": "Undergraduate student (<a href=\"https://uwaterloo.ca/\">University of Waterloo</a>)",
+                            "currentStatus": "Undergraduate student",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
                                 "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
@@ -811,7 +814,8 @@
                             "myCareerStage": "Assistant Professor",
                             "programs": [
                                 "Co-op Program"
-                            ]
+                            ],
+                            "institution": "<a href=\"https://uwaterloo.ca/\">University of Waterloo</a>"
                         },
                         {
                             "name": "Isabella Rivera",
@@ -898,10 +902,11 @@
                             ],
                             "project": "Identifying and Characterizing Strong Gravitational Lensing Systems Using Probabilistic Machine Learning",
                             "myCareerStage": "Assistant Professor",
-                            "currentStatus": "Undergraduate student (<a href=\"https://www.ukma.edu.ua/eng/\">UKMA</a>)",
+                            "currentStatus": "Undergraduate student",
                             "awards": [
                                 "<a href=\"https://www.mitacs.ca/our-programs/globalink-research-internship-students/\">MITACS Globalink</a>"
-                            ]
+                            ],
+                            "institution": "<a href=\"https://www.ukma.edu.ua/eng/\">UKMA</a>"
                         },
                         {
                             "name": "Matthew Kustec",
@@ -931,7 +936,7 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Software Engineer at <a href=\"https://www.veeva.com/\">Veeva Systems</a>",
                             "programs": [
-                                "A&A SURP",
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ]
                         },
@@ -945,10 +950,11 @@
                             ],
                             "project": "Counting Massive Galaxies in the Early Universe with JWST",
                             "myCareerStage": "Assistant Professor",
-                            "currentStatus": "Undergraduate researcher (<a href=\"https://ontariotechu.ca/\">Ontario Tech University</a>)",
+                            "currentStatus": "Undergraduate researcher",
                             "programs": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
-                            ]
+                            ],
+                            "institution": "<a href=\"https://ontariotechu.ca/\">Ontario Tech University</a>"
                         },
                         {
                             "name": "Cissy Kuang",
@@ -961,7 +967,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "programs": [
-                                "A&A SURP",
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://www.artsci.utoronto.ca/current/experiential-learning/research-opportunities/research-opportunities-program\">A&S ROP</a>"
                             ]
                         },
@@ -977,7 +983,7 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Master's Program in Science Technology at <a href=\"https://www.upenn.edu/\">UPenn</a>",
                             "programs": [
-                                "A&A SURP",
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ]
                         },
@@ -992,7 +998,7 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "programs": [
-                                "A&A SURP"
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
                             "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
@@ -1011,7 +1017,7 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Master's program in Data Science and AI at the <a href=\"https://uwaterloo.ca/\">University of Waterloo</a>",
                             "programs": [
-                                "A&A SURP"
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
                             "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
@@ -1030,7 +1036,7 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined the MScAC program at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>",
                             "programs": [
-                                "A&A SURP"
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
                             "awards": [
                                 "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>",
@@ -1162,11 +1168,12 @@
                             ],
                             "project": "Classifying PLAsTiCC Transient Simulations with Recurrent Neural Networks",
                             "myCareerStage": "Assistant Professor",
-                            "currentStatus": "Undergraduate researcher (<a href=\"https://www.georgebrown.ca/\">George Brown College</a>)",
+                            "currentStatus": "Undergraduate researcher",
                             "programs": [
-                                "A&A SURP",
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "Co-op Program"
-                            ]
+                            ],
+                            "institution": "<a href=\"https://www.georgebrown.ca/\">George Brown College</a>"
                         },
                         {
                             "name": "Guiping Zhao",
@@ -1175,11 +1182,8 @@
                             "project": "Deriving Stellar Properties with Spectrophotometric Modelling",
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
-                            "programs": [
-                                "A&A SURP"
-                            ],
                             "awards": [
-                                "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">SURA</a>"
+                                "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>"
                             ]
                         },
                         {
@@ -1194,11 +1198,8 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Master's program at <a href=\"https://www.stanford.edu/\">Stanford University</a>",
-                            "programs": [
-                                "A&A SURP"
-                            ],
                             "awards": [
-                                "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">SURA</a>"
+                                "<a href=\"https://www.statistics.utoronto.ca/current-students/statistical-sciences-research-opportunities-awards\">DoSS SURA</a>"
                             ]
                         },
                         {
@@ -1318,7 +1319,7 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined PhD program at <a href=\"https://www.caltech.edu/\">Caltech</a>",
                             "programs": [
-                                "A&A SURP",
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
                             ],
                             "courses": [
@@ -1351,11 +1352,12 @@
                             ],
                             "project": "Hierarchical Modelling of Globular Cluster Properties",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
-                            "currentStatus": "Undergraduate researcher (<a href=\"https://uwaterloo.ca/\">University of Waterloo</a>)",
+                            "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined PhD program at <a href=\"https://www.caltech.edu/\">Caltech</a>",
                             "programs": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
-                            ]
+                            ],
+                            "institution": "<a href=\"https://uwaterloo.ca/\">University of Waterloo</a>"
                         },
                         {
                             "name": "<a href=\"https://porpose.github.io/\">Feiyu Quan</a>",
@@ -1369,7 +1371,7 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined Masters program at <a href=\"https://www.cam.ac.uk/\">University of Cambridge</a>, then PhD program at <a href=\"https://www.cuhk.edu.hk/\">CUHK</a>",
                             "programs": [
-                                "A&A SURP",
+                                "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>",
                                 "<a href=\"https://www.cita.utoronto.ca/opportunities/surf-at-cita/\">CITA SURF</a>"
                             ]
                         },
@@ -1385,7 +1387,7 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined <a href=\"https://cerebras.net/\">Cerebras Systems</a> as Kernel Software Engineer",
                             "courses": [
-                                "Research Course"
+                                "Senior Thesis"
                             ]
                         },
                         {
@@ -1396,28 +1398,6 @@
                             "myCareerStage": "Assistant Professor",
                             "currentStatus": "Research Assistant",
                             "outcome": "Joined MSc program in Statistics at <a href=\"https://www.utoronto.ca/\">University of Toronto</a>"
-                        },
-                        {
-                            "name": "<a href=\"https://yunyishen.github.io/\">Yunyi Shen</a>",
-                            "timelinePeriod": "Summer 2021-Summer 2022",
-                            "supervisionType": "Secondary Supervisor",
-                            "coSupervisors": [
-                                "<a href=\"https://www.vleosbarajas.com/\">Vianey Leos Barajas</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a> / School of the Environment)",
-                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
-                            ],
-                            "project": "Modelling Stellar Flares with Hidden Markov Models",
-                            "myCareerStage": "Postdoctoral Fellow",
-                            "currentStatus": "MSc student (<a href=\"https://www.wisc.edu/\">UW-Madison</a>)",
-                            "outcome": "Joined <a href=\"https://www.mit.edu/\">MIT</a> PhD program (EECS/LIDS with <a href=\"https://www.tamarabroderick.com/\">Tamara Broderick</a>)"
-                        },
-                        {
-                            "name": "<a href=\"https://www.linkedin.com/in/liam-pilarski/\">Liam Pilarski</a>",
-                            "timelinePeriod": "Fall 2021-Winter 2022",
-                            "supervisionType": "Primary Supervisor",
-                            "project": "Estimating Galaxy Properties from Images with Probabilistic Deep Learning",
-                            "myCareerStage": "Postdoctoral Fellow",
-                            "currentStatus": "HS student (<a href=\"https://mhs.millburn.org/\">Millburn HS</a>, NJ)",
-                            "outcome": "Joined <a href=\"https://www.gatech.edu/\">Georgia Institute of Technology</a> for Computer Science undergraduate studies"
                         },
                         {
                             "name": "Charlie Hughes",
@@ -1490,11 +1470,12 @@
                             ],
                             "project": "Milky Way Analogues in Cosmological Simulations",
                             "myCareerStage": "Postdoctoral Fellow",
-                            "currentStatus": "Undergraduate researcher (<a href=\"https://brocku.ca/\">Brock University</a>)",
+                            "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined PhD program at <a href=\"https://www.utoronto.ca/\">University of Toronto</a>",
                             "programs": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
-                            ]
+                            ],
+                            "institution": "<a href=\"https://brocku.ca/\">Brock University</a>"
                         },
                         {
                             "name": "<a href=\"https://jshen.net/\">Jeff Shen</a>",
@@ -1530,7 +1511,8 @@
                             "currentStatus": "Undergraduate researcher",
                             "outcome": "Joined PhD program at <a href=\"https://www.princeton.edu/\">Princeton University</a>",
                             "courses": [
-                                "Research Course"
+                                "Research Course",
+                                "Senior Thesis"
                             ]
                         },
                         {
@@ -1580,14 +1562,15 @@
                             ],
                             "project": "Studying Galaxy Assembly Histories in Cosmological Simulations",
                             "myCareerStage": "Postdoctoral Fellow",
-                            "currentStatus": "Undergraduate researcher (<a href=\"https://www.uwo.ca/\">Western University</a>)",
+                            "currentStatus": "Undergraduate researcher",
                             "outcome": "Became Levy Scholar at <a href=\"https://www.law.upenn.edu/\">UPenn Law</a>",
                             "programs": [
                                 "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                             ],
                             "awards": [
                                 "Aurora Borealis Fellow"
-                            ]
+                            ],
+                            "institution": "<a href=\"https://www.uwo.ca/\">Western University</a>"
                         },
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/atwo/\">Alan Tu</a>",
@@ -1599,8 +1582,9 @@
                             ],
                             "project": "Kinematics of Young Stars in the Radcliffe Wave",
                             "myCareerStage": "Postdoctoral Fellow",
-                            "currentStatus": "Undergraduate researcher (<a href=\"https://www.harvard.edu/\">Harvard University</a>)",
-                            "outcome": "Became quantitative trader at <a href=\"https://sig.com/\">SIG</a>"
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Became quantitative trader at <a href=\"https://sig.com/\">SIG</a>",
+                            "institution": "<a href=\"https://www.harvard.edu/\">Harvard University</a>"
                         },
                         {
                             "name": "Kaustav Das",
@@ -1611,8 +1595,9 @@
                             ],
                             "project": "Constraining the Distance to the North Polar Spur",
                             "myCareerStage": "Postdoctoral Fellow",
-                            "currentStatus": "Undergraduate researcher (<a href=\"https://www.iitk.ac.in/\">IIT Kanpur</a>)",
-                            "outcome": "Joined PhD program in Astrophysics at <a href=\"https://www.caltech.edu/\">Caltech</a>"
+                            "currentStatus": "Undergraduate researcher",
+                            "outcome": "Joined PhD program in Astrophysics at <a href=\"https://www.caltech.edu/\">Caltech</a>",
+                            "institution": "<a href=\"https://www.iitk.ac.in/\">IIT Kanpur</a>"
                         }
                     ],
                     "mastersProjects": [
@@ -1643,6 +1628,32 @@
                             ],
                             "project": "Exploring the Feasibility of Detecting a Time-Dependent σ<sub>8</sub> with LSST",
                             "myCareerStage": "Assistant Professor"
+                        },
+                        {
+                            "name": "<a href=\"https://yunyishen.github.io/\">Yunyi Shen</a>",
+                            "timelinePeriod": "Summer 2021-Summer 2022",
+                            "supervisionType": "Secondary Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.vleosbarajas.com/\">Vianey Leos Barajas</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a> / School of the Environment)",
+                                "<a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a> / <a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
+                            "project": "Modelling Stellar Flares with Hidden Markov Models",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "MSc student",
+                            "outcome": "Joined <a href=\"https://www.mit.edu/\">MIT</a> PhD program (EECS/LIDS with <a href=\"https://www.tamarabroderick.com/\">Tamara Broderick</a>)",
+                            "institution": "<a href=\"https://www.wisc.edu/\">UW-Madison</a>"
+                        }
+                    ],
+                    "secondary": [
+                        {
+                            "name": "<a href=\"https://www.linkedin.com/in/liam-pilarski/\">Liam Pilarski</a>",
+                            "timelinePeriod": "Fall 2021-Winter 2022",
+                            "supervisionType": "Primary Supervisor",
+                            "project": "Estimating Galaxy Properties from Images with Probabilistic Deep Learning",
+                            "myCareerStage": "Postdoctoral Fellow",
+                            "currentStatus": "HS student",
+                            "outcome": "Joined <a href=\"https://www.gatech.edu/\">Georgia Institute of Technology</a> for Computer Science undergraduate studies",
+                            "institution": "<a href=\"https://mhs.millburn.org/\">Millburn HS</a>"
                         }
                     ]
                 }
