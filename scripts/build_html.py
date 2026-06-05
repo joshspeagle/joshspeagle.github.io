@@ -729,6 +729,47 @@ def _riq_svg(metrics):
     return "".join(s)
 
 
+def _mix_svg(pubs):
+    """Inline SVG: a full-width 100% horizontal bar of research mix (by area)."""
+    from collections import defaultdict
+    # (full name, key, short legend label)
+    areas = [("Statistical Learning & AI", "sla", "Statistical Learning"),
+             ("Interpretability & Insight", "ii", "Interpretability"),
+             ("Inference & Computation", "ic", "Inference"),
+             ("Discovery & Understanding", "du", "Discovery")]
+    agg = defaultdict(float)
+    for p in pubs:
+        cp = p.get("categoryProbabilities") or {}
+        tot = sum(float(cp.get(name, 0)) for name, _, _ in areas)
+        if tot <= 0:
+            continue
+        for name, _, _ in areas:
+            agg[name] += float(cp.get(name, 0)) / tot
+    grand = sum(agg.values())
+    if grand <= 0:
+        return ""
+    fr = sorted(((key, name, short, agg[name] / grand) for name, key, short in areas), key=lambda r: -r[3])
+    esc_attr = lambda x: _esc(x).replace('"', "&quot;")
+    W, H, bx0, bx1, by, bh = 820, 62, 2, 818, 6, 30
+    bw = bx1 - bx0
+    s = [f'<svg class="pf-svg pf-mix" viewBox="0 0 {W} {H}" role="group" aria-label="Research mix: share of work by area" preserveAspectRatio="xMinYMin meet">']
+    x = bx0
+    for key, name, short, frac in fr:
+        w = frac * bw
+        tip = f"{name}: {round(frac * 100)}% of classified output"
+        s.append(f'<rect class="mix-seg mix-{key}" x="{x:.1f}" y="{by}" width="{max(0, w - 2):.1f}" height="{bh}" rx="3" '
+                 f'tabindex="0" role="img" aria-label="{esc_attr(tip)}" data-tip="{esc_attr(tip)}"/>')
+        x += w
+    lx, ly = bx0, H - 7
+    for key, name, short, frac in fr:
+        label = f"{short} {round(frac * 100)}%"
+        s.append(f'<circle class="mix-dot mix-{key}" cx="{lx + 4:.0f}" cy="{ly - 4:.0f}" r="4"/>')
+        s.append(f'<text class="pf-legend" x="{lx + 13:.0f}" y="{ly:.0f}">{_esc(label)}</text>')
+        lx += 13 + len(label) * 6.3 + 20
+    s.append("</svg>")
+    return "".join(s)
+
+
 def generate_publications_redesign(data):
     """Generate the inner HTML for #publications-content (redesign).
 
@@ -792,16 +833,21 @@ def generate_publications_redesign(data):
 
     figures = (
         '<div class="pub-figures">'
+        + _fig("Research mix", "share of work by area", _mix_svg(papers_with_year), wide=True)
         + _fig("Citations received per year", peak_txt, _citations_svg(metrics), wide=True)
-        + _fig("Publications by year &amp; my role", "hover or tab through the bars", _roles_svg(papers_with_year))
+        + _fig("Publications by year &amp; role", "hover or tab through the bars", _roles_svg(papers_with_year))
         + _fig("Research impact by role", "RIQ vs. the typical astronomer range", _riq_svg(metrics))
         + '</div>'
-        '<p class="pub-fig-note">A note on reading these: I separate work I led (primary author) from '
-        'work led by my postdocs and students and from larger collaborations, so these show how much of '
-        'the group’s output and impact comes from early-career researchers. Citations use a square-root '
-        'scale so earlier years stay legible (the current partial year is omitted). The '
-        '<strong>Research Impact Quotient (RIQ)</strong> normalizes citation impact by career length; the '
-        'shaded band marks the typical range for astronomers '
+        '<p class="pub-fig-note"><strong>Why these figures?</strong> Raw paper and citation totals are easy '
+        'to over- or under-read, so these break the record down in more meaningful ways. <strong>Research '
+        'mix</strong> shows what the work is about, weighting each paper by its classification across the four '
+        'areas. The <strong>role breakdowns</strong> separate work led as primary author from work led by '
+        'postdocs, students, and larger collaborations — much of the recent output and impact comes from '
+        'early-career researchers, which a single total would hide. (Citations use a square-root scale so the '
+        'early years stay legible; the current partial year is omitted.) <strong>RIQ</strong> '
+        '(Research Impact Quotient) normalizes citation impact by career length — roughly √(total citations) ÷ '
+        'years active — so impact compares fairly across career stages instead of just growing with time; the '
+        'shaded band is the typical range for established astronomers '
         '(<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" rel="noopener">Pepe &amp; Kurtz 2012</a>).</p>'
     )
 

@@ -319,6 +319,12 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 [data-theme="light"] .ln-primary { stroke: #1565c0; } [data-theme="light"] .ln-significant { stroke: #0e9aa8; } [data-theme="light"] .ln-student { stroke: #b9760f; } [data-theme="light"] .ln-postdoc { stroke: #7c5cff; }
 .pf-band-typ { fill: var(--text-3); opacity: .08; }
 .pf-mean { stroke: var(--text-3); stroke-dasharray: 4 3; opacity: .5; }
+/* research-mix bar (category colors) */
+.mix-seg { transition: opacity .12s ease; }
+.mix-seg:hover { opacity: .82; }
+.mix-seg:focus { outline: none; }
+.mix-seg:focus-visible { stroke: var(--text); stroke-width: 2; }
+.mix-sla { fill: var(--cat-sla); } .mix-ii { fill: var(--cat-ii); } .mix-ic { fill: var(--cat-ic); } .mix-du { fill: var(--cat-du); }
 .pub-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
