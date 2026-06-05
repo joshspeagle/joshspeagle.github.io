@@ -57,6 +57,15 @@ def _period_text(pos):
     return str(pos.get("term") or pos.get("period") or "").strip()
 
 
+def _end_year(period):
+    """End year for sorting (newest first): ongoing roles ('…-Present') sort top,
+    else the latest year mentioned, else 0."""
+    if "present" in str(period or "").lower():
+        return 9999
+    years = re.findall(r"(?:19|20)\d{2}", str(period or ""))
+    return max(int(y) for y in years) if years else 0
+
+
 def _organizations(category):
     """Return the list of organization dicts for a category (empty if none)."""
     orgs = category.get("organizations")
@@ -109,6 +118,7 @@ def generate_content(data):
 
         for title, byline, period, note in cards:
             search_src = " ".join(_strip_tags(x) for x in (title, byline, period, note, cat_title)).strip()
+            year = _end_year(period)
             when_html = f'<span class="item-when">{esc(period)}</span>' if period else ""
             meta_html = f'<p class="item-meta">{esc(byline)}</p>' if byline else ""
             note_html = f'<p class="item-sub">{esc(note)}</p>' if note else ""
@@ -116,7 +126,7 @@ def generate_content(data):
                 f'<article class="item accent-{attr_esc(cat_slug)}" data-lv-item '
                 f'data-cat="{attr_esc(cat_slug)}" '
                 f'data-search="{attr_esc(search_src)}" '
-                f'data-year="0" data-num="0" '
+                f'data-year="{year}" data-num="{year}" '
                 f'data-title="{attr_esc(_strip_tags(title))}">'
                 f'<div class="item-head"><h3 class="item-title">{esc(title)}</h3>{when_html}</div>'
                 f'{meta_html}{note_html}'
@@ -130,8 +140,8 @@ def generate_content(data):
         "".join(items_html),
         filters,
         total,
-        sorts=None,
+        sorts=[("year", "Newest first"), ("default", "By category")],
         batch=0,
         search_ph="Search service…",
-        default_sort="default",
+        default_sort="year",
     )

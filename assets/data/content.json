@@ -604,7 +604,7 @@
                     {
                         "name": "Leo (Hanbang) Wu",
                         "timelinePeriod": "Summer 2026",
-                        "supervisionType": "Primary Supervisor",
+                        "supervisionType": "Co-Supervisor",
                         "coSupervisors": [
                             "<a href=\"https://biprateep.de/\">Biprateep Dey</a>",
                             "<a href=\"https://nolank.ca/\">Nolan Koblischke</a>"
@@ -624,14 +624,14 @@
                         "projects": [
                             {
                                 "title": "Hamiltonian Optimization and Sampling for Deep Learning",
-                                "supervisionType": "Primary Supervisor",
+                                "supervisionType": "Co-Supervisor",
                                 "coSupervisors": [
                                     "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
                                 ]
                             },
                             {
                                 "title": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
-                                "supervisionType": "Primary Supervisor"
+                                "supervisionType": "Co-Supervisor"
                             }
                         ],
                         "programs": [
@@ -644,7 +644,7 @@
                     {
                         "name": "Yasir Alsugair",
                         "timelinePeriod": "Summer 2026",
-                        "supervisionType": "Primary Supervisor",
+                        "supervisionType": "Co-Supervisor",
                         "coSupervisors": [
                             "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
                         ],
