@@ -138,8 +138,31 @@ def _webp(src):
     return re.sub(r"\.(jpe?g|png)$", ".webp", src, flags=re.I)
 
 
+def _dog_photos(bio):
+    """Render the personal dog photos (used in the About section)."""
+    photos = ""
+    for ph in bio.get("dogPhotos", []):
+        if not ph.get("src"):
+            continue
+        if ph.get("creditLink"):
+            credit = f' <a href="{ph["creditLink"]}" target="_blank" rel="noopener">{_esc(ph.get("creditName", ""))}</a>'
+        elif ph.get("creditName"):
+            credit = f' {_esc(ph["creditName"])}'
+        else:
+            credit = ""
+        photos += (
+            '<figure class="dog-photo"><picture>'
+            f'<source srcset="{_webp(ph["src"])}" type="image/webp">'
+            f'<img src="{ph["src"]}" alt="{_esc(ph.get("alt", ""))}" loading="lazy" width="800" height="533">'
+            '</picture>'
+            f'<figcaption>{_esc(ph.get("caption", ""))}{credit}</figcaption></figure>'
+        )
+    return f'<div class="dog-photos">{photos}</div>' if photos else ""
+
+
 def generate_home_about(data):
     about = data["sections"]["about"]
+    bio = data["sections"].get("biography", {})
     pi = about.get("profileImage", {})
     hb = about.get("highlightBox", {})
     ci = about.get("contactInfo", {})
@@ -169,6 +192,9 @@ def generate_home_about(data):
             f'<p><strong>Email:</strong> <a href="mailto:{ci["email"]}">{ci["email"]}</a></p>'
             f'<p><strong>Office:</strong> {_esc(ci.get("office", ""))}</p></div>'
         )
+    note = bio.get("personalNote", "")
+    personal = f'<p class="about-personal">{_esc(note)}</p>' if note else ""
+    dogs = _dog_photos(bio)
     return (
         '<div class="container">\n'
         '<p class="section-kicker">Who I am</p>\n'
@@ -180,6 +206,8 @@ def generate_home_about(data):
         '</div>\n'
         f'{photo}\n'
         '</div>\n'
+        f'{personal}\n'
+        f'{dogs}\n'
         "</div>"
     )
 
@@ -208,13 +236,15 @@ def generate_home_research(data):
         pubbox = (
             '<aside class="callout pub-callout">'
             f'<h3>{_esc(pubs.get("title", "Publications"))}</h3>'
-            f'<p>{_esc(pubs.get("intro", ""))} {publinks}</p></aside>'
+            f'<p>{_esc(pubs.get("intro", ""))} {publinks}</p>'
+            '<p class="callout-cta"><a href="publications.html">Browse all publications, metrics &amp; figures →</a></p>'
+            '</aside>'
         )
     context = f'<p class="research-context">{_esc(additional)}</p>' if additional else ""
     return (
         '<div class="container">\n'
         '<p class="section-kicker">What I do</p>\n'
-        '<h2 class="section-title">Four research areas</h2>\n'
+        '<h2 class="section-title">Statistics, AI &amp; astronomy</h2>\n'
         f'<p class="section-intro">{intro}</p>\n'
         f'<div class="research-grid">{"".join(cards)}</div>\n'
         f'{context}\n'
@@ -346,31 +376,11 @@ def generate_home_bio(data):
         "</div>"
         for t in bio.get("timeline", [])
     )
-    photos = ""
-    for ph in bio.get("dogPhotos", []):
-        if not ph.get("src"):
-            continue
-        if ph.get("creditLink"):
-            credit = f' <a href="{ph["creditLink"]}" target="_blank" rel="noopener">{_esc(ph.get("creditName", ""))}</a>'
-        elif ph.get("creditName"):
-            credit = f' {_esc(ph["creditName"])}'
-        else:
-            credit = ""
-        photos += (
-            '<figure class="dog-photo"><picture>'
-            f'<source srcset="{_webp(ph["src"])}" type="image/webp">'
-            f'<img src="{ph["src"]}" alt="{_esc(ph.get("alt", ""))}" loading="lazy" width="800" height="533">'
-            '</picture>'
-            f'<figcaption>{_esc(ph.get("caption", ""))}{credit}</figcaption></figure>'
-        )
-    photos_html = f'<div class="dog-photos">{photos}</div>' if photos else ""
     return (
         '<div class="container">\n'
         '<p class="section-kicker">Short biography</p>\n'
         f'<h2 class="section-title">{_esc(bio.get("title", ""))}</h2>\n'
         f'<div class="timeline">{items}</div>\n'
-        f'<p class="personal-note">{_esc(bio.get("personalNote", ""))}</p>\n'
-        f'{photos_html}\n'
         "</div>"
     )
 

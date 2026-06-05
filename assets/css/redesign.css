@@ -185,6 +185,9 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .contact-info p { margin: 2px 0; }
 .contact-info a { color: var(--blue); }
 .research-context { color: var(--text-2); max-width: 80ch; margin: var(--space-6) 0 0; font-size: var(--fs-small); line-height: 1.65; }
+.about-personal { color: var(--text-2); max-width: 70ch; margin: var(--space-6) 0 0; line-height: 1.6; }
+.callout-cta { margin: var(--space-3) 0 0; font-size: var(--fs-small); }
+.callout-cta a { color: var(--violet); font-weight: 600; border-bottom: 0; }
 /* Collaboration: values highlight near the top + opportunity links restored */
 .values-callout { border-left-color: var(--cyan); margin-bottom: var(--space-7); }
 .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-3); }
