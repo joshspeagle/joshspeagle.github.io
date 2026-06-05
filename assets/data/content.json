@@ -1649,6 +1649,7 @@
                     "color": "amber",
                     "talks": [
                         {
+                            "featured": true,
                             "title": "AI for Scientists: Learning and Doing in the Era of VLMs",
                             "event": "Language AI in the Space Sciences",
                             "location": "Baltimore, USA",
@@ -1665,6 +1666,7 @@
                             "type": "Invited Talk"
                         },
                         {
+                            "featured": true,
                             "title": "A Brief History of <s>Time</s> MCMC in Astronomy",
                             "event": "The Fast and Curious 2: MCMC in Action",
                             "location": "Toronto, Canada",
@@ -1786,6 +1788,7 @@
                             "type": "Seminar"
                         },
                         {
+                            "featured": true,
                             "title": "A Conceptual Introduction to Deep Learning",
                             "event": "UC Berkeley: BIDMAP Seminar",
                             "location": "Berkeley, CA",
