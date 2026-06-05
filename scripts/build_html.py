@@ -447,8 +447,16 @@ def _format_authors_html(authors):
     return html
 
 
-def _generate_paper_card(pub):
-    """Build a single .paper article card per the contract."""
+def _truncate(s, n=320):
+    """Escape + truncate prose at a word boundary for the featured-card abstract."""
+    s = " ".join(str(s or "").split())
+    if len(s) <= n:
+        return _esc(s)
+    return _esc(s[:n].rsplit(" ", 1)[0]) + "…"
+
+
+def _generate_paper_card(pub, board=False):
+    """Build a .paper card. board=True adds the abstract for the Featured spotlight."""
     title = pub.get("title", "")
     year = pub.get("year", "")
     journal = pub.get("journal", "")
@@ -459,19 +467,27 @@ def _generate_paper_card(pub):
     research_area = pub.get("researchArea", "")
     catkey = _PUB_CAT_MAP.get(research_area, ("du", "Discovery &amp; Understanding"))[0]
 
-    is_student = pub.get("authorshipCategory") == "student"
+    role = pub.get("authorshipCategory")
+    is_student = role == "student"
+    is_postdoc = role == "postdoc"
     is_featured = bool(pub.get("featured"))
 
-    # Class list and student tag
+    # Class list and authorship accent
     cls = f"paper {catkey}"
+    if board:
+        cls += " feat-card"
     if is_student:
         cls += " student"
+    elif is_postdoc:
+        cls += " postdoc"
 
     tags = ""
     if is_featured:
         tags += '<span class="tag feat">★ Featured</span>'
     if is_student:
         tags += '<span class="tag stu">Student-led</span>'
+    elif is_postdoc:
+        tags += '<span class="tag pd">Postdoc-led</span>'
 
     # Category badges for any category >= 0.20
     probs = pub.get("categoryProbabilities", {}) or {}
@@ -486,36 +502,47 @@ def _generate_paper_card(pub):
             key, label = _PUB_CAT_MAP[cat]
             badges += f'<span class="badge b-{key}">{label}</span>'
 
-    # Links
+    # Resource links: ADS · arXiv · DOI (whichever exist)
+    ads = pub.get("adsUrl")
+    arxiv = pub.get("arxivId")
+    doi = pub.get("doi")
+    arxiv_url = f"https://arxiv.org/abs/{arxiv}" if arxiv else ""
+    doi_url = f"https://doi.org/{doi}" if doi else ""
     links = ""
-    if pub.get("adsUrl"):
-        links += (
-            f'<a class="reslink" href="{pub["adsUrl"]}" '
-            f'target="_blank" rel="noopener">ADS</a>'
-        )
-    if pub.get("doi"):
-        links += (
-            f'<a class="reslink" href="https://doi.org/{pub["doi"]}" '
-            f'target="_blank" rel="noopener">DOI</a>'
-        )
+    if ads:
+        links += f'<a class="reslink" href="{ads}" target="_blank" rel="noopener">ADS</a>'
+    if arxiv_url:
+        links += f'<a class="reslink" href="{arxiv_url}" target="_blank" rel="noopener">arXiv</a>'
+    if doi_url:
+        links += f'<a class="reslink" href="{doi_url}" target="_blank" rel="noopener">DOI</a>'
+
+    # Title links to the best available target (arXiv -> ADS -> DOI)
+    title_href = arxiv_url or ads or doi_url
+    title_inner = _esc(title)
+    title_html = (
+        f'<a href="{title_href}" target="_blank" rel="noopener">{title_inner}</a>'
+        if title_href else title_inner
+    )
 
     authors_html = _format_authors_html(authors)
+    cite_str = f"{cites_comma} citation{'s' if cites_int != 1 else ''}" if cites_int else ""
     meta = " · ".join(
-        part for part in [authors_html, _esc(journal), str(year)] if part
+        part for part in [authors_html, _esc(journal), str(year), cite_str] if part
     )
+
+    abstract_html = ""
+    if board and pub.get("abstract"):
+        abstract_html = f'<p class="paper-abstract">{_truncate(pub["abstract"], 340)}</p>'
 
     return (
         f'<article class="{cls}" data-cat="{catkey}" data-year="{year}" '
         f'data-cites="{cites_int}" data-title="{_attr_esc(title)}" '
         f'data-authors="{_attr_esc(" ".join(authors))}">'
-        f'<div class="paper-main">'
-        f'<h3 class="paper-title">{_esc(title)}</h3>'
+        f'<h3 class="paper-title">{title_html}</h3>'
         f'<div class="paper-meta">{meta}</div>'
         f'<div class="paper-badges">{tags}{badges}'
         f'<span class="paper-links">{links}</span></div>'
-        f'</div>'
-        f'<div class="paper-cite"><span class="n">{cites_comma}</span>'
-        f'<span class="l">citations</span></div>'
+        f'{abstract_html}'
         f'</article>'
     )
 
@@ -555,29 +582,64 @@ def generate_publications_redesign(data):
     cards = "".join(_generate_paper_card(p) for p in papers_with_year)
 
     dashboard = (
-        '<div class="pub-dashboard">'
         '<div class="pub-stats">'
-        f'<div class="pub-stat"><span class="n">{total_papers:,}</span>'
-        '<span class="l">Papers</span></div>'
-        f'<div class="pub-stat"><span class="n">{total_citations:,}</span>'
-        '<span class="l">Citations</span></div>'
-        f'<div class="pub-stat"><span class="n">{h_index}</span>'
-        '<span class="l">h-index</span></div>'
-        f'<div class="pub-stat"><span class="n">{i10_index}</span>'
-        '<span class="l">i10-index</span></div>'
-        '</div>'
-        '<figure class="pub-chart">'
-        '<figcaption class="pub-chart-head">'
-        '<span class="t">Citations per year</span>'
-        '<span class="m">peak 3,804 in 2025 · 16,908 total</span>'
-        '</figcaption>'
-        '<img class="chart-dark" src="assets/images/pubchart-dark.webp" '
-        'alt="Citations per year, 2015 to 2026" width="1000" height="330">'
-        '<img class="chart-light" src="assets/images/pubchart-light.webp" '
-        'alt="Citations per year, 2015 to 2026" width="1000" height="330">'
-        '</figure>'
+        f'<div class="pub-stat"><span class="n">{total_papers:,}</span><span class="l">Papers</span></div>'
+        f'<div class="pub-stat"><span class="n">{total_citations:,}</span><span class="l">Citations</span></div>'
+        f'<div class="pub-stat"><span class="n">{h_index}</span><span class="l">h-index</span></div>'
+        f'<div class="pub-stat"><span class="n">{i10_index}</span><span class="l">i10-index</span></div>'
         '</div>'
     )
+
+    # peak citation year (excluding the current partial year)
+    cpy = {int(y): v for y, v in metrics.get("citationsPerYear", {}).items()}
+    peak_txt = f"{total_citations:,} total"
+    if cpy:
+        cur = max(cpy)
+        complete = {y: v for y, v in cpy.items() if y < cur} or cpy
+        py = max(complete, key=complete.get)
+        peak_txt = f"{total_citations:,} total · peak {complete[py]:,} in {py}"
+
+    def _fig(name, title, meta, alt, wide=False):
+        cls = "pub-fig wide" if wide else "pub-fig"
+        return (
+            f'<figure class="{cls}">'
+            f'<figcaption class="pub-fig-head"><span class="t">{title}</span>'
+            f'<span class="m">{meta}</span></figcaption>'
+            f'<img class="fig-dark" src="assets/images/pubfig-{name}-dark.svg" alt="{alt}" loading="lazy">'
+            f'<img class="fig-light" src="assets/images/pubfig-{name}-light.svg" alt="{alt}" loading="lazy">'
+            '</figure>'
+        )
+
+    figures = (
+        '<div class="pub-figures">'
+        + _fig("citations", "Citations received per year", peak_txt,
+               "Citations received per year, square-root scale", wide=True)
+        + _fig("roles", "Publications by year &amp; my role",
+               "primary · postdoc-led · student-led · contributor",
+               "Publications per year, stacked by my authorship role")
+        + _fig("riq", "Research impact by role", "RIQ vs. the typical astronomer range",
+               "Research Impact Quotient over time by authorship role")
+        + '</div>'
+        '<p class="pub-fig-note">A note on reading these: I separate work I led (primary author) from '
+        'work led by my postdocs and students and from larger collaborations, so these show how much of '
+        'the group’s output and impact comes from early-career researchers. Citations use a square-root '
+        'scale so earlier years stay legible (the current partial year is omitted). The '
+        '<strong>Research Impact Quotient (RIQ)</strong> normalizes citation impact by career length; the '
+        'shaded band marks the typical range for astronomers '
+        '(<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" rel="noopener">Pepe &amp; Kurtz 2012</a>).</p>'
+    )
+
+    # Featured spotlight (papers flagged featured=true), shown with abstracts
+    featured = [p for p in papers_with_year if p.get("featured")]
+    feat_html = ""
+    if featured:
+        fcards = "".join(_generate_paper_card(p, board=True) for p in featured)
+        feat_html = (
+            '<section class="pub-featured" aria-labelledby="featured-head">'
+            '<h2 id="featured-head" class="pub-featured-head">Featured work</h2>'
+            f'<div class="featured-grid">{fcards}</div>'
+            '</section>'
+        )
 
     controls = (
         '<div class="pub-controls">'
@@ -617,8 +679,10 @@ def generate_publications_redesign(data):
 
     return (
         '<div class="container">'
-        '<h2 class="sr-only">Publications</h2>'
         + dashboard
+        + figures
+        + feat_html
+        + '<h2 class="sr-only">All publications</h2>'
         + controls
         + list_section
         + '</div>'
