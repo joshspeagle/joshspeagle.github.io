@@ -43,6 +43,7 @@
         <div class="menu"><a href="mentorship.html">Group / ART</a><a href="mentorship.html">Mentorship</a><a href="teaching.html">Teaching</a></div></div>
       <div class="nav-group"><button class="nav-trigger" aria-haspopup="true" aria-expanded="false">About <span aria-hidden="true">▾</span></button>
         <div class="menu"><a href="index.html#bio">Biography</a><a href="news.html">News</a><a href="awards.html" aria-current="page">Awards</a><a href="service.html">Service</a></div></div>
+      <a class="nav-item cv-mobile" href="https://joshspeagle.com/bio-cv/CV_speagle.pdf">Curriculum Vitae</a>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
       <a class="cv-btn" href="https://joshspeagle.com/bio-cv/CV_speagle.pdf">Curriculum Vitae</a>
@@ -102,6 +103,6 @@
     })();
   </script>
   <script src="assets/js/redesign/listview.js" defer></script>
-  <script>(function(){var h=document.getElementById("hamburger"),n=document.querySelector(".nav");if(h&&n)h.addEventListener("click",function(){var o=n.classList.toggle("nav-open");h.setAttribute("aria-expanded",o?"true":"false");});})();</script>
+  <script>(function(){var n=document.querySelector(".nav"),h=document.getElementById("hamburger");function c(){if(n)n.classList.remove("nav-open");if(h)h.setAttribute("aria-expanded","false");}if(h&&n)h.addEventListener("click",function(){var o=n.classList.toggle("nav-open");h.setAttribute("aria-expanded",o?"true":"false");});document.querySelectorAll(".nav-trigger").forEach(function(t){t.addEventListener("click",function(){var g=t.parentElement,o=g.classList.toggle("open");t.setAttribute("aria-expanded",o?"true":"false");});});if(n){n.querySelectorAll(".nav-links a").forEach(function(a){a.addEventListener("click",c);});document.addEventListener("click",function(e){if(n.classList.contains("nav-open")&&!n.contains(e.target))c();});}})();</script>
 </body>
 </html>

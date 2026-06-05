@@ -60,6 +60,7 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .menu a:hover { background: var(--surface); color: var(--text); }
 .cv-btn { font-size: var(--fs-small); font-weight: 600; color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: var(--radius-pill); }
 .cv-btn:hover { border-color: var(--violet); }
+.cv-mobile { display: none; }  /* in-menu CV link; shown only in the open mobile menu */
 .theme-toggle { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--border); background: var(--surface); color: var(--text-2); font-size: 1rem; cursor: pointer; }
 .theme-toggle:hover { color: var(--text); border-color: var(--violet); }
 .hamburger { display: none; }
@@ -564,14 +565,19 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 @media (max-width: 860px) {
   .nav-open .nav-links { display: flex; flex-direction: column; align-items: stretch; gap: 2px;
     position: absolute; left: 0; right: 0; top: 100%; background: var(--bg-1);
-    border-bottom: 1px solid var(--border); padding: var(--space-4) var(--space-5);
-    max-height: 80vh; overflow-y: auto; }
+    border-bottom: 1px solid var(--border); padding: var(--space-3) var(--space-4) var(--space-5);
+    max-height: 84vh; overflow-y: auto; box-shadow: var(--shadow-card); }
   .nav-open .nav-group { position: static; }
-  .nav-open .menu { display: block; position: static; border: 0; box-shadow: none; background: transparent;
-    padding: 0 0 var(--space-3) var(--space-4); margin: 0; min-width: 0; }
-  .nav-open .nav-trigger { width: 100%; justify-content: flex-start; pointer-events: none;
-    color: var(--text-3); text-transform: uppercase; font-size: var(--fs-label); letter-spacing: .12em; }
-  .nav-open .nav-item { width: 100%; padding: 10px 12px; }
-  .nav-open .menu a { padding: 10px 12px; }
-  .nav-open .cv-btn { display: inline-flex; margin-top: var(--space-3); width: max-content; }
+  /* tap-to-expand accordion: each group's menu is collapsed until its trigger is tapped */
+  .nav-open .nav-trigger { width: 100%; justify-content: space-between; padding: 13px 12px;
+    color: var(--text); font-size: var(--fs-body); border-radius: var(--radius-sm); }
+  .nav-open .nav-trigger span { transition: transform .18s ease; }
+  .nav-open .nav-group.open > .nav-trigger { background: var(--surface); }
+  .nav-open .nav-group.open > .nav-trigger span { transform: rotate(180deg); }
+  .nav-open .menu { display: none; position: static; border: 0; box-shadow: none; background: transparent;
+    padding: 2px 0 var(--space-3) var(--space-4); margin: 0; min-width: 0; }
+  .nav-open .nav-group.open .menu { display: block; }
+  .nav-open .nav-item { width: 100%; padding: 13px 12px; font-size: var(--fs-body); border-radius: var(--radius-sm); }
+  .nav-open .menu a { padding: 12px; font-size: var(--fs-small); }
+  .nav-open .cv-mobile { display: block; margin-top: var(--space-3); }
 }
