@@ -190,9 +190,10 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .about-personal { color: var(--text-2); max-width: 70ch; margin: var(--space-6) 0 0; line-height: 1.6; }
 .callout-cta { margin: var(--space-3) 0 0; font-size: var(--fs-small); }
 .callout-cta a { color: var(--violet); font-weight: 600; border-bottom: 0; }
-/* Teaching: 3-up stat strip + philosophy highlight (distinct from the plain .callout) */
+/* Teaching: 3-up stat strip */
 .teach-stats { grid-template-columns: repeat(3, 1fr); }
-.teach-philosophy {
+/* Reusable highlight box (Teaching Philosophy, Mentorship intro) — distinct from the plain .callout */
+.highlight-box {
   margin: var(--space-7) 0 var(--space-8);
   padding: var(--space-6) var(--space-7);
   border: 1px solid color-mix(in srgb, var(--violet) 34%, var(--border));
@@ -201,9 +202,10 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
     radial-gradient(135% 130% at 100% 0%, color-mix(in srgb, var(--violet) 15%, transparent), transparent 58%),
     var(--surface);
 }
-.teach-philosophy h3 { display: flex; align-items: baseline; gap: 10px; font-size: var(--fs-h3); margin: 0 0 var(--space-3); color: var(--text); }
-.teach-philosophy h3::before { content: "\2726"; color: var(--violet); font-size: 0.85em; }
-.teach-philosophy p { color: var(--text); font-size: var(--fs-body); line-height: 1.7; margin: 0; max-width: 78ch; }
+.highlight-box h3 { display: flex; align-items: baseline; gap: 10px; font-size: var(--fs-h3); margin: 0 0 var(--space-3); color: var(--text); }
+.highlight-box h3::before { content: "\2726"; color: var(--violet); font-size: 0.85em; }
+.highlight-box p { color: var(--text); font-size: var(--fs-body); line-height: 1.7; margin: 0; max-width: 78ch; }
+.highlight-box p + p { margin-top: var(--space-3); }
 /* Collaboration: values highlight near the top + opportunity links restored */
 .values-callout { border-left-color: var(--cyan); margin-bottom: var(--space-7); }
 .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin-top: var(--space-3); }

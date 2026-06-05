@@ -80,12 +80,11 @@ def _card(rec, cat, label, color, completed):
     sup, proj = _supervision_and_project(rec)
     cosup = _cosupervisors(rec)
     current_status = rec.get("currentStatus") or ""
-    outcome = rec.get("outcome") or ""
     career = rec.get("myCareerStage") or ""
     program = rec.get("program") or ""
 
     # data-* keys (plain text for search/sort)
-    search_src = " ".join(_strip_tags(x) for x in (name_plain, proj, current_status, outcome, " ".join(cosup)))
+    search_src = " ".join(_strip_tags(x) for x in (name_plain, proj, current_status, " ".join(cosup)))
     data_search = attr_esc(search_src)
     data_title = attr_esc(name_plain)
     data_year = _parse_year(period)
@@ -98,16 +97,13 @@ def _card(rec, cat, label, color, completed):
     else:
         meta = esc(proj)
 
-    # detail lines: co-supervisors, current status / outcome, my career stage
+    # detail lines: co-supervisors, current status (current mentees only), my career stage
     subs = []
     if cosup:
         subs.append(f'<span class="md-label">Co-supervised with</span> {", ".join(cosup)}')
-    if completed:
-        if outcome:
-            subs.append(f'<span class="md-label">Now:</span> {outcome}')
-        elif current_status:
-            subs.append(current_status)
-    elif current_status:
+    # "Where they are now" shows only for current mentees; for former mentees it was
+    # too hard to keep accurate, so the status/outcome line is intentionally omitted.
+    if not completed and current_status:
         subs.append(current_status)
     if career:
         subs.append(f'<span class="faint">My career stage then: {esc(career)}</span>')
@@ -166,10 +162,14 @@ def generate_content(data):
 
     filters = [(cat, _CHIP_LABEL[cat], counts[cat]) for _, cat, _, _ in _STAGES]
 
+    prose = (section.get("introduction") or {}).get("content") or ""
+    intro_box = f'<aside class="highlight-box"><p>{esc(prose)}</p></aside>' if prose else ""
     intro = (
-        f'<div class="container"><p class="section-intro">'
-        f'{n_current} current and {n_former} former mentees across postdocs, '
-        f"doctoral, master's, and undergraduates.</p></div>"
+        '<div class="container">'
+        f'<p class="section-intro">{n_current} current and {n_former} former mentees '
+        f"across postdocs, doctoral, master's, and undergraduates.</p>"
+        f'{intro_box}'
+        '</div>'
     )
 
     body = scaffold(

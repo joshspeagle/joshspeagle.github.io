@@ -208,7 +208,7 @@ def generate_content(data):
     phil_html = ""
     if phil.get("content"):
         phil_html = (
-            f'<aside class="teach-philosophy"><h3>{esc(phil.get("title", "Teaching Philosophy"))}</h3>'
+            f'<aside class="highlight-box"><h3>{esc(phil.get("title", "Teaching Philosophy"))}</h3>'
             f'<p>{esc(phil["content"])}</p></aside>'
         )
     top_html = f'<div class="container">{stats_html}{phil_html}</div>' if (stats_html or phil_html) else ""
