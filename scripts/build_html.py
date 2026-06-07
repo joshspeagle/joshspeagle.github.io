@@ -865,7 +865,18 @@ def generate_publications_redesign(data):
         for label, cnt, lib in role_buttons
     ) + '</div>'
 
-    # peak citation year (excluding the current partial year)
+    # Aggregate author-profile links (ADS search · Google Scholar · ORCID) from content.json
+    plinks = (data.get("sections", {}).get("publications", {}) or {}).get("links", {}) or {}
+    prof_defs = [("ADS", plinks.get("ads")), ("Google Scholar", plinks.get("scholar")),
+                 ("ORCID", plinks.get("orcid"))]
+    prof_links = "".join(
+        f'<a class="reslink" href="{u}" target="_blank" rel="noopener">{lbl} ↗</a>'
+        for lbl, u in prof_defs if u
+    )
+    profiles = (
+        '<div class="pub-profiles"><span class="pub-profiles-label">Full author profiles</span>'
+        f'{prof_links}</div>'
+    ) if prof_links else ""
     cpy = {int(y): v for y, v in metrics.get("citationsPerYear", {}).items()}
     peak_txt = f"{total_citations:,} total"
     if cpy:
@@ -954,6 +965,7 @@ def generate_publications_redesign(data):
     return (
         '<div class="container">'
         + dashboard
+        + profiles
         + figures
         + feat_html
         + '<h2 class="sr-only">All publications</h2>'
