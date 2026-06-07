@@ -2996,40 +2996,87 @@
                     "date": "Feb 2026",
                     "year": 2026,
                     "type": "paper",
-                    "title": "New preprint on supernova yields from dwarf spheroidals",
+                    "title": "New preprint: supernova yields from dwarf spheroidals",
                     "blurb": "Student-led work (Heiger et al.) constraining supernova yields and delay times from dwarf spheroidal galaxies.",
                     "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv260222333H"
                 },
                 {
-                    "date": "2025",
-                    "year": 2025,
-                    "type": "talk",
-                    "title": "CCA Colloquium — Mapping the Milky Way in the Age of Gaia",
-                    "blurb": "Invited colloquium at the Flatiron Institute's Center for Computational Astrophysics.",
-                    "link": "https://www.simonsfoundation.org/event/joshuaspeagle/"
+                    "date": "Nov 2024",
+                    "year": 2024,
+                    "type": "press",
+                    "title": "First white dwarf–main-sequence binary candidates in open star clusters",
+                    "blurb": "Co-author on the discovery (Grondin et al., ApJ), also picked up by Phys.org and SciTechDaily.",
+                    "outlet": "U of T Arts & Science",
+                    "link": "https://www.artsci.utoronto.ca/news/u-t-astronomers-discover-first-white-dwarf-main-sequence-binary-candidates-open-star-clusters"
+                },
+                {
+                    "date": "Aug 2024",
+                    "year": 2024,
+                    "type": "press",
+                    "title": "A 5-D map of the Milky Way — AAS Nova featured image",
+                    "blurb": "My lead-author work (Speagle et al. 2024) highlighted as an AAS Nova featured image.",
+                    "outlet": "AAS Nova",
+                    "link": "https://aasnova.org/2024/08/12/featured-image-a-5d-map-of-the-milky-way/"
+                },
+                {
+                    "date": "Feb 2024",
+                    "year": 2024,
+                    "type": "press",
+                    "title": "The Radcliffe Wave is waving",
+                    "blurb": "Co-author on the finding that the galaxy's largest gaseous structure oscillates (Konietzka et al., Nature). Widely covered — CfA, Phys.org, Universe Today, the Harvard Crimson.",
+                    "outlet": "Center for Astrophysics | Harvard & Smithsonian",
+                    "link": "https://www.cfa.harvard.edu/news/radcliffe-wave-waving"
                 },
                 {
                     "date": "2024",
                     "year": 2024,
                     "type": "award",
                     "title": "Connaught New Researcher Award",
-                    "blurb": "Recognized by the University of Toronto for early-career research.",
+                    "blurb": "Awarded by the University of Toronto in support of early-career research.",
                     "link": ""
                 },
                 {
-                    "date": "2024",
-                    "year": 2024,
-                    "type": "group",
-                    "title": "ART hosts the annual Statstro workshop",
-                    "blurb": "The Astrostatistics Research Team brought together researchers across astrophysics, statistics, and data science.",
-                    "link": "https://astrostatuoft.com/"
+                    "date": "Jan 2023",
+                    "year": 2023,
+                    "type": "award",
+                    "title": "2022 John Charles Polanyi Prize in Physics",
+                    "blurb": "Recognized by the Government of Ontario for outstanding early-career research — \"I'm honoured and humbled to receive the Polanyi Prize.\"",
+                    "outlet": "University of Toronto",
+                    "link": "https://www.utoronto.ca/celebrates/joshua-speagle-wins-2022-john-charles-polanyi-prize-physics"
+                },
+                {
+                    "date": "Jan 2022",
+                    "year": 2022,
+                    "type": "press",
+                    "title": "The Local Bubble: the Sun sits in a 1,000-light-year void that forms stars",
+                    "blurb": "Co-author on the Local Bubble result (Zucker et al., Nature). Covered by CfA, the Harvard Gazette, STScI, and the Smithsonian.",
+                    "outlet": "Center for Astrophysics | Harvard & Smithsonian",
+                    "link": "https://www.cfa.harvard.edu/news/1000-light-year-wide-bubble-surrounding-earth-source-all-nearby-young-stars"
+                },
+                {
+                    "date": "Jul 2021",
+                    "year": 2021,
+                    "type": "press",
+                    "title": "Mapping the Milky Way: an interactive tool for 170 million stars",
+                    "blurb": "Profiled by the Dunlap Institute for building the first interactive map of the Milky Way's stars and dust — the basis of the allsky visualization.",
+                    "outlet": "Dunlap Institute",
+                    "link": "https://www.dunlap.utoronto.ca/dunlap-postdoc-creates-interactive-map-of-the-milky-way/"
+                },
+                {
+                    "date": "Jan 2020",
+                    "year": 2020,
+                    "type": "press",
+                    "title": "The Radcliffe Wave — the largest gaseous structure in the galaxy",
+                    "blurb": "Co-author on the discovery of a 9,000-light-year wave of stellar nurseries near the Sun (Alves et al., Nature). Featured by CfA and the Harvard Gazette.",
+                    "outlet": "Center for Astrophysics | Harvard & Smithsonian",
+                    "link": "https://www.cfa.harvard.edu/news/radcliffe-wave"
                 },
                 {
                     "date": "2020",
                     "year": 2020,
                     "type": "software",
                     "title": "dynesty published in MNRAS",
-                    "blurb": "The dynamic nested sampling package paper appeared in MNRAS and is now cited 2,000+ times.",
+                    "blurb": "The dynamic nested sampling package paper appeared in MNRAS; it is now cited 2,000+ times.",
                     "link": "https://doi.org/10.1093/mnras/staa278"
                 }
             ]
@@ -3072,9 +3119,9 @@
             "tagline": "Open-source tools for inference, discovery, and keeping up with the literature."
         },
         "news": {
-            "kicker": "Updates",
-            "title": "News & Updates",
-            "tagline": "Recent papers, talks, awards, and group milestones."
+            "kicker": "In the news",
+            "title": "News & Press",
+            "tagline": "Press coverage, media features, awards, and research milestones."
         },
         "biography": {
             "kicker": "About",

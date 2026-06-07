@@ -698,6 +698,14 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .viz-cta { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--blue); }
 @media (max-width: 700px) { .viz-card { grid-template-columns: 1fr; } }
 
+/* ---------------- News & Press page ---------------- */
+.item.accent-press { border-left-color: #ff7eb6; }
+.d-press { background: #ff7eb6; }
+.d-paper { background: var(--cat-ic); } .d-talk { background: var(--cat-sla); }
+.d-award { background: var(--cat-du); } .d-group { background: var(--cat-ii); }
+.d-software { background: var(--violet); }
+.news-outlet { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: .02em; color: var(--text-3); }
+
 /* ---------------- Mobile nav (hamburger) ---------------- */
 @media (max-width: 860px) {
   .nav-open .nav-links { display: flex; flex-direction: column; align-items: stretch; gap: 2px;
