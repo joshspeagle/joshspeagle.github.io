@@ -10,7 +10,7 @@ Repos absent from the curation map are bucketed into "scratch" (forks always go 
 """
 import json
 from datetime import datetime
-from pages_shared import esc, attr_esc
+from pages_shared import esc, attr_esc, url_attr
 
 try:
     from config import get_data_path
@@ -58,11 +58,11 @@ def _lang_tag(lang):
 
 
 def _links(repo, cur):
-    out = [f'<a class="reslink" href="{repo["url"]}" target="_blank" rel="noopener">GitHub</a>']
+    out = [f'<a class="reslink" href="{url_attr(repo["url"])}" target="_blank" rel="noopener">GitHub</a>']
     if cur.get("docs"):
-        out.append(f'<a class="reslink" href="{cur["docs"]}" target="_blank" rel="noopener">Docs</a>')
+        out.append(f'<a class="reslink" href="{url_attr(cur["docs"])}" target="_blank" rel="noopener">Docs</a>')
     if cur.get("paper"):
-        out.append(f'<a class="reslink" href="{cur["paper"]}" target="_blank" rel="noopener">Paper</a>')
+        out.append(f'<a class="reslink" href="{url_attr(cur["paper"])}" target="_blank" rel="noopener">Paper</a>')
     return "".join(out)
 
 
@@ -101,12 +101,12 @@ def _showcase(sw, repos):
     img = sc.get("image", "")
     title = esc(sc.get("title", sc.get("repo", "")))
     blurb = esc(sc.get("blurb", ""))
-    img_html = (f'<div class="viz-img"><img src="{img}" loading="lazy" '
+    img_html = (f'<div class="viz-img"><img src="{url_attr(img)}" loading="lazy" '
                 f'alt="Preview of the {title} visualization"></div>') if img else ""
     return (
         '<section class="sw-showcase" aria-labelledby="sw-viz-head">'
         '<h2 id="sw-viz-head" class="pub-featured-head">Data visualization</h2>'
-        f'<a class="viz-card" href="{url}" target="_blank" rel="noopener">'
+        f'<a class="viz-card" href="{url_attr(url)}" target="_blank" rel="noopener">'
         f'{img_html}'
         f'<div class="viz-body"><h3 class="item-title">{title}</h3>'
         f'<p class="item-meta">{blurb}</p>'

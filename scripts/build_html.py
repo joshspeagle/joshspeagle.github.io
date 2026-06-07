@@ -127,13 +127,23 @@ def _esc(s):
     return re.sub(r"&(?!(?:amp|lt|gt|quot|#\d+);)", "&amp;", str(s or ""))
 
 
+def _esc_text(s):
+    """Full plain-text escape (&, <, >) for fields that must never carry markup."""
+    return _esc(s).replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _url_attr(s):
+    """Escape a URL for a double-quoted href/src attribute (&, ", <, >; no lowercasing)."""
+    return _esc(s).replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+
+
 def generate_page_header(page):
     """Render a secondary page's header band (kicker / title / tagline) from pages.<page>.
     kicker + title are plain text (escaped); tagline is emitted as-is so it may carry
     inline markup (e.g. <strong>)."""
     return (
-        f'<p class="section-kicker">{_esc(page.get("kicker", ""))}</p>\n'
-        f'        <h1 class="pub-h1">{_esc(page.get("title", ""))}</h1>\n'
+        f'<p class="section-kicker">{_esc_text(page.get("kicker", ""))}</p>\n'
+        f'        <h1 class="pub-h1">{_esc_text(page.get("title", ""))}</h1>\n'
         f'        <p class="pub-sub">{page.get("tagline", "")}</p>'
     )
 
@@ -870,7 +880,7 @@ def generate_publications_redesign(data):
     prof_defs = [("ADS", plinks.get("ads")), ("Google Scholar", plinks.get("scholar")),
                  ("ORCID", plinks.get("orcid"))]
     prof_links = "".join(
-        f'<a class="reslink" href="{u}" target="_blank" rel="noopener">{lbl} ↗</a>'
+        f'<a class="reslink" href="{_url_attr(u)}" target="_blank" rel="noopener">{lbl} ↗</a>'
         for lbl, u in prof_defs if u
     )
     profiles = (

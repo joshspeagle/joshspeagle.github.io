@@ -1,6 +1,6 @@
 """News & Updates page content (redesign). generate_content(data) -> inner HTML for #news-content."""
 from collections import Counter
-from pages_shared import scaffold, esc, attr_esc
+from pages_shared import scaffold, esc, attr_esc, url_attr
 
 _TYPE = {
     "press": ("Press", "press"), "paper": ("Paper", "ic"), "talk": ("Talk", "sla"),
@@ -15,7 +15,7 @@ def _news_card(n):
     link = n.get("link", "")
     outlet = n.get("outlet", "")
     cta = f"Read at {outlet} →" if outlet else "Read more →"
-    more = f' <a class="reslink" href="{link}" target="_blank" rel="noopener">{esc(cta)}</a>' if link else ""
+    more = f' <a class="reslink" href="{url_attr(link)}" target="_blank" rel="noopener">{esc(cta)}</a>' if link else ""
     byline = f'<span class="news-outlet">{esc(outlet)}</span>' if outlet else ""
     search = attr_esc(f'{n.get("title","")} {n.get("blurb","")} {outlet} {label}')
     return (

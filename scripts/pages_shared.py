@@ -26,6 +26,11 @@ def attr_esc(s):
     """Lowercase + escape for a double-quoted HTML attribute value (data-search/title)."""
     return esc(str(s or "")).replace('"', "&quot;").lower()
 
+def url_attr(s):
+    """Escape a URL for a double-quoted href/src attribute. Unlike attr_esc this does
+    NOT lowercase (URLs are case-sensitive), and it escapes &, ", <, >."""
+    return esc(str(s or "")).replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+
 def _chip(cat, label, count, active=False):
     dot = "" if cat == "all" else f'<span class="dot d-{cat}"></span>'
     cls = "chip is-active" if active else "chip"
