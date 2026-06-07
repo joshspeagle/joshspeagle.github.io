@@ -126,6 +126,28 @@ def _esc(s):
     """Escape bare & in plain-text fields without double-encoding existing entities."""
     return re.sub(r"&(?!(?:amp|lt|gt|quot|#\d+);)", "&amp;", str(s or ""))
 
+
+def _esc_text(s):
+    """Full plain-text escape (&, <, >) for fields that must never carry markup."""
+    return _esc(s).replace("<", "&lt;").replace(">", "&gt;")
+
+
+def _url_attr(s):
+    """Escape a URL for a double-quoted href/src attribute (&, ", <, >; no lowercasing)."""
+    return _esc(s).replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+
+
+def generate_page_header(page):
+    """Render a secondary page's header band (kicker / title / tagline) from pages.<page>.
+    kicker + title are plain text (escaped); tagline is emitted as-is so it may carry
+    inline markup (e.g. <strong>)."""
+    return (
+        f'<p class="section-kicker">{_esc_text(page.get("kicker", ""))}</p>\n'
+        f'        <h1 class="pub-h1">{_esc_text(page.get("title", ""))}</h1>\n'
+        f'        <p class="pub-sub">{page.get("tagline", "")}</p>'
+    )
+
+
 _HOME_ICONS = [
     ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="13" cy="12" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="20" cy="18" r="2"/><path d="M7 6.6 11 11M7 17.4 11 13M15 11l4-4M15 13l4 4"/></svg>', "sla"),
     ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5 20 20"/><path d="M10 7.5v5M7.5 10h5"/></svg>', "ii"),
@@ -853,7 +875,18 @@ def generate_publications_redesign(data):
         for label, cnt, lib in role_buttons
     ) + '</div>'
 
-    # peak citation year (excluding the current partial year)
+    # Aggregate author-profile links (ADS search · Google Scholar · ORCID) from content.json
+    plinks = (data.get("sections", {}).get("publications", {}) or {}).get("links", {}) or {}
+    prof_defs = [("ADS", plinks.get("ads")), ("Google Scholar", plinks.get("scholar")),
+                 ("ORCID", plinks.get("orcid"))]
+    prof_links = "".join(
+        f'<a class="reslink" href="{_url_attr(u)}" target="_blank" rel="noopener">{lbl} ↗</a>'
+        for lbl, u in prof_defs if u
+    )
+    profiles = (
+        '<div class="pub-profiles"><span class="pub-profiles-label">Full author profiles</span>'
+        f'{prof_links}</div>'
+    ) if prof_links else ""
     cpy = {int(y): v for y, v in metrics.get("citationsPerYear", {}).items()}
     peak_txt = f"{total_citations:,} total"
     if cpy:
@@ -942,6 +975,7 @@ def generate_publications_redesign(data):
     return (
         '<div class="container">'
         + dashboard
+        + profiles
         + figures
         + feat_html
         + '<h2 class="sr-only">All publications</h2>'
@@ -991,6 +1025,14 @@ def build_page(page_name, html, data):
     elif page_name == "publications":
         html = replace_container_content(
             html, "id", "publications-content", generate_publications_redesign(data)
+        )
+
+    # Header band (kicker/title/tagline) from pages.* — single source of truth for the
+    # nine secondary pages (Home's hero is bespoke and not handled here).
+    pages_meta = data.get("pages", {})
+    if page_name in pages_meta:
+        html = replace_container_content(
+            html, "id", f"{page_name}-header", generate_page_header(pages_meta[page_name])
         )
 
     return html

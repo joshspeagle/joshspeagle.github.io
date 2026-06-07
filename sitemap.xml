@@ -35,16 +35,19 @@
         <lastmod>2026-06-03</lastmod>
         <priority>0.6</priority>
     </url>
-  <url>
-    <loc>https://joshspeagle.com/software.html</loc>
-    <lastmod>2026-06-03</lastmod>
-  </url>
-  <url>
-    <loc>https://joshspeagle.com/news.html</loc>
-    <lastmod>2026-06-03</lastmod>
-  </url>
-  <url>
-    <loc>https://joshspeagle.com/biography.html</loc>
-    <lastmod>2026-06-03</lastmod>
-  </url>
+    <url>
+        <loc>https://joshspeagle.com/software.html</loc>
+        <lastmod>2026-06-07</lastmod>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/news.html</loc>
+        <lastmod>2026-06-03</lastmod>
+        <priority>0.6</priority>
+    </url>
+    <url>
+        <loc>https://joshspeagle.com/biography.html</loc>
+        <lastmod>2026-06-03</lastmod>
+        <priority>0.6</priority>
+    </url>
 </urlset>

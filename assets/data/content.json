@@ -1847,7 +1847,7 @@
                             "title": "Learning and Doing Physics and Astronomy in the Age of AI",
                             "event": "Wellesley College: Physics & Astronomy Colloquium",
                             "location": "Wellesley, USA",
-                            "date": "TBD (rescheduled)",
+                            "date": "Feb 2026 (rescheduled — new date TBD)",
                             "year": 2026,
                             "type": "Colloquium"
                         },
@@ -2942,53 +2942,51 @@
         "software": {
             "title": "Software & Code",
             "tagline": "Open-source tools for inference, discovery, and keeping up with the literature",
-            "tools": [
-                {
-                    "name": "dynesty",
-                    "role": "Dynamic nested sampling for Bayesian posteriors & evidence",
-                    "language": "Python",
-                    "stars": "400+",
-                    "featured": true,
-                    "install": "pip install dynesty",
-                    "github": "https://github.com/joshspeagle/dynesty",
-                    "docs": "https://dynesty.readthedocs.io",
-                    "paper": "https://doi.org/10.1093/mnras/staa278"
-                },
-                {
-                    "name": "brutus",
-                    "role": "Stellar photometry, distances & extinction via brute-force Bayesian inference",
-                    "language": "Python",
-                    "stars": "50+",
-                    "featured": true,
-                    "install": "pip install astro-brutus",
-                    "github": "https://github.com/joshspeagle/brutus"
-                },
-                {
-                    "name": "frankenz",
-                    "role": "Photometric redshift estimation (a photo-z monstrosity)",
-                    "language": "Python",
-                    "github": "https://github.com/joshspeagle/frankenz"
-                },
-                {
-                    "name": "dorothy",
-                    "role": "Data-driven stellar abundances",
-                    "language": "Python",
-                    "github": "https://github.com/joshspeagle/dorothy"
-                },
-                {
-                    "name": "aparture",
-                    "role": "LLM-powered tool to sift through the arXiv",
-                    "language": "JavaScript",
-                    "stars": "19",
-                    "github": "https://github.com/joshspeagle/aparture"
-                },
-                {
-                    "name": "arxivy",
-                    "role": "Helping keep up with the arXiv",
-                    "language": "Python",
-                    "github": "https://github.com/joshspeagle/arxivy"
-                }
-            ]
+            "githubUser": "joshspeagle",
+            "groups": [
+                { "id": "inference", "label": "Inference & sampling", "accent": "ic" },
+                { "id": "stellar", "label": "Stellar & Galactic", "accent": "du" },
+                { "id": "extragal", "label": "Extragalactic & cosmology", "accent": "ii" },
+                { "id": "dataviz", "label": "Data visualization", "accent": "sla" },
+                { "id": "literature", "label": "Literature & LLM tools", "accent": "violet" },
+                { "id": "teaching", "label": "Teaching & tutorials", "accent": "teal" },
+                { "id": "websites", "label": "Websites", "accent": "gray" },
+                { "id": "scratch", "label": "Scratch & misc", "accent": "mute" }
+            ],
+            "featured": ["dynesty", "brutus", "aparture"],
+            "showcase": {
+                "repo": "allsky",
+                "title": "allsky",
+                "url": "http://allsky.s3-website.us-east-2.amazonaws.com/",
+                "image": "assets/images/allsky-showcase.jpg",
+                "blurb": "An animated, interactive all-sky map of stellar motion across the Milky Way — the visualization behind the 2021 Dunlap \"interactive map of the Milky Way\" feature."
+            },
+            "curation": {
+                "dynesty": { "group": "inference", "pypi": "dynesty", "docs": "https://dynesty.readthedocs.io", "paper": "https://doi.org/10.1093/mnras/staa278", "blurb": "Dynamic nested sampling for Bayesian posteriors & evidences" },
+                "brutus": { "group": "stellar", "pypi": "astro-brutus", "docs": "https://brutus.readthedocs.io", "paper": "https://ui.adsabs.harvard.edu/abs/2025arXiv250302227S", "blurb": "Stellar properties, distances & extinctions via brute-force Bayesian inference" },
+                "aparture": { "group": "literature", "docs": "https://joshspeagle.com/aparture/", "blurb": "An LLM-powered tool to help sift through the arXiv" },
+                "frankenz": { "group": "extragal", "pypi": "frankenz", "blurb": "Photometric redshift estimation (a photo-z monstrosity)" },
+                "allsky": { "group": "dataviz", "url": "http://allsky.s3-website.us-east-2.amazonaws.com/", "blurb": "An animated, interactive 3-D map of Galactic motion" },
+                "dorothy": { "group": "stellar", "blurb": "Data-driven stellar abundances" },
+                "phot_bias": { "group": "inference", "blurb": "Biases in maximum-likelihood photometry (paper companion)" },
+                "nrp_astrobayes": { "group": "inference", "blurb": "Worked example accompanying Eadie et al. (2023)" },
+                "typical_sets": { "group": "teaching", "blurb": "The role of typical sets in (MCMC) sampling" },
+                "ast424-2025": { "group": "teaching" },
+                "AY191": { "group": "teaching" },
+                "STA130-W23": { "group": "teaching" },
+                "UCSC-Python-Coffee": { "group": "teaching" },
+                "harvardastro_MLJC": { "group": "teaching", "blurb": "Harvard astronomy ML journal club" },
+                "ssc-2026-AI-LLM-demo": { "group": "teaching" },
+                "joshspeagle.github.io": { "group": "websites" },
+                "STATSTRO": { "group": "websites" },
+                "astrostat_uoft": { "group": "websites" },
+                "bio-cv": { "group": "websites" },
+                "research": { "group": "websites" },
+                "cd_sbi": { "group": "scratch" },
+                "frasian_tilting": { "group": "scratch" },
+                "PCAT": { "group": "scratch" },
+                "arxivy": { "group": "scratch", "pypi": "arxivy", "blurb": "Helping keep up with the arXiv" }
+            }
         },
         "news": {
             "title": "News & Updates",
@@ -2998,69 +2996,172 @@
                     "date": "Feb 2026",
                     "year": 2026,
                     "type": "paper",
-                    "title": "New preprint on supernova yields from dwarf spheroidals",
+                    "title": "New preprint: supernova yields from dwarf spheroidals",
                     "blurb": "Student-led work (Heiger et al.) constraining supernova yields and delay times from dwarf spheroidal galaxies.",
                     "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv260222333H"
                 },
                 {
-                    "date": "2025",
+                    "date": "Oct 2025",
                     "year": 2025,
-                    "type": "talk",
-                    "title": "CCA Colloquium — Mapping the Milky Way in the Age of Gaia",
-                    "blurb": "Invited colloquium at the Flatiron Institute's Center for Computational Astrophysics.",
-                    "link": "https://www.simonsfoundation.org/event/joshuaspeagle/"
+                    "type": "paper",
+                    "title": "A deep 3-D dust map of the southern Galactic plane",
+                    "blurb": "Co-led a high-angular-resolution 3-D dust map of the southern Milky Way (Zucker, Saydjari & Speagle, ApJ), built on the DECaPS2 survey with the brutus inference framework.",
+                    "link": "https://ui.adsabs.harvard.edu/abs/2025ApJ...992...39Z"
+                },
+                {
+                    "date": "Jul 2025",
+                    "year": 2025,
+                    "type": "press",
+                    "title": "ChronoFlow: an AI model for the ages of stars",
+                    "blurb": "Student-led work (Van-Lane et al.) using normalizing flows for gyrochronology, co-supervised with Gwen Eadie. Covered by U of T News and Phys.org.",
+                    "outlet": "U of T News",
+                    "link": "https://www.utoronto.ca/news/u-t-astronomers-develop-ai-model-determine-stars-ages"
+                },
+                {
+                    "date": "Nov 2024",
+                    "year": 2024,
+                    "type": "press",
+                    "title": "First white dwarf–main-sequence binary candidates in open star clusters",
+                    "blurb": "Co-author on the discovery (Grondin et al., ApJ), also picked up by Phys.org and SciTechDaily.",
+                    "outlet": "U of T Arts & Science",
+                    "link": "https://www.artsci.utoronto.ca/news/u-t-astronomers-discover-first-white-dwarf-main-sequence-binary-candidates-open-star-clusters"
+                },
+                {
+                    "date": "Aug 2024",
+                    "year": 2024,
+                    "type": "press",
+                    "title": "A 5-D map of the Milky Way — AAS Nova featured image",
+                    "blurb": "My lead-author work (Speagle et al. 2024) highlighted as an AAS Nova featured image.",
+                    "outlet": "AAS Nova",
+                    "link": "https://aasnova.org/2024/08/12/featured-image-a-5d-map-of-the-milky-way/"
+                },
+                {
+                    "date": "2024",
+                    "year": 2024,
+                    "type": "press",
+                    "title": "Students train AI for the Galaxy Zoo: Euclid citizen-science project",
+                    "blurb": "U of T Statistical Sciences profiled undergraduates Khalid Edris and Junbo Li — co-mentored with Dunlap Fellow Mike Walmsley — on training the Zoobot AI to classify galaxies from the Euclid space telescope.",
+                    "outlet": "U of T Statistical Sciences",
+                    "link": "https://www.statistics.utoronto.ca/news/exploring-universe-u-t-students%E2%80%99-journey-galaxy-zoo-project"
+                },
+                {
+                    "date": "Feb 2024",
+                    "year": 2024,
+                    "type": "press",
+                    "title": "The Radcliffe Wave is waving",
+                    "blurb": "Co-author on the finding that the galaxy's largest gaseous structure oscillates (Konietzka et al., Nature). Widely covered — CfA, Phys.org, Universe Today, the Harvard Crimson.",
+                    "outlet": "Center for Astrophysics | Harvard & Smithsonian",
+                    "link": "https://www.cfa.harvard.edu/news/radcliffe-wave-waving"
                 },
                 {
                     "date": "2024",
                     "year": 2024,
                     "type": "award",
                     "title": "Connaught New Researcher Award",
-                    "blurb": "Recognized by the University of Toronto for early-career research.",
+                    "blurb": "Awarded by the University of Toronto in support of early-career research.",
                     "link": ""
                 },
                 {
-                    "date": "2024",
-                    "year": 2024,
-                    "type": "group",
-                    "title": "ART hosts the annual Statstro workshop",
-                    "blurb": "The Astrostatistics Research Team brought together researchers across astrophysics, statistics, and data science.",
-                    "link": "https://astrostatuoft.com/"
+                    "date": "Jan 2023",
+                    "year": 2023,
+                    "type": "press",
+                    "title": "DECaPS2: a survey of 3.3 billion objects in the Milky Way's plane",
+                    "blurb": "Co-author on the DECaPS2 survey and catalogue (Saydjari et al.). Covered by NOIRLab, Space.com, PBS NewsHour, and Salon.",
+                    "outlet": "NSF NOIRLab",
+                    "link": "https://noirlab.edu/public/news/noirlab2301/"
+                },
+                {
+                    "date": "Jan 2023",
+                    "year": 2023,
+                    "type": "award",
+                    "title": "2022 John Charles Polanyi Prize in Physics",
+                    "blurb": "Recognized by the Government of Ontario for outstanding early-career research — \"I'm honoured and humbled to receive the Polanyi Prize.\"",
+                    "outlet": "University of Toronto",
+                    "link": "https://www.utoronto.ca/celebrates/joshua-speagle-wins-2022-john-charles-polanyi-prize-physics"
+                },
+                {
+                    "date": "Jan 2022",
+                    "year": 2022,
+                    "type": "press",
+                    "title": "The Local Bubble: the Sun sits in a 1,000-light-year void that forms stars",
+                    "blurb": "Co-author on the Local Bubble result (Zucker et al., Nature). Covered by CfA, the Harvard Gazette, STScI, and the Smithsonian.",
+                    "outlet": "Center for Astrophysics | Harvard & Smithsonian",
+                    "link": "https://www.cfa.harvard.edu/news/1000-light-year-wide-bubble-surrounding-earth-source-all-nearby-young-stars"
+                },
+                {
+                    "date": "Jul 2021",
+                    "year": 2021,
+                    "type": "press",
+                    "title": "Mapping the Milky Way: an interactive tool for 170 million stars",
+                    "blurb": "Profiled by the Dunlap Institute for building the first interactive map of the Milky Way's stars and dust — the basis of the allsky visualization.",
+                    "outlet": "Dunlap Institute",
+                    "link": "https://www.dunlap.utoronto.ca/dunlap-postdoc-creates-interactive-map-of-the-milky-way/"
+                },
+                {
+                    "date": "Jan 2020",
+                    "year": 2020,
+                    "type": "press",
+                    "title": "The Radcliffe Wave — the largest gaseous structure in the galaxy",
+                    "blurb": "Co-author on the discovery of a 9,000-light-year wave of stellar nurseries near the Sun (Alves et al., Nature). Featured by CfA and the Harvard Gazette.",
+                    "outlet": "Center for Astrophysics | Harvard & Smithsonian",
+                    "link": "https://www.cfa.harvard.edu/news/radcliffe-wave"
                 },
                 {
                     "date": "2020",
                     "year": 2020,
                     "type": "software",
                     "title": "dynesty published in MNRAS",
-                    "blurb": "The dynamic nested sampling package paper appeared in MNRAS and is now cited 2,000+ times.",
+                    "blurb": "The dynamic nested sampling package paper appeared in MNRAS; it is now cited 2,000+ times.",
                     "link": "https://doi.org/10.1093/mnras/staa278"
                 }
             ]
         }
     },
     "pages": {
-        "mentorship": {
-            "title": "Mentorship",
-            "description": "Student supervision and research opportunities in astrostatistics"
-        },
         "publications": {
+            "kicker": "Research output",
             "title": "Publications",
-            "description": "Peer-reviewed research and scholarly contributions"
+            "tagline": "Peer-reviewed research and scholarly contributions."
         },
         "talks": {
+            "kicker": "Speaking & outreach",
             "title": "Talks & Events",
-            "tagline": "Presentations, panels, and public engagement across academia and beyond"
+            "tagline": "Presentations, panels, and public engagement across academia and beyond."
         },
         "teaching": {
+            "kicker": "Teaching & education",
             "title": "Teaching",
-            "description": "Courses, workshops, and educational resources"
+            "tagline": "Statistical methods and computational thinking for scientific discovery — courses, short courses, and hands-on workshops."
+        },
+        "mentorship": {
+            "kicker": "Mentoring & training",
+            "title": "Mentorship & Supervision",
+            "tagline": "Guiding the next generation of astrostatisticians and data scientists."
         },
         "awards": {
+            "kicker": "Recognition",
             "title": "Awards & Honors",
-            "description": "Recognition and achievements in academia and research"
+            "tagline": "Recognition and achievements in academia and research."
         },
         "service": {
-            "title": "Leadership & Service",
-            "description": "Professional service and community engagement"
+            "kicker": "Leadership & community",
+            "title": "Service",
+            "tagline": "Professional service and community engagement — <strong>societies, university committees, and conference organization</strong>."
+        },
+        "software": {
+            "kicker": "Open source",
+            "title": "Software & Code",
+            "tagline": "Open-source tools for inference, discovery, and keeping up with the literature."
+        },
+        "news": {
+            "kicker": "In the news",
+            "title": "News & Press",
+            "tagline": "Press coverage, media features, awards, and research milestones."
+        },
+        "biography": {
+            "kicker": "About",
+            "title": "Biography",
+            "tagline": "A short career timeline."
         }
     },
     "footer": {

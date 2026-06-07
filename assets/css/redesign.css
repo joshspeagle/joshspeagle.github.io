@@ -50,7 +50,12 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .nav-item:hover, .nav-trigger:hover, .nav-item:focus-visible, .nav-trigger:focus-visible { color: var(--text); background: var(--surface); }
 .nav-item[aria-current="page"] { color: var(--text); }
 .nav-item[aria-current="page"]::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 2px; height: 2px; border-radius: 2px; background: var(--grad); }
-.nav-group:hover .menu, .nav-group:focus-within .menu { display: block; }
+/* Desktop only: hover / keyboard-focus reveals the dropdown. Scoped above the mobile
+   breakpoint so touch :hover/:focus-within can't pin a submenu open in the mobile
+   accordion (where the .open class is the sole control). */
+@media (min-width: 861px) {
+  .nav-group:hover .menu, .nav-group:focus-within .menu { display: block; }
+}
 .menu {
   display: none; position: absolute; top: 100%; left: 0; min-width: 190px;
   background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius-card);
@@ -458,6 +463,10 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .pub-statlink:hover { border-color: color-mix(in srgb, var(--violet) 50%, var(--border)); transform: translateY(-2px); }
 .pub-stat-go { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; color: var(--text-3); margin-top: 4px; }
 .pub-statlink:hover .pub-stat-go { color: var(--violet); }
+.pub-profiles { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin: var(--space-4) 0 var(--space-2); }
+.pub-profiles-label { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
+.pub-profiles .reslink { font-size: var(--fs-sm); color: var(--violet); text-decoration: none; }
+.pub-profiles .reslink:hover { text-decoration: underline; }
 .pub-fig {
   margin: 0;
   background: var(--surface);
@@ -650,6 +659,56 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .d-bachelors{background:var(--cat-du)}
 
 .install { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-2); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: var(--space-3); overflow-x: auto; }
+
+/* ---------------- Software page ---------------- */
+.sw-topline { margin: var(--space-6) 0 var(--space-2); }
+.sw-topline .pub-metrics { gap: var(--space-7); }
+.pub-featured .featured-grid { align-items: stretch; }
+.feat-card { display: flex; flex-direction: column; }
+.feat-card .item-title { font-family: var(--font-mono); font-weight: 700; }
+.tool-stats { display: flex; flex-wrap: wrap; gap: var(--space-5); margin: var(--space-4) 0 0; }
+.tool-stat { display: flex; flex-direction: column; gap: 1px; }
+.tool-stat .n { font-family: var(--font-mono); font-weight: 700; font-size: 1.15rem; line-height: 1; background: var(--grad-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tool-stat .l { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); }
+.feat-card .install { margin-top: var(--space-4); }
+.feat-card .item-tags { margin-top: auto; padding-top: var(--space-4); }
+.feat-card .paper-links { flex-wrap: wrap; }
+#software-content .item-title { font-family: var(--font-mono); font-weight: 700; font-size: 1.05rem; }
+.tag.lang { color: var(--text-2); border: 1px solid var(--border); background: var(--surface-2); }
+.tag.lang-py { color: #7fb3ff; border-color: color-mix(in srgb,#5aa9ff 45%,var(--border)); background: color-mix(in srgb,#5aa9ff 12%,transparent); }
+.tag.lang-js { color: #e7c34d; border-color: color-mix(in srgb,#efc63a 45%,var(--border)); background: color-mix(in srgb,#efc63a 12%,transparent); }
+.tag.lang-jn { color: #ff9d6b; border-color: color-mix(in srgb,#ff7a3a 40%,var(--border)); background: color-mix(in srgb,#ff7a3a 10%,transparent); }
+[data-theme="light"] .tag.lang-py { color: #1d5fb0; }
+[data-theme="light"] .tag.lang-js { color: #8a6d00; }
+[data-theme="light"] .tag.lang-jn { color: #b4501a; }
+.tag.lang-web, .tag.lang-x { color: var(--text-3); }
+.tag.fork { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
+/* group accents + chip dots */
+.item.accent-teal { border-left-color: #34d3e0; }
+.item.accent-gray { border-left-color: var(--text-3); }
+.item.accent-mute { border-left-color: var(--border); }
+.d-sla { background: var(--cat-sla); } .d-ic { background: var(--cat-ic); }
+.d-du { background: var(--cat-du); } .d-ii { background: var(--cat-ii); }
+.d-violet { background: var(--violet); } .d-teal { background: #34d3e0; }
+.d-gray { background: var(--text-3); } .d-mute { background: var(--border); }
+/* data-visualization showcase */
+.sw-showcase { margin: var(--space-8) 0; }
+.viz-card { display: grid; grid-template-columns: 1.3fr 1fr; align-items: stretch; border: 1px solid color-mix(in srgb, var(--cat-sla) 30%, var(--border)); border-radius: var(--radius-card); overflow: hidden; background: var(--surface); text-decoration: none; color: inherit; transition: border-color .2s ease; }
+.viz-card:hover { border-color: color-mix(in srgb, var(--cat-sla) 60%, var(--border)); }
+.viz-img { background: #000; display: flex; min-height: 220px; }
+.viz-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.viz-body { padding: var(--space-6); display: flex; flex-direction: column; gap: var(--space-3); justify-content: center; }
+.viz-body .item-title { font-family: var(--font-mono); font-weight: 700; }
+.viz-cta { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--blue); }
+@media (max-width: 700px) { .viz-card { grid-template-columns: 1fr; } }
+
+/* ---------------- News & Press page ---------------- */
+.item.accent-press { border-left-color: #ff7eb6; }
+.d-press { background: #ff7eb6; }
+.d-paper { background: var(--cat-ic); } .d-talk { background: var(--cat-sla); }
+.d-award { background: var(--cat-du); } .d-group { background: var(--cat-ii); }
+.d-software { background: var(--violet); }
+.news-outlet { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: .02em; color: var(--text-3); }
 
 /* ---------------- Mobile nav (hamburger) ---------------- */
 @media (max-width: 860px) {

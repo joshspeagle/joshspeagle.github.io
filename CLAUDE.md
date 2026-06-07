@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Personal academic website for Joshua S. Speagle — live at **joshspeagle.com** (custom apex domain via the tracked `CNAME`; the repo `joshspeagle.github.io` is the GitHub Pages source). Static HTML/CSS/JS on GitHub Pages. **Redesigned June 2026** onto a design-token system with self-hosted fonts and an animated hero. All HTML is pre-rendered from `content.json` by `build_html.py` for SEO; lightweight JS adds interactivity (theme toggle, the hero canvas, and a generic search/filter/sort/load-more list).
+Personal academic website for Joshua S. Speagle — live at **joshspeagle.com** (custom apex domain via the tracked `CNAME`; the repo `joshspeagle.github.io` is the GitHub Pages source). Static HTML/CSS/JS on GitHub Pages. **Redesigned June 2026** onto a design-token system with self-hosted fonts and an animated hero. All HTML is pre-rendered for SEO by `build_html.py` from `content.json` (plus the data caches `publications_data.json` and `software_data.json`); lightweight JS adds interactivity (theme toggle, the hero canvas, and a generic search/filter/sort/load-more list).
 
 ## Development Workflow
 
@@ -24,11 +24,11 @@ python -m http.server 8000       # local dev server
 
 ### Build system (content.json → static HTML)
 
-`scripts/build_html.py` reads `assets/data/content.json` and fills each page's content container(s): `#<page>-content` for the nine secondary pages, and the per-section ids `#about`/`#research`/`#team`/`#join` for Home (there is no `#home-content`). The **10 HTML pages** (Home, Publications, Talks, Teaching, Mentorship, Awards, Service, Software, News, Biography) are **static shells** (head, nav, hero/header band, footer); only the content area is generated — so the static HTML *is* the SEO layer and JS only adds interactivity. Idempotent. *(Biography is a dedicated page holding the career timeline — `sections.biography.timeline` via `generate_biography`; the nav "Biography" links to it, not a homepage anchor. A further shell, `404.html`, is also a redesign static shell but is hand-maintained — it's absent from build_html.py's `HTML_FILES` map and is not regenerated. Footers are likewise static in each shell; the `footer` key in content.json is currently unused.)*
+`scripts/build_html.py` reads `assets/data/content.json` and fills each page's content container(s): `#<page>-content` for the nine secondary pages, and the per-section ids `#about`/`#research`/`#team`/`#join` for Home (there is no `#home-content`). For the nine secondary pages it **also** fills the header band — the `#<page>-header` container — from the top-level `pages.<page>` object (`kicker`/`title`/`tagline`) via `generate_page_header`, so that band is data-driven, not hand-edited per shell. The **10 HTML pages** (Home, Publications, Talks, Teaching, Mentorship, Awards, Service, Software, News, Biography) are **static shells** (head, nav, hero frame, footer); the content area and (for secondary pages) the header band are generated — so the static HTML *is* the SEO layer and JS only adds interactivity. Idempotent. *(Biography is a dedicated page holding the career timeline — `sections.biography.timeline` via `generate_biography`; the nav "Biography" links to it, not a homepage anchor. A further shell, `404.html`, is also a redesign static shell but is hand-maintained — it's absent from build_html.py's `HTML_FILES` map and is not regenerated. Footers are likewise static in each shell; the `footer` key in content.json is currently unused.)*
 
 - Home sections: `generate_home_*` in `build_html.py`.
 - Publications: `generate_publications_redesign` pre-renders **all ~130 papers** from `publications_data.json` (no Chart.js, no runtime JSON fetch).
-- Other pages: one generator each in `scripts/pages_<page>.py` (talks/teaching/mentorship/awards/service/software/news), sharing `scripts/pages_shared.py` (`scaffold()`, `esc`, `attr_esc`).
+- Other pages: one generator each in `scripts/pages_<page>.py` (talks/teaching/mentorship/awards/service/software/news), sharing `scripts/pages_shared.py` (`scaffold()`, `esc`, `attr_esc`). Most use `scaffold()`; **Software** renders a bespoke layout (metric strip + featured board + data-viz showcase + grouped list) from `software_data.json` — see "Software Stats Pipeline".
 
 ### Design tokens & fonts
 
@@ -41,10 +41,12 @@ python -m http.server 8000       # local dev server
 |------|---------|
 | `assets/data/content.json` | All site content (incl. `software` + `news` sections) |
 | `assets/data/publications_data.json` | Publication metadata (pipeline output) |
+| `assets/data/software_data.json` | GitHub/PyPI stats cache for the Software page (output of `fetch_software.py`) |
 | `assets/data/tokens.json` | Design tokens (source) |
-| `scripts/build_html.py` | Build: fills page content from content.json |
+| `scripts/build_html.py` | Build: fills page content **and** secondary-page header bands from content.json |
 | `scripts/build_tokens.py` · `scripts/setup_fonts.py` | tokens → CSS · vendor fonts |
 | `scripts/pages_shared.py` + `scripts/pages_<page>.py` | per-page content generators (talks/teaching/mentorship/awards/service/software/news) |
+| `scripts/fetch_software.py` | Refreshes `software_data.json` from GitHub + PyPI (on-demand; see "Software Stats Pipeline") |
 | `scripts/generate_favicons.py` · `scripts/make_og_card.py` | asset generation: favicon set + `site.webmanifest` · OG/Twitter social card (`assets/images/og-card.png`). Re-run on rebrand. |
 | `assets/css/{fonts,tokens,redesign}.css` | the only stylesheets |
 | `assets/js/redesign/hero.js` | animated inference-field hero (decorative, `aria-hidden`) |
@@ -81,16 +83,16 @@ When the user asks to "update the website", walk through each category below and
 | 5 | **Home — Biography** | `sections.biography` — career timeline entries, personal note, dog photos | 2026-03-08 |
 | 6 | **Mentorship — Current** | `sections.mentorship.menteesByStage` (`postdoctoral`/`doctoral`/`bachelors`/`mastersProjects`) | 2026-04-06 |
 | 7 | **Mentorship — Completed** | `sections.mentorship.menteesByStage.completed.<stage>` — former mentees & outcomes (TODO: verify current jobs/outcomes) | 2026-04-06 |
-| 8 | **Talks** | `sections.talks` — invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-04-06 |
+| 8 | **Talks** | `sections.talks` — invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-06-07 |
 | 9 | **Teaching** | `sections.teaching` — course history, short courses & workshops, teaching stats | 2026-04-06 |
 | 10 | **Awards** | `sections.awards` — new awards or honors | 2026-03-09 |
 | 11 | **Service** | `sections.service` — society roles, committee memberships, conference org, referee list | 2026-04-06 |
-| 12 | **Software** | `sections.software.tools` — packages (dynesty/brutus/…), install, links | 2026-06-03 |
+| 12 | **Software** | `sections.software` — the **curation** map (per-repo `group`/`featured`/`pypi`/`docs`/`paper`/`blurb`), plus `groups`, `featured`, `showcase`. Stars/forks/downloads are auto-pulled into `software_data.json` by `fetch_software.py`. **New repos must be added to `curation` or the fetch fails** (forks auto-route to `scratch`). See "Software Stats Pipeline". | 2026-06-07 |
 | 13 | **News** | `sections.news.items` — recent papers/talks/awards/milestones | 2026-06-03 |
 | 14 | **Publications** | Pre-rendered from `publications_data.json`; automated pipeline — see "Publication Pipeline" | 2026-03-09 |
 | 15 | **Footer** | Static in each page shell (copyright year, "last updated"); the `footer` key in content.json is unused | 2026-06-03 |
 
-> Page **header bands** (title/tagline/intro above the listview) for the secondary pages live in the top-level `pages.<page>` object (`mentorship`/`publications`/`talks`/`teaching`/`awards`/`service`), separate from `sections.*`.
+> Page **header bands** (`kicker`/`title`/`tagline` above the listview) for all nine secondary pages — `publications`/`talks`/`teaching`/`mentorship`/`awards`/`service`/`software`/`news`/`biography` — live in the top-level `pages.<page>` object (separate from `sections.*`) and are **rendered by `build_html.py`** into each shell's `#<page>-header` container. Edit them there, not in the HTML. `tagline` is emitted as raw HTML (so inline `<strong>` etc. work); `kicker`/`title` are escaped.
 
 Update the "Last edited" column each time a category is modified.
 
@@ -125,6 +127,21 @@ Variations: **bachelors** with several stints may use a `projects` array (`title
 ### Publication Categories
 
 Four categories: Statistical Learning & AI, Interpretability & Insight, Inference & Computation, Discovery & Understanding. Papers show badges for categories with ≥20% probability. Student-led papers get orange highlighting.
+
+## Software Stats Pipeline
+
+The Software page is rendered from two sources: the hand-curated `sections.software` in `content.json` (taxonomy + which repos are featured/grouped + per-repo overrides) and an auto-generated stats cache, `assets/data/software_data.json`.
+
+```bash
+cd scripts && python fetch_software.py                  # refresh stars/forks/downloads
+cd scripts && python fetch_software.py --allow-unclassified   # drop unknown repos into "scratch" instead of failing
+cd scripts && python build_html.py                      # re-render software.html from the refreshed cache
+```
+
+- **On-demand only** — there is no scheduled job. Run `fetch_software.py` whenever you want fresh numbers, then `build_html.py`, then commit both `software_data.json` and `software.html`.
+- **Source**: GitHub REST API (all **public** repos; private repos excluded, forks flagged) + `pypistats.org` monthly downloads for any repo whose curation entry has a `pypi` name. Stdlib only. Honors `$GITHUB_TOKEN` for a higher rate limit (anonymous is 60/hr).
+- **Explicit classification**: every **non-fork** public repo must appear in `sections.software.curation` with a `group`. If GitHub returns one that isn't there, the fetch prints it and **exits non-zero** so new repos can't ship unclassified. Forks auto-route to the `scratch` group.
+- **Curation fields** per repo: `group` (required; one of the `groups` ids), `pypi` (PyPI package name if it differs from the repo name, e.g. `brutus → astro-brutus`), `docs`, `paper`, `blurb` (display override; else the GitHub description is used), `hidden` (omit from the page). `featured` (top board) and `showcase` (the data-viz spotlight, e.g. `allsky`) are set at the `sections.software` level, not per-repo.
 
 ## Publication Pipeline
 
