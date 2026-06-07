@@ -50,7 +50,12 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .nav-item:hover, .nav-trigger:hover, .nav-item:focus-visible, .nav-trigger:focus-visible { color: var(--text); background: var(--surface); }
 .nav-item[aria-current="page"] { color: var(--text); }
 .nav-item[aria-current="page"]::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 2px; height: 2px; border-radius: 2px; background: var(--grad); }
-.nav-group:hover .menu, .nav-group:focus-within .menu { display: block; }
+/* Desktop only: hover / keyboard-focus reveals the dropdown. Scoped above the mobile
+   breakpoint so touch :hover/:focus-within can't pin a submenu open in the mobile
+   accordion (where the .open class is the sole control). */
+@media (min-width: 861px) {
+  .nav-group:hover .menu, .nav-group:focus-within .menu { display: block; }
+}
 .menu {
   display: none; position: absolute; top: 100%; left: 0; min-width: 190px;
   background: var(--bg-1); border: 1px solid var(--border); border-radius: var(--radius-card);

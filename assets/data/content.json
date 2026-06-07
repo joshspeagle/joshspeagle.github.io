@@ -1847,7 +1847,7 @@
                             "title": "Learning and Doing Physics and Astronomy in the Age of AI",
                             "event": "Wellesley College: Physics & Astronomy Colloquium",
                             "location": "Wellesley, USA",
-                            "date": "TBD (rescheduled)",
+                            "date": "Feb 2026 (rescheduled — new date TBD)",
                             "year": 2026,
                             "type": "Colloquium"
                         },
@@ -3036,29 +3036,50 @@
         }
     },
     "pages": {
-        "mentorship": {
-            "title": "Mentorship",
-            "description": "Student supervision and research opportunities in astrostatistics"
-        },
         "publications": {
+            "kicker": "Research output",
             "title": "Publications",
-            "description": "Peer-reviewed research and scholarly contributions"
+            "tagline": "Peer-reviewed research and scholarly contributions."
         },
         "talks": {
+            "kicker": "Speaking & outreach",
             "title": "Talks & Events",
-            "tagline": "Presentations, panels, and public engagement across academia and beyond"
+            "tagline": "Presentations, panels, and public engagement across academia and beyond."
         },
         "teaching": {
+            "kicker": "Teaching & education",
             "title": "Teaching",
-            "description": "Courses, workshops, and educational resources"
+            "tagline": "Statistical methods and computational thinking for scientific discovery — courses, short courses, and hands-on workshops."
+        },
+        "mentorship": {
+            "kicker": "Mentoring & training",
+            "title": "Mentorship & Supervision",
+            "tagline": "Guiding the next generation of astrostatisticians and data scientists."
         },
         "awards": {
+            "kicker": "Recognition",
             "title": "Awards & Honors",
-            "description": "Recognition and achievements in academia and research"
+            "tagline": "Recognition and achievements in academia and research."
         },
         "service": {
-            "title": "Leadership & Service",
-            "description": "Professional service and community engagement"
+            "kicker": "Leadership & community",
+            "title": "Service",
+            "tagline": "Professional service and community engagement — <strong>societies, university committees, and conference organization</strong>."
+        },
+        "software": {
+            "kicker": "Open source",
+            "title": "Software & Code",
+            "tagline": "Open-source tools for inference, discovery, and keeping up with the literature."
+        },
+        "news": {
+            "kicker": "Updates",
+            "title": "News & Updates",
+            "tagline": "Recent papers, talks, awards, and group milestones."
+        },
+        "biography": {
+            "kicker": "About",
+            "title": "Biography",
+            "tagline": "A short career timeline."
         }
     },
     "footer": {

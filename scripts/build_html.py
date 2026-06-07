@@ -126,6 +126,18 @@ def _esc(s):
     """Escape bare & in plain-text fields without double-encoding existing entities."""
     return re.sub(r"&(?!(?:amp|lt|gt|quot|#\d+);)", "&amp;", str(s or ""))
 
+
+def generate_page_header(page):
+    """Render a secondary page's header band (kicker / title / tagline) from pages.<page>.
+    kicker + title are plain text (escaped); tagline is emitted as-is so it may carry
+    inline markup (e.g. <strong>)."""
+    return (
+        f'<p class="section-kicker">{_esc(page.get("kicker", ""))}</p>\n'
+        f'        <h1 class="pub-h1">{_esc(page.get("title", ""))}</h1>\n'
+        f'        <p class="pub-sub">{page.get("tagline", "")}</p>'
+    )
+
+
 _HOME_ICONS = [
     ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="13" cy="12" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="20" cy="18" r="2"/><path d="M7 6.6 11 11M7 17.4 11 13M15 11l4-4M15 13l4 4"/></svg>', "sla"),
     ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5 20 20"/><path d="M10 7.5v5M7.5 10h5"/></svg>', "ii"),
@@ -991,6 +1003,14 @@ def build_page(page_name, html, data):
     elif page_name == "publications":
         html = replace_container_content(
             html, "id", "publications-content", generate_publications_redesign(data)
+        )
+
+    # Header band (kicker/title/tagline) from pages.* — single source of truth for the
+    # nine secondary pages (Home's hero is bespoke and not handled here).
+    pages_meta = data.get("pages", {})
+    if page_name in pages_meta:
+        html = replace_container_content(
+            html, "id", f"{page_name}-header", generate_page_header(pages_meta[page_name])
         )
 
     return html
