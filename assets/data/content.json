@@ -2942,53 +2942,51 @@
         "software": {
             "title": "Software & Code",
             "tagline": "Open-source tools for inference, discovery, and keeping up with the literature",
-            "tools": [
-                {
-                    "name": "dynesty",
-                    "role": "Dynamic nested sampling for Bayesian posteriors & evidence",
-                    "language": "Python",
-                    "stars": "400+",
-                    "featured": true,
-                    "install": "pip install dynesty",
-                    "github": "https://github.com/joshspeagle/dynesty",
-                    "docs": "https://dynesty.readthedocs.io",
-                    "paper": "https://doi.org/10.1093/mnras/staa278"
-                },
-                {
-                    "name": "brutus",
-                    "role": "Stellar photometry, distances & extinction via brute-force Bayesian inference",
-                    "language": "Python",
-                    "stars": "50+",
-                    "featured": true,
-                    "install": "pip install astro-brutus",
-                    "github": "https://github.com/joshspeagle/brutus"
-                },
-                {
-                    "name": "frankenz",
-                    "role": "Photometric redshift estimation (a photo-z monstrosity)",
-                    "language": "Python",
-                    "github": "https://github.com/joshspeagle/frankenz"
-                },
-                {
-                    "name": "dorothy",
-                    "role": "Data-driven stellar abundances",
-                    "language": "Python",
-                    "github": "https://github.com/joshspeagle/dorothy"
-                },
-                {
-                    "name": "aparture",
-                    "role": "LLM-powered tool to sift through the arXiv",
-                    "language": "JavaScript",
-                    "stars": "19",
-                    "github": "https://github.com/joshspeagle/aparture"
-                },
-                {
-                    "name": "arxivy",
-                    "role": "Helping keep up with the arXiv",
-                    "language": "Python",
-                    "github": "https://github.com/joshspeagle/arxivy"
-                }
-            ]
+            "githubUser": "joshspeagle",
+            "groups": [
+                { "id": "inference", "label": "Inference & sampling", "accent": "ic" },
+                { "id": "stellar", "label": "Stellar & Galactic", "accent": "du" },
+                { "id": "extragal", "label": "Extragalactic & cosmology", "accent": "ii" },
+                { "id": "dataviz", "label": "Data visualization", "accent": "sla" },
+                { "id": "literature", "label": "Literature & LLM tools", "accent": "violet" },
+                { "id": "teaching", "label": "Teaching & tutorials", "accent": "teal" },
+                { "id": "websites", "label": "Websites", "accent": "gray" },
+                { "id": "scratch", "label": "Scratch & misc", "accent": "mute" }
+            ],
+            "featured": ["dynesty", "brutus", "aparture"],
+            "showcase": {
+                "repo": "allsky",
+                "title": "allsky",
+                "url": "http://allsky.s3-website.us-east-2.amazonaws.com/",
+                "image": "assets/images/allsky-showcase.jpg",
+                "blurb": "An animated, interactive all-sky map of stellar motion across the Milky Way — the visualization behind the 2021 Dunlap \"interactive map of the Milky Way\" feature."
+            },
+            "curation": {
+                "dynesty": { "group": "inference", "pypi": "dynesty", "docs": "https://dynesty.readthedocs.io", "paper": "https://doi.org/10.1093/mnras/staa278", "blurb": "Dynamic nested sampling for Bayesian posteriors & evidences" },
+                "brutus": { "group": "stellar", "pypi": "astro-brutus", "docs": "https://brutus.readthedocs.io", "paper": "https://ui.adsabs.harvard.edu/abs/2025arXiv250302227S", "blurb": "Stellar properties, distances & extinctions via brute-force Bayesian inference" },
+                "aparture": { "group": "literature", "docs": "https://joshspeagle.com/aparture/", "blurb": "An LLM-powered tool to help sift through the arXiv" },
+                "frankenz": { "group": "extragal", "pypi": "frankenz", "blurb": "Photometric redshift estimation (a photo-z monstrosity)" },
+                "allsky": { "group": "dataviz", "url": "http://allsky.s3-website.us-east-2.amazonaws.com/", "blurb": "An animated, interactive 3-D map of Galactic motion" },
+                "dorothy": { "group": "stellar", "blurb": "Data-driven stellar abundances" },
+                "phot_bias": { "group": "inference", "blurb": "Biases in maximum-likelihood photometry (paper companion)" },
+                "nrp_astrobayes": { "group": "inference", "blurb": "Worked example accompanying Eadie et al. (2023)" },
+                "typical_sets": { "group": "teaching", "blurb": "The role of typical sets in (MCMC) sampling" },
+                "ast424-2025": { "group": "teaching" },
+                "AY191": { "group": "teaching" },
+                "STA130-W23": { "group": "teaching" },
+                "UCSC-Python-Coffee": { "group": "teaching" },
+                "harvardastro_MLJC": { "group": "teaching", "blurb": "Harvard astronomy ML journal club" },
+                "ssc-2026-AI-LLM-demo": { "group": "teaching" },
+                "joshspeagle.github.io": { "group": "websites" },
+                "STATSTRO": { "group": "websites" },
+                "astrostat_uoft": { "group": "websites" },
+                "bio-cv": { "group": "websites" },
+                "research": { "group": "websites" },
+                "cd_sbi": { "group": "scratch" },
+                "frasian_tilting": { "group": "scratch" },
+                "PCAT": { "group": "scratch" },
+                "arxivy": { "group": "scratch", "pypi": "arxivy", "blurb": "Helping keep up with the arXiv" }
+            }
         },
         "news": {
             "title": "News & Updates",
