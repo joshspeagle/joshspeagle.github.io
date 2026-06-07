@@ -3001,6 +3001,23 @@
                     "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv260222333H"
                 },
                 {
+                    "date": "Oct 2025",
+                    "year": 2025,
+                    "type": "paper",
+                    "title": "A deep 3-D dust map of the southern Galactic plane",
+                    "blurb": "Co-led a high-angular-resolution 3-D dust map of the southern Milky Way (Zucker, Saydjari & Speagle, ApJ), built on the DECaPS2 survey with the brutus inference framework.",
+                    "link": "https://ui.adsabs.harvard.edu/abs/2025ApJ...992...39Z"
+                },
+                {
+                    "date": "Jul 2025",
+                    "year": 2025,
+                    "type": "press",
+                    "title": "ChronoFlow: an AI model for the ages of stars",
+                    "blurb": "Student-led work (Van-Lane et al.) using normalizing flows for gyrochronology, co-supervised with Gwen Eadie. Covered by U of T News and Phys.org.",
+                    "outlet": "U of T News",
+                    "link": "https://www.utoronto.ca/news/u-t-astronomers-develop-ai-model-determine-stars-ages"
+                },
+                {
                     "date": "Nov 2024",
                     "year": 2024,
                     "type": "press",
@@ -3034,6 +3051,15 @@
                     "title": "Connaught New Researcher Award",
                     "blurb": "Awarded by the University of Toronto in support of early-career research.",
                     "link": ""
+                },
+                {
+                    "date": "Jan 2023",
+                    "year": 2023,
+                    "type": "press",
+                    "title": "DECaPS2: a survey of 3.3 billion objects in the Milky Way's plane",
+                    "blurb": "Co-author on the DECaPS2 survey and catalogue (Saydjari et al.). Covered by NOIRLab, Space.com, PBS NewsHour, and Salon.",
+                    "outlet": "NSF NOIRLab",
+                    "link": "https://noirlab.edu/public/news/noirlab2301/"
                 },
                 {
                     "date": "Jan 2023",
