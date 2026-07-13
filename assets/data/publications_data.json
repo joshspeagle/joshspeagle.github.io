@@ -607,7 +607,8 @@
         "arxiv_id": "2601.20930",
         "model": "claude-opus-4-8",
         "timestamp": "2026-07-13T10:15:00Z"
-      }
+      },
+      "arxivId": "2601.20930"
     },
     {
       "title": "Assessing Zeeman Measurements of Magnetic Fields in Synthetic H I Observations",
@@ -775,7 +776,8 @@
         "arxiv_id": null,
         "model": "claude-opus-4-8",
         "timestamp": "2026-07-13T10:15:00Z"
-      }
+      },
+      "doi": "10.13140/rg.2.2.25799.36005"
     },
     {
       "title": "Finding the boundary: Using galaxy membership to inform galaxy cluster extent through machine learning",
@@ -1008,7 +1010,11 @@
         "Inference & Computation": 0.1,
         "Discovery & Understanding": 0.55
       },
-      "researchArea": "Discovery & Understanding"
+      "researchArea": "Discovery & Understanding",
+      "arxivId": "2408.15909",
+      "doi": "10.1088/1475-7516/2025/02/045",
+      "bibcode": "2025JCAP...02..045K",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025JCAP...02..045K"
     },
     {
       "title": "A Deep, High-angular-resolution 3D Dust Map of the Southern Galactic Plane",
@@ -1947,7 +1953,8 @@
         "arxiv_id": "2508.02602",
         "model": "claude-opus-4-8",
         "timestamp": "2026-07-13T10:15:00Z"
-      }
+      },
+      "arxivId": "2508.02602"
     },
     {
       "title": "An Ancient Descendant of the First Galaxies",
@@ -2241,7 +2248,11 @@
         "Inference & Computation": 0.05,
         "Discovery & Understanding": 0.35
       },
-      "researchArea": "Interpretability & Insight"
+      "researchArea": "Interpretability & Insight",
+      "arxivId": "2410.07244",
+      "doi": "10.3847/1538-4357/adc38c",
+      "bibcode": "2025ApJ...984..195S",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2025ApJ...984..195S"
     },
     {
       "title": "A parsec-scale Galactic 3D dust map out to 1.25 kpc from the Sun",
@@ -3266,7 +3277,11 @@
         "Inference & Computation": 0.17,
         "Discovery & Understanding": 0.55
       },
-      "researchArea": "Discovery & Understanding"
+      "researchArea": "Discovery & Understanding",
+      "arxivId": "2407.04764",
+      "doi": "10.3847/1538-4357/ad6147",
+      "bibcode": "2024ApJ...972..104B",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024ApJ...972..104B"
     },
     {
       "title": "Improving Power Spectrum Estimation Using Multitapering: Efficient Asteroseismic Analyses for Understanding Stars, the Milky Way, and Beyond",
@@ -6093,7 +6108,8 @@
         "Inference & Computation": 0.6,
         "Discovery & Understanding": 0.05
       },
-      "researchArea": "Inference & Computation"
+      "researchArea": "Inference & Computation",
+      "doi": "10.1038/s43586-022-00138-2"
     },
     {
       "title": "On the Robustness of the Velocity Anisotropy Parameter in Probing the Stellar Kinematics in Milky Way-Like Galaxies: Takeaway from TNG50 Simulation",
@@ -6403,7 +6419,7 @@
     },
     {
       "title": "Improving Power Spectral Estimation using Multitapering: Precise asteroseismic modeling of stars, exoplanets, and beyond",
-      "year": 2022,
+      "year": 2024,
       "scholar_id": "Z6dqXGoAAAAJ:pyW8ca7W8N0C",
       "source": "google_scholar",
       "abstract": "Asteroseismic time-series data have imprints of stellar oscillation modes, whose detection and characterization through time-series analysis allows us to probe stellar interiors physics. Such analyses usually occur in the Fourier domain by computing the Lomb-Scargle (LS) periodogram, an estimator of the power spectrum underlying unevenly-sampled time-series data. However, the LS periodogram suffers from the statistical problems of (1) inconsistency (or noise) and (2) bias due to high spectral leakage. In addition, it is designed to detect strictly periodic signals but is unsuitable for non-sinusoidal periodic or quasi-periodic signals. Here, we develop a multitaper spectral estimation method that tackles the inconsistency and bias problems of the LS periodogram. We combine this multitaper method with the Non-Uniform Fast Fourier Transform (mtNUFFT) to more precisely estimate the frequencies of asteroseismic signals that are non-sinusoidal periodic (eg, exoplanet transits) or quasi-periodic (eg, pressure modes). We illustrate this using a simulated and the Kepler-91 red giant light curve. Particularly, we detect the Kepler-91b exoplanet and precisely estimate its period, 6.246±0.002 days, in the frequency domain using the multitaper F-test alone. We also integrate mtNUFFT into the PBjam package to obtain a Kepler-91 age estimate of 3.96±0.48 Gyr. This 36% improvement in age precision relative to the 4.27±0.75 Gyr APOKASC-2 (uncorrected) estimate illustrates that mtNUFFT has promising implications for Galactic archaeology, in addition to stellar interiors and exoplanet studies. Our frequency analysis method generally applies to time …",
@@ -6441,7 +6457,11 @@
         "Inference & Computation": 0.65,
         "Discovery & Understanding": 0.1
       },
-      "researchArea": "Inference & Computation"
+      "researchArea": "Inference & Computation",
+      "arxivId": "2209.15027",
+      "doi": "10.3847/1538-3881/ad7029",
+      "bibcode": "2024AJ....168..193P",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2024AJ....168..193P"
     },
     {
       "title": "Stellar Population Inference with Prospector",
@@ -7130,7 +7150,10 @@
         "Inference & Computation": 0.2,
         "Discovery & Understanding": 0.05
       },
-      "researchArea": "Interpretability & Insight"
+      "researchArea": "Interpretability & Insight",
+      "doi": "10.1038/s41550-021-01509-7",
+      "bibcode": "2021NatAs...5..971S",
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2021NatAs...5..971S"
     },
     {
       "title": "DYNESTY: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
