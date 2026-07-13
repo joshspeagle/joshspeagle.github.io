@@ -10397,7 +10397,7 @@
         "Discovery & Understanding": 0.05
       },
       "authorshipCategory": "primary",
-      "identifierNote": "recheck + DEDUPE: this title appears TWICE in the dataset (drop one); refereed paper missing only arXiv — backfill arxivId next update."
+      "arxivId": "1510.08073"
     },
     {
       "title": "Deriving photometric redshifts using fuzzy archetypes and self-organizing maps - II. Implementation",
@@ -10462,7 +10462,7 @@
         "Discovery & Understanding": 0.08
       },
       "authorshipCategory": "primary",
-      "identifierNote": "recheck + DEDUPE: this title appears TWICE in the dataset (drop one); refereed paper missing only arXiv — backfill arxivId next update."
+      "arxivId": "1510.08080"
     },
     {
       "title": "The Impossibly Early Galaxy Problem",
@@ -10892,7 +10892,7 @@
         "Discovery & Understanding": 0.6
       },
       "authorshipCategory": "significant",
-      "identifierNote": "recheck: refereed paper (ApJS) missing only arXiv — an arXiv preprint almost certainly exists; backfill arxivId next update."
+      "arxivId": "1409.2883"
     },
     {
       "title": "The X-Ray Counterpart of the High-B Pulsar PSR J0726-2612",

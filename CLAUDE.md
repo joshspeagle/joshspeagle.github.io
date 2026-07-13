@@ -200,4 +200,4 @@ For each, add a manual **`identifierNote`** field explaining why, prefixed with 
 
 Recovery is usually a direct ADS/arXiv/publisher lookup by title — the `scholarUrl` field often embeds the DOI or arXiv id. `identifierNote` (like `llm_categorization`) is a manual annotation on the paper entry and persists across pipeline runs. A paper is "identifier-complete" when it has the trio **or** a `settled:` note. (`identifierNote` is maintenance-only — not rendered on the site.)
 
-> **Known cleanup**: "Deriving photometric redshifts using fuzzy archetypes…" (2017) currently appears **twice** in `publications_data.json` — dedupe to one entry.
+> **Watch for near-duplicate titles, but verify before merging**: multi-part series can share a base title (e.g. the two 2017 "Deriving photometric redshifts using fuzzy archetypes…" papers are Part I *Methodology* / Part II *Implementation* — distinct bibcodes/DOIs, **not** a duplicate). Compare `bibcode`/`doi` before deduping.
