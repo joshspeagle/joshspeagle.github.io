@@ -81,15 +81,15 @@
     "sections": {
         "about": {
             "title": "Who am I?",
-            "content": "I am an <strong>Assistant Professor of Astrostatistics</strong> jointly appointed between the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a> and the <a href=\"https://www.astro.utoronto.ca/\">David A. Dunlap Department of Astronomy & Astrophysics</a> at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>. I am also an Associate Member of the <a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute for Astronomy & Astrophysics</a> as well as a Member of the <a href=\"https://datasciences.utoronto.ca/\">Data Sciences Institute</a>.",
+            "content": "I am an <strong>Assistant Professor of Astrostatistics</strong> jointly appointed between the <a href=\"https://www.astro.utoronto.ca/\">David A. Dunlap Department of Astronomy & Astrophysics</a> and the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a> at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>. I am also an Associate Member of the <a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute for Astronomy & Astrophysics</a> as well as a Member of the <a href=\"https://datasciences.utoronto.ca/\">Data Sciences Institute</a>.",
             "highlightBox": {
                 "title": "A Few Other Things",
-                "content": "I also teach both undergraduate and graduate courses in statistics and astronomy, serve on a few committees (both within the University of Toronto and some professional societies such as the <a href=\"https://aas.org/\">AAS</a>, <a href=\"https://astrostat.org/\">ASA-AIG</a>, and <a href=\"https://ssc.ca/en/about/sections-regions/data-science-and-analytics\">SSC-DSA</a>), and help manage the <a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">Astronomy & Astrophysics Summer Undergraduate Research Program (SURP)</a> (the largest of its kind in Canada!)."
+                "content": "I also teach both undergraduate and graduate courses in astronomy and statistics, serve on a few committees within the University of Toronto, and remain a member of several professional societies such as the <a href=\"https://aas.org/\">AAS</a>, <a href=\"https://astrostat.org/\">ASA-AIG</a>, and <a href=\"https://ssc.ca/en/about/sections-regions/data-science-and-analytics\">SSC-DSA</a>. I also help manage the <a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">Astronomy & Astrophysics Summer Undergraduate Research Program (SURP)</a> (the largest of its kind in Canada!)."
             },
             "contactInfo": {
                 "title": "Contact Information",
                 "email": "j.speagle@utoronto.ca",
-                "office": "UY 9134 (Statistical Sciences) and AB 206 (Astronomy & Astrophysics)"
+                "office": "AB 206 (Astronomy & Astrophysics) and UY 9134 (Statistical Sciences)"
             },
             "profileImage": {
                 "src": "assets/images/speagle_doss_2025.jpg",
@@ -207,14 +207,13 @@
                 "cards": [
                     {
                         "title": "Postdoctoral Researchers",
-                        "content": "Gwen and I are always looking for enthusiastic postdoctoral researchers to join the Astrostatistics Research Team! If you are interested in applying your skills to cutting-edge research in astrostatistics, please feel free to reach out to either me and/or Gwen.",
+                        "content": "Gwen and I are always happy to hear from enthusiastic postdoctoral researchers interested in the Astrostatistics Research Team. While openings depend on available funding, if you are interested in applying your skills to cutting-edge research in astrostatistics, please feel free to reach out to either me and/or Gwen.",
                         "fellowships": {
                             "intro": "Fellowship opportunities:",
                             "links": [
                                 {
                                     "name": "CPRA",
-                                    "url": "https://nserc-crsng.canada.ca/en/funding-opportunity/canada-postdoctoral-research-award-program",
-                                    "note": "replaces NSERC/Banting"
+                                    "url": "https://nserc-crsng.canada.ca/en/funding-opportunity/canada-postdoctoral-research-award-program"
                                 },
                                 {
                                     "name": "CANSSI CDPF",
@@ -235,6 +234,11 @@
                                     "url": "https://www.sgs.utoronto.ca/awards/research-excellence-postdoctoral-fellows-program/"
                                 },
                                 {
+                                    "name": "PCRA",
+                                    "url": "https://www.sgs.utoronto.ca/awards/postdoctoral-competitive-research-awards/",
+                                    "note": "research top-up"
+                                },
+                                {
                                     "name": "Provost",
                                     "url": "https://www.sgs.utoronto.ca/awards/provosts-postdoctoral-fellowship-program/",
                                     "note": "Black & Indigenous"
@@ -249,7 +253,8 @@
                                 },
                                 {
                                     "name": "DSI",
-                                    "url": "https://datasciences.utoronto.ca/postdoctoral-fellowship/"
+                                    "url": "https://datasciences.utoronto.ca/postdoctoral-fellowship/",
+                                    "note": "when available"
                                 },
                                 {
                                     "name": "Schmidt AI in Science",
@@ -260,7 +265,7 @@
                     },
                     {
                         "title": "Graduate Students",
-                        "content": "I am always looking for enthusiastic students to join our research group. While I cannot directly admit graduate students, I encourage applications to our Master's/Doctoral programs. Please feel free to reach out if you are interested in learning more about my research and how it might fit into your potential graduate studies.",
+                        "content": "I am always happy to hear from enthusiastic students interested in our research group. While I cannot directly admit graduate students, I encourage applications to our Master's/Doctoral programs. Please feel free to reach out if you are interested in learning more about my research and how it might fit into your potential graduate studies.",
                         "programs": {
                             "intro": "Programs:",
                             "links": [
@@ -286,7 +291,7 @@
                             },
                             {
                                 "name": "Work Study Program",
-                                "url": "https://www.registrar.utoronto.ca/financial-aid-awards/work-study-program/",
+                                "url": "https://studentlife.utoronto.ca/work-study-program/",
                                 "abbr": "WSP"
                             },
                             {
@@ -320,8 +325,13 @@
                                 "url": "https://datasciences.utoronto.ca/suds/"
                             },
                             {
+                                "name": "UTSSRP",
+                                "url": "https://www.statistics.utoronto.ca/UTSSRP",
+                                "note": "statistical sciences"
+                            },
+                            {
                                 "name": "NSERC USRA",
-                                "url": "https://www.nserc-crsng.gc.ca/students-etudiants/ug-pc/usra-brpc_eng.asp",
+                                "url": "https://nserc-crsng.canada.ca/en/funding-opportunity/undergraduate-student-research-awards",
                                 "note": "supervisor-nominated"
                             }
                         ]
@@ -343,7 +353,7 @@
                             {
                                 "name": "ELAP",
                                 "url": "https://www.educanada.ca/scholarships-bourses/can/institutions/elap-pfla.aspx?lang=eng",
-                                "note": "Latin America & Caribbean"
+                                "note": "Latin America & Caribbean; institution-nominated"
                             },
                             {
                                 "name": "Study in Canada Scholarships",
@@ -407,7 +417,7 @@
                 {
                     "title": "Assistant Professor",
                     "date": "2022 - Present",
-                    "content": "Joint appointment in Statistical Sciences and Astronomy & Astrophysics. Co-leading the <a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a> with Gwen Eadie.",
+                    "content": "Joint appointment in Astronomy & Astrophysics and Statistical Sciences. Co-leading the <a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a> with Gwen Eadie.",
                     "location": "Toronto, Canada",
                     "position": "right",
                     "current": true
@@ -1737,6 +1747,22 @@
                     "color": "amber",
                     "talks": [
                         {
+                            "title": "How AI has taken over the world and what it means for science",
+                            "event": "SETI Institute: Introduction to Artificial Intelligence Workshop (SSAIL)",
+                            "location": "Mountain View, USA",
+                            "date": "Jun 2026",
+                            "year": 2026,
+                            "type": "Invited Talk"
+                        },
+                        {
+                            "title": "Adaptive 'Frasian' Inference under Data-Prior Conflict",
+                            "event": "STAMPS@CMU Workshop 2026",
+                            "location": "Pittsburgh, USA",
+                            "date": "May 2026",
+                            "year": 2026,
+                            "type": "Invited Talk"
+                        },
+                        {
                             "featured": true,
                             "title": "AI for Scientists: Learning and Doing in the Era of VLMs",
                             "event": "Language AI in the Space Sciences",
@@ -1843,6 +1869,30 @@
                     "badge": "academic",
                     "color": "blue",
                     "talks": [
+                        {
+                            "title": "A Deep Dive into Data-Driven Astrophysics",
+                            "event": "UC San Diego: Astronomy & Astrophysics Colloquium",
+                            "location": "La Jolla, USA",
+                            "date": "Jun 2026",
+                            "year": 2026,
+                            "type": "Colloquium"
+                        },
+                        {
+                            "title": "What the *** are we doing? (or: why do we do research?)",
+                            "event": "UC San Diego: SMASH (AI x Physical Sciences) Seminar",
+                            "location": "La Jolla, USA",
+                            "date": "Jun 2026",
+                            "year": 2026,
+                            "type": "Seminar"
+                        },
+                        {
+                            "title": "AI x Astrophysics",
+                            "event": "University of Toronto: 2nd Colloquium on Applications of AI",
+                            "location": "Toronto, ON",
+                            "date": "May 2026",
+                            "year": 2026,
+                            "type": "Colloquium"
+                        },
                         {
                             "title": "Learning and Doing Physics and Astronomy in the Age of AI",
                             "event": "Wellesley College: Physics & Astronomy Colloquium",
@@ -1971,6 +2021,14 @@
                             "date": "Apr 2023",
                             "year": 2023,
                             "type": "Seminar"
+                        },
+                        {
+                            "title": "AI x Astrophysics",
+                            "event": "University of Toronto: Colloquium on Applications of LLMs",
+                            "location": "Toronto, ON",
+                            "date": "Apr 2023",
+                            "year": 2023,
+                            "type": "Colloquium"
                         },
                         {
                             "title": "From Panchromatic Images to Stellar Ages and Beyond",
@@ -2255,12 +2313,36 @@
                     "color": "purple",
                     "talks": [
                         {
+                            "title": "A Conceptual Introduction to Deep Learning",
+                            "event": "Penn State: Summer School in Statistics for Astronomers (2026)",
+                            "location": "Virtual",
+                            "date": "Jun 2026",
+                            "year": 2026,
+                            "type": "Tutorial"
+                        },
+                        {
+                            "title": "Nested Sampling: Past, Present, and Future",
+                            "event": "Penn State: Summer School in Statistics for Astronomers (2026)",
+                            "location": "Virtual",
+                            "date": "Jun 2026",
+                            "year": 2026,
+                            "type": "Tutorial"
+                        },
+                        {
                             "title": "Bayesian Inference",
                             "event": "University of Toronto Statistical Sciences Research Program (UTSSRP 2026)",
                             "location": "Toronto, ON",
                             "date": "Jun 2026",
                             "year": 2026,
                             "type": "Tutorial"
+                        },
+                        {
+                            "title": "AI and LLMs – Research Perspective",
+                            "event": "Statistical Society of Canada 2026 Annual Meeting",
+                            "location": "Hamilton, ON",
+                            "date": "May 2026",
+                            "year": 2026,
+                            "type": "Workshop"
                         },
                         {
                             "title": "A Conceptual Introduction to Deep Learning",
@@ -2780,6 +2862,12 @@
                                     "periods": [
                                         "2025-2026"
                                     ]
+                                },
+                                {
+                                    "role": "Data Science and Analytics Section: Past President",
+                                    "periods": [
+                                        "2026-2027"
+                                    ]
                                 }
                             ]
                         },
@@ -2818,7 +2906,7 @@
                                 {
                                     "role": "Summer Undergraduate Research Program (SURP) Committee",
                                     "periods": [
-                                        "2026",
+                                        "2026-Present",
                                         "2021-2022"
                                     ]
                                 },
@@ -2977,6 +3065,7 @@
                 "UCSC-Python-Coffee": { "group": "teaching" },
                 "harvardastro_MLJC": { "group": "teaching", "blurb": "Harvard astronomy ML journal club" },
                 "ssc-2026-AI-LLM-demo": { "group": "teaching" },
+                "utssrp-2026": { "group": "teaching", "blurb": "Research project from the UTSSRP 2026 summer program" },
                 "joshspeagle.github.io": { "group": "websites" },
                 "STATSTRO": { "group": "websites" },
                 "astrostat_uoft": { "group": "websites" },

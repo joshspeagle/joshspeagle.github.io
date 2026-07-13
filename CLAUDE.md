@@ -27,7 +27,7 @@ python -m http.server 8000       # local dev server
 `scripts/build_html.py` reads `assets/data/content.json` and fills each page's content container(s): `#<page>-content` for the nine secondary pages, and the per-section ids `#about`/`#research`/`#team`/`#join` for Home (there is no `#home-content`). For the nine secondary pages it **also** fills the header band — the `#<page>-header` container — from the top-level `pages.<page>` object (`kicker`/`title`/`tagline`) via `generate_page_header`, so that band is data-driven, not hand-edited per shell. The **10 HTML pages** (Home, Publications, Talks, Teaching, Mentorship, Awards, Service, Software, News, Biography) are **static shells** (head, nav, hero frame, footer); the content area and (for secondary pages) the header band are generated — so the static HTML *is* the SEO layer and JS only adds interactivity. Idempotent. *(Biography is a dedicated page holding the career timeline — `sections.biography.timeline` via `generate_biography`; the nav "Biography" links to it, not a homepage anchor. A further shell, `404.html`, is also a redesign static shell but is hand-maintained — it's absent from build_html.py's `HTML_FILES` map and is not regenerated. Footers are likewise static in each shell; the `footer` key in content.json is currently unused.)*
 
 - Home sections: `generate_home_*` in `build_html.py`.
-- Publications: `generate_publications_redesign` pre-renders **all ~130 papers** from `publications_data.json` (no Chart.js, no runtime JSON fetch).
+- Publications: `generate_publications_redesign` pre-renders **all ~137 papers** from `publications_data.json` (no Chart.js, no runtime JSON fetch).
 - Other pages: one generator each in `scripts/pages_<page>.py` (talks/teaching/mentorship/awards/service/software/news), sharing `scripts/pages_shared.py` (`scaffold()`, `esc`, `attr_esc`). Most use `scaffold()`; **Software** renders a bespoke layout (metric strip + featured board + data-viz showcase + grouped list) from `software_data.json` — see "Software Stats Pipeline".
 
 ### Design tokens & fonts
@@ -76,20 +76,20 @@ When the user asks to "update the website", walk through each category below and
 
 | # | Category | What to review | Last edited |
 |---|----------|---------------|-------------|
-| 1 | **Home — About Me** | `sections.about` — title, affiliations, highlight box, contact info, profile image | 2026-04-06 |
+| 1 | **Home — About Me** | `sections.about` — title, affiliations, highlight box, contact info, profile image | 2026-07-13 |
 | 2 | **Home — Team** | `sections.team` — ART description, highlights, CTAs | 2026-03-08 |
-| 3 | **Home — Research Areas** | `sections.research` — four area descriptions; `sections.research.publications.links` meta stats (citations, h-index, paper count) | 2026-03-08 |
-| 4 | **Home — Collaboration** | `sections.collaboration` — `opportunities` (postdoc/grad/undergrad cards, fellowship links) **and** `values` (EDI, Open Science) | 2026-03-08 |
-| 5 | **Home — Biography** | `sections.biography` — career timeline entries, personal note, dog photos | 2026-03-08 |
+| 3 | **Home — Research Areas** | `sections.research` — four area descriptions, `additionalContent`, `publications.links`. NB: the meta stats (papers/citations/h-index) are **auto-computed** by `_pub_metrics()` in `build_html.py` from `publications_data.json` — not editable here; the card `intro` is also hardcoded there, overriding `sections.research.intro`. | 2026-03-08 |
+| 4 | **Home — Collaboration** | `sections.collaboration` — `opportunities` (postdoc/grad/undergrad cards, fellowship links) **and** `values` (EDI, Open Science) | 2026-07-13 |
+| 5 | **Home — Biography** | `sections.biography` — career timeline entries, personal note, dog photos | 2026-07-13 |
 | 6 | **Mentorship — Current** | `sections.mentorship.menteesByStage` (`postdoctoral`/`doctoral`/`bachelors`/`mastersProjects`) | 2026-04-06 |
-| 7 | **Mentorship — Completed** | `sections.mentorship.menteesByStage.completed.<stage>` — former mentees & outcomes (TODO: verify current jobs/outcomes) | 2026-04-06 |
-| 8 | **Talks** | `sections.talks` — invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-06-07 |
+| 7 | **Mentorship — Completed** | `sections.mentorship.menteesByStage.completed.<stage>` — former mentees. (NB: `currentStatus`/`outcome` are no longer displayed, so no job/outcome verification needed — just add newly-finished mentees & fix periods/names.) | 2026-07-13 |
+| 8 | **Talks** | `sections.talks` — invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-07-13 |
 | 9 | **Teaching** | `sections.teaching` — course history, short courses & workshops, teaching stats | 2026-04-06 |
 | 10 | **Awards** | `sections.awards` — new awards or honors | 2026-03-09 |
-| 11 | **Service** | `sections.service` — society roles, committee memberships, conference org, referee list | 2026-04-06 |
+| 11 | **Service** | `sections.service` — society roles, committee memberships, conference org, referee list | 2026-07-13 |
 | 12 | **Software** | `sections.software` — the **curation** map (per-repo `group`/`featured`/`pypi`/`docs`/`paper`/`blurb`), plus `groups`, `featured`, `showcase`. Stars/forks/downloads are auto-pulled into `software_data.json` by `fetch_software.py`. **New repos must be added to `curation` or the fetch fails** (forks auto-route to `scratch`). See "Software Stats Pipeline". | 2026-06-07 |
 | 13 | **News** | `sections.news.items` — recent papers/talks/awards/milestones | 2026-06-03 |
-| 14 | **Publications** | Pre-rendered from `publications_data.json`; automated pipeline — see "Publication Pipeline" | 2026-03-09 |
+| 14 | **Publications** | Pre-rendered from `publications_data.json`; automated pipeline — see "Publication Pipeline" | 2026-07-13 |
 | 15 | **Footer** | Static in each page shell (copyright year, "last updated"); the `footer` key in content.json is unused | 2026-06-03 |
 
 > Page **header bands** (`kicker`/`title`/`tagline` above the listview) for all nine secondary pages — `publications`/`talks`/`teaching`/`mentorship`/`awards`/`service`/`software`/`news`/`biography` — live in the top-level `pages.<page>` object (separate from `sections.*`) and are **rendered by `build_html.py`** into each shell's `#<page>-header` container. Edit them there, not in the HTML. `tagline` is emitted as raw HTML (so inline `<strong>` etc. work); `kicker`/`title` are escaped.
@@ -122,7 +122,7 @@ Mentees live under `sections.mentorship.menteesByStage` in `content.json`. Add a
 - `courses` — academic-credit context; values are exactly `Research Course`, `Junior Thesis`, or `Senior Thesis` (avoid raw course codes). Neutral badge.
 - `institution` — home institution for **non-Toronto** students (e.g. visiting/external undergrads); outline badge. Omit for U of T students.
 
-Variations: **bachelors** with several stints may use a `projects` array (`title`/`supervisionType`/`coSupervisors`). For **former** mentees the `currentStatus`/`outcome` fields are no longer displayed (too hard to keep current), though the data may persist. Award/program/course strings may be plain text or `<a>`-linked HTML (`esc()` preserves links). Match the field names of a sibling entry exactly — misspelled keys silently fail to render.
+Variations: **bachelors** with several stints may use a `projects` array (`title`/`supervisionType`/`coSupervisors`) **instead of** the top-level `project`/`supervisionType` fields — such an entry is complete even though those top-level fields are absent (read the `projects` array before flagging an entry as missing data). For **former** mentees the `currentStatus`/`outcome` fields are no longer displayed (too hard to keep current), though the data may persist. Award/program/course strings may be plain text or `<a>`-linked HTML (`esc()` preserves links). Match the field names of a sibling entry exactly — misspelled keys silently fail to render.
 
 ### Publication Categories
 
