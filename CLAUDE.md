@@ -184,3 +184,20 @@ Paper categorization uses LLM agents reading full papers against `scripts/llm_ca
 4. Update the paper's entry in `publications_data.json`: set `categoryProbabilities`, `researchArea`, and add `llm_categorization` field (format documented in the rubric)
 
 Papers are "done" when they have an `llm_categorization` field with a valid timestamp.
+
+## Publication Identifier Completeness
+
+Each paper ideally carries the full **ADS + arXiv + DOI trio** (`bibcode`/`adsUrl`, `arxivId`, `doi`); the publications page renders one link per identifier present. The pipeline enriches Scholar-sourced papers by **title-matching** against ADS/OpenAlex, so a paper ends up missing identifiers when either (a) it isn't in ADS (non-astro venue, workshop/proceeding, erratum, thesis, News & Views, decadal white paper) or (b) the title match failed (curly apostrophes / em-dashes / `?`, subscripts like `σ8`, long subtitles).
+
+**After every pipeline run**, list papers missing the trio and make sure each is accounted for:
+```bash
+cd scripts && python -c "import json;d=json.load(open('../assets/data/publications_data.json'));\
+print([p['title'][:60] for p in d['publications'] if not(p.get('bibcode') and p.get('arxivId') and p.get('doi'))])"
+```
+For each, add a manual **`identifierNote`** field explaining why, prefixed with a status:
+- **`settled: ...`** — the missing identifier(s) genuinely don't exist (thesis, erratum, News & Views, non-astro/DataCite-only, white paper with no arXiv). Skip it on future updates.
+- **`recheck: ...`** — an identifier likely exists but wasn't captured (title-match miss) or will appear later (preprint awaiting publication). Re-attempt the lookup on the next update; when recovered, set the field(s) and drop/downgrade the note.
+
+Recovery is usually a direct ADS/arXiv/publisher lookup by title — the `scholarUrl` field often embeds the DOI or arXiv id. `identifierNote` (like `llm_categorization`) is a manual annotation on the paper entry and persists across pipeline runs. A paper is "identifier-complete" when it has the trio **or** a `settled:` note. (`identifierNote` is maintenance-only — not rendered on the site.)
+
+> **Known cleanup**: "Deriving photometric redshifts using fuzzy archetypes…" (2017) currently appears **twice** in `publications_data.json` — dedupe to one entry.

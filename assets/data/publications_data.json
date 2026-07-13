@@ -608,7 +608,8 @@
         "model": "claude-opus-4-8",
         "timestamp": "2026-07-13T10:15:00Z"
       },
-      "arxivId": "2601.20930"
+      "arxivId": "2601.20930",
+      "identifierNote": "recheck: arXiv preprint (2601.20930), not yet in a journal — expect an ADS bibcode + journal DOI once published."
     },
     {
       "title": "Assessing Zeeman Measurements of Magnetic Fields in Synthetic H I Observations",
@@ -777,7 +778,8 @@
         "model": "claude-opus-4-8",
         "timestamp": "2026-07-13T10:15:00Z"
       },
-      "doi": "10.13140/rg.2.2.25799.36005"
+      "doi": "10.13140/rg.2.2.25799.36005",
+      "identifierNote": "settled: non-astro workshop paper (AI Foundation Models for Science 2025); DataCite/ResearchGate DOI only — no ADS record, no arXiv preprint."
     },
     {
       "title": "Finding the boundary: Using galaxy membership to inform galaxy cluster extent through machine learning",
@@ -1954,7 +1956,8 @@
         "model": "claude-opus-4-8",
         "timestamp": "2026-07-13T10:15:00Z"
       },
-      "arxivId": "2508.02602"
+      "arxivId": "2508.02602",
+      "identifierNote": "recheck: arXiv preprint (2508.02602) at a stats/ML venue — check for a journal DOI + ADS record on the next update."
     },
     {
       "title": "An Ancient Descendant of the First Galaxies",
@@ -4304,7 +4307,8 @@
         "Interpretability & Insight": 0.05,
         "Inference & Computation": 0.1,
         "Discovery & Understanding": 0.5
-      }
+      },
+      "identifierNote": "recheck: has ADS + arXiv but no DOI — likely an ML workshop paper with no journal DOI; confirm whether a DOI was ever issued."
     },
     {
       "title": "Learning Reionization History from Quasars with Simulation-Based Inference",
@@ -4520,7 +4524,8 @@
         "Interpretability & Insight": 0.35,
         "Inference & Computation": 0.05,
         "Discovery & Understanding": 0.1
-      }
+      },
+      "identifierNote": "recheck: ADS-only (no arXiv/DOI captured) — likely an ML workshop paper; search for an arXiv ID and DOI next update."
     },
     {
       "title": "NANCY: Next-generation All-sky Near-infrared Community surveY",
@@ -6109,7 +6114,8 @@
         "Discovery & Understanding": 0.05
       },
       "researchArea": "Inference & Computation",
-      "doi": "10.1038/s43586-022-00138-2"
+      "doi": "10.1038/s43586-022-00138-2",
+      "identifierNote": "settled: author correction/erratum linked to its own correction DOI (10.1038/s43586-022-00138-2); ADS/arXiv only hold the original primer's records."
     },
     {
       "title": "On the Robustness of the Velocity Anisotropy Parameter in Probing the Stellar Kinematics in Milky Way-Like Galaxies: Takeaway from TNG50 Simulation",
@@ -7153,7 +7159,8 @@
       "researchArea": "Interpretability & Insight",
       "doi": "10.1038/s41550-021-01509-7",
       "bibcode": "2021NatAs...5..971S",
-      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2021NatAs...5..971S"
+      "adsUrl": "https://ui.adsabs.harvard.edu/abs/2021NatAs...5..971S",
+      "identifierNote": "settled: Nature Astronomy News & Views commentary — no arXiv preprint exists (has ADS + DOI)."
     },
     {
       "title": "DYNESTY: a dynamic nested sampling package for estimating Bayesian posteriors and evidences",
@@ -8336,7 +8343,8 @@
         "Interpretability & Insight": 0.15,
         "Inference & Computation": 0.5,
         "Discovery & Understanding": 0.3
-      }
+      },
+      "identifierNote": "settled: PhD thesis (Harvard) — no arXiv preprint or journal DOI; ADS record only."
     },
     {
       "title": "A 3D Dust Map Based on Gaia, Pan-STARRS 1, and 2MASS",
@@ -9474,7 +9482,8 @@
         "Interpretability & Insight": 0.15,
         "Inference & Computation": 0.75,
         "Discovery & Understanding": 0.05
-      }
+      },
+      "identifierNote": "recheck: Astro2020 decadal-survey white paper — many are on arXiv; search for an arXiv ID next update."
     },
     {
       "title": "High-Dimensional Dust Mapping",
@@ -10387,7 +10396,8 @@
         "Inference & Computation": 0.25,
         "Discovery & Understanding": 0.05
       },
-      "authorshipCategory": "primary"
+      "authorshipCategory": "primary",
+      "identifierNote": "recheck + DEDUPE: this title appears TWICE in the dataset (drop one); refereed paper missing only arXiv — backfill arxivId next update."
     },
     {
       "title": "Deriving photometric redshifts using fuzzy archetypes and self-organizing maps - II. Implementation",
@@ -10451,7 +10461,8 @@
         "Inference & Computation": 0.12,
         "Discovery & Understanding": 0.08
       },
-      "authorshipCategory": "primary"
+      "authorshipCategory": "primary",
+      "identifierNote": "recheck + DEDUPE: this title appears TWICE in the dataset (drop one); refereed paper missing only arXiv — backfill arxivId next update."
     },
     {
       "title": "The Impossibly Early Galaxy Problem",
@@ -10880,7 +10891,8 @@
         "Inference & Computation": 0.1,
         "Discovery & Understanding": 0.6
       },
-      "authorshipCategory": "significant"
+      "authorshipCategory": "significant",
+      "identifierNote": "recheck: refereed paper (ApJS) missing only arXiv — an arXiv preprint almost certainly exists; backfill arxivId next update."
     },
     {
       "title": "The X-Ray Counterpart of the High-B Pulsar PSR J0726-2612",
