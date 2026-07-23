@@ -2200,6 +2200,14 @@
                     "color": "green",
                     "talks": [
                         {
+                            "title": "Data-Driven Stellar Abundances from All The Spectra",
+                            "event": "Fields Institute: Near Field Cosmology in the Era of Big Data - Local Group and Beyond",
+                            "location": "Toronto, ON",
+                            "date": "Jul 2026",
+                            "year": 2026,
+                            "type": "Contributed Talk"
+                        },
+                        {
                             "title": "SBI++: Extending Simulation-Based Inference to Censored and Out-of-Distribution Data",
                             "event": "Banff International Research Station: Astrostatistics in Canada and Beyond",
                             "location": "Banff, AB",

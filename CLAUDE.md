@@ -83,7 +83,7 @@ When the user asks to "update the website", walk through each category below and
 | 5 | **Home — Biography** | `sections.biography` — career timeline entries, personal note, dog photos | 2026-07-13 |
 | 6 | **Mentorship — Current** | `sections.mentorship.menteesByStage` (`postdoctoral`/`doctoral`/`bachelors`/`mastersProjects`) | 2026-04-06 |
 | 7 | **Mentorship — Completed** | `sections.mentorship.menteesByStage.completed.<stage>` — former mentees. (NB: `currentStatus`/`outcome` are no longer displayed, so no job/outcome verification needed — just add newly-finished mentees & fix periods/names.) | 2026-07-13 |
-| 8 | **Talks** | `sections.talks` — invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-07-13 |
+| 8 | **Talks** | `sections.talks` — invited, contributed, colloquia, panels, public, interviews, workshops, lectures & tutorials | 2026-07-23 |
 | 9 | **Teaching** | `sections.teaching` — course history, short courses & workshops, teaching stats | 2026-04-06 |
 | 10 | **Awards** | `sections.awards` — new awards or honors | 2026-03-09 |
 | 11 | **Service** | `sections.service` — society roles, committee memberships, conference org, referee list | 2026-07-13 |
