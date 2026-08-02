@@ -1870,6 +1870,14 @@
                     "color": "blue",
                     "talks": [
                         {
+                            "title": "What exactly are we doing?",
+                            "event": "Center for Astrophysics | Harvard & Smithsonian: AstroAI Lunch Seminar",
+                            "location": "Cambridge, MA",
+                            "date": "Aug 2026",
+                            "year": 2026,
+                            "type": "Seminar"
+                        },
+                        {
                             "title": "A Deep Dive into Data-Driven Astrophysics",
                             "event": "UC San Diego: Astronomy & Astrophysics Colloquium",
                             "location": "La Jolla, USA",
@@ -2199,6 +2207,14 @@
                     "badge": "contributed",
                     "color": "green",
                     "talks": [
+                        {
+                            "title": "Uncertainty Quantification and Calibration in Stellar Parameter Estimation",
+                            "event": "JSM 2026: Statistical Advances Motivated by Astrophysics and Space Sciences (Topic-Contributed Paper Session)",
+                            "location": "Boston, MA",
+                            "date": "Aug 2026",
+                            "year": 2026,
+                            "type": "Topic-Contributed Paper Session"
+                        },
                         {
                             "title": "Data-Driven Stellar Abundances from All The Spectra",
                             "event": "Fields Institute: Near Field Cosmology in the Era of Big Data - Local Group and Beyond",
