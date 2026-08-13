@@ -85,8 +85,9 @@ venv/
 ENV/
 env/
 
-# Claude-specific files
-.claude/
+# Claude-specific files (skills are checked in; local settings are not)
+.claude/*
+!.claude/skills/
 
 # Miscellaneous
 docs/
