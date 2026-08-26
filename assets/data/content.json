@@ -3220,15 +3220,6 @@
                     "link": "https://www.utoronto.ca/news/u-t-astronomers-develop-ai-model-determine-stars-ages"
                 },
                 {
-                    "date": "Sep 2024",
-                    "year": 2024,
-                    "type": "group",
-                    "title": "Sam Berek and Shivan Khullar win the Jui Lin (Allen) Yen Award",
-                    "blurb": "Sam was honoured for \"Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models,\" introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model.",
-                    "outlet": "U of T Astronomy & Astrophysics",
-                    "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/"
-                },
-                {
                     "date": "Nov 2024",
                     "year": 2024,
                     "type": "press",
@@ -3236,6 +3227,15 @@
                     "blurb": "Co-author on the discovery (Grondin et al., ApJ), also picked up by Phys.org and SciTechDaily.",
                     "outlet": "U of T Arts & Science",
                     "link": "https://www.artsci.utoronto.ca/news/u-t-astronomers-discover-first-white-dwarf-main-sequence-binary-candidates-open-star-clusters"
+                },
+                {
+                    "date": "Sep 2024",
+                    "year": 2024,
+                    "type": "group",
+                    "title": "Sam Berek and Shivan Khullar win the Jui Lin (Allen) Yen Award",
+                    "blurb": "Sam was honoured for \"Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models,\" introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model.",
+                    "outlet": "U of T Astronomy & Astrophysics",
+                    "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/"
                 },
                 {
                     "date": "Aug 2024",
