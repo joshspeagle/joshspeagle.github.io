@@ -24,6 +24,30 @@
       "isFork": false,
       "downloads_month": 172169
     },
+    "jumufraktiv": {
+      "url": "https://github.com/JSiyangLi/jumufraktiv",
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "description": "A package that returns model evidence, posterior density, posterior predictive, posterior MGF and posterior moments using fractional derivatives of prior MGF",
+      "pushed": "2026-08-02",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": null,
+      "external": true
+    },
+    "lf2i": {
+      "url": "https://github.com/lee-group-cmu/lf2i",
+      "stars": 23,
+      "forks": 2,
+      "language": "Python",
+      "description": "Likelihood-Free Frequentist Inference",
+      "pushed": "2026-08-18",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": 17,
+      "external": true
+    },
     "brutus": {
       "url": "https://github.com/joshspeagle/brutus",
       "stars": 55,

@@ -3137,6 +3137,8 @@
             },
             "curation": {
                 "dynesty": { "group": "inference", "pypi": "dynesty", "docs": "https://dynesty.readthedocs.io", "paper": "https://doi.org/10.1093/mnras/staa278", "blurb": "Dynamic nested sampling for Bayesian posteriors & evidences" },
+                "jumufraktiv": { "group": "inference", "external": "JSiyangLi/jumufraktiv", "pypi": "jumufraktiv", "blurb": "Model evidence, posterior density & moments via fractional derivatives of prior MGFs (with Siyang Li)" },
+                "lf2i": { "group": "inference", "external": "lee-group-cmu/lf2i", "pypi": "lf2i", "blurb": "Likelihood-free frequentist inference with finite-sample coverage guarantees" },
                 "brutus": { "group": "stellar", "pypi": "astro-brutus", "docs": "https://brutus.readthedocs.io", "paper": "https://ui.adsabs.harvard.edu/abs/2025arXiv250302227S", "blurb": "Stellar properties, distances & extinctions via brute-force Bayesian inference" },
                 "aparture": { "group": "literature", "docs": "https://joshspeagle.com/aparture/", "blurb": "An LLM-powered tool to help sift through the arXiv" },
                 "frankenz": { "group": "extragal", "pypi": "frankenz", "blurb": "Photometric redshift estimation (a photo-z monstrosity)" },

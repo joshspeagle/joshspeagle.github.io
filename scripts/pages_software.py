@@ -132,6 +132,8 @@ def _list_card(name, repo, cur, group_id, group_label, accent, featured):
         tags += '<span class="tag feat">★ Featured</span>'
     if repo.get("isFork"):
         tags += '<span class="tag fork">fork</span>'
+    if repo.get("external"):
+        tags += '<span class="tag external">collaborator</span>'
     search = attr_esc(f'{name} {cur.get("blurb","") or repo.get("description","")} {group_label}')
     num = (repo.get("pushed", "") or "")[:10].replace("-", "")
     return (

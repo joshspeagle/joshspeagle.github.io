@@ -64,10 +64,7 @@ def _get_json(url, headers=None, retries=4):
 
 def fetch_repos(user):
     """Return all public repos (incl. forks) for `user` as a list of GitHub repo dicts."""
-    headers = {"Accept": "application/vnd.github+json"}
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-    if token:
-        headers["Authorization"] = f"Bearer {token}"
+    headers = _auth_headers()
     repos, page = [], 1
     while True:
         url = f"{GITHUB_API}/users/{user}/repos?per_page=100&page={page}&type=owner&sort=pushed"
@@ -92,6 +89,24 @@ def fetch_downloads(pkg):
         print(f"  ! pypistats: no data for {pkg} ({err or 'empty'})")
         return None
     return (data.get("data") or {}).get("last_month")
+
+
+def _auth_headers():
+    headers = {"Accept": "application/vnd.github+json"}
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
+    return headers
+
+
+def fetch_external_repo(full_name):
+    """Fetch a single repo (owner/repo) not owned by the primary githubUser —
+    e.g. a collaborator's repo or an org repo you contribute to but don't own."""
+    data, err = _get_json(f"{GITHUB_API}/repos/{full_name}", _auth_headers())
+    if err:
+        print(f"  ! external repo {full_name}: {err}")
+        return None
+    return data
 
 
 def main():
@@ -120,7 +135,8 @@ def main():
         if not args.allow_unclassified:
             sys.exit("\nRefusing to write cache. Classify the repos above (or rerun with "
                      "--allow-unclassified to drop them into 'scratch').")
-    missing = [n for n in curation if n not in {r["name"] for r in gh}]
+    owned_curation = {n: c for n, c in curation.items() if not c.get("external")}
+    missing = [n for n in owned_curation if n not in {r["name"] for r in gh}]
     if missing:
         print(f"\nNote: curated repos no longer public on GitHub (renamed/deleted): {', '.join(sorted(missing))}")
 
@@ -141,6 +157,31 @@ def main():
             "isFork": bool(r.get("fork")),
             "downloads_month": dl,
         }
+
+    # external repos: curated by full "owner/repo" name, not owned by `user`
+    # (a collaborator's repo, or an org repo you contribute to but don't own)
+    external = {n: c["external"] for n, c in curation.items() if c.get("external")}
+    if external:
+        print(f"Fetching {len(external)} external repo(s) …")
+        for name, full_name in external.items():
+            r = fetch_external_repo(full_name)
+            if r is None:
+                continue
+            cur = curation.get(name, {})
+            pkg = cur.get("pypi")
+            dl = fetch_downloads(pkg) if pkg else None
+            repos[name] = {
+                "url": r["html_url"],
+                "stars": r.get("stargazers_count", 0),
+                "forks": r.get("forks_count", 0),
+                "language": r.get("language"),
+                "description": r.get("description") or "",
+                "pushed": (r.get("pushed_at") or "")[:10],
+                "archived": bool(r.get("archived")),
+                "isFork": bool(r.get("fork")),
+                "downloads_month": dl,
+                "external": True,
+            }
 
     out = {"lastUpdated": time.strftime("%Y-%m-%d"), "githubUser": user, "repos": repos}
     out_path = get_data_path("software_data.json")

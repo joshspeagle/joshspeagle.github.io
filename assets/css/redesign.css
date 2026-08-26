@@ -683,6 +683,7 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 [data-theme="light"] .tag.lang-jn { color: #b4501a; }
 .tag.lang-web, .tag.lang-x { color: var(--text-3); }
 .tag.fork { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
+.tag.external { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
 /* group accents + chip dots */
 .item.accent-teal { border-left-color: #34d3e0; }
 .item.accent-gray { border-left-color: var(--text-3); }
