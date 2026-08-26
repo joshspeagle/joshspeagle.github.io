@@ -81,7 +81,7 @@
     "sections": {
         "about": {
             "title": "Who am I?",
-            "content": "I am an <strong>Assistant Professor of Astrostatistics</strong> jointly appointed between the <a href=\"https://www.astro.utoronto.ca/\">David A. Dunlap Department of Astronomy & Astrophysics</a> and the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a> at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>. I am also an Associate Member of the <a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute for Astronomy & Astrophysics</a> as well as a Member of the <a href=\"https://datasciences.utoronto.ca/\">Data Sciences Institute</a>.",
+            "content": "I am an <strong>Assistant Professor of Astrostatistics</strong> jointly appointed between the <a href=\"https://www.astro.utoronto.ca/\">David A. Dunlap Department of Astronomy & Astrophysics</a> and the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a> at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>. I am also an Associate Member of the <a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute for Astronomy & Astrophysics</a> as well as a Member of the <a href=\"https://datasciences.utoronto.ca/\">Data Sciences Institute</a>. For the 2026-2027 academic year, I am also serving as the (Interim) Director of the <a href=\"https://www.statistics.utoronto.ca/graduate/mscac-data-science\">MScAc – Data Science Concentration</a> in the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a>.",
             "highlightBox": {
                 "title": "A Few Other Things",
                 "content": "I also teach both undergraduate and graduate courses in astronomy and statistics, serve on a few committees within the University of Toronto, and remain a member of several professional societies such as the <a href=\"https://aas.org/\">AAS</a>, <a href=\"https://astrostat.org/\">ASA-AIG</a>, and <a href=\"https://ssc.ca/en/about/sections-regions/data-science-and-analytics\">SSC-DSA</a>. I also help manage the <a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">Astronomy & Astrophysics Summer Undergraduate Research Program (SURP)</a> (the largest of its kind in Canada!)."
@@ -227,7 +227,7 @@
                                 },
                                 {
                                     "name": "Arts & Science",
-                                    "url": "https://www.sgs.utoronto.ca/awards/https-www-artsci-utoronto-ca-faculty-staff-research-supports-services-find-fundingas-postdoctoral-fellowship-program/"
+                                    "url": "https://www.artsci.utoronto.ca/faculty-staff/research-supports-services/find-funding/past-recipients-postdoctoral-fellowships"
                                 },
                                 {
                                     "name": "Research Excellence",
@@ -258,7 +258,7 @@
                                 },
                                 {
                                     "name": "Schmidt AI in Science",
-                                    "url": "https://datasciences.utoronto.ca/schmidt-fellows/"
+                                    "url": "https://schmidtfellows.utoronto.ca"
                                 }
                             ]
                         }
@@ -519,19 +519,30 @@
                 ],
                 "doctoral": [
                     {
-                        "name": "Siyang Li",
-                        "timelinePeriod": "Spring 2026",
-                        "supervisionType": "Informal Supervisor",
+                        "name": "Ian Zhang",
+                        "timelinePeriod": "Fall 2026-Present",
+                        "supervisionType": "Co-Supervisor",
                         "coSupervisors": [
-                            "<a href=\"https://www.ma.imperial.ac.uk/~dvandyk/\">David van Dyk</a> (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)"
+                            "<a href=\"https://thibaultrandrianarisoa.netlify.app/\">Thibault Randrianarisoa</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
                         ],
-                        "project": "Developing an astrostatistics-oriented software package",
+                        "project": "Robust and Generalized Bayesian Inference",
                         "myCareerStage": "Assistant Professor",
-                        "currentStatus": "PhD candidate",
-                        "awards": [
-                            "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
+                        "currentStatus": "PhD student"
+                    },
+                    {
+                        "name": "Isabelle (Liyuan) Huang",
+                        "timelinePeriod": "Fall 2026-Present",
+                        "supervisionType": "Primary Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.aviadlevis.info/\">Aviad Levis</a> (<a href=\"https://web.cs.toronto.edu/\">Computer Science</a>)",
+                            "<a href=\"https://sfseiji.github.io/\">Seiji Fujimoto</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                         ],
-                        "institution": "<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>"
+                        "project": "Statistical Challenges in Gravitationally-Lensed Galaxy Surveys",
+                        "myCareerStage": "Assistant Professor",
+                        "currentStatus": "PhD student",
+                        "programs": [
+                            "<a href=\"https://canssiontario.utoronto.ca/opportunities/uoft-opportunities/mdoc/\">CANSSI Ontario Mdoc</a>"
+                        ]
                     },
                     {
                         "name": "<a href=\"https://pinchen.fan/\">Pinchen Fan</a>",
@@ -594,20 +605,6 @@
                             "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC CGS-M</a>",
                             "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
                         ]
-                    },
-                    {
-                        "name": "Mairead Heiger",
-                        "timelinePeriod": "Fall 2022-Present",
-                        "supervisionType": "Co-Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
-                        ],
-                        "project": "Galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling",
-                        "myCareerStage": "Assistant Professor",
-                        "currentStatus": "PhD candidate",
-                        "awards": [
-                            "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
-                        ]
                     }
                 ],
                 "bachelors": [
@@ -625,46 +622,6 @@
                         "programs": [
                             "<a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">A&A SURP</a>"
                         ]
-                    },
-                    {
-                        "name": "Chuxuan Ai",
-                        "timelinePeriod": "Fall 2025-Present",
-                        "myCareerStage": "Assistant Professor",
-                        "currentStatus": "Undergraduate student",
-                        "projects": [
-                            {
-                                "title": "Hamiltonian Optimization and Sampling for Deep Learning",
-                                "supervisionType": "Co-Supervisor",
-                                "coSupervisors": [
-                                    "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
-                                ]
-                            },
-                            {
-                                "title": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
-                                "supervisionType": "Co-Supervisor"
-                            }
-                        ],
-                        "programs": [
-                            "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
-                        ],
-                        "courses": [
-                            "Senior Thesis"
-                        ]
-                    },
-                    {
-                        "name": "Yasir Alsugair",
-                        "timelinePeriod": "Summer 2026",
-                        "supervisionType": "Co-Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
-                        ],
-                        "project": "Hamiltonian Optimization and Sampling for Deep Learning",
-                        "currentStatus": "Undergraduate student",
-                        "myCareerStage": "Assistant Professor",
-                        "programs": [
-                            "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
-                        ],
-                        "institution": "<a href=\"https://www.kaust.edu.sa/\">KAUST</a>"
                     }
                 ],
                 "mastersProjects": [],
@@ -699,6 +656,36 @@
                             "awards": [
                                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
                             ]
+                        },
+                        {
+                            "name": "Mairead Heiger",
+                            "timelinePeriod": "Fall 2022-2026",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                            ],
+                            "project": "Galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "PhD candidate",
+                            "outcome": "Joint <a href=\"https://astronomy.as.virginia.edu/\">GECO</a> and <a href=\"https://www.cosmicai.org/\">CosmicAI</a> Postdoctoral Fellow at the University of Virginia",
+                            "awards": [
+                                "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
+                            ]
+                        },
+                        {
+                            "name": "Siyang Li",
+                            "timelinePeriod": "Spring 2026",
+                            "supervisionType": "Informal Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.ma.imperial.ac.uk/~dvandyk/\">David van Dyk</a> (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)"
+                            ],
+                            "project": "Developing an astrostatistics-oriented software package",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "PhD candidate",
+                            "awards": [
+                                "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
+                            ],
+                            "institution": "<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>"
                         },
                         {
                             "name": "<a href=\"https://www.astro.utoronto.ca/~steffani.grondin/\">Steffani Grondin</a>",
@@ -778,6 +765,74 @@
                         }
                     ],
                     "bachelors": [
+                        {
+                            "name": "Chuxuan Ai",
+                            "timelinePeriod": "Fall 2025-Summer 2026",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate student",
+                            "projects": [
+                                {
+                                    "title": "Hamiltonian Optimization and Sampling for Deep Learning",
+                                    "supervisionType": "Co-Supervisor",
+                                    "coSupervisors": [
+                                        "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
+                                    ]
+                                },
+                                {
+                                    "title": "Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems",
+                                    "supervisionType": "Co-Supervisor"
+                                }
+                            ],
+                            "programs": [
+                                "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
+                            ],
+                            "courses": [
+                                "Senior Thesis"
+                            ]
+                        },
+                        {
+                            "name": "Yasir Alsugair",
+                            "timelinePeriod": "Summer 2026",
+                            "supervisionType": "Co-Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.ricardobaptista.com/\">Ricardo Baptista</a>"
+                            ],
+                            "project": "Hamiltonian Optimization and Sampling for Deep Learning",
+                            "currentStatus": "Undergraduate student",
+                            "myCareerStage": "Assistant Professor",
+                            "programs": [
+                                "<a href=\"https://datasciences.utoronto.ca/suds/\">DSI SUDS</a>"
+                            ],
+                            "institution": "<a href=\"https://www.kaust.edu.sa/\">KAUST</a>"
+                        },
+                        {
+                            "name": "Tristan Fattedad",
+                            "timelinePeriod": "Summer 2026",
+                            "supervisionType": "Secondary Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
+                            ],
+                            "project": "Photometric redshift calibration for the Vera C. Rubin Observatory",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate student",
+                            "courses": [
+                                "Senior Thesis"
+                            ]
+                        },
+                        {
+                            "name": "Sargun Jassal",
+                            "timelinePeriod": "Summer 2026",
+                            "supervisionType": "Secondary Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+                            ],
+                            "project": "Surveying Ultra-Low-Mass Stellar Populations in the Solar Neighborhood",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "Undergraduate student",
+                            "courses": [
+                                "Senior Thesis"
+                            ]
+                        },
                         {
                             "name": "<a href=\"https://www.linkedin.com/in/harry-peng1205/\">Zehao \"Harry\" Peng</a>",
                             "timelinePeriod": "Summer 2024-Winter 2026",
@@ -2640,6 +2695,7 @@
                     "code": "AST424",
                     "title": "Introduction to Astrophysical Research",
                     "terms": [
+                        "Fall 2026",
                         "Fall 2025",
                         "Full Year 2023-2024"
                     ],
@@ -2952,6 +3008,12 @@
                             "name": "Department of Statistical Sciences",
                             "positions": [
                                 {
+                                    "role": "Interim Director, <a href=\"https://www.statistics.utoronto.ca/graduate/mscac-data-science\">MScAc – Data Science Concentration</a>",
+                                    "periods": [
+                                        "2026-2027"
+                                    ]
+                                },
+                                {
                                     "role": "Graduate Admissions Committee",
                                     "periods": [
                                         "2022-Present"
@@ -3075,6 +3137,8 @@
             },
             "curation": {
                 "dynesty": { "group": "inference", "pypi": "dynesty", "docs": "https://dynesty.readthedocs.io", "paper": "https://doi.org/10.1093/mnras/staa278", "blurb": "Dynamic nested sampling for Bayesian posteriors & evidences" },
+                "jumufraktiv": { "group": "inference", "external": "JSiyangLi/jumufraktiv", "pypi": "jumufraktiv", "blurb": "Model evidence, posterior density & moments via fractional derivatives of prior MGFs (with Siyang Li)" },
+                "lf2i": { "group": "inference", "external": "lee-group-cmu/lf2i", "pypi": "lf2i", "blurb": "Likelihood-free frequentist inference with finite-sample coverage guarantees" },
                 "brutus": { "group": "stellar", "pypi": "astro-brutus", "docs": "https://brutus.readthedocs.io", "paper": "https://ui.adsabs.harvard.edu/abs/2025arXiv250302227S", "blurb": "Stellar properties, distances & extinctions via brute-force Bayesian inference" },
                 "aparture": { "group": "literature", "docs": "https://joshspeagle.com/aparture/", "blurb": "An LLM-powered tool to help sift through the arXiv" },
                 "frankenz": { "group": "extragal", "pypi": "frankenz", "blurb": "Photometric redshift estimation (a photo-z monstrosity)" },
@@ -3106,6 +3170,23 @@
             "tagline": "Recent papers, talks, and milestones",
             "items": [
                 {
+                    "date": "Aug 2026",
+                    "year": 2026,
+                    "type": "group",
+                    "title": "Mairead Heiger completes her PhD, joins UVA as a joint GECO/CosmicAI postdoctoral fellow",
+                    "blurb": "Mairead successfully defended her PhD in Astronomy & Astrophysics and is moving on to a joint postdoctoral fellowship with <a href=\"https://astronomy.as.virginia.edu/\">GECO</a> and <a href=\"https://www.cosmicai.org/\">CosmicAI</a> at the <a href=\"https://www.virginia.edu\">University of Virginia</a>.",
+                    "link": ""
+                },
+                {
+                    "date": "Jul 2026",
+                    "year": 2026,
+                    "type": "group",
+                    "title": "Simran Nerval and Mairead Heiger win the Fieldus Award",
+                    "blurb": "Departmental recognition for a very high level of research acumen and service. Mairead was honoured for her spectroscopic follow-up of the ultra-faint dwarf galaxies Eridanus IV and Centaurus I, her DLEIY galactic chemical evolution framework, and her service as GASA co-chair.",
+                    "outlet": "U of T Astronomy & Astrophysics",
+                    "link": "https://www.astro.utoronto.ca/2026-fieldus-award-recipients-simran-nerval-and-mairead-heiger/"
+                },
+                {
                     "date": "Feb 2026",
                     "year": 2026,
                     "type": "paper",
@@ -3120,6 +3201,23 @@
                     "title": "A deep 3-D dust map of the southern Galactic plane",
                     "blurb": "Co-led a high-angular-resolution 3-D dust map of the southern Milky Way (Zucker, Saydjari & Speagle, ApJ), built on the DECaPS2 survey with the brutus inference framework.",
                     "link": "https://ui.adsabs.harvard.edu/abs/2025ApJ...992...39Z"
+                },
+                {
+                    "date": "Sep 2025",
+                    "year": 2025,
+                    "type": "group",
+                    "title": "Steffani Grondin and Michael Poon win the 2025 Jui Lin (Allen) Yen Award",
+                    "blurb": "Departmental recognition for exceptional achievement in research by a graduate student. Steffani completed her PhD studying massive star clusters, including post-common-envelope binaries and dynamical interactions.",
+                    "outlet": "U of T Astronomy & Astrophysics",
+                    "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award-2/"
+                },
+                {
+                    "date": "Aug 2025",
+                    "year": 2025,
+                    "type": "group",
+                    "title": "Sam Berek completes her PhD, joins UMass Amherst as an NSF postdoctoral fellow",
+                    "blurb": "Sam successfully defended her PhD in the David A. Dunlap Department of Astronomy & Astrophysics and is now an <a href=\"https://www.nsf.gov/funding/opportunities/aapf-nsf-astronomy-astrophysics-postdoctoral-fellowships\">NSF Astronomy and Astrophysics Postdoctoral Fellow</a> at <a href=\"https://www.umass.edu\">UMass Amherst</a>.",
+                    "link": "https://samberek.github.io/samberek/index.html"
                 },
                 {
                     "date": "Jul 2025",
@@ -3138,6 +3236,15 @@
                     "blurb": "Co-author on the discovery (Grondin et al., ApJ), also picked up by Phys.org and SciTechDaily.",
                     "outlet": "U of T Arts & Science",
                     "link": "https://www.artsci.utoronto.ca/news/u-t-astronomers-discover-first-white-dwarf-main-sequence-binary-candidates-open-star-clusters"
+                },
+                {
+                    "date": "Sep 2024",
+                    "year": 2024,
+                    "type": "group",
+                    "title": "Sam Berek and Shivan Khullar win the Jui Lin (Allen) Yen Award",
+                    "blurb": "Sam was honoured for \"Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models,\" introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model.",
+                    "outlet": "U of T Astronomy & Astrophysics",
+                    "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/"
                 },
                 {
                     "date": "Aug 2024",
