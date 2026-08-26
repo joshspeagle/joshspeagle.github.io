@@ -545,21 +545,6 @@
                         ]
                     },
                     {
-                        "name": "Siyang Li",
-                        "timelinePeriod": "Spring 2026",
-                        "supervisionType": "Informal Supervisor",
-                        "coSupervisors": [
-                            "<a href=\"https://www.ma.imperial.ac.uk/~dvandyk/\">David van Dyk</a> (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)"
-                        ],
-                        "project": "Developing an astrostatistics-oriented software package",
-                        "myCareerStage": "Assistant Professor",
-                        "currentStatus": "PhD candidate",
-                        "awards": [
-                            "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
-                        ],
-                        "institution": "<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>"
-                    },
-                    {
                         "name": "<a href=\"https://pinchen.fan/\">Pinchen Fan</a>",
                         "timelinePeriod": "Winter 2026-Present",
                         "supervisionType": "Informal Supervisor",
@@ -686,6 +671,21 @@
                             "awards": [
                                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
                             ]
+                        },
+                        {
+                            "name": "Siyang Li",
+                            "timelinePeriod": "Spring 2026",
+                            "supervisionType": "Informal Supervisor",
+                            "coSupervisors": [
+                                "<a href=\"https://www.ma.imperial.ac.uk/~dvandyk/\">David van Dyk</a> (<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>)"
+                            ],
+                            "project": "Developing an astrostatistics-oriented software package",
+                            "myCareerStage": "Assistant Professor",
+                            "currentStatus": "PhD candidate",
+                            "awards": [
+                                "<a href=\"https://www.sgs.utoronto.ca/future-students/international/international-visiting-graduate-students/\">IVGS</a>"
+                            ],
+                            "institution": "<a href=\"https://www.imperial.ac.uk/statistics/\">Imperial College London</a>"
                         },
                         {
                             "name": "<a href=\"https://www.astro.utoronto.ca/~steffani.grondin/\">Steffani Grondin</a>",
@@ -2695,6 +2695,7 @@
                     "code": "AST424",
                     "title": "Introduction to Astrophysical Research",
                     "terms": [
+                        "Fall 2026",
                         "Fall 2025",
                         "Full Year 2023-2024"
                     ],
