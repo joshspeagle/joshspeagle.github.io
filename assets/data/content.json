@@ -3169,6 +3169,15 @@
                     "link": ""
                 },
                 {
+                    "date": "Jul 2026",
+                    "year": 2026,
+                    "type": "group",
+                    "title": "Simran Nerval and Mairead Heiger win the Fieldus Award",
+                    "blurb": "Departmental recognition for a very high level of research acumen and service. Mairead was honoured for her spectroscopic follow-up of the ultra-faint dwarf galaxies Eridanus IV and Centaurus I, her DLEIY galactic chemical evolution framework, and her service as GASA co-chair.",
+                    "outlet": "U of T Astronomy & Astrophysics",
+                    "link": "https://www.astro.utoronto.ca/2026-fieldus-award-recipients-simran-nerval-and-mairead-heiger/"
+                },
+                {
                     "date": "Feb 2026",
                     "year": 2026,
                     "type": "paper",
@@ -3200,6 +3209,15 @@
                     "blurb": "Student-led work (Van-Lane et al.) using normalizing flows for gyrochronology, co-supervised with Gwen Eadie. Covered by U of T News and Phys.org.",
                     "outlet": "U of T News",
                     "link": "https://www.utoronto.ca/news/u-t-astronomers-develop-ai-model-determine-stars-ages"
+                },
+                {
+                    "date": "Sep 2024",
+                    "year": 2024,
+                    "type": "group",
+                    "title": "Sam Berek and Shivan Khullar win the Jui Lin (Allen) Yen Award",
+                    "blurb": "Sam was honoured for \"Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models,\" introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model.",
+                    "outlet": "U of T Astronomy & Astrophysics",
+                    "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/"
                 },
                 {
                     "date": "Nov 2024",
