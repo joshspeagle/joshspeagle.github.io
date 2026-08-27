@@ -448,6 +448,50 @@
             "menteesByStage": {
                 "postdoctoral": [
                     {
+                        "name": "<a href=\"https://astrockragh.github.io/\">Christian Kragh Jespersen</a>",
+                        "timelinePeriod": "Fall 2026-Present",
+                        "supervisionType": "Co-Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.aviadlevis.info\">Aviad Levis</a> (<a href=\"https://web.cs.toronto.edu\">Computer Science</a>)",
+                            "<a href=\"https://www.astro.umontreal.ca/~lpl/\">Laurence Perreault-Levasseur</a> (<a href=\"https://www.umontreal.ca\">Université de Montréal</a>)"
+                        ],
+                        "project": "Building inductive biases and geometric and physical constraints into well-calibrated Bayesian and machine learning models for galaxy formation and cosmology",
+                        "currentStatus": "",
+                        "myCareerStage": "Assistant Professor",
+                        "awards": [
+                            "<a href=\"https://schmidtfellows.utoronto.ca\">Schmidt AI in Science Fellow</a>",
+                            "<a href=\"https://www.cita.utoronto.ca/people/national-fellows/\">CITA National Fellow</a>"
+                        ]
+                    },
+                    {
+                        "name": "<a href=\"https://maryumsayeed.github.io/\">Maryum Sayeed</a>",
+                        "timelinePeriod": "Fall 2026-Present",
+                        "supervisionType": "Co-Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a> (<a href=\"https://www.astro.utoronto.ca\">Astronomy & Astrophysics</a>)"
+                        ],
+                        "project": "Using large photometric and spectroscopic surveys and asteroseismology to probe the formation and evolution of the Milky Way and the stars within it",
+                        "currentStatus": "",
+                        "myCareerStage": "Assistant Professor",
+                        "awards": [
+                            "<a href=\"https://www.artsci.utoronto.ca/faculty-staff/research-supports-services/find-funding/past-recipients-postdoctoral-fellowships\">Arts & Science Fellow</a>"
+                        ]
+                    },
+                    {
+                        "name": "<a href=\"https://chloe-mt-cheng.github.io/\">Chloe Cheng</a>",
+                        "timelinePeriod": "Fall 2026-Present",
+                        "supervisionType": "Co-Supervisor",
+                        "coSupervisors": [
+                            "<a href=\"https://sfseiji.github.io/\">Seiji Fujimoto</a> (<a href=\"https://www.astro.utoronto.ca\">Astronomy & Astrophysics</a>)"
+                        ],
+                        "project": "Using ultra-deep spectroscopy to measure elemental abundances and stellar population parameters, unravelling the formation and assembly histories of massive quiescent galaxies",
+                        "currentStatus": "",
+                        "myCareerStage": "Assistant Professor",
+                        "awards": [
+                            "<a href=\"https://www.sgs.utoronto.ca/awards/research-excellence-postdoctoral-fellows-program/\">Research Excellence Fellow</a>"
+                        ]
+                    },
+                    {
                         "name": "<a href=\"https://www.rkerrastro.com\">Ronan Kerr</a>",
                         "timelinePeriod": "Fall 2024-Present",
                         "supervisionType": "Primary Supervisor",
