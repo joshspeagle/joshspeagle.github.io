@@ -2,14 +2,15 @@
   "name": "joshspeagle-site",
   "version": "1.0.0",
   "private": true,
-  "description": "Self-hosted webfonts for joshspeagle.github.io. Fonts are vendored from node_modules into assets/fonts/ by scripts/setup_fonts.py; tokens + HTML are built in Python. (esbuild/PostCSS minification + CI is a later build-hardening pass.)",
+  "description": "Build entry points for joshspeagle.com. `npm run build` is the single source of build order (tokens -> fonts -> HTML + sitemap); `npm run check` runs the correctness checks over the result (including that publications.bib matches the publication cache). CI runs both.",
   "scripts": {
     "fonts": "python scripts/setup_fonts.py",
-    "build": "python scripts/build_tokens.py && python scripts/setup_fonts.py && python scripts/build_html.py"
+    "build": "python scripts/build_tokens.py && python scripts/setup_fonts.py && python scripts/build_html.py",
+    "check": "python scripts/check_build.py && python scripts/export_bib.py --check"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.1.0",
-    "@fontsource/source-serif-4": "^5.1.0",
-    "@fontsource/jetbrains-mono": "^5.1.0"
+    "@fontsource/inter": "5.2.8",
+    "@fontsource/source-serif-4": "5.2.9",
+    "@fontsource/jetbrains-mono": "5.2.8"
   }
 }

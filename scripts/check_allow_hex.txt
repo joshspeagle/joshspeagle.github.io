@@ -1,0 +1,6 @@
+// Raw colours still hard-coded in redesign.css, tolerated by scripts/check_build.py.
+// Design G moved every palette and taxonomy colour into assets/data/tokens.json, so
+// only the two print inks are left: @media print forces ink on paper, and paper is
+// not a theme. Nothing may be added here without a reason.
+#000
+#fff

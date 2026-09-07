@@ -1,6 +1,14 @@
 {
-  "lastUpdated": "2026-07-13",
+  "lastUpdated": "2026-08-26",
+  "lastFetched": "2026-07-13",
   "githubUser": "joshspeagle",
+  "manualEdits": [
+    {
+      "date": "2026-08-26",
+      "summary": "Added the external repos `jumufraktiv` and `lf2i` by hand (commit f723960) without re-running fetch_software.py; their stars/forks/downloads are as of that date, every other repo's are as of lastFetched."
+    }
+  ],
+  "reposChecksum": "c87a9647c651efcf561c14ded558f434ea0647233101fa070253a204ee75ed7c",
   "repos": {
     "allsky": {
       "url": "https://github.com/joshspeagle/allsky",

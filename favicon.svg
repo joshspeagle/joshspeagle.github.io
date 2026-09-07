@@ -1,10 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#a99bff"/>
-      <stop offset="1" stop-color="#6fd2ff"/>
-    </linearGradient>
-  </defs>
-  <rect x="0" y="0" width="64" height="64" rx="14" ry="14" fill="#06080f"/>
-  <path d="M32 6 L37.1 26.9 L58 32 L37.1 37.1 L32 58 L26.9 37.1 L6 32 L26.9 26.9 Z" fill="url(#g)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="64" height="64">
+  <rect width="32" height="32" rx="7" ry="7" fill="#06080f"/>
+  <g fill="none" stroke="#f2b13a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 26 L11 20 L19 20 L25 14 L25 7.5"/>
+    <path d="M19 20 L23 24"/>
+  </g>
+  <g fill="none" stroke="#f2b13a" stroke-width="1.4">
+    <circle cx="5" cy="26" r="2.1"/>
+    <circle cx="11" cy="20" r="2.1"/>
+    <circle cx="23" cy="24" r="2.1"/>
+  </g>
+  <circle cx="19" cy="20" r="2.4" fill="#f2b13a"/>
+  <path d="M24.98 3.3 L25.808 6.152 L28.66 6.98 L25.808 7.808000000000001 L24.98 10.66 L24.152 7.808000000000001 L21.3 6.98 L24.152 6.152 Z" fill="#f2b13a"/>
 </svg>

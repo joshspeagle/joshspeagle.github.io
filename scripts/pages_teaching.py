@@ -10,21 +10,23 @@ card's left stripe + badge dot is colored to match its chip.
 
 Per-item card contract is documented in pages_shared.py.
 """
-import re
-
-from pages_shared import scaffold, esc, attr_esc
-
-
-def _strip_tags(s):
-    """Remove any HTML tags from a string (for building data-search text)."""
-    return re.sub(r"<[^>]+>", "", str(s or ""))
+from pages_shared import (accent_class, all_years, attr_esc, card_meta, date_range, esc,
+                          parse_latest_year, scaffold, slug as _slug,
+                          strip_tags as _strip_tags, term_month as _term_month, url_attr, warn)
 
 
-def _slug(s):
-    """Lowercase, hyphenated, attribute-safe slug for data-cat / chip keys."""
-    s = _strip_tags(s).lower()
-    s = re.sub(r"[^a-z0-9]+", "-", s).strip("-")
-    return s or "other"
+def _tags_row(inner):
+    """The card's tag/link row, omitted entirely when there is nothing to put in it."""
+    return f'<div class="item-tags">{inner}</div>' if inner else ""
+
+
+def _link_html(rec, label="Course page"):
+    """Optional outbound link for a record carrying a `url`."""
+    url = (rec.get("url") or "").strip() if isinstance(rec, dict) else ""
+    if not url:
+        return ""
+    return (f'<a class="reslink" href="{url_attr(url)}" target="_blank" rel="noopener">'
+            f'{esc(rec.get("urlLabel") or label)} ↗</a>')
 
 
 def _departments(course):
@@ -38,48 +40,31 @@ def _departments(course):
     return [dept] if dept else []
 
 
-def _latest_year(terms):
-    """Parse the latest 4-digit year mentioned across a list of term strings.
-
-    Handles ranges (e.g. "Full Year 2023-2024") and annotations
-    (e.g. "Winter 2022 (partial)") by scanning for every 19xx/20xx token.
-    """
-    years = [int(y) for t in (terms or []) for y in re.findall(r"(?:19|20)\d{2}", str(t))]
-    return max(years) if years else 0
-
-
-_MONTHS3 = {m: i for i, m in enumerate(
-    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
-_SEASONS = {"winter": 1, "spring": 4, "summer": 6, "fall": 9, "autumn": 9}
-
-
-def _term_month(term):
-    """Representative month (1-12) for a term/date string; month names win over
-    season words (winter/spring/summer/fall). 0 if nothing is recognized."""
-    t = str(term or "").lower()
-    for name, num in _MONTHS3.items():
-        if name in t:
-            return num
-    for season, num in _SEASONS.items():
-        if season in t:
-            return num
-    return 0
-
-
 def _sort_key(terms):
     """YYYYMM-style key so same-year items order by recency: latest year, with the
     month/season of the term(s) carrying that year. 0 if no year present."""
     terms = terms or []
-    year = _latest_year(terms)
+    year = parse_latest_year(terms)
     if not year:
         return 0
     month = max((_term_month(t) for t in terms if str(year) in str(t)), default=0)
     return year * 100 + month
 
 
+def _accent(accents, name, kind="department"):
+    """Declared accent colour class for a department (or the workshops/joint keys)."""
+    accent = accents.get(name)
+    if not accent:
+        warn(f"teaching {kind} {name!r} has no accent in sections.teaching.accents; "
+             f"using a neutral stripe")
+        return "mute"
+    return accent_class(accent, f"teaching {kind} {name!r}")
+
+
 def generate_content(data):
     """Build the inner HTML for #teaching-content."""
     teaching = (data or {}).get("sections", {}).get("teaching", {}) or {}
+    accents = teaching.get("accents", {}) or {}
     courses = teaching.get("courseHistory", []) or []
     short_courses = teaching.get("shortCourses", []) or []
 
@@ -96,9 +81,11 @@ def generate_content(data):
                 dept_order.append(slug)
             dept_counts[slug] += 1
 
-    filters = [(slug, dept_label[slug], dept_counts[slug]) for slug in dept_order]
+    filters = [(slug, dept_label[slug], dept_counts[slug], _accent(accents, dept_label[slug]))
+               for slug in dept_order]
     if short_courses:
-        filters.append(("workshops", "Workshops", len(short_courses)))
+        filters.append(("workshops", "Workshops", len(short_courses),
+                        _accent(accents, "workshops", "workshops chip")))
 
     # ---- Course cards ----
     cards = []
@@ -111,10 +98,9 @@ def generate_content(data):
         depts = _departments(course)
 
         cat = " ".join(_slug(d) for d in depts) or "other"
-        when = esc(" · ".join(terms))
         dept_display = " / ".join(depts)
         title_display = " · ".join(p for p in [code, title] if p)
-        year = _latest_year(terms)
+        year = parse_latest_year(terms)
 
         search_src = " ".join([
             _strip_tags(code), _strip_tags(title), _strip_tags(level),
@@ -124,28 +110,30 @@ def generate_content(data):
         data_search = attr_esc(search_src)
         data_title = attr_esc(_strip_tags(title_display))
 
-        # Description carries the meta line; level + department(s) become badges.
+        # Description carries the meta line; the level stays a badge, while the terms
+        # and the department(s) move up into the card's mono metadata line (they are
+        # what places the course, and the department is already the card's accent).
         meta = esc(description) if description else ""
 
-        level_badge = f'<span class="badge">{esc(level)}</span>' if level else ""
-        dept_badges = "".join(
-            f'<span class="badge talk-badge"><span class="dot d-{_slug(d)}"></span>{esc(d)}</span>'
-            for d in depts
-        )
-        tags = level_badge + dept_badges
-        # left stripe: split blue/purple for joint (multi-dept) courses, else dept color
-        accent = "astrostat" if len(depts) >= 2 else (_slug(depts[0]) if depts else "violet")
+        tags = f'<span class="badge">{esc(level)}</span>' if level else ""
+        # left stripe: the joint accent for multi-department courses, else the dept accent
+        if len(depts) >= 2:
+            accent = _accent(accents, "joint", "joint-course stripe")
+        elif depts:
+            accent = _accent(accents, depts[0])
+        else:
+            accent = "mute"
 
         cards.append(
             f'<article class="item accent-{accent}" data-lv-item '
             f'data-cat="{cat}" data-search="{data_search}" '
             f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
+            f'{card_meta(date_range(" · ".join(terms)), (dept_display, True))}'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title_display)}</h3>'
-            f'<span class="item-when">{when}</span>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
-            f'<div class="item-tags">{tags}</div>'
+            f'<div class="item-tags">{tags}{_link_html(course)}</div>'
             f'</article>'
         )
 
@@ -155,8 +143,7 @@ def generate_content(data):
         program = sc.get("program", "")
         location = sc.get("location", "")
         terms = sc.get("terms", []) or []
-        when = esc(" · ".join(terms))
-        year = _latest_year(terms)
+        year = parse_latest_year(terms)
 
         meta = " · ".join(p for p in [esc(program), esc(location)] if p)
 
@@ -168,16 +155,15 @@ def generate_content(data):
         data_title = attr_esc(_strip_tags(title))
 
         cards.append(
-            f'<article class="item accent-workshops" data-lv-item '
+            f'<article class="item accent-{_accent(accents, "workshops")}" data-lv-item '
             f'data-cat="workshops" data-search="{data_search}" '
             f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
+            f'{card_meta(date_range(" · ".join(terms)), ("Workshop", True))}'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title)}</h3>'
-            f'<span class="item-when">{when}</span>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
-            f'<div class="item-tags"><span class="badge talk-badge">'
-            f'<span class="dot d-workshops"></span>Workshop</span></div>'
+            f'{_tags_row(_link_html(sc, "Details"))}'
             f'</article>'
         )
 
@@ -187,34 +173,34 @@ def generate_content(data):
         items_html,
         filters,
         total=len(courses) + len(short_courses),
-        sorts=[("year", "Most recent"), ("az", "A–Z")],
+        sorts=[("year", "Newest first"), ("az", "A–Z")],
         batch=0,
         search_ph="Search courses & workshops…",
         default_sort="year",
     )
 
     # ---- Intro: teaching stats + philosophy ----
-    # Auto-compute the topline stats from courseHistory rather than trusting the
-    # hand-entered teachingStats (which had a stale departments count). "Years
-    # teaching" is the span of years taught; departments drive the chips, not a tile.
-    _years = sorted({int(y) for c in courses for t in (c.get("terms") or [])
-                     for y in re.findall(r"(?:19|20)\d{2}", str(t))})
+    # Auto-compute the topline stats from courseHistory. "Years active" counts every
+    # distinct year taught — both ends of a range like "Full Year 2023-2024" (a span
+    # understates gap years and reads 0 for a single year); departments drive the
+    # chips, not a tile.
+    _years = all_years(t for c in courses for t in (c.get("terms") or []))
     stat_defs = [
         (len(courses), "Courses"),
         (sum(len(c.get("terms") or []) for c in courses), "Offerings"),
-        ((_years[-1] - _years[0]) if _years else 0, "Years teaching"),
+        (len(_years), "Years active"),
     ]
     tiles = "".join(
         f'<div class="pub-stat"><span class="n">{v}</span><span class="l">{esc(l)}</span></div>'
         for v, l in stat_defs if v is not None
     )
-    stats_html = f'<div class="pub-stats teach-stats">{tiles}</div>' if tiles else ""
+    stats_html = f'<div class="pub-stats teach-stats" data-chip>{tiles}</div>' if tiles else ""
 
     phil = teaching.get("philosophy") or {}
     phil_html = ""
     if phil.get("content"):
         phil_html = (
-            f'<aside class="highlight-box"><h3>{esc(phil.get("title", "Teaching Philosophy"))}</h3>'
+            f'<aside class="highlight-box" data-chip><h2>{esc(phil.get("title", "Teaching Philosophy"))}</h2>'
             f'<p>{esc(phil["content"])}</p></aside>'
         )
     top_html = f'<div class="container">{stats_html}{phil_html}</div>' if (stats_html or phil_html) else ""

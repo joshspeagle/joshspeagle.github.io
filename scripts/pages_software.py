@@ -9,13 +9,11 @@ flat, date-sorted repo list with group filter chips (wired by listview.js).
 Repos absent from the curation map are bucketed into "scratch" (forks always go to scratch).
 """
 import json
+import re
 from datetime import datetime
-from pages_shared import esc, attr_esc, url_attr
 
-try:
-    from config import get_data_path
-except Exception:  # pragma: no cover - config always present in build env
-    get_data_path = None
+from config import get_data_path
+from pages_shared import accent_class, attr_esc, card_meta, esc, listview_status, slug, url_attr
 
 # GitHub language -> (short label, css token)
 _LANG = {
@@ -28,13 +26,14 @@ _LANG = {
 
 
 def _load_cache():
-    """Load the software_data.json stats cache; return {} if unavailable."""
-    try:
-        path = get_data_path("software_data.json") if get_data_path else "assets/data/software_data.json"
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
+    """Load the software_data.json stats cache.
+
+    A missing or corrupt cache raises (OSError / json.JSONDecodeError): build_html
+    reports the page as failed and exits non-zero, rather than silently publishing a
+    Software page with "0 repositories, 0 GitHub stars" (C4).
+    """
+    with open(get_data_path("software_data.json"), encoding="utf-8") as f:
+        return json.load(f)
 
 
 def _human(n):
@@ -48,13 +47,6 @@ def _fdate(s):
         return datetime.strptime(s[:10], "%Y-%m-%d").strftime("%b %Y")
     except Exception:
         return ""
-
-
-def _lang_tag(lang):
-    if not lang or lang not in _LANG:
-        return ""
-    label, tok = _LANG[lang]
-    return f'<span class="tag lang lang-{tok}">{esc(label)}</span>'
 
 
 def _links(repo, cur):
@@ -82,13 +74,16 @@ def _feat_card(name, repo, cur):
     if cur.get("pypi"):
         install = f'<div class="install">$ pip install {esc(cur["pypi"])}</div>'
     blurb = esc(cur.get("blurb") or repo.get("description") or "")
+    pushed = _fdate(repo.get("pushed", ""))
+    lang = _LANG.get(repo.get("language") or "", ("", ""))[0]
     return (
         f'<article class="item feat-card accent-violet">'
+        f'{card_meta((lang, True), f"Updated {pushed}" if pushed else "")}'
         f'<div class="item-head"><h3 class="item-title">{esc(name)}</h3></div>'
         f'<div class="item-meta">{blurb}</div>'
         f'<div class="tool-stats">{stats_html}</div>'
         f'{install}'
-        f'<div class="item-tags">{_lang_tag(repo.get("language"))}'
+        f'<div class="item-tags">'
         f'<span class="paper-links">{_links(repo, cur)}</span></div>'
         f'</article>')
 
@@ -101,12 +96,21 @@ def _showcase(sw, repos):
     img = sc.get("image", "")
     title = esc(sc.get("title", sc.get("repo", "")))
     blurb = esc(sc.get("blurb", ""))
-    img_html = (f'<div class="viz-img"><img src="{url_attr(img)}" loading="lazy" '
-                f'alt="Preview of the {title} visualization"></div>') if img else ""
+    # <picture> + webp sibling + intrinsic width/height (no layout shift), matching
+    # how every other photo on the site is served (D18).
+    dims = ""
+    if sc.get("imageWidth") and sc.get("imageHeight"):
+        dims = f' width="{int(sc["imageWidth"])}" height="{int(sc["imageHeight"])}"'
+    webp = re.sub(r"\.(jpe?g|png)$", ".webp", img, flags=re.I)
+    src_html = (f'<source srcset="{url_attr(webp)}" type="image/webp">'
+                if webp != img else "")
+    img_html = (f'<div class="viz-img"><picture>{src_html}'
+                f'<img src="{url_attr(img)}" loading="lazy" decoding="async"{dims} '
+                f'alt="Preview of the {title} visualization"></picture></div>') if img else ""
     return (
         '<section class="sw-showcase" aria-labelledby="sw-viz-head">'
         '<h2 id="sw-viz-head" class="pub-featured-head">Data visualization</h2>'
-        f'<a class="viz-card" href="{url_attr(url)}" target="_blank" rel="noopener">'
+        f'<a class="viz-card" data-chip href="{url_attr(url)}" target="_blank" rel="noopener">'
         f'{img_html}'
         f'<div class="viz-body"><h3 class="item-title">{title}</h3>'
         f'<p class="item-meta">{blurb}</p>'
@@ -115,6 +119,8 @@ def _showcase(sw, repos):
 
 
 def _list_card(name, repo, cur, group_id, group_label, accent, featured):
+    # The date slot keeps the live numbers; the card's metadata line says what the
+    # repo is written in and when it last moved.
     when_bits = []
     if repo.get("stars"):
         when_bits.append(f'★ {repo["stars"]}')
@@ -124,21 +130,35 @@ def _list_card(name, repo, cur, group_id, group_label, accent, featured):
     dl = _human(repo.get("downloads_month"))
     if dl:
         when_bits.append(f'{dl}/mo')
-    when_bits.append(f'Updated {_fdate(repo.get("pushed", ""))}')
     when = esc(" · ".join(b for b in when_bits if b))
+    pushed = _fdate(repo.get("pushed", ""))
+    lang = _LANG.get(repo.get("language") or "", ("", ""))[0]
     blurb = esc(cur.get("blurb") or repo.get("description") or "")
-    tags = _lang_tag(repo.get("language"))
+    tags = ""
     if featured:
         tags += '<span class="tag feat">★ Featured</span>'
     if repo.get("isFork"):
         tags += '<span class="tag fork">fork</span>'
     if repo.get("external"):
         tags += '<span class="tag external">collaborator</span>'
-    search = attr_esc(f'{name} {cur.get("blurb","") or repo.get("description","")} {group_label}')
+    if repo.get("archived"):
+        tags += '<span class="tag archived">archived</span>'
+    # Search over everything the card actually shows: name, blurb, group, the language
+    # pill, and the fork / collaborator / archived tags (E8).
+    search_bits = [name, cur.get("blurb", "") or repo.get("description", ""), group_label,
+                   repo.get("language") or ""]
+    if repo.get("isFork"):
+        search_bits.append("fork")
+    if repo.get("external"):
+        search_bits.append("collaborator external")
+    if repo.get("archived"):
+        search_bits.append("archived")
+    search = attr_esc(" ".join(b for b in search_bits if b))
     num = (repo.get("pushed", "") or "")[:10].replace("-", "")
     return (
-        f'<article class="item accent-{accent}" data-lv-item data-cat="{group_id}" '
+        f'<article class="item accent-{accent}" data-lv-item data-cat="{slug(group_id)}" '
         f'data-num="{num}" data-title="{attr_esc(name)}" data-search="{search}">'
+        f'{card_meta((lang, True), f"Updated {pushed}" if pushed else "")}'
         f'<div class="item-head"><h3 class="item-title">{esc(name)}</h3>'
         f'<span class="item-when">{when}</span></div>'
         f'<div class="item-meta">{blurb}</div>'
@@ -153,7 +173,8 @@ def generate_content(data):
     curation = sw.get("curation", {})
     groups = sw.get("groups", [])
     group_label = {g["id"]: g["label"] for g in groups}
-    group_accent = {g["id"]: g.get("accent", "violet") for g in groups}
+    group_accent = {g["id"]: accent_class(g.get("accent", "violet"), f'software group {g["id"]!r}')
+                    for g in groups}
     group_order = [g["id"] for g in groups]
     featured_names = sw.get("featured", [])
 
@@ -173,13 +194,15 @@ def generate_content(data):
     metrics_html = "".join(
         f'<div class="pub-metric"><span class="n">{esc(n)}</span><span class="l">{esc(l)}</span></div>'
         for n, l in metrics)
-    topline = f'<div class="sw-topline"><div class="pub-metrics">{metrics_html}</div></div>'
+    topline = ('<div class="sw-topline">'
+               f'<div class="pub-metrics-chip" data-chip><div class="pub-metrics">{metrics_html}</div></div>'
+               '</div>')
 
     # ---------- featured board ----------
     fcards = "".join(_feat_card(n, repos[n], curation.get(n, {}))
                      for n in featured_names if n in repos)
     featured_html = (
-        '<section class="pub-featured" aria-labelledby="sw-feat-head">'
+        '<section class="pub-featured" data-chip aria-labelledby="sw-feat-head">'
         '<h2 id="sw-feat-head" class="pub-featured-head">Featured tools</h2>'
         f'<div class="featured-grid">{fcards}</div></section>') if fcards else ""
 
@@ -195,7 +218,7 @@ def generate_content(data):
     for gid in group_order:
         if counts.get(gid):
             acc = group_accent[gid]
-            chips.append(f'<button class="chip" data-cat="{gid}" aria-pressed="false">'
+            chips.append(f'<button class="chip" data-cat="{slug(gid)}" aria-pressed="false">'
                          f'<span class="dot d-{acc}"></span>{esc(group_label[gid])} '
                          f'<span class="ct">{counts[gid]}</span></button>')
     cards = "".join(
@@ -212,6 +235,7 @@ def generate_content(data):
         '<option value="num">Recently updated</option><option value="az">A–Z</option></select>'
         f'<div class="pub-filters" data-lv-filters role="group" aria-label="Filter">{"".join(chips)}</div>'
         '</div>'
+        f'{listview_status()}'
         f'<div class="pub-list" data-lv-list>{cards}</div>'
         '<p class="pub-empty" data-lv-empty hidden>No repositories match your search or filters. '
         '<button type="button" class="linkbtn" data-lv-reset>Show all</button></p>'

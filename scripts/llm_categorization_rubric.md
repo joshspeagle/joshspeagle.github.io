@@ -209,8 +209,12 @@ If you could not analyze the full paper, add:
 2. **Find** the paper entry by matching the `bibcode` field
 3. **Update** the paper entry with these fields:
    - `categoryProbabilities`: Copy from your `categorization` object
-   - `researchArea`: Set to the category name with highest probability
    - `llm_categorization`: Store your complete output object
+   - `researchArea`: Set to the category name with highest probability — but note
+     this is a **derived** field. `postprocessing.ensure_categorization` recomputes
+     it as `argmax(categoryProbabilities)` on every run and will overwrite anything
+     that disagrees, so the probabilities are what actually decide a paper's accent
+     colour and filter chip on the site.
 4. **Write** the updated JSON back to the file
 
 **Example of updated paper entry:**

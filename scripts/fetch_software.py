@@ -20,9 +20,19 @@ is missing from curation, this script prints it and exits non-zero, so a newly c
 repo can never slip onto the site unclassified. Forks are auto-assigned to "scratch".
 Pass --allow-unclassified to write the cache anyway (the page will bucket them in scratch).
 
+Cache ownership
+---------------
+`repos{}` is owned by this script. Every write bumps `lastUpdated`/`lastFetched`
+to the run date and stores a `reposChecksum`; if someone hand-adds a repo without
+re-running the fetch, the next run detects the checksum mismatch and says so.
+Hand edits should be recorded in the `manualEdits` list (which this script carries
+forward) and should bump `lastUpdated` themselves. The write also refuses an empty
+`repos{}` and refuses any repo missing the `archived` flag the page renders.
+
 Stdlib only (no third-party deps), matching the other front-end build scripts.
 """
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -109,6 +119,38 @@ def fetch_external_repo(full_name):
     return data
 
 
+def _repos_checksum(repos):
+    """Stable sha256 of the repos map, used to detect hand edits to the cache."""
+    canonical = json.dumps(repos, sort_keys=True, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def _load_existing(path):
+    """Read the current cache, or {} if there isn't a readable one."""
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def _warn_if_hand_edited(previous):
+    """Report a cache whose repos{} no longer matches the checksum it shipped with.
+
+    `repos{}` is pipeline-owned. Hand-adding a repo without re-running this script
+    leaves the file advertising a `lastUpdated` older than the data it contains
+    (audit C16); this is where that gets caught and named.
+    """
+    stored = previous.get("reposChecksum")
+    if not stored:
+        return
+    actual = _repos_checksum(previous.get("repos", {}))
+    if actual != stored:
+        print("  ! the existing cache's repos{} was edited by hand since the last "
+              f"fetch (lastUpdated {previous.get('lastUpdated', '?')}). This run "
+              "replaces it with freshly fetched data.")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--user", default=None, help="GitHub username (default: sections.software.githubUser)")
@@ -183,12 +225,34 @@ def main():
                 "external": True,
             }
 
-    out = {"lastUpdated": time.strftime("%Y-%m-%d"), "githubUser": user, "repos": repos}
     out_path = get_data_path("software_data.json")
+    previous = _load_existing(out_path)
+    _warn_if_hand_edited(previous)
+
+    if not repos:
+        sys.exit("ERROR: refusing to write an empty repos{} — the fetch produced nothing.")
+    missing_archived = sorted(n for n, r in repos.items() if "archived" not in r)
+    if missing_archived:
+        sys.exit("ERROR: repos missing the `archived` flag the page renders: "
+                 + ", ".join(missing_archived))
+
+    today = time.strftime("%Y-%m-%d")
+    out = {
+        # `lastUpdated` is the date the cache CONTENTS last changed; `lastFetched`
+        # is the date of the last full GitHub/PyPI pull. A fetch bumps both. Hand
+        # edits to repos{} must bump `lastUpdated` and add a `manualEdits` entry —
+        # `reposChecksum` is what detects it when they don't (audit C16).
+        "lastUpdated": today,
+        "lastFetched": today,
+        "githubUser": user,
+        "manualEdits": previous.get("manualEdits", []),
+        "reposChecksum": _repos_checksum(repos),
+        "repos": repos,
+    }
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2, ensure_ascii=False)
         f.write("\n")
-    print(f"\nWrote {out_path} ({len(repos)} repos).")
+    print(f"\nWrote {out_path} ({len(repos)} repos, lastUpdated {today}).")
 
 
 if __name__ == "__main__":

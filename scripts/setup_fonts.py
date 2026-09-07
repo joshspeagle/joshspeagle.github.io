@@ -21,18 +21,26 @@ def main():
     if not os.path.isdir(NM):
         raise SystemExit("node_modules/@fontsource not found — run `npm install` first.")
     os.makedirs(FONTS_DIR, exist_ok=True)
-    faces = []
+    faces, missing = [], []
     for pkg, (family, weights) in SPEC.items():
         files_dir = os.path.join(NM, pkg, "files")
         for weight, style in weights:
             suffix = "italic" if style == "italic" else "normal"
             src = os.path.join(files_dir, f"{pkg}-latin-{weight}-{suffix}.woff2")
             if not os.path.exists(src):
-                print(f"  MISSING: {src}")
+                missing.append(src)
                 continue
             dst_name = f"{pkg}-{weight}-{suffix}.woff2"
             shutil.copyfile(src, os.path.join(FONTS_DIR, dst_name))
             faces.append((family, weight, style, dst_name))
+
+    if missing:
+        # Fail BEFORE writing fonts.css: a stylesheet that declares faces which were
+        # never vendored is worse than no run at all.
+        for src in missing:
+            print(f"  MISSING: {src}")
+        raise SystemExit(f"{len(missing)} declared font face(s) missing from node_modules "
+                         f"— run `npm ci` and re-run.")
 
     lines = [
         "/* Self-hosted fonts — vendored from @fontsource by scripts/setup_fonts.py. Do NOT hand-edit. */",
