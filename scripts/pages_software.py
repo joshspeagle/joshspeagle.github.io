@@ -114,7 +114,7 @@ def _showcase(sw, repos):
     return (
         '<section class="sw-showcase" aria-labelledby="sw-viz-head">'
         '<h2 id="sw-viz-head" class="pub-featured-head">Data visualization</h2>'
-        f'<a class="viz-card" href="{url_attr(url)}" target="_blank" rel="noopener">'
+        f'<a class="viz-card" data-chip href="{url_attr(url)}" target="_blank" rel="noopener">'
         f'{img_html}'
         f'<div class="viz-body"><h3 class="item-title">{title}</h3>'
         f'<p class="item-meta">{blurb}</p>'
@@ -194,13 +194,15 @@ def generate_content(data):
     metrics_html = "".join(
         f'<div class="pub-metric"><span class="n">{esc(n)}</span><span class="l">{esc(l)}</span></div>'
         for n, l in metrics)
-    topline = f'<div class="sw-topline"><div class="pub-metrics">{metrics_html}</div></div>'
+    topline = ('<div class="sw-topline">'
+               f'<div class="pub-metrics-chip" data-chip><div class="pub-metrics">{metrics_html}</div></div>'
+               '</div>')
 
     # ---------- featured board ----------
     fcards = "".join(_feat_card(n, repos[n], curation.get(n, {}))
                      for n in featured_names if n in repos)
     featured_html = (
-        '<section class="pub-featured" aria-labelledby="sw-feat-head">'
+        '<section class="pub-featured" data-chip aria-labelledby="sw-feat-head">'
         '<h2 id="sw-feat-head" class="pub-featured-head">Featured tools</h2>'
         f'<div class="featured-grid">{fcards}</div></section>') if fcards else ""
 

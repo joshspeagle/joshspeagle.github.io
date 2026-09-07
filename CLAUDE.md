@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Personal academic website for Joshua S. Speagle — live at **joshspeagle.com** (custom apex domain via the tracked `CNAME`; the repo `joshspeagle.github.io` is the GitHub Pages source). Static HTML/CSS/JS on GitHub Pages. **Redesigned June 2026** onto a design-token system with self-hosted fonts and an animated hero. All HTML is pre-rendered for SEO by `build_html.py` from `content.json` (plus the data caches `publications_data.json` and `software_data.json`); lightweight JS adds interactivity (theme toggle, the hero canvas, and a generic search/filter/sort/load-more list).
+Personal academic website for Joshua S. Speagle — live at **joshspeagle.com** (custom apex domain via the tracked `CNAME`; the repo `joshspeagle.github.io` is the GitHub Pages source). Static HTML/CSS/JS on GitHub Pages. **Redesigned June 2026** onto a design-token system with self-hosted fonts and an animated hero; **restyled September 2026 to "chips on the board" (Design G)** — a navy substrate with a copper solder-pad grid, cards as bolted-on *chips*, copper traces routed behind the page, and amber *energy* reserved for motion and the one action per screen. All HTML is pre-rendered for SEO by `build_html.py` from `content.json` (plus the data caches `publications_data.json` and `software_data.json`); lightweight JS adds interactivity (theme toggle, the hero network canvas, the board layer, and a generic search/filter/sort/load-more list).
 
 ## Development Workflow
 
@@ -38,13 +38,16 @@ python -m http.server 8000       # local dev server
 
 ### Design tokens & fonts
 
-- `assets/data/tokens.json` → `scripts/build_tokens.py` → `assets/css/tokens.css` (single source of truth: `:root` dark + `[data-theme="light"]`).
+- `assets/data/tokens.json` → `scripts/build_tokens.py` → `assets/css/tokens.css` (single source of truth: `:root` dark + `[data-theme="light"]`; `_`-prefixed keys are notes, not tokens).
+- **Design G palette**: `--bg-0/1/2` (substrate) · `--chip`/`--chip-2` (every card surface) · `--border`/`--border-2` · `--copper-rgb` (every trace, via, pin, rule and link underline — always used as `rgb(var(--copper-rgb) / α)`) · `--energy`/`--energy-rgb`/`--energy-hot`/`--energy-ink` (amber). **`--energy-text` is energy used as INK**: the light `--energy` is a 2.8:1 fill, so text, focus rings and active borders take `--energy-text` (`#6b3a00` in light) instead — never `--energy`.
+- **Taxonomy colour is declared, never hard-coded**: `--cat-*` (the four research areas + secondary school), `--acc-*` (talks types, teaching departments, service org-types, news types, software groups, authorship) and `--role-*` (the publication-figure series). Every light value clears 3:1 on the light `--chip` (`#fffefb`), because that is what a 2px chip edge or a 7px pad swatch has to survive. `scripts/check_allow_hex.txt` is down to `#000`/`#fff` (print only) — put new colours in `tokens.json`, not in the CSS.
+- Geometry: `--radius-chip` 3px (chips, buttons, inputs, pads), `--radius-sm` 2px. No pills, no gradients, no glassmorphism.
 - Self-hosted fonts: `npm install` (`@fontsource/*`) → `scripts/setup_fonts.py` vendors woff2 into `assets/fonts/` + writes `assets/css/fonts.css`. **Source Serif 4** (serif) · **Inter** (sans) · **JetBrains Mono** (mono); CJK (沈佳士) falls back to system fonts.
 
 ### Non-obvious file notes
 
 - `requirements.txt` pins deps for the **publication pipeline only** — the front-end build scripts are stdlib.
-- `scripts/generate_favicons.py` · `scripts/make_og_card.py` generate the favicon set + `site.webmanifest` and the OG/Twitter social card (`assets/images/og-card.png`). Re-run on rebrand.
+- `scripts/generate_favicons.py` · `scripts/make_og_card.py` draw the `#mark` geometry (amber on `#06080f`) with Pillow and generate the favicon set + `site.webmanifest` and the OG/Twitter social card (`assets/images/og-card.png`). Both are deterministic and are NOT part of `npm run build` — re-run them by hand on rebrand. The OG card wants `fontTools` + `brotli` to read the vendored woff2 brand fonts (it falls back to a default font and says so).
 - Update `sitemap.xml` when adding pages.
 - `assets/js/redesign/pubchart.js` only adds tooltips — the publication figures themselves are **inline SVG built in `build_html.py`** by `_citations_svg`/`_roles_svg`/`_riq_svg`. Edit the chart shapes there, not in the JS.
 - `assets/data/publications.bib` is generated from `publications_data.json` by `scripts/export_bib.py`; Publications links it as "BibTeX ↓" and `npm run check` fails when it drifts (`export_bib.py --check`).
@@ -53,10 +56,12 @@ python -m http.server 8000       # local dev server
 ### Interactivity & patterns
 
 - **Lists** (`listview.js` — the *only* list widget; Publications and Mentorship use it too): wrap in `<div data-listview data-lv-batch="N">` with `[data-lv-search]`, optional `[data-lv-sort-control]`, one or more `[data-lv-filters]` groups (`.chip[data-cat]`; each group is an independent single-select dimension and the groups are ANDed), a `[data-lv-status]` sr-only live region, and `[data-lv-list]` of `[data-lv-item]` cards carrying `data-cat/data-search/data-year/data-num/data-title` (`data-cat` may be space-separated). `pages_shared.scaffold()` emits this; `listview.js` wires it. Two extras: `[data-lv-pinned]` blocks (a "Featured" board) hide while a query or non-`all` chip is active, and **grouped mode** — any `[data-lv-group]` containers (optionally inside `[data-lv-section]`) switch the widget to in-place filtering that hides empty groups/sections and updates their `[data-lv-count]`/`[data-lv-seccount]` tallies (Mentorship).
+- **The board** (`board.js`, loaded on every page after `site.js`): measures every `[data-chip]` block after layout and draws, into the one `<svg id="board">` emitted right after `<body>`, a copper trunk in the left gutter (fed from the hero network on Home, from the header band's bottom-left elsewhere), one branch per chip, a via at each junction and a copper pin on the chip edge; a pulse rides each branch when its chip scrolls into view and leaves the chip `.lit` for 1.8 s. Pure progressive enhancement — no JS, no board. **Density rule: ≤ 8 traced `[data-chip]` blocks per page** (chips inside a `[data-bus]` row share one tap). List *items* are chips visually but never carry a trace; `pages_shared.scaffold()` puts the single `data-chip` on the list column.
+- **Icon sprite**: `pages_shared.SPRITE` (`star4`, `mark`, `mark-s`, `via`, `pad`, `gnd`, `ic-sla/ii/ic/du`, `ic-team`) is emitted once per page by `render_shell()`; reference it with `<use href="#…">`. `board.js` stamps `#via` and `#gnd` from it too, so it must stay in the shell.
 - **Site chrome** (`site.js`, loaded on every page): the nav and the theme toggle. Desktop dropdowns are pure CSS (`:hover`/`:focus-within`) and JS only mirrors that into `aria-expanded`; mobile is a one-at-a-time accordion closed by Escape / an outside click / following a link.
 - **Theme**: `data-theme` on `<html>` (a one-line inline boot script per page — the only inline JS left; the toggle in `site.js` persists to `localStorage['preferred-theme']` and repoints `<meta name="theme-color">` at the current `--bg-0`).
 - **Accessibility**: WCAG 2.1 AA contrast in both themes; visible focus; skip link to focusable `<main>`.
-- **Category colors**: `--cat-sla/ii/ic/du`; papers badge every category with ≥20% probability but are filed (accent + chip) under their argmax area; student-led get an amber accent.
+- **Category colors**: `--cat-sla/ii/ic/du`; papers badge every category with ≥20% probability but are filed (accent + chip) under their argmax area; student-led get an amber accent. A card's accent is a **2px top edge** driven by the `--edge` custom property (never a left stripe); a pad's swatch is a 7px square driven by `--pad-hue`. Both are set by the `.accent-*` / `.b-*` / `.d-*` class the generators already emit.
 - **Publication categories** (domain glossary): Statistical Learning & AI, Interpretability & Insight, Inference & Computation, Discovery & Understanding.
 
 ## Task workflows (skills)

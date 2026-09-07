@@ -10,7 +10,8 @@ OUT = os.path.join(ROOT, "assets", "css", "tokens.css")
 
 def main():
     data = json.load(open(SRC, encoding="utf-8"))
-    tv = data["themeVarying"]
+    # "_"-prefixed keys are documentation notes, not tokens (both blocks).
+    tv = {k: v for k, v in data["themeVarying"].items() if not k.startswith("_")}
     base = data["base"]
 
     out = ["/* Design tokens — generated from assets/data/tokens.json by scripts/build_tokens.py. Do NOT hand-edit. */", ""]

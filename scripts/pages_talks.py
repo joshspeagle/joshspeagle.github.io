@@ -177,7 +177,7 @@ def generate_content(data):
     if featured:
         fcards = "".join(_featured_card(t, cid, cname, acc) for (t, cid, cname, acc) in featured)
         featured_html = (
-            '<section class="pub-featured" data-lv-pinned aria-labelledby="talks-featured-head">'
+            '<section class="pub-featured" data-lv-pinned data-chip aria-labelledby="talks-featured-head">'
             '<h2 id="talks-featured-head" class="pub-featured-head">Featured talks</h2>'
             f'<div class="featured-grid">{fcards}</div>'
             '</section>\n'

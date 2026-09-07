@@ -169,7 +169,7 @@ def _breakdown_chart(mbs, completed):
         '</div>'
     )
     return (
-        '<figure class="mentor-chart">'
+        '<figure class="mentor-chart" data-chip>'
         '<figcaption class="mc-cap">Mentees by career stage</figcaption>'
         f'{legend}{"".join(rows)}'
         '</figure>'
@@ -207,10 +207,10 @@ def generate_content(data):
 
     # ---- Overview: intro highlight + stats + breakdown chart ----
     prose = (section.get("introduction") or {}).get("content") or ""
-    intro_box = (f'<aside class="highlight-box"><h2>On Mentorship</h2><p>{esc(prose)}</p></aside>'
+    intro_box = (f'<aside class="highlight-box" data-chip><h2>On Mentorship</h2><p>{esc(prose)}</p></aside>'
                  if prose else "")
     stats = (
-        '<div class="pub-stats teach-stats">'
+        '<div class="pub-stats teach-stats" data-chip>'
         f'<div class="pub-stat"><span class="n">{total}</span><span class="l">Total mentees</span></div>'
         f'<div class="pub-stat"><span class="n">{n_current}</span><span class="l">Current</span></div>'
         f'<div class="pub-stat"><span class="n">{n_former}</span><span class="l">Former</span></div>'

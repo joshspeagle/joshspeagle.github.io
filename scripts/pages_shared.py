@@ -19,6 +19,11 @@ page's `#<page>-content` container. Use `scaffold(...)` to wrap the page's pre-r
 cards in the generic interactive listview (search + filter chips + optional sort + load-more),
 which is enhanced by assets/js/redesign/listview.js.
 
+`data-chip` marks a block the board (assets/js/redesign/board.js) routes ONE copper
+trace into. scaffold() puts it on the list column; a page adds it to its stat/tiles
+block, each figure card and the featured board. Keep it to <= 8 per page — list
+*items* are chips visually but never carry a trace of their own.
+
 Per-item card convention (so listview.js can filter/search/sort):
   <article class="item accent-<accent>" data-lv-item
            data-cat="<key>"            (space-separated keys allowed; matches a filter chip)
@@ -68,6 +73,38 @@ def warn(msg):
     """Print a build WARNING to stderr (visible in the build log and in CI)."""
     print(f"  WARNING: {msg}", file=sys.stderr)
 
+
+# ---------------------------------------------------------------------------
+# Icon sprite (Design G)
+#
+# Emitted ONCE per document by build_html.render_shell(), immediately after
+# <body>, so every <use href="#..."> on the page (and every symbol board.js
+# stamps into #board) resolves without a network request:
+#   star4   the brand asterism, also the "latest point" marker in the figures
+#   mark / mark-s   the trace-ending-in-a-star logo (outline / solid nav weight)
+#   via     a hollow ring: a junction on the board
+#   pad     a filled disc: a category pad
+#   gnd     the ground symbol that terminates the trunk above the footer
+#   ic-sla / ic-ii / ic-ic / ic-du   the four research areas
+#   ic-team a two-vias-joined glyph for the collaborative-team highlight
+# ---------------------------------------------------------------------------
+
+SPRITE = (
+    '  <svg class="sprite" aria-hidden="true" focusable="false"><defs>\n'
+    '<symbol id="star4" viewBox="0 0 8 8"><path d="M4 0 L4.9 3.1 L8 4 L4.9 4.9 L4 8 L3.1 4.9 L0 4 L3.1 3.1 Z" fill="currentColor"/></symbol>\n'
+    '<symbol id="mark" viewBox="0 0 32 32"><path d="M5 26 L11 20 H19 L25 14 V7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 20 L23 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5" cy="26" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="11" cy="20" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="23" cy="24" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="19" cy="20" r="2.4" fill="currentColor"/><g transform="translate(21.3,3.3) scale(.92)"><use href="#star4"/></g></symbol>\n'
+    '<symbol id="mark-s" viewBox="0 0 32 32"><path d="M5 26 L11 20 H19 L25 14 V8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 20 L23 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5" cy="26" r="2.6" fill="currentColor"/><circle cx="11" cy="20" r="2.6" fill="currentColor"/><circle cx="23" cy="24" r="2.6" fill="currentColor"/><circle cx="19" cy="20" r="2.9" fill="currentColor"/><g transform="translate(20.4,2.4) scale(1.15)"><use href="#star4"/></g></symbol>\n'
+    '<symbol id="via" viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.6" fill="none" stroke="currentColor" stroke-width="2.6"/></symbol>\n'
+    '<symbol id="pad" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.6" fill="currentColor"/></symbol>\n'
+    '<symbol id="gnd" viewBox="0 0 24 24"><path d="M12 3V11M4.5 11H19.5M7.5 15H16.5M10.5 19H13.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>\n'
+    '<symbol id="ic-sla" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 5.9L8.2 9.7V12h2"/><path d="M4.4 18.1L8.2 14.3V12"/><path d="M14 12h1.8l3.8-3.8"/><path d="M14 12h6"/><path d="M14 12h1.8l3.8 3.8"/></g><circle cx="3.4" cy="5" r="1.25" fill="currentColor"/><circle cx="3.4" cy="19" r="1.25" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="20.6" cy="7.4" r="1.25" fill="currentColor"/><circle cx="21" cy="12" r="1.25" fill="currentColor"/><circle cx="20.6" cy="16.6" r="1.25" fill="currentColor"/></symbol>\n'
+    '<symbol id="ic-ii" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 9.8V17.5A2 2 0 0 0 7.5 19.5H16.5A2 2 0 0 0 18.5 17.5V9.8"/><path d="M4.2 7.4L19.8 5"/><path d="M9.9 16.2H11.9L14.2 13.9"/></g><circle cx="9" cy="16.2" r="1.3" fill="currentColor"/><circle cx="15.5" cy="13.1" r="1.7" fill="none" stroke="currentColor"/></symbol>\n'
+    '<symbol id="ic-ic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="13.6" cy="13" rx="7.4" ry="5.4" transform="rotate(-20 13.6 13)"/><ellipse cx="13.6" cy="13" rx="4.9" ry="3.5" transform="rotate(-20 13.6 13)"/><ellipse cx="13.6" cy="13" rx="2.4" ry="1.7" transform="rotate(-20 13.6 13)"/><path d="M2.6 3.4h2.2l7.1 7.1"/></g><circle cx="1.9" cy="3.4" r="1.2" fill="currentColor"/><circle cx="13.6" cy="13" r="1.5" fill="currentColor"/></symbol>\n'
+    '<symbol id="ic-du" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9.4V6.4A1.4 1.4 0 0 1 8.4 5H11"/><path d="M15 5H17.6A1.4 1.4 0 0 1 19 6.4V9.4"/><path d="M19 13.6V16.6A1.4 1.4 0 0 1 17.6 18H15"/><path d="M11 18H8.4A1.4 1.4 0 0 1 7 16.6V13.6"/></g><g transform="translate(9.4,7.9) scale(.9)"><use href="#star4"/></g><circle cx="3.2" cy="16.6" r="1.15" fill="currentColor"/><circle cx="21.6" cy="3.4" r="0.95" fill="currentColor"/></symbol>\n'
+    '<symbol id="ic-team" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.6 7.4H12l3.4 3.9"/><path d="M8.6 16.6H12l3.4-3.9"/><circle cx="5.4" cy="7.4" r="2.2"/><circle cx="5.4" cy="16.6" r="2.2"/><circle cx="18.6" cy="12" r="2.2"/></g><circle cx="18.6" cy="12" r="0.9" fill="currentColor"/></symbol>\n'
+
+    '  </defs></svg>'
+)
 
 _ACCENT_RE = re.compile(r"^[a-z][a-z0-9-]*$")
 
@@ -266,7 +303,7 @@ def scaffold(items_html, filters, total, sorts=None, batch=20,
         opts = "".join(f'<option value="{v}">{esc(label)}</option>' for v, label in sorts)
         sort_html = f'<select class="pub-sort" data-lv-sort-control aria-label="Sort">{opts}</select>'
 
-    more_html = '<div class="pub-loadmore-wrap"><button type="button" class="btn btn-ghost" data-lv-more>Load more</button></div>' if batch else ""
+    more_html = '<div class="pub-loadmore-wrap"><button type="button" class="btn-ghost" data-lv-more>Load more</button></div>' if batch else ""
 
     return (
         '<div class="container">\n'
@@ -279,7 +316,7 @@ def scaffold(items_html, filters, total, sorts=None, batch=20,
         f'<div class="pub-filters" data-lv-filters role="group" aria-label="Filter">{chips_html}</div>\n'
         '</div>\n'
         f'{listview_status()}\n'
-        f'<div class="pub-list" data-lv-list>{items_html}</div>\n'
+        f'<div class="pub-list" data-lv-list data-chip>{items_html}</div>\n'
         f'<p class="pub-empty" data-lv-empty hidden>{esc(empty_msg)} <button type="button" class="linkbtn" data-lv-reset>Show all</button></p>\n'
         f'{more_html}\n'
         '</div>\n'

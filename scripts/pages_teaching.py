@@ -187,13 +187,13 @@ def generate_content(data):
         f'<div class="pub-stat"><span class="n">{v}</span><span class="l">{esc(l)}</span></div>'
         for v, l in stat_defs if v is not None
     )
-    stats_html = f'<div class="pub-stats teach-stats">{tiles}</div>' if tiles else ""
+    stats_html = f'<div class="pub-stats teach-stats" data-chip>{tiles}</div>' if tiles else ""
 
     phil = teaching.get("philosophy") or {}
     phil_html = ""
     if phil.get("content"):
         phil_html = (
-            f'<aside class="highlight-box"><h2>{esc(phil.get("title", "Teaching Philosophy"))}</h2>'
+            f'<aside class="highlight-box" data-chip><h2>{esc(phil.get("title", "Teaching Philosophy"))}</h2>'
             f'<p>{esc(phil["content"])}</p></aside>'
         )
     top_html = f'<div class="container">{stats_html}{phil_html}</div>' if (stats_html or phil_html) else ""

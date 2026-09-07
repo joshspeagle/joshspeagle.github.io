@@ -1,236 +1,189 @@
-/* Simulation-based-inference hero: data (left) -> a star-network that lights up
-   left-to-right (activations flowing like signal/light) -> samples that land and
-   accumulate into an astronomical posterior on the right.
-   Decorative (canvas is aria-hidden). Theme-aware, reduced-motion-safe, pauses
-   off-screen / when the tab is hidden. The CSS .backdrop is the static fallback. */
+/* Hero: observations (left) -> a feed-forward network drawn as a constellation (middle)
+   -> samples that land and accumulate into a posterior (right).
+   Each "pass" is a real forward pass: an input vector taken from a galaxy lights the input
+   layer; activations a_k = squash(W_k a_{k-1}) propagate layer by layer with fixed (seeded)
+   weights, so every input produces a different, visible activation pattern; edges light in
+   proportion to activation x |weight|; the output layer's activations decide where the
+   sample lands. 30 fps cap, pauses off-screen, still frame under reduced motion. */
 (function () {
   const canvas = document.getElementById('hero-sky');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const R = (a, b) => a + Math.random() * (b - a);
   const lerp = (a, b, t) => a + (b - a) * t;
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
-  function gauss() { let u = Math.random() || 1e-9, v = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2831853 * v); }
+  // seeded RNG so the scene (and the weights) are the same every load
+  let seed = 20260907; const R = (a, b) => { seed = (seed * 1664525 + 1013904223) >>> 0; return a + (seed / 4294967296) * (b - a); };
+  function gauss() { let u = R(1e-6, 1), v = R(0, 1); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2831853 * v); }
+  function cssRGB(name, fb) { const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim(); return v ? v.split(/\s+/).map(Number) : fb; }
 
   const PAL = {
-    dark:  { star: '226,233,255', edge: '150,170,235', node: '200,208,245', v: [150, 128, 255], c: [70, 224, 238], starMax: 0.6, edgeMax: 0.16, sample: '150,224,255', gal: [[150, 190, 255], [255, 212, 172], [216, 178, 198]] },
-    light: { star: '120,120,165', edge: '120,122,170', node: '90,86,140',   v: [91, 67, 214],   c: [14, 154, 168], starMax: 0.45, edgeMax: 0.22, sample: '60,120,190', gal: [[64, 92, 168], [150, 92, 44], [120, 78, 108]] },
+    dark:  { star: '226,233,255', edge: '184,128,94', node: '236,222,200', starMax: 0.6, edgeMax: 0.22, gal: [[150, 190, 255], [255, 212, 172], [216, 178, 198]] },
+    light: { star: '120,120,165', edge: '168,113,74', node: '110,70,36',   starMax: 0.45, edgeMax: 0.32, gal: [[64, 92, 168], [150, 92, 44], [120, 78, 108]] },
   };
-
-  let W = 0, H = 0, DPR = 1;
-  let stars = [], galaxies = [], inputs = [], layers = [], edges = [], signals = [], samples = [];
-  let PX = 0, PY = 0, pw = 0, ph = 0;
+  let W = 0, H = 0, DPR = 1, stars = [], galaxies = [], layers = [], weights = [], passes = [], samples = [];
+  let PX = 0, PY = 0, pw = 0, ph = 0, ANG = -0.6;
   let theme = document.documentElement.getAttribute('data-theme') || 'dark';
   let pal = PAL[theme] || PAL.dark;
-  let running = false, visible = true, rafId = null, lastT = 0, animating = true;
+  let E = [242, 140, 40], EH = [255, 228, 194];        // energy + hot core, read from CSS tokens
+  let running = false, visible = true, rafId = null, lastT = 0, tLast = 0, nextPass = 0;
+  const MAXS = 160, SIZES = [5, 7, 6, 3];                 // input, hidden, hidden, output
+  const COLS = [0.535, 0.615, 0.695, 0.775];             // layer x (fraction of W)
+  const PASS_T = 2.6;                                     // seconds per forward pass
 
-  const MAXS = 150;
-  const LAYER_X = [0.605, 0.685, 0.765];   // hidden-layer columns (fraction of W)
-  const INPUT_X = 0.525;
+  function readEnergy() { E = cssRGB('--energy-rgb', E); EH = theme === 'dark' ? [255, 228, 194] : [255, 240, 220]; }
 
-  // Target posterior: a compact, rotated (correlated) degeneracy — classic inference look.
-  const ANG = -0.6;
-  function sampleTarget() {
-    const a = gauss() * 1.0, b = gauss() * 0.42;     // long / short axis
-    const rx = a * Math.cos(ANG) - b * Math.sin(ANG);
-    const ry = a * Math.sin(ANG) + b * Math.cos(ANG);
-    return { x: clamp(PX + rx * pw, W * 0.74, W * 0.985), y: clamp(PY + ry * ph, H * 0.08, H * 0.92) };
+  function sampleFrom(out) {                              // output activations -> a point in the posterior
+    const z1 = (out[0] - 0.5) * 3.2 + gauss() * 0.35, z2 = (out[1] - out[2]) * 2.6 + gauss() * 0.35;
+    const a = z1 * 1.0, b = z2 * 0.42;
+    const rx = a * Math.cos(ANG) - b * Math.sin(ANG), ry = a * Math.sin(ANG) + b * Math.cos(ANG);
+    return { x: clamp(PX + rx * pw, W * 0.80, W * 0.985), y: clamp(PY + ry * ph, H * 0.08, H * 0.92) };
   }
+  const squash = (x) => 1 / (1 + Math.exp(-3.2 * x));
 
-  function newSignal(phase) {
-    const inp = inputs[(Math.random() * inputs.length) | 0];
-    const a = layers[0][(Math.random() * layers[0].length) | 0];
-    const b = layers[1][(Math.random() * layers[1].length) | 0];
-    const d = layers[2][(Math.random() * layers[2].length) | 0];
-    const land = sampleTarget();
-    return { pts: [inp, a, b, d, land], nodes: [a, b, d], t: phase || 0, speed: R(0.055, 0.09), land };
-  }
-
-  // Positions are rolled once per layout; anything that depends on the palette is a
-  // stored 0..1 factor (star.af, galaxy.gi) so applyPalette() can re-tint the SAME
-  // scene on a theme change instead of re-rolling it (D10).
-  function applyPalette() {
-    for (const s of stars) s.a = lerp(0.08, pal.starMax, s.af);
-    for (const g of galaxies) g.tint = pal.gal[g.gi];
-    for (const p of inputs) p.tint = pal.gal[p.gi];
+  function newPass(t0) {
+    const src = galaxies[(R(0, 1) * galaxies.length) | 0];
+    const acts = [Array.from({ length: SIZES[0] }, () => clamp(0.15 + R(0, 1) * 0.85, 0, 1))];
+    for (let k = 1; k < SIZES.length; k++) {
+      const prev = acts[k - 1], Wk = weights[k - 1], a = [];
+      for (let j = 0; j < SIZES[k]; j++) { let s = 0; for (let i = 0; i < prev.length; i++) s += Wk[j][i] * (prev[i] - 0.45); a.push(squash(s)); }
+      acts.push(a);
+    }
+    return { t0, src, acts, land: sampleFrom(acts[SIZES.length - 1]), landed: false };
   }
 
   function layout() {
     const rect = canvas.getBoundingClientRect();
-    // Buffer matches the element 1:1 — flooring the width squashed every circle
-    // horizontally on narrow screens (D11).
     W = Math.max(1, rect.width); H = Math.max(1, rect.height);
     DPR = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    seed = 20260907;
+    PX = W * 0.895; PY = H * 0.50; pw = W * 0.04; ph = H * 0.095;
 
-    PX = W * 0.875; PY = H * 0.50; pw = W * 0.045; ph = H * 0.095;   // sample x/y scales
-
-    // faint full-width sky
     stars = [];
-    for (let i = 0; i < Math.round(W * H / 6400); i++)
-      stars.push({ x: R(0, W), y: R(0, H), r: R(0.3, 1.4), af: Math.random(), a: 0, ph: R(0, 6.28), sp: R(0.5, 1.6) });
-
-    // left "data" field: a deep field of galaxies (the observations). Distant/faint
-    // on the far left, richer toward the network — a quiet nod to cosmic evolution.
-    // The central text band is kept clear so the copy stays clean.
+    for (let i = 0; i < Math.round(W * H / 6400); i++) stars.push({ x: R(0, W), y: R(0, H), r: R(0.3, 1.4), af: R(0, 1), a: 0, ph: R(0, 6.28), sp: R(0.5, 1.6) });
     galaxies = [];
-    const NG = Math.round(W / 38);
-    let tries = 0;
+    const NG = Math.round(W / 40); let tries = 0;
     const addGal = (fx, fy, depth, scale, alpha, forceType) => {
-      const type = forceType || (depth < 0.4 ? (Math.random() < 0.6 ? 'd' : 'e') : (Math.random() < 0.5 ? 's' : 'e'));
+      const type = forceType || (depth < 0.4 ? (R(0, 1) < 0.6 ? 'd' : 'e') : (R(0, 1) < 0.5 ? 's' : 'e'));
       const gi = type === 's' ? 0 : type === 'e' ? 1 : 2;
-      galaxies.push({ x: W * fx, y: H * fy, rot: R(0, 6.28), ph: R(0, 6.28), type, gi,
-        tint: pal.gal[gi], r: lerp(1.4, 4.6, depth) * scale, a: alpha });
+      galaxies.push({ x: W * fx, y: H * fy, rot: R(0, 6.28), ph: R(0, 6.28), type, gi, tint: pal.gal[gi], r: lerp(1.4, 4.6, depth) * scale, a: alpha });
     };
     while (galaxies.length < NG && tries < NG * 8) {
-      tries++;
-      const fx = R(0.02, 0.47), fy = R(0.05, 0.95);
-      if (fx < 0.44 && fy > 0.30 && fy < 0.70) continue;          // keep the headline band clear
-      const depth = clamp((fx - 0.02) / 0.45, 0, 1);              // 0 far-left .. 1 near network
+      tries++; const fx = R(0.03, 0.46), fy = R(0.06, 0.94);
+      if (fx < 0.44 && fy > 0.28 && fy < 0.72) continue;
+      const depth = clamp((fx - 0.02) / 0.45, 0, 1);
       addGal(fx, fy, depth, R(0.7, 1.3), lerp(0.24, 0.56, depth) * R(0.8, 1.12));
     }
-    // a few prominent "feature" galaxies anchoring the top-left and lower-left
-    addGal(0.115, 0.155, 0.5, 1.9, 0.6, 's');
-    addGal(0.305, 0.125, 0.65, 1.4, 0.52, 'e');
-    addGal(0.165, 0.85, 0.55, 1.7, 0.55, 's');
-    addGal(0.30, 0.88, 0.6, 1.3, 0.5, 'e');
+    addGal(0.115, 0.155, 0.5, 1.9, 0.6, 's'); addGal(0.305, 0.125, 0.65, 1.4, 0.52, 'e'); addGal(0.165, 0.85, 0.55, 1.7, 0.55, 's'); addGal(0.30, 0.88, 0.6, 1.3, 0.5, 'e');
+    // richer field right next to the network: the survey the model is fed from
+    for (let i = 0; i < 9; i++) addGal(R(0.44, 0.49), lerp(0.14, 0.86, i / 8) + R(-0.03, 0.03), 0.9, R(0.9, 1.5), R(0.55, 0.85));
 
-    // bright "input" galaxies adjacent to the network — pulses originate here
-    inputs = [];
-    for (let i = 0; i < 5; i++) inputs.push({ x: W * R(INPUT_X - 0.02, INPUT_X + 0.01), y: H * lerp(0.24, 0.76, i / 4) + R(-10, 10),
-      r: R(2.2, 3.2), rot: R(0, 6.28), ph: R(0, 6.28), a: R(0.7, 0.95), type: i % 2 === 0 ? 's' : 'e',
-      gi: i % 2 === 0 ? 0 : 1, tint: pal.gal[i % 2 === 0 ? 0 : 1] });
+    layers = SIZES.map((n, k) => Array.from({ length: n }, (_, i) => ({ x: W * COLS[k] + R(-W * 0.006, W * 0.006), y: H * lerp(0.2, 0.8, n === 1 ? 0.5 : i / (n - 1)) + R(-6, 6), r: R(1.6, 2.4), act: 0 })));
+    weights = [];
+    for (let k = 1; k < SIZES.length; k++) { const Wk = []; for (let j = 0; j < SIZES[k]; j++) { const row = []; for (let i = 0; i < SIZES[k - 1]; i++) row.push(gauss() * 0.9); Wk.push(row); } weights.push(Wk); }
 
-    // layered network (nodes styled as stars)
-    layers = LAYER_X.map((fx, li) => {
-      const k = [4, 5, 4][li];
-      const arr = [];
-      for (let i = 0; i < k; i++) arr.push({ x: W * fx + R(-W * 0.01, W * 0.01), y: H * lerp(0.2, 0.8, i / (k - 1)) + R(-10, 10), r: R(1.4, 2.6), act: 0 });
-      return arr;
-    });
-
-    // edges between consecutive layers (each node -> 2 nearest in next layer) + inputs -> layer0
-    edges = [];
-    const connect = (A, B) => {
-      for (const p of A) {
-        const nb = B.map((q) => ({ q, d: (p.x - q.x) ** 2 + (p.y - q.y) ** 2 })).sort((m, n) => m.d - n.d).slice(0, 2);
-        for (const { q } of nb) edges.push([p, q]);
-      }
-    };
-    connect(inputs, layers[0]); connect(layers[0], layers[1]); connect(layers[1], layers[2]);
-
-    samples = [];
-    signals = [];
-    for (let i = 0; i < 6; i++) signals.push(newSignal(i / 6));
-
-    if (reduce || !animating) {            // prefill a static posterior + mid-flight signals
-      for (let i = 0; i < 95; i++) { const s = sampleTarget(); samples.push({ x: s.x, y: s.y, born: -1 }); }
-      signals.forEach((s, i) => { s.t = (0.25 + 0.12 * i) % 1; });
+    samples = []; passes = []; nextPass = 0;
+    if (reduce) {                                    // still frame: a filled posterior + one pass mid-way
+      for (let i = 0; i < 110; i++) { const p = newPass(0); samples.push({ x: p.land.x, y: p.land.y, born: -1 }); }
+      passes.push(Object.assign(newPass(0), { t0: -1.45 })); passes.push(Object.assign(newPass(0), { t0: -0.55 }));
     }
-
     applyPalette();
   }
+  function applyPalette() { for (const s of stars) s.a = lerp(0.08, pal.starMax, s.af); for (const g of galaxies) g.tint = pal.gal[g.gi]; readEnergy(); }
 
   function glow(cx, cy, r, rgb, a) { const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(1, `rgba(${rgb},0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill(); }
-  function smooth(pts) { ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y); for (let i = 1; i < pts.length - 1; i++) { const xc = (pts[i].x + pts[i + 1].x) / 2, yc = (pts[i].y + pts[i + 1].y) / 2; ctx.quadraticCurveTo(pts[i].x, pts[i].y, xc, yc); } ctx.lineTo(pts[pts.length - 1].x, pts[pts.length - 1].y); }
-  function ptAt(pts, f) { const seg = (pts.length - 1) * clamp(f, 0, 1); const i = Math.min(pts.length - 2, Math.floor(seg)); const t = seg - i; return { x: lerp(pts[i].x, pts[i + 1].x, t), y: lerp(pts[i].y, pts[i + 1].y, t) }; }
-  function ellipse(cx, cy, rl, rs, ang) { ctx.save(); ctx.translate(cx, cy); ctx.rotate(ang); ctx.beginPath(); ctx.ellipse(0, 0, rl, rs, 0, 0, 7); ctx.stroke(); ctx.restore(); }
-  function drawGalaxy(g, t, bright) {
-    const tw = 0.85 + 0.15 * Math.sin(t * 0.5 + g.ph), a = g.a * tw, tint = g.tint.join(',');
+  function star4(cx, cy, r) { const s = r * 0.3; ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx + s, cy - s); ctx.lineTo(cx + r, cy); ctx.lineTo(cx + s, cy + s); ctx.lineTo(cx, cy + r); ctx.lineTo(cx - s, cy + s); ctx.lineTo(cx - r, cy); ctx.lineTo(cx - s, cy - s); ctx.closePath(); ctx.fill(); }
+  function ellipse(cx, cy, rl, rs, ang) { ctx.save(); ctx.translate(cx, cy); ctx.rotate(ang); ctx.scale(rl, rs); ctx.beginPath(); ctx.arc(0, 0, 1, 0, 7); ctx.restore(); }
+  function drawGalaxy(g, now, bright) {
+    const tint = `${g.tint[0]},${g.tint[1]},${g.tint[2]}`, a = g.a * (bright ? 1 : 0.85 + 0.15 * Math.sin(now * 0.7 + g.ph));
     glow(g.x, g.y, g.r * (bright ? 4.6 : 3.4), tint, a * (bright ? 0.4 : 0.26));
-    ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.rot);
-    const grd = ctx.createRadialGradient(0, 0, 0, 0, 0, g.r * 1.8);
-    grd.addColorStop(0, `rgba(${tint},${a})`); grd.addColorStop(1, `rgba(${tint},0)`);
-    ctx.fillStyle = grd; ctx.beginPath(); ctx.ellipse(0, 0, g.r * 1.8, g.r * (g.type === 's' ? 0.66 : 1.0), 0, 0, 7); ctx.fill();
-    if (g.type === 's') {
-      ctx.strokeStyle = `rgba(${tint},${a * 0.55})`; ctx.lineWidth = 0.8;
-      for (let k = 0; k < 2; k++) { ctx.beginPath(); for (let u = 0; u <= 1.01; u += 0.12) { const ang = u * 3.2 + k * Math.PI, rr = g.r * 1.7 * u, x = Math.cos(ang) * rr, y = Math.sin(ang) * rr * 0.66; u === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
-    }
-    if (g.type !== 'd' || bright) { ctx.fillStyle = `rgba(255,255,255,${a * 0.6})`; ctx.beginPath(); ctx.arc(0, 0, Math.max(0.6, g.r * 0.3), 0, 7); ctx.fill(); }
-    ctx.restore();
+    if (g.type === 'e') { ellipse(g.x, g.y, g.r * 1.5, g.r * 0.95, g.rot); ctx.fillStyle = `rgba(${tint},${a * 0.9})`; ctx.fill(); }
+    else if (g.type === 's') { ctx.strokeStyle = `rgba(${tint},${a * 0.55})`; ctx.lineWidth = 0.8; ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.rot); ctx.beginPath(); for (let arm = 0; arm < 2; arm++) { for (let t = 0; t <= 2.6; t += 0.2) { const rr = g.r * 0.3 * Math.exp(0.32 * t), th = t + arm * Math.PI; const x = rr * Math.cos(th), y = rr * 0.55 * Math.sin(th); t === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } } ctx.stroke(); ctx.restore(); ctx.fillStyle = `rgba(${tint},${a})`; ctx.beginPath(); ctx.arc(g.x, g.y, g.r * 0.45, 0, 7); ctx.fill(); }
+    else { ctx.fillStyle = `rgba(${tint},${a * 0.8})`; ctx.beginPath(); ctx.arc(g.x, g.y, g.r * 0.7, 0, 7); ctx.fill(); }
   }
 
-  function render(time) {
+  function render(now) {
     ctx.clearRect(0, 0, W, H);
-    const V = pal.v, C = pal.c, now = time;
-    // (early-universe glow is a CSS layer — .hero .dawn — so it sits above the
-    //  readability scrim instead of being washed out by it.)
-
-    // faint sky
+    const Ec = `${E[0]},${E[1]},${E[2]}`, Hc = `${EH[0]},${EH[1]},${EH[2]}`;
     for (const s of stars) { const a = s.a * (0.6 + 0.4 * Math.sin(now * s.sp + s.ph)); ctx.fillStyle = `rgba(${pal.star},${Math.max(0, a)})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill(); }
-    // left data field: galaxies (the observations)
     for (const g of galaxies) drawGalaxy(g, now, false);
 
-    // --- posterior (right): glow + iso-density contours + accumulated samples ---
-    glow(PX, PY, Math.min(W, H) * 0.26, `${C}`, 0.12);
-    ctx.strokeStyle = `rgba(${C},0.16)`; ctx.lineWidth = 1;
-    for (const k of [1.1, 2.1]) {   // iso-density ellipses matching the sample map
-      ctx.beginPath();
-      for (let q = 0; q <= 6.2832 + 0.001; q += 0.2) {
-        const a = k * Math.cos(q), b = 0.42 * k * Math.sin(q);
-        const rx = a * Math.cos(ANG) - b * Math.sin(ANG), ry = a * Math.sin(ANG) + b * Math.cos(ANG);
-        const x = PX + rx * pw, y = PY + ry * ph;
-        q === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      }
-      ctx.stroke();
-    }
-    for (const sm of samples) {
-      const age = sm.born < 0 ? 1 : clamp((now - sm.born) / 0.5, 0, 1);
-      ctx.fillStyle = `rgba(${pal.sample},${0.55 * age})`;
-      ctx.beginPath(); ctx.arc(sm.x, sm.y, 1.7, 0, 7); ctx.fill();
-    }
+    // posterior: glow, two iso-density contours, accumulated samples
+    glow(PX, PY, Math.min(W, H) * 0.24, Ec, 0.09);
+    ctx.strokeStyle = `rgba(${pal.edge},0.45)`; ctx.lineWidth = 1;
+    for (const k of [1.1, 2.1]) { ctx.beginPath(); for (let q = 0; q <= 6.2832 + 0.001; q += 0.2) { const a = k * Math.cos(q), b = 0.42 * k * Math.sin(q); const rx = a * Math.cos(ANG) - b * Math.sin(ANG), ry = a * Math.sin(ANG) + b * Math.cos(ANG); const x = PX + rx * pw, y = PY + ry * ph; q === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); } ctx.stroke(); }
+    for (const sm of samples) { const age = sm.born < 0 ? 1 : clamp((now - sm.born) / 0.5, 0, 1); ctx.fillStyle = `rgba(${Ec},${0.6 * age})`; ctx.beginPath(); ctx.arc(sm.x, sm.y, 1.6, 0, 7); ctx.fill(); }
 
-    // --- network edges (faint) ---
-    ctx.lineWidth = 1;
-    for (const [a, b] of edges) { ctx.strokeStyle = `rgba(${pal.edge},${pal.edgeMax})`; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
-
-    // reset activation, advance signals
+    // network: faint copper edges (fully connected between adjacent layers)
+    ctx.lineWidth = 0.9; ctx.strokeStyle = `rgba(${pal.edge},${pal.edgeMax})`;
+    for (let k = 0; k < layers.length - 1; k++) for (const a of layers[k]) for (const b of layers[k + 1]) { ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
     for (const L of layers) for (const nd of L) nd.act = 0;
-    for (const s of signals) {
-      if (animating) s.t += s.speed * 0.6;
-      if (s.t >= 1) { samples.push({ x: s.land.x, y: s.land.y, born: now }); if (samples.length > MAXS) samples.shift(); Object.assign(s, newSignal(0)); }
-      const seg = s.t * (s.pts.length - 1);
-      s.nodes.forEach((nd, i) => { const reach = clamp(1 - (seg - (i + 1)) / 1.6, 0, 1) * clamp(seg - i * 0.4, 0, 1); if (reach > nd.act) nd.act = reach; });
-    }
 
-    // --- activations flow along the real edges (data -> network -> sample) ---
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    for (const s of signals) {
-      const head = clamp(s.t, 0, 1), n = s.pts.length - 1, segF = head * n;
-      const hp = ptAt(s.pts, head);
-      const g = ctx.createLinearGradient(s.pts[0].x, s.pts[0].y, s.land.x, s.land.y);
-      g.addColorStop(0, `rgba(${V[0]},${V[1]},${V[2]},0)`); g.addColorStop(0.45, `rgb(${V})`); g.addColorStop(1, `rgb(${C})`);
-      ctx.strokeStyle = g; ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(s.pts[0].x, s.pts[0].y);
-      for (let i = 1; i <= Math.floor(segF); i++) ctx.lineTo(s.pts[i].x, s.pts[i].y);
-      ctx.lineTo(hp.x, hp.y); ctx.stroke();
-      const f = head, col = `${Math.round(lerp(V[0], C[0], f))},${Math.round(lerp(V[1], C[1], f))},${Math.round(lerp(V[2], C[2], f))}`;
-      glow(hp.x, hp.y, 11, col, 0.85); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(hp.x, hp.y, 2, 0, 7); ctx.fill();
+    // passes: 0..0.18 ingest (galaxy -> input layer), then one layer transition per 0.2, then the sample flies
+    ctx.lineCap = 'round';
+    for (const p of passes) {
+      const ph = (now - p.t0) / PASS_T;
+      if (ph < 0) continue;
+      // ingestion: a bright point leaves the galaxy toward the input layer's centroid
+      if (ph < 0.18) {
+        const q = ph / 0.18, cx = layers[0].reduce((s, n) => s + n.x, 0) / layers[0].length, cy = layers[0].reduce((s, n) => s + n.y, 0) / layers[0].length;
+        const x = lerp(p.src.x, cx, q), y = lerp(p.src.y, cy, q);
+        ctx.strokeStyle = `rgba(${Ec},${0.35 * (1 - q)})`; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(p.src.x, p.src.y); ctx.lineTo(x, y); ctx.stroke();
+        glow(x, y, 9, Ec, 0.8); ctx.fillStyle = `rgb(${Hc})`; ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 7); ctx.fill();
+        glow(p.src.x, p.src.y, p.src.r * 5, Ec, 0.35 * (1 - q));
+      }
+      // layer-by-layer propagation
+      for (let k = 0; k < layers.length; k++) {
+        const start = 0.18 + k * 0.2, rise = clamp((ph - start) / 0.08, 0, 1);         // node k lights over 80 ms
+        const fade = clamp(1 - (ph - start - 0.55) / 0.45, 0, 1);                       // and lingers, then fades
+        const level = rise * fade;
+        layers[k].forEach((nd, i) => { const a = p.acts[k][i] * level; if (a > nd.act) nd.act = a; });
+        if (k > 0) {                                                                    // edges k-1 -> k light with the front
+          const q = clamp((ph - (start - 0.2)) / 0.2, 0, 1); if (q <= 0 || fade <= 0) continue;
+          const Wk = weights[k - 1]; let wmax = 0; for (const row of Wk) for (const w of row) wmax = Math.max(wmax, Math.abs(w));
+          layers[k - 1].forEach((a, i) => layers[k].forEach((b, j) => {
+            const s = p.acts[k - 1][i] * Math.abs(Wk[j][i]) / wmax; if (s < 0.12) return;
+            const ex = lerp(a.x, b.x, q), ey = lerp(a.y, b.y, q);
+            ctx.strokeStyle = `rgba(${Ec},${(0.15 + 0.85 * s) * (q < 1 ? 1 : fade)})`; ctx.lineWidth = 0.8 + 1.4 * s;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(ex, ey); ctx.stroke();
+            if (q < 1 && s > 0.5) { ctx.fillStyle = `rgb(${Hc})`; ctx.beginPath(); ctx.arc(ex, ey, 1.2, 0, 7); ctx.fill(); }
+          }));
+        }
+      }
+      // the sample: leaves the output layer and lands in the posterior
+      const fly0 = 0.18 + (layers.length - 1) * 0.2 + 0.1;
+      if (ph >= fly0) {
+        const q = clamp((ph - fly0) / 0.22, 0, 1), out = layers[layers.length - 1];
+        const ox = out.reduce((s, n) => s + n.x, 0) / out.length, oy = out.reduce((s, n) => s + n.y, 0) / out.length;
+        const x = lerp(ox, p.land.x, q), y = lerp(oy, p.land.y, q) - Math.sin(q * Math.PI) * 18;
+        ctx.strokeStyle = `rgba(${Ec},${0.5 * (1 - q)})`; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(x, y); ctx.stroke();
+        glow(x, y, 10, Ec, 0.9 * (1 - 0.5 * q)); ctx.fillStyle = `rgb(${Hc})`; ctx.beginPath(); ctx.arc(x, y, 2, 0, 7); ctx.fill();
+        if (q >= 1 && !p.landed) { p.landed = true; samples.push({ x: p.land.x, y: p.land.y, born: now }); if (samples.length > MAXS) samples.shift(); }
+      }
     }
+    passes = passes.filter(p => (now - p.t0) / PASS_T < 1.25);
 
-    // --- nodes (stars that light up) ---
+    // nodes: four-point stars whose brightness is their activation
     for (const L of layers) for (const nd of L) {
-      if (nd.act > 0.02) { const col = `${Math.round(lerp(V[0], C[0], 0.5))},${Math.round(lerp(V[1], C[1], 0.5))},${Math.round(lerp(V[2], C[2], 0.5))}`; glow(nd.x, nd.y, 11 * nd.act + 4, col, 0.6 * nd.act); }
-      ctx.fillStyle = `rgba(${pal.node},${0.45 + 0.5 * nd.act})`; ctx.beginPath(); ctx.arc(nd.x, nd.y, nd.r, 0, 7); ctx.fill();
+      if (nd.act > 0.03) glow(nd.x, nd.y, 6 + 14 * nd.act, Ec, 0.75 * nd.act);
+      ctx.fillStyle = nd.act > 0.03 ? `rgba(${Hc},${0.55 + 0.45 * nd.act})` : `rgba(${pal.node},0.55)`;
+      star4(nd.x, nd.y, nd.r * 2.2 + 3.2 * nd.act);
     }
-    // input galaxies (the observed sample feeding the network)
-    for (const p of inputs) drawGalaxy(p, now, true);
   }
 
-  function drawOnce() { render(0.6); }
-  function loop(now) { if (!running) return; if (now - lastT >= 33) { lastT = now; render(now / 1000); } rafId = requestAnimationFrame(loop); }
-  function start() { if (running || reduce || !visible) return; running = true; animating = true; rafId = requestAnimationFrame(loop); }
+  function loop(now) {
+    if (!running) return;
+    if (now - lastT >= 33) { lastT = now; const t = now / 1000; if (t >= nextPass) { passes.push(newPass(t)); nextPass = t + 1.05; } render(t); }
+    rafId = requestAnimationFrame(loop);
+  }
+  function start() { if (running || reduce || !visible) return; running = true; rafId = requestAnimationFrame(loop); }
   function stop() { running = false; if (rafId) cancelAnimationFrame(rafId); }
-  function init() { animating = !reduce; layout(); if (reduce) drawOnce(); else start(); }
-
+  function init() { layout(); if (reduce) render(0); else start(); }
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) start(); else stop(); }, { threshold: 0.01 }).observe(canvas);
   document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
-  // Theme change: re-tint in place. Only a resize re-rolls the scene.
-  new MutationObserver(() => { const t = document.documentElement.getAttribute('data-theme') || 'dark'; if (t !== theme) { theme = t; pal = PAL[t] || PAL.dark; applyPalette(); if (reduce) drawOnce(); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); if (reduce) drawOnce(); }, 200); });
-
+  new MutationObserver(() => { const t = document.documentElement.getAttribute('data-theme') || 'dark'; if (t !== theme) { theme = t; pal = PAL[t] || PAL.dark; applyPalette(); if (reduce) render(0); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-energy'] });
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); if (reduce) render(0); }, 200); });
   if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();

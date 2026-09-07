@@ -30,9 +30,9 @@ FEED_XML = PROJECT_ROOT / FEED_FILE
 
 # Redesign per-page content generators (scripts/ on path so they import cleanly)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from pages_shared import (attr_esc, clean_text, esc, esc_text,  # noqa: E402
-                          listview_status, percent_shares, slug, strip_tags,
-                          term_month, url_attr, warn)
+from pages_shared import (SPRITE, attr_esc, clean_text, esc,  # noqa: E402
+                          esc_text, listview_status, percent_shares, slug,
+                          strip_tags, term_month, url_attr, warn)
 from pages_talks import generate_content as gen_talks          # noqa: E402
 from pages_teaching import generate_content as gen_teaching    # noqa: E402
 from pages_mentorship import generate_content as gen_mentorship  # noqa: E402
@@ -58,7 +58,7 @@ DEFAULT_FOOTER_NOTE = "Astronomy · Statistics · AI"
 #   title      <title>; None derives "<pages.<key>.title> · Joshua S. Speagle"
 #   canonical  path under SITE_URL (None = no canonical/OG block, e.g. 404)
 #   layout     'hero' (Home) | 'header' (kicker/title/tagline band) | 'notfound'
-#   scripts    assets/js/redesign/*.js loaded before the nav script
+#   scripts    assets/js/redesign/*.js loaded after site.js (board.js first)
 #   sitemap    <priority> in sitemap.xml (None = excluded)
 #   sources    data files whose newest change dates the footer + sitemap lastmod
 #   footer     right-hand footer note (defaults to DEFAULT_FOOTER_NOTE)
@@ -66,33 +66,33 @@ DEFAULT_FOOTER_NOTE = "Astronomy · Statistics · AI"
 # ---------------------------------------------------------------------------
 PAGES = {
     "index": dict(file="index.html", nav="Home", title=f"{SITE_NAME} · Astrostatistics",
-                  canonical="/", layout="hero", scripts=["hero.js"], sitemap="1.0",
+                  canonical="/", layout="hero", scripts=["board.js", "hero.js"], sitemap="1.0",
                   sources=["content", "publications"], content_key="home"),
     "publications": dict(file="publications.html", nav="Publications", canonical="/publications.html",
-                         layout="header", scripts=["listview.js", "pubchart.js"], sitemap="0.8",
+                         layout="header", scripts=["board.js", "listview.js", "pubchart.js"], sitemap="0.8",
                          sources=["publications"],
                          footer="Data from SAO/NASA ADS &amp; Google Scholar"),
     # Software dates from its own cache only: the stats it shows are pipeline-owned,
     # so the stamp must not drift forward when unrelated content.json prose changes.
     "software": dict(file="software.html", nav="Software", canonical="/software.html",
-                     layout="header", scripts=["listview.js"], sitemap="0.6",
+                     layout="header", scripts=["board.js", "listview.js"], sitemap="0.6",
                      sources=["software"]),
     "talks": dict(file="talks.html", nav="Talks", canonical="/talks.html",
-                  layout="header", scripts=["listview.js"], sitemap="0.6", sources=["content"]),
+                  layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "teaching": dict(file="teaching.html", nav="Teaching", canonical="/teaching.html",
-                     layout="header", scripts=["listview.js"], sitemap="0.6", sources=["content"]),
+                     layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "mentorship": dict(file="mentorship.html", nav="Mentorship", canonical="/mentorship.html",
-                       layout="header", scripts=["listview.js"], sitemap="0.8", sources=["content"]),
+                       layout="header", scripts=["board.js", "listview.js"], sitemap="0.8", sources=["content"]),
     "biography": dict(file="biography.html", nav="Biography", canonical="/biography.html",
-                      layout="header", scripts=[], sitemap="0.6", sources=["content"]),
+                      layout="header", scripts=["board.js"], sitemap="0.6", sources=["content"]),
     "news": dict(file="news.html", nav="News", canonical="/news.html",
-                 layout="header", scripts=["listview.js"], sitemap="0.6", sources=["content"]),
+                 layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "awards": dict(file="awards.html", nav="Awards", canonical="/awards.html",
-                   layout="header", scripts=["listview.js"], sitemap="0.6", sources=["content"]),
+                   layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "service": dict(file="service.html", nav="Service", canonical="/service.html",
-                    layout="header", scripts=["listview.js"], sitemap="0.6", sources=["content"]),
+                    layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "404": dict(file="404.html", nav=None, title=f"Page not found · {SITE_NAME}",
-                canonical=None, layout="notfound", scripts=[], sitemap=None,
+                canonical=None, layout="notfound", scripts=["board.js"], sitemap=None,
                 sources=["content"], root="/", noindex=True, container="notfound-content",
                 content_key="notfound"),
 }
@@ -282,9 +282,13 @@ def _nav_link(entry, current, root):
 
 
 def render_nav(current, root):
-    """Primary nav: brand, top-level items + dropdown groups, CV, theme + hamburger."""
+    """Primary nav: the brand mark + name, top-level items + dropdown groups, CV,
+    theme toggle + hamburger. The class/id contract (.nav-group/.nav-trigger/.menu/
+    .nav-open/.open/#hamburger/#theme-toggle/#nav-links) is what site.js wires."""
     out = ['  <nav class="nav" aria-label="Primary">',
-           f'    <a class="brand" href="{root}index.html"><span class="star" aria-hidden="true">✦</span>{SITE_NAME}</a>',
+           f'    <a class="brand" href="{root}index.html">'
+           f'<svg class="mark" aria-hidden="true" focusable="false"><use href="#mark-s"/></svg>'
+           f'{SITE_NAME}</a>',
            '    <div class="nav-links" id="nav-links">']
     for entry in NAV:
         if entry.get("items"):
@@ -303,8 +307,8 @@ def render_nav(current, root):
             out.append(f'      <a class="nav-item" href="{href}"{cur}>{label}</a>')
     out.append(f'      <a class="nav-item cv-mobile" href="{url_attr(CV_URL)}">Curriculum Vitae</a>')
     out.append('    </div>')
-    out.append('    <div style="display:flex;align-items:center;gap:12px">')
-    out.append(f'      <a class="cv-btn" href="{url_attr(CV_URL)}">Curriculum Vitae</a>')
+    out.append('    <div class="nav-right">')
+    out.append(f'      <a class="cv" href="{url_attr(CV_URL)}">Curriculum Vitae</a>')
     out.append('      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode">☾</button>')
     out.append('      <button class="theme-toggle hamburger" id="hamburger" type="button" aria-label="Open menu" '
                'aria-expanded="false" aria-controls="nav-links">☰</button>')
@@ -438,45 +442,93 @@ def render_structured_data(key, page, data):
     return "\n".join(_json_ld(b) for b in blocks)
 
 
-def render_footer(page):
-    """Site footer. Both dates come from the data files (see data_date): the stamp
-    from this page's own sources, the © year from the newest of all of them."""
+def _footer_elsewhere(data):
+    """The "Elsewhere" footer column: the author profiles declared in
+    sections.publications.links, plus the GitHub account software_data.json fetches."""
+    declared = ((data.get("sections", {}).get("publications", {}) or {}).get("links") or {})
+    labels = [("ads", "ADS"), ("scholar", "Google Scholar"), ("orcid", "ORCID")]
+    links = [(label, declared[key]) for key, label in labels if declared.get(key)]
+    user = load_data_file("software").get("githubUser")
+    if user:
+        links.insert(2, ("GitHub", f"https://github.com/{user}"))
+    return "".join(
+        f'<li><a href="{url_attr(url)}" target="_blank" rel="noopener">{esc(name)}</a></li>'
+        for name, url in links)
+
+
+def render_footer(page, data, root):
+    """Site footer: the brand lockup, one link column per NAV group plus "Elsewhere",
+    and the copyright line. Both dates come from the data files (see data_date): the
+    stamp from this page's own sources, the © year from the newest of all of them."""
     note = page.get("footer", DEFAULT_FOOTER_NOTE)
     stamp = source_date(page)
     updated = f' · Updated {stamp.strftime("%B %Y")}' if stamp else ""
     year = site_updated()
     copyright_ = f"© {year.year} " if year else ""
+    site = data.get("site", {}) or {}
+
+    columns = []
+    for entry in NAV:                       # the nav registry IS the footer sitemap
+        if not entry.get("items"):
+            continue
+        rows = ""
+        for item in entry["items"]:
+            href, label, _cur, ext = _nav_link(item, None, root)
+            rows += f'<li><a href="{href}"{ext}>{label}</a></li>'
+        columns.append((entry["label"], rows))
+    columns.append(("Elsewhere", _footer_elsewhere(data)))
+    cols_html = "".join(
+        f'        <div><h2>{label}</h2><ul>{rows}</ul></div>\n'
+        for label, rows in columns if rows)
+
+    blurb = esc(site.get("jobTitle", ""))
+    if site.get("affiliation", {}).get("name"):
+        blurb = f'{blurb} · {esc(site["affiliation"]["name"])}' if blurb else esc(site["affiliation"]["name"])
     return ('  <footer class="site-footer">\n'
             '    <div class="container">\n'
-            f'      <span>{copyright_}{SITE_NAME} · <span class="zh">沈佳士</span></span>\n'
-            f'      <span>{note}{updated}</span>\n'
+            '      <div class="foot">\n'
+            '        <div>\n'
+            f'          <a class="brand" href="{root}index.html">'
+            f'<svg class="mark" aria-hidden="true" focusable="false"><use href="#mark-s"/></svg>'
+            f'{SITE_NAME}</a>\n'
+            f'          <p class="foot-blurb">{blurb}</p>\n'
+            '        </div>\n'
+            f'{cols_html}'
+            '      </div>\n'
+            '      <div class="foot-copy">\n'
+            f'        <span>{copyright_}{SITE_NAME} · <span class="zh">沈佳士</span></span>\n'
+            f'        <span>{note}{updated}</span>\n'
+            '      </div>\n'
             '    </div>\n'
             '  </footer>')
 
 
+# The three stages the hero canvas draws, labelled along its bottom edge.
+_HERO_LABELS = [("hl-obs", "Observations"), ("hl-net", "Network"), ("hl-post", "Posterior")]
+
+
 def render_hero(data):
-    """Home hero: animated canvas + kicker/name/tagline/CTAs from pages.home."""
+    """Home hero: the animated network canvas + kicker/name/tagline/CTAs from
+    pages.home. One solid action (.btn); every further CTA is a text link (.link)."""
     home = page_meta(data, "index")
     ctas = ""
-    for cta in home.get("cta", []):
-        cls = "btn-primary" if cta.get("type") == "primary" else "btn-ghost"
-        ctas += f'<a class="btn {cls}" href="{url_attr(cta.get("url", "#"))}">{esc(cta.get("text", ""))}</a>\n            '
+    for i, cta in enumerate(home.get("cta", [])):
+        cls = "btn" if i == 0 and cta.get("type") == "primary" else "link"
+        ctas += f'<a class="{cls}" href="{url_attr(cta.get("url", "#"))}">{esc(cta.get("text", ""))}</a>'
+    labels = "".join(f'<span class="{cls}">{esc(text)}</span>' for cls, text in _HERO_LABELS)
     return ('    <section class="hero">\n'
             '      <canvas id="hero-sky" aria-hidden="true"></canvas>\n'
-            '      <div class="backdrop" aria-hidden="true"></div>\n'
-            '      <div class="vignette" aria-hidden="true"></div>\n'
-            '      <div class="dawn" aria-hidden="true"></div>\n'
+            '      <div class="scrim" aria-hidden="true"></div>\n'
             '      <div class="container">\n'
             '        <div class="hero-inner">\n'
             f'          <p class="kicker">{esc_text(home.get("kicker", ""))}</p>\n'
             f'          <h1>{esc_text(home.get("title", SITE_NAME))}'
             f'<span class="zh">{esc_text(home.get("nameZh", ""))}</span></h1>\n'
             f'          <p class="tagline">{home.get("tagline", "")}</p>\n'
-            '          <div class="cta">\n'
-            f'            {ctas.rstrip()}\n'
-            '          </div>\n'
+            f'          <div class="cta">{ctas}</div>\n'
             '        </div>\n'
             '      </div>\n'
+            f'      <div class="hero-labels" aria-hidden="true">{labels}</div>\n'
             '    </section>')
 
 
@@ -485,7 +537,7 @@ def generate_page_header(page):
     kicker + title are plain text (escaped); tagline is emitted as-is so it may carry
     inline markup (e.g. <strong>)."""
     return (
-        f'<p class="section-kicker">{esc_text(page.get("kicker", ""))}</p>\n'
+        f'<p class="kicker">{esc_text(page.get("kicker", ""))}</p>\n'
         f'        <h1 class="pub-h1">{esc_text(page.get("title", ""))}</h1>\n'
         f'        <p class="pub-sub">{page.get("tagline", "")}</p>'
     )
@@ -498,11 +550,13 @@ def render_notfound(data):
     cta = (meta.get("cta") or {})
     return ('  <main id="main-content" class="notfound-main" tabindex="-1">\n'
             '    <div class="container" id="notfound-content">\n'
-            f'<p class="section-kicker notfound-kicker">{esc_text(meta.get("kicker", ""))}</p>\n'
+            '<div class="notfound-card" data-chip>\n'
+            f'      <p class="kicker">{esc_text(meta.get("kicker", ""))}</p>\n'
             f'      <h1 class="notfound-title">{esc_text(meta.get("title", ""))}</h1>\n'
             f'      <p class="notfound-body">{esc_text(meta.get("body", ""))}</p>\n'
-            f'      <a class="btn btn-primary" href="{url_attr(cta.get("url", "/index.html"))}">'
+            f'      <a class="btn" href="{url_attr(cta.get("url", "/index.html"))}">'
             f'{esc_text(cta.get("text", "Return home"))}</a>\n'
+            '      </div>\n'
             '</div>\n'
             '  </main>')
 
@@ -520,7 +574,6 @@ def render_main(key, page, data, content):
     else:
         meta = page_meta(data, key)
         out.append('    <section class="pub-header">')
-        out.append('      <div class="pub-header-glow" aria-hidden="true"></div>')
         out.append(f'      <div class="container" id="{key}-header">')
         out.append(generate_page_header(meta))
         out.append('</div>')
@@ -556,13 +609,16 @@ def render_shell(key, data, content):
         f'{render_head(key, page, data)}\n'
         '\n'
         '<body>\n'
+        f'{SPRITE}\n'
+        '  <svg id="board" aria-hidden="true"></svg>\n'
+        '\n'
         '  <a class="skip-link" href="#main-content">Skip to main content</a>\n'
         '\n'
         f'{render_nav(key, root)}\n'
         '\n'
         f'{render_main(key, page, data, content)}\n'
         '\n'
-        f'{render_footer(page)}\n'
+        f'{render_footer(page, data, root)}\n'
         f'{scripts}\n'
         '</body>\n'
         '</html>\n'
@@ -656,12 +712,18 @@ def write_feed(data):
     return xml
 
 
-_HOME_ICONS = [
-    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="13" cy="12" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="20" cy="18" r="2"/><path d="M7 6.6 11 11M7 17.4 11 13M15 11l4-4M15 13l4 4"/></svg>', "sla"),
-    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5 20 20"/><path d="M10 7.5v5M7.5 10h5"/></svg>', "ii"),
-    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 19h18"/><path d="M3 19c4 0 4-12 9-12s5 12 9 12"/></svg>', "ic"),
-    ('<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="9" ry="3.6" transform="rotate(-24 12 12)"/><path d="M12 12c2.6-1.1 5.2 0 6 2.2M12 12c-2.6 1.1-5.2 0-6-2.2"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>', "du"),
-]
+# The four research areas, in content.json order: (sprite icon id, area key).
+_HOME_ICONS = [("ic-sla", "sla"), ("ic-ii", "ii"), ("ic-ic", "ic"), ("ic-du", "du")]
+
+# The ART panel's two highlights, in content.json order (the emoji in the data are
+# ignored — Design G draws them from the sprite).
+_ART_ICONS = ["ic-sla", "ic-team"]
+
+
+def _use(icon_id, cls):
+    """One sprite glyph (see pages_shared.SPRITE)."""
+    return f'<svg class="{cls}" aria-hidden="true" focusable="false"><use href="#{icon_id}"/></svg>'
+
 
 
 def _webp(src):
@@ -696,6 +758,14 @@ def home_section(data, key):
     return ((data.get("pages", {}).get("home", {}).get("sections", {}) or {}).get(key) or {})
 
 
+def sec_head(title):
+    """A Home section head: a serif h2 followed by a copper rule that starts on a
+    hollow via and ends on a square pad (§5). Replaces the old mono eyebrows — only
+    the hero keeps a kicker."""
+    return (f'<div class="sec-head"><h2 class="section-title">{esc(title)}</h2>'
+            '<div class="rule" aria-hidden="true"></div></div>')
+
+
 def generate_home_about(data):
     about = data["sections"]["about"]
     bio = data["sections"].get("biography", {})
@@ -706,7 +776,7 @@ def generate_home_about(data):
     photo = ""
     if pi.get("src"):
         photo = (
-            '<figure class="profile-figure">'
+            '<figure class="profile-figure" data-chip>'
             '<picture>'
             f'<source srcset="{url_attr(_webp(pi["src"]))}" type="image/webp">'
             f'<img class="profile-image" src="{url_attr(pi["src"])}" alt="{esc(pi.get("alt", ""))}" '
@@ -716,26 +786,23 @@ def generate_home_about(data):
     highlight = ""
     if hb.get("content"):
         highlight = (
-            '<aside class="callout">'
+            '<aside class="callout" data-chip>'
             f'<h3>{esc(hb.get("title", ""))}</h3>'
             f'<p>{hb.get("content", "")}</p></aside>'
         )
     contact = ""
     if ci.get("email"):
         contact = (
-            '<div class="contact-info">'
-            f'<h3>{esc(ci.get("title", "Contact"))}</h3>'
-            f'<p><strong>Email:</strong> <a href="mailto:{url_attr(ci["email"])}">{esc(ci["email"])}</a></p>'
-            f'<p><strong>Office:</strong> {esc(ci.get("office", ""))}</p></div>'
+            '<dl class="contact-info">'
+            f'<dt>Email</dt><dd><a href="mailto:{url_attr(ci["email"])}">{esc(ci["email"])}</a></dd>'
+            f'<dt>Office</dt><dd>{esc(ci.get("office", ""))}</dd></dl>'
         )
     note = bio.get("personalNote", "")
     personal = f'<p class="about-personal">{esc(note)}</p>' if note else ""
     dogs = _dog_photos(bio)
-    head = home_section(data, "about")
     return (
         '<div class="container">\n'
-        f'<p class="section-kicker">{esc_text(head.get("kicker", ""))}</p>\n'
-        f'<h2 class="section-title">{esc(about.get("title", "About"))}</h2>\n'
+        + sec_head(about.get("title", "About")) + '\n'
         '<div class="intro-grid">\n'
         '<div class="intro-body">'
         f'<p class="about">{about.get("content", "")}</p>'
@@ -754,53 +821,75 @@ def _pub_metrics():
     return load_data_file("publications").get("metrics", {}) or {}
 
 
+def _area_paper_counts():
+    """How many papers are FILED under each of the four areas (argmax of
+    categoryProbabilities — the same rule the Publications chips use, so the Home
+    counts and the Publications chips can never disagree)."""
+    counts = {"sla": 0, "ii": 0, "ic": 0, "du": 0}
+    for pub in load_data_file("publications").get("publications", []):
+        if pub.get("year"):
+            counts[_pub_cat_key(pub)] += 1
+    return counts
+
+
+def _mentee_count(data):
+    """Everyone ever mentored: the current menteesByStage cohorts plus the completed
+    ones (the same all-time total the Mentorship page reports)."""
+    mbs = ((data.get("sections", {}).get("mentorship", {}) or {}).get("menteesByStage") or {})
+    completed = mbs.get("completed") or {}
+    return sum(len(v) for k, v in mbs.items() if k != "completed" and isinstance(v, list)) \
+        + sum(len(v) for v in completed.values() if isinstance(v, list))
+
+
 def generate_home_research(data):
     research = data["sections"]["research"]
     areas = research["areas"][:4]
+    counts = _area_paper_counts()
     cards = []
     for i, area in enumerate(areas):
         icon, cls = _HOME_ICONS[i] if i < len(_HOME_ICONS) else _HOME_ICONS[-1]
+        n = counts.get(cls, 0)
+        tally = f'<div class="meta-via">{n} paper{"s" if n != 1 else ""}</div>' if n else ""
         cards.append(
-            f'<article class="research-card {cls}">{icon}'
+            f'<article class="research-card {cls}" data-chip data-cat="{cls}">'
+            f'{_use(icon, "icon")}'
             f'<h3>{esc(area.get("title", ""))}</h3>'
-            f'<p>{esc(area.get("description", ""))}</p></article>'
+            f'<p>{esc(area.get("description", ""))}</p>{tally}</article>'
         )
     head = home_section(data, "research")
     intro = esc(head.get("intro", ""))
     additional = research.get("additionalContent", "")
     pubs = research.get("publications", {})
-    publinks = " · ".join(
+    publinks = "".join(
         f'<a href="{url_attr(l.get("url", "#"))}" target="_blank" rel="noopener">{esc(l.get("name", ""))}</a>'
         for l in pubs.get("links", [])
     )
-    # Auto-computed metric cards (from the pipeline-maintained publication metrics)
+    # Auto-computed metric pads (pipeline-maintained publication metrics + the
+    # all-time mentee count).
     m = _pub_metrics()
     metric_defs = [(m.get("totalPapers"), "Papers"),
                    (m.get("totalCitations"), "Citations"),
-                   (m.get("hIndex"), "h-index")]
+                   (m.get("hIndex"), "h-index"),
+                   (_mentee_count(data), "Mentees")]
     metrics_html = "".join(
         f'<div class="pub-metric"><span class="n">{v:,}</span><span class="l">{esc(l)}</span></div>'
         for v, l in metric_defs if v
     )
-    metrics_box = f'<div class="pub-metrics">{metrics_html}</div>' if metrics_html else ""
-
     pubbox = ""
-    if publinks:
+    if metrics_html or publinks:
         pubbox = (
-            '<aside class="callout pub-callout">'
-            f'<h3>{esc(pubs.get("title", "Publications"))}</h3>'
-            f'{metrics_box}'
-            f'<p>{esc(pubs.get("intro", ""))} {publinks}</p>'
-            '<p class="callout-cta"><a href="publications.html">Browse all publications, metrics &amp; figures →</a></p>'
-            '</aside>'
+            '<article class="pub-metrics-chip" data-chip>'
+            f'<div class="pub-metrics">{metrics_html}</div>'
+            f'<div class="pub-links"><span>{esc(pubs.get("intro", ""))}</span>{publinks}'
+            '<a class="go" href="publications.html">Browse all publications, metrics &amp; figures →</a>'
+            '</div></article>'
         )
     context = f'<p class="research-context">{esc(additional)}</p>' if additional else ""
     return (
         '<div class="container">\n'
-        f'<p class="section-kicker">{esc_text(head.get("kicker", ""))}</p>\n'
-        f'<h2 class="section-title">{esc(head.get("title", ""))}</h2>\n'
+        + sec_head(head.get("title", "")) + '\n'
         f'<p class="section-intro">{intro}</p>\n'
-        f'<div class="research-grid">{"".join(cards)}</div>\n'
+        f'<div class="research-grid" data-bus>{"".join(cards)}</div>\n'
         f'{context}\n'
         f'{pubbox}\n'
         "</div>"
@@ -825,42 +914,45 @@ def _inline_logo(logo):
 def generate_home_team(data):
     team = data["sections"]["team"]
     logo = _inline_logo(team.get("logo"))
-    logo_html = f'<figure class="art-logo" aria-label="{esc(team.get("logo", {}).get("alt", ""))}">{logo}</figure>' if logo else ""
-    hls = "".join(
-        '<div class="art-highlight">'
-        f'<span class="art-hl-icon" aria-hidden="true">{h.get("icon", "")}</span>'
-        f'<div><h3>{esc(h.get("title", ""))}</h3><p>{esc(h.get("content", ""))}</p></div></div>'
-        for h in team.get("highlights", [])
-    )
+    logo_html = (f'<figure class="art-logo" aria-label="{esc(team.get("logo", {}).get("alt", ""))}">'
+                 f'{logo}</figure>') if logo else ""
+    hls = ""
+    for i, h in enumerate(team.get("highlights", [])):
+        icon = _ART_ICONS[i] if i < len(_ART_ICONS) else _ART_ICONS[-1]
+        hls += ('<div class="art-highlight">'
+                f'{_use(icon, "art-hl-icon")}'
+                f'<div><h3>{esc(h.get("title", ""))}</h3>'
+                f'<p>{esc(h.get("content", ""))}</p></div></div>')
     head = home_section(data, "team")
     # The eyebrow link reuses the group's own CTA url — one source of truth for it.
     group_url = next((c.get("url") for c in team.get("cta", []) if c.get("url", "").startswith("http")), "")
-    eyebrow = (
+    eyebrow_link = (
         f'<a class="art-ext" href="{url_attr(group_url)}" target="_blank" rel="noopener">'
         f'{esc(urlparse(group_url).netloc)} <span aria-hidden="true">↗</span></a>'
     ) if group_url else ""
+    # Design G retires the ✦ glyph; the eyebrow is a square pad like every other label.
+    eyebrow_text = esc(head.get("eyebrow", "").replace("✦", "").strip())
     btns = []
-    for c in team.get("cta", []):
-        cls = "btn-primary" if c.get("type") == "primary" else "btn-ghost"
+    for i, c in enumerate(team.get("cta", [])):
         url = c.get("url", "#")
         ext = url.startswith("http")
         attrs = ' target="_blank" rel="noopener"' if ext else ""
         arrow = ' <span aria-hidden="true">↗</span>' if ext else ""
-        btns.append(f'<a class="btn {cls}" href="{url_attr(url)}"{attrs}>{esc(c.get("text", ""))}{arrow}</a>')
+        cls = "btn" if i == 0 else "link"
+        btns.append(f'<a class="{cls}" href="{url_attr(url)}"{attrs}>{esc(c.get("text", ""))}{arrow}</a>')
     return (
         '<div class="container">\n'
-        '<div class="art-panel">\n'
+        '<article class="art-panel" data-chip>\n'
         f'{logo_html}\n'
         '<div class="art-body">\n'
-        f'<p class="art-eyebrow"><span class="art-badge">{esc(head.get("eyebrow", ""))}</span>'
-        f'{eyebrow}</p>\n'
-        f'<h2 class="section-title">{esc(team.get("title", ""))}</h2>\n'
+        f'<p class="art-eyebrow"><span class="badge">{eyebrow_text}</span>{eyebrow_link}</p>\n'
+        f'<h2>{esc(team.get("title", ""))}</h2>\n'
         f'<p class="team-tagline">{esc(team.get("tagline", ""))}</p>\n'
         f'<p class="lead">{team.get("content", "")}</p>\n'
         f'<div class="art-highlights">{hls}</div>\n'
         f'<div class="cta">{"".join(btns)}</div>\n'
         '</div>\n'
-        '</div>\n'
+        '</article>\n'
         "</div>"
     )
 
@@ -894,29 +986,23 @@ def generate_home_collab(data):
     collab = data["sections"]["collaboration"]
     vals = collab.get("values", {})
     val_items = "".join(
-        f'<div class="value-item"><h4>{esc(v.get("title", ""))}</h4>'
-        f'<p>{esc(v.get("content", ""))}</p></div>'
+        f'<article class="card" data-chip><h3>{esc(v.get("title", ""))}</h3>'
+        f'<p>{esc(v.get("content", ""))}</p></article>'
         for v in vals.get("items", [])
     )
-    values_html = ""
-    if val_items:
-        values_html = (
-            '<aside class="callout values-callout">'
-            f'<h3>{esc(vals.get("title", "Our Values"))}</h3>'
-            f'<div class="values-grid">{val_items}</div></aside>'
-        )
+    values_html = f'<div class="values-grid" data-bus>{val_items}</div>' if val_items else ""
     opp = collab.get("opportunities", {})
+    # The opportunity cards are chips visually but carry no trace: the density rule
+    # keeps Home to the eight blocks the trunk actually feeds.
     cards = "".join(
-        f'<div class="card opp-card"><h3>{esc(c.get("title", ""))}</h3>'
-        f'<p>{esc(c.get("content", ""))}</p>{_opp_links_html(c)}</div>'
+        f'<article class="card opp-card"><h3>{esc(c.get("title", ""))}</h3>'
+        f'<p>{esc(c.get("content", ""))}</p>{_opp_links_html(c)}</article>'
         for c in opp.get("cards", [])
     )
     opp_heading = f'<h3 class="opp-heading">{esc(opp.get("title", "Opportunities"))}</h3>' if cards else ""
-    head = home_section(data, "join")
     return (
         '<div class="container">\n'
-        f'<p class="section-kicker">{esc_text(head.get("kicker", ""))}</p>\n'
-        f'<h2 class="section-title">{esc(collab.get("title", ""))}</h2>\n'
+        + sec_head(collab.get("title", "")) + '\n'
         f'<p class="section-intro">{esc(collab.get("intro", ""))}</p>\n'
         f'{values_html}\n'
         f'{opp_heading}\n'
@@ -1466,7 +1552,7 @@ def generate_publications_redesign(data):
             f'<p class="pub-stats-note">{covered} of {total_papers} papers sit in one of '
             'these curated ADS libraries; the rest are co-authored work, counted in the '
             'total and shown as “Other” in the roles figure below.</p>')
-    dashboard = '<div class="pub-stats pub-authorship">' + "".join(
+    dashboard = '<div class="pub-stats pub-authorship" data-chip>' + "".join(
         f'<a class="pub-stat pub-statlink" href="{url_attr(_ADS_LIB + lib)}" target="_blank" rel="noopener" '
         f'aria-label="{label}: {cnt} papers (opens the ADS library)">'
         f'<span class="n">{cnt:,}</span><span class="l">{label}</span>'
@@ -1501,7 +1587,7 @@ def generate_publications_redesign(data):
     def _fig(title, meta, svg, wide=False):
         cls = "pub-fig wide" if wide else "pub-fig"
         return (
-            f'<figure class="{cls}">'
+            f'<figure class="{cls}" data-chip>'
             f'<figcaption class="pub-fig-head"><span class="t">{title}</span>'
             f'<span class="m">{meta}</span></figcaption>'
             f'{svg}</figure>'
@@ -1533,7 +1619,7 @@ def generate_publications_redesign(data):
     if featured:
         fcards = "".join(_generate_paper_card(p, board=True) for p in featured)
         feat_html = (
-            '<section class="pub-featured" data-lv-pinned aria-labelledby="featured-head">'
+            '<section class="pub-featured" data-lv-pinned data-chip aria-labelledby="featured-head">'
             '<h2 id="featured-head" class="pub-featured-head">Featured work</h2>'
             f'<div class="featured-grid">{fcards}</div>'
             '</section>'
@@ -1562,12 +1648,12 @@ def generate_publications_redesign(data):
     )
 
     list_section = (
-        f'<div id="pub-list" class="pub-list" data-lv-list>{cards}</div>'
+        f'<div id="pub-list" class="pub-list" data-lv-list data-chip>{cards}</div>'
         '<p id="pub-empty" class="pub-empty" data-lv-empty hidden>'
         'No papers match your search/filters. '
         '<button type="button" class="linkbtn" id="pub-reset" data-lv-reset>Show all</button></p>'
         '<div class="pub-loadmore-wrap">'
-        '<button type="button" id="pub-loadmore" class="btn btn-ghost" data-lv-more>Load more</button></div>'
+        '<button type="button" id="pub-loadmore" class="btn-ghost" data-lv-more>Load more</button></div>'
     )
 
     # #pub-root is the listview root: everything listview.js shows/hides lives inside
@@ -1605,7 +1691,7 @@ _CONTENT_GENERATORS = {
 
 # Home is four generated <section>s rather than one content container.
 _HOME_SECTIONS = [
-    ("team", "section art-section", generate_home_team),
+    ("team", "section", generate_home_team),
     ("about", "section", generate_home_about),
     ("research", "section", generate_home_research),
     ("join", "section", generate_home_collab),
