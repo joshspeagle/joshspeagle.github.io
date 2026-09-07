@@ -21,9 +21,9 @@ def _type_meta(types, typ):
     return meta
 
 
-def _news_card(n, types):
+def _news_card(n, meta_by_type):
     typ = n.get("type", "note")
-    meta = _type_meta(types, typ)
+    meta = meta_by_type[typ]
     label = meta.get("label", typ)
     accent = accent_class(meta.get("accent", _FALLBACK["accent"]), f"news type {typ!r}")
     year = n.get("year", 0)
@@ -49,10 +49,12 @@ def generate_content(data):
     section = data["sections"]["news"]
     types = section.get("types", {}) or {}
     items_data = section.get("items", [])
-    items = "".join(_news_card(n, types) for n in items_data)
     counts = Counter(n.get("type", "note") for n in items_data)
-    filters = [(k, _type_meta(types, k).get("label", k),
-                counts[k], _type_meta(types, k).get("accent", _FALLBACK["accent"]))
+    # Resolve each type once (one build warning per undeclared type, not one per card).
+    meta_by_type = {k: _type_meta(types, k) for k in counts}
+    items = "".join(_news_card(n, meta_by_type) for n in items_data)
+    filters = [(k, meta_by_type[k].get("label", k),
+                counts[k], meta_by_type[k].get("accent", _FALLBACK["accent"]))
                for k in counts]
     return scaffold(items, filters, len(items_data), sorts=[("year", "Newest first")],
                     batch=0, search_ph="Search updates…", default_sort="year")
