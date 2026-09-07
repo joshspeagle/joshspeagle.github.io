@@ -211,6 +211,13 @@ main, footer { position: relative; z-index: 1; }
 .b-ic,   .d-ic,   .accent-ic   { --pad-hue: var(--cat-ic);  --edge: var(--cat-ic); }
 .b-du,   .d-du,   .accent-du   { --pad-hue: var(--cat-du);  --edge: var(--cat-du); }
 .b-sec,  .d-sec,  .accent-sec  { --pad-hue: var(--cat-sec); --edge: var(--cat-sec); }
+/* Mentee career stage: an ordinal single-hue ramp (dim -> bright), never a category hue */
+.b-st-secondary, .d-st-secondary, .accent-st-secondary { --pad-hue: var(--stage-secondary); --edge: var(--stage-secondary); }
+.b-st-bachelors, .d-st-bachelors, .accent-st-bachelors { --pad-hue: var(--stage-bachelors); --edge: var(--stage-bachelors); }
+.b-st-masters,   .d-st-masters,   .accent-st-masters   { --pad-hue: var(--stage-masters);   --edge: var(--stage-masters); }
+.b-st-doctoral,  .d-st-doctoral,  .accent-st-doctoral  { --pad-hue: var(--stage-doctoral);  --edge: var(--stage-doctoral); }
+.b-st-postdoc,   .d-st-postdoc,   .accent-st-postdoc   { --pad-hue: var(--stage-postdoc);   --edge: var(--stage-postdoc); }
+.d-energy { --pad-hue: var(--energy); }
 .d-violet, .accent-violet      { --pad-hue: var(--violet);  --edge: var(--violet); }
 .d-teal,   .accent-teal        { --pad-hue: var(--acc-teal); --edge: var(--acc-teal); }
 .d-gray,   .accent-gray        { --pad-hue: var(--text-3);  --edge: var(--text-3); }
@@ -674,9 +681,9 @@ main, footer { position: relative; z-index: 1; }
 .mc-label { font-size: var(--fs-small); color: var(--text-2); }
 .mc-track { display: flex; height: 16px; background: var(--chip-2); border: 1px solid var(--border); }
 .mc-seg { height: 100%; }
-.mc-sla { background-color: var(--cat-sla); } .mc-ii { background-color: var(--cat-ii); }
-.mc-ic { background-color: var(--cat-ic); } .mc-du { background-color: var(--cat-du); }
-.mc-sec { background-color: var(--cat-sec); }
+.mc-st-secondary { background-color: var(--stage-secondary); } .mc-st-bachelors { background-color: var(--stage-bachelors); }
+.mc-st-masters { background-color: var(--stage-masters); } .mc-st-doctoral { background-color: var(--stage-doctoral); }
+.mc-st-postdoc { background-color: var(--stage-postdoc); }
 .mc-faded, .mc-kw-former { background-image: repeating-linear-gradient(45deg, transparent 0 3.5px, var(--chip) 3.5px 4.5px); }
 .mc-kw-current, .mc-kw-former { background-color: var(--text-2); }
 .mc-total { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-3); text-align: right; }

@@ -105,3 +105,8 @@ lights up with clear activation patterns → samples. No brown grounds. No spec-
   npm run build twice → byte-identical; npm run check passes with the allowlist shrunk; contrast.py AA for text in
   both themes; no console errors on 11 pages × 2 themes × (1440, 390); screenshots reviewed against the mockup
   renders; print still works (#board hidden in print).
+
+
+## Addendum (2026-09-07): mentee career stages
+
+Career stage is ordinal, so it no longer borrows the research-area hues. The five stages take one step each of a single-hue green lightness ramp (`--stage-secondary` dim → `--stage-postdoc` bright in dark; the reverse in light), every step ≥ 3:1 on the chip surface, adjacent steps ≥ 7 relative-luminance points apart in dark so the chart survives greyscale. The Current/Former filter uses the energy swatch for current and the neutral one for former.

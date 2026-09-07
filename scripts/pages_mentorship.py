@@ -10,20 +10,20 @@ groups/sections and keep the per-group / per-section counts honest.
 The overview stats and chart are deliberately all-time totals and are captioned as
 such — they sit outside the listview and do not react to the filters (E9).
 
-Each stage maps to one of the four redesign category colors (postdoc->sla,
-doctoral->ii, masters->ic, bachelors->du) used for the card accent, stage badge,
-group-heading dot, and the breakdown chart bars.
+Career stage is ordinal, so each stage takes one step of a single-hue lightness
+ramp (--stage-* tokens, dim secondary school -> bright postdoc) used for the card
+accent, stage badge, group-heading dot, and the breakdown chart bars.
 """
 from pages_shared import (attr_esc, card_meta, chip, date_range, esc, listview_status,
                           parse_latest_year, period_end_key, strip_tags as _strip_tags)
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
 _STAGES = [
-    ("postdoctoral",    "postdoc",   "Postdoc",          "sla"),
-    ("doctoral",        "doctoral",  "Doctoral",         "ii"),
-    ("mastersProjects", "masters",   "Master's",         "ic"),
-    ("bachelors",       "bachelors", "Undergraduate",    "du"),
-    ("secondary",       "secondary", "Secondary school", "sec"),
+    ("postdoctoral",    "postdoc",   "Postdoc",          "st-postdoc"),
+    ("doctoral",        "doctoral",  "Doctoral",         "st-doctoral"),
+    ("mastersProjects", "masters",   "Master's",         "st-masters"),
+    ("bachelors",       "bachelors", "Undergraduate",    "st-bachelors"),
+    ("secondary",       "secondary", "Secondary school", "st-secondary"),
 ]
 
 # Plain labels (singular/contextual) for chips, group headings, and chart rows
@@ -250,8 +250,8 @@ def generate_content(data):
         for stage_key, cat, _label, color in _STAGES
         if (mbs.get(stage_key) or completed.get(stage_key))
     )
-    status_chips = (chip("current", "Current", n_current, accent="sla")
-                    + chip("former", "Former", n_former, accent="ii"))
+    status_chips = (chip("current", "Current", n_current, accent="energy")
+                    + chip("former", "Former", n_former, accent="mute"))
 
     body = (
         '<div class="container" data-listview data-lv-batch="0">'

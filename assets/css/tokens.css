@@ -70,6 +70,11 @@
   --role-student: #939dc4;
   --role-significant: #6d78a8;
   --role-other: #4a5482;
+  --stage-secondary: #337a54;
+  --stage-bachelors: #3f9264;
+  --stage-masters: #5cb884;
+  --stage-doctoral: #8fd9ad;
+  --stage-postdoc: #c4f0d6;
   --shadow-card: 0 12px 32px rgba(0,0,0,0.38);
 }
 
@@ -118,5 +123,10 @@
   --role-student: #6d7695;
   --role-significant: #99a1bb;
   --role-other: #bcc3d4;
+  --stage-secondary: #4c9a6f;
+  --stage-bachelors: #2f7f55;
+  --stage-masters: #1f6642;
+  --stage-doctoral: #134d31;
+  --stage-postdoc: #0b3521;
   --shadow-card: 0 10px 28px rgba(40,38,28,0.10);
 }
