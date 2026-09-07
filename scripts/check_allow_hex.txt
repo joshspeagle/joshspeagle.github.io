@@ -1,0 +1,37 @@
+// Raw colours still hard-coded in redesign.css, tolerated by scripts/check_build.py.
+// Every line here is a colour that should move into assets/data/tokens.json:
+// the visual-design pass shrinks this list; nothing may be added to it without a reason.
+#000
+#0a0a14
+#0e9aa8
+#1565c0
+#1d5fb0
+#2f559d
+#34d3e0
+#44c98a
+#4733c4
+#5aa9ff
+#7c5cff
+#7e88b0
+#7fb3ff
+#8a4500
+#8a6d00
+#999
+#9aa0b8
+#9fb6ef
+#a78bff
+#a99bff
+#b4501a
+#b9760f
+#c9bcff
+#e7c34d
+#efa73a
+#efc63a
+#ff6b6b
+#ff7a3a
+#ff7eb6
+#ff9d4d
+#ff9d6b
+#ffb454
+#ffce8f
+#fff

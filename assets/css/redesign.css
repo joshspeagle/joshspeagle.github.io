@@ -3,6 +3,11 @@
    + self-hosted fonts (fonts.css). Both themes via [data-theme].
    ============================================================ */
 
+/* Rendered height of the sticky nav — the offset every other sticky element hangs
+   from (see .pub-controls). Kept here rather than in tokens.css because it describes
+   this stylesheet's layout, not the design palette. */
+:root { --nav-h: 74px; }
+
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -35,6 +40,7 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
   display: flex; align-items: center; justify-content: space-between;
   gap: var(--space-5); padding: var(--space-4) var(--space-7);
   background: color-mix(in srgb, var(--bg-0) 72%, transparent);
+  -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
@@ -114,9 +120,14 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 
 /* focus visibility */
 :focus-visible { outline: 2px solid var(--violet); outline-offset: 2px; }
+/* .btn is clip-path'd, which also clips its outline — ring it from the inside instead. */
+.btn:focus-visible { outline: none;
+  box-shadow: inset 0 0 0 2px var(--bg-0), inset 0 0 0 4px var(--violet);
+  filter: drop-shadow(0 0 3px var(--violet)); }
 
 /* ---------------- Responsive ---------------- */
 @media (max-width: 860px) {
+  :root { --nav-h: 63px; }
   .container { padding: 0 var(--space-5); }
   .nav { padding: var(--space-3) var(--space-5); }
   .nav-links, .cv-btn { display: none; }
@@ -186,7 +197,6 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .callout h3 { font-size: var(--fs-h3); margin: 0 0 var(--space-2); }
 .callout p { color: var(--text-2); font-size: var(--fs-small); margin: 0; line-height: 1.65; }
 .callout a { color: var(--blue); border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
-.pub-callout p a { white-space: nowrap; }
 .contact-info { margin-top: var(--space-5); font-size: var(--fs-small); color: var(--text-2); }
 .contact-info h3 { font-size: var(--fs-h3); margin: 0 0 var(--space-2); }
 .contact-info p { margin: 2px 0; }
@@ -212,8 +222,8 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
     radial-gradient(135% 130% at 100% 0%, color-mix(in srgb, var(--violet) 15%, transparent), transparent 58%),
     var(--surface);
 }
-.highlight-box h3 { display: flex; align-items: baseline; gap: 10px; font-size: var(--fs-h3); margin: 0 0 var(--space-3); color: var(--text); }
-.highlight-box h3::before { content: "\2726"; color: var(--violet); font-size: 0.85em; }
+.highlight-box h2 { display: flex; align-items: baseline; gap: 10px; font-size: var(--fs-h3); margin: 0 0 var(--space-3); color: var(--text); }
+.highlight-box h2::before { content: "\2726"; color: var(--violet); font-size: 0.85em; }
 .highlight-box p { color: var(--text); font-size: var(--fs-body); line-height: 1.7; margin: 0; max-width: 78ch; }
 .highlight-box p + p { margin-top: var(--space-3); }
 /* Mentorship: overview breakdown chart (current vs former by career stage) */
@@ -271,6 +281,9 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .opp-card .opp-links { margin: var(--space-3) 0 0; font-size: var(--fs-small); color: var(--text-3); line-height: 1.85; }
 .opp-card .opp-links strong { color: var(--text-2); }
 .opp-card .opp-links a { color: var(--blue); border-bottom: 0; }
+/* Restore the underline substitute: hue alone is not a sufficient link cue (D2). */
+.opp-card .opp-links a, .fellowships a, .contact-info a {
+  border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
 .opp-note { color: var(--text-3); }
 /* Biography: current-role highlight + dog photos */
 .tl-item.current::before { background: var(--violet); box-shadow: 0 0 0 4px color-mix(in srgb, var(--violet) 22%, transparent); }
@@ -342,8 +355,12 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 }
 .item.student { border-left-color: #ff9d4d; background: linear-gradient(90deg, color-mix(in srgb, #ff9d4d 7%, transparent), var(--surface) 42%); }
 .item-head { display: flex; justify-content: space-between; gap: var(--space-4); align-items: baseline; flex-wrap: wrap; }
-.item-title { font-family: var(--font-serif); font-size: var(--fs-h3); margin: 0 0 4px; color: var(--text); }
+/* .item-title is an <h3> on most list pages and an <h4> on mentee cards, so it
+   carries the heading treatment itself rather than relying on the h1-h3 rule. */
+.item-title { font-family: var(--font-serif); font-weight: 700; line-height: 1.05;
+  letter-spacing: -0.01em; font-size: var(--fs-h3); margin: 0 0 4px; color: var(--text); }
 .item-when { font-family: var(--font-mono); font-size: var(--fs-label); color: var(--text-3); white-space: nowrap; }
+@media (max-width: 420px) { .item-when { white-space: normal; overflow-wrap: anywhere; } }
 .item-meta { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; }
 .item-meta strong { color: var(--text); font-weight: 600; }
 .item-meta a, .item-links a { color: var(--blue); }
@@ -395,6 +412,9 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .pub-figures { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-5); margin: var(--space-6) 0 var(--space-5); }
 .pub-fig.wide { grid-column: 1 / -1; }
 .pub-fig-note { color: var(--text-2); font-size: var(--fs-small); line-height: 1.65; max-width: 82ch; margin: 0 0 var(--space-8); }
+/* Coverage note under the authorship tiles (they are curated ADS libraries, not a
+   partition of the corpus). */
+.pub-stats-note { color: var(--text-3); font-size: var(--fs-small); line-height: 1.6; max-width: 82ch; margin: var(--space-3) 0 0; }
 
 /* Interactive inline-SVG chart (theme-aware via classes; tooltip via pubchart.js) */
 .pf-svg { width: 100%; height: auto; display: block; font-family: var(--font-mono); }
@@ -422,6 +442,8 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .ln-all { stroke: var(--text-3); stroke-width: 1.6; stroke-dasharray: 5 3; }
 .ln-primary { stroke: #5aa9ff; } .ln-significant { stroke: #34d3e0; } .ln-student { stroke: #ffb454; } .ln-postdoc { stroke: #a99bff; }
 [data-theme="light"] .ln-primary { stroke: #1565c0; } [data-theme="light"] .ln-significant { stroke: #0e9aa8; } [data-theme="light"] .ln-student { stroke: #b9760f; } [data-theme="light"] .ln-postdoc { stroke: #7c5cff; }
+.pf-sw { stroke: none; }
+.seg-all { fill: var(--text-3); }   /* matches the dashed .ln-all series */
 .pf-band-typ { fill: var(--text-3); opacity: .08; }
 .pf-mean { stroke: var(--text-3); stroke-dasharray: 4 3; opacity: .5; }
 /* research-mix bar (category colors) */
@@ -465,7 +487,7 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .pub-statlink:hover .pub-stat-go { color: var(--violet); }
 .pub-profiles { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-4); margin: var(--space-4) 0 var(--space-2); }
 .pub-profiles-label { font-family: var(--font-mono); font-size: var(--fs-label); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
-.pub-profiles .reslink { font-size: var(--fs-sm); color: var(--violet); text-decoration: none; }
+.pub-profiles .reslink { font-size: var(--fs-small); color: var(--violet); text-decoration: none; }
 .pub-profiles .reslink:hover { text-decoration: underline; }
 .pub-fig {
   margin: 0;
@@ -490,10 +512,17 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 [data-theme="light"] .pub-fig .fig-light { display: block; }
 
 /* ---- Controls (search / sort / filters) ---- */
+/* Sticky under the nav so search/sort/filters stay reachable on the long list pages
+   (D17). --nav-h is the nav's rendered height; z-index stays below the nav's 100. */
 .pub-controls {
   display: flex; flex-wrap: wrap; align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-6);
+  position: sticky; top: var(--nav-h); z-index: 90;
+  background: color-mix(in srgb, var(--bg-1) 97%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  padding: var(--space-3) 0;
 }
 .pub-search, .pub-sort {
   font-family: var(--font-sans);
@@ -648,15 +677,11 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 }
 @media (max-width: 620px) {
   .pub-stats { grid-template-columns: repeat(2, 1fr); }
-  .pub-controls { flex-direction: column; align-items: stretch; }
+  /* Stacked, the control block is several hundred px tall — sticky would cover the
+     list it filters, so below this width it scrolls away with the page. */
+  .pub-controls { flex-direction: column; align-items: stretch; position: static; }
   .pub-search, .pub-sort { width: 100%; flex: 1 1 auto; }
 }
-
-/* mentorship stage chip dots (match item accents) */
-.d-postdoc{background:var(--cat-sla)}
-.d-doctoral{background:var(--cat-ii)}
-.d-masters{background:var(--cat-ic)}
-.d-bachelors{background:var(--cat-du)}
 
 .install { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-2); background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 12px; margin-top: var(--space-3); overflow-x: auto; }
 
@@ -684,6 +709,7 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
 .tag.lang-web, .tag.lang-x { color: var(--text-3); }
 .tag.fork { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
 .tag.external { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
+.tag.archived { color: var(--text-3); border: 1px dashed var(--border); background: transparent; }
 /* group accents + chip dots */
 .item.accent-teal { border-left-color: #34d3e0; }
 .item.accent-gray { border-left-color: var(--text-3); }
@@ -730,4 +756,36 @@ h1, h2, h3 { font-family: var(--font-serif); font-weight: 700; line-height: 1.05
   .nav-open .nav-item { width: 100%; padding: 13px 12px; font-size: var(--fs-body); border-radius: var(--radius-sm); }
   .nav-open .menu a { padding: 12px; font-size: var(--fs-small); }
   .nav-open .cv-mobile { display: block; margin-top: var(--space-3); }
+}
+
+/* ---------------- 404 ----------------
+   The generated 404 body used inline styles; these are the same declarations as
+   classes so the page can be restyled with the rest of the site. */
+.notfound-main { min-height: 60vh; display: flex; align-items: center; justify-content: center; text-align: center; }
+.notfound-kicker { justify-content: center; }
+.notfound-title { font-family: var(--font-serif); font-size: var(--fs-display); margin: 0 0 var(--space-4); }
+.notfound-body { color: var(--text-2); font-size: 1.1rem; max-width: 48ch; margin: 0 auto var(--space-7); }
+
+/* ---------------- Print (D12 + E2) ----------------
+   Dark is the default theme and the page ground is a gradient browsers drop when
+   "background graphics" is off, so printing gave ~1.06:1. Force ink on paper, hide
+   the interactive chrome, and reveal everything the load-more/filter JS has hidden
+   so the full list prints. */
+@media print {
+  :root { color-scheme: light; }
+  html, body { background: #fff !important; color: #000 !important; }
+  body *, body *::before, body *::after {
+    background-image: none !important; box-shadow: none !important; text-shadow: none !important; }
+  h1, h2, h3, h4, p, span, div, li, td, th, time, strong, em, figcaption, a {
+    color: #000 !important; }
+  .item, .card, .callout, .highlight-box, .paper, .badge, .tag, .chip, .pub-stat, .feat-card {
+    background: #fff !important; border-color: #999 !important; }
+  .pf-axis, .pf-legend { fill: #000 !important; }
+  .pf-grid, .pf-mean { stroke: #999 !important; }
+  .nav, .skip-link, .theme-toggle, .hamburger,
+  .pub-controls, [data-lv-filters], [data-lv-more], .pub-loadmore-wrap, #pub-loadmore,
+  .hero canvas, .hero .backdrop, .hero .vignette, .hero .dawn, .pub-header-glow {
+    display: none !important; }
+  .is-hidden { display: block !important; }
+  .item, .paper, .pub-fig, .tl-item, .mentor-group { break-inside: avoid; }
 }

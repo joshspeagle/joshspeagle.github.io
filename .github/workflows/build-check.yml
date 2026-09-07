@@ -1,8 +1,14 @@
 name: build-check
 
-# Fails if the committed static HTML / tokens / fonts are stale relative to a
-# fresh build from content.json + tokens.json + @fontsource. Catches the common
-# "edited content.json but forgot to run the build" mistake.
+# Two gates:
+#   1. staleness — rebuilding from content.json / tokens.json / @fontsource must
+#      reproduce the committed HTML, CSS and sitemap byte for byte;
+#   2. correctness — scripts/check_build.py asserts things a reproducible build can
+#      still get wrong (listview data contract, empty content containers, undefined
+#      CSS custom properties, raw hex outside the token system, broken internal
+#      links/anchors, duplicate ids, unbalanced tags), and export_bib.py --check
+#      asserts publications.bib still matches the publication cache.
+# `npm run build` is the single source of build order — do not inline the steps here.
 
 on:
   push:
@@ -14,6 +20,9 @@ jobs:
   verify-build:
     runs-on: ubuntu-latest
     steps:
+      # A shallow checkout is enough: the build reads its dates out of the data
+      # files (site.lastUpdated / the caches' own timestamps), never from git or
+      # the clock, so a rebuild is byte-identical whenever it runs.
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -27,17 +36,17 @@ jobs:
       - name: Install self-hosted fonts (@fontsource)
         run: npm ci
 
-      - name: Rebuild assets + HTML from sources
-        run: |
-          python scripts/setup_fonts.py
-          python scripts/build_tokens.py
-          python scripts/build_html.py
+      - name: Rebuild + check
+        run: npm run build && npm run check
 
+      # --untracked-files catches a NEW build output (e.g. feed.xml) that was
+      # generated but never committed; `git diff` alone would not see it.
       - name: Fail if the committed build is stale
         run: |
-          if ! git diff --quiet; then
+          if ! git diff --quiet || [ -n "$(git status --porcelain --untracked-files=normal)" ]; then
             echo "::error::Static build is out of date. Run 'npm run build' locally and commit the result."
             git --no-pager diff --stat
+            git --no-pager status --porcelain
             exit 1
           fi
           echo "Build is up to date. ✓"

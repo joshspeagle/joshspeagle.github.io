@@ -4,11 +4,18 @@ Consolidated post-processing for publications data.
 
 Runs all post-processing steps with a single load/save cycle:
   1. Flag featured publications
-  2. Ensure categorization (sync LLM results, strip dead weight)
+  2a. Normalise titles/abstracts (strip publisher + LaTeX artifacts)
+  2b. Backfill missing venues from the bibcode journal code
+  2c. De-duplicate by DOI / bibcode / arXiv id
+  2d. Ensure categorization (sync LLM probabilities, derive researchArea)
   3. Fix citations timeline (Google Scholar metrics)
   4. Update ADS library cache
-  5. Apply authorship categories
+  5. Apply authorship categories, then reconcile them against the RIQ corpora
   6. Fetch ADS bibliometric time series
+
+Steps 2a/2b/2c are pure functions on the data (`normalize_text`,
+`deduplicate_publications`, `argmax_research_area`) and are importable without
+the pipeline's third-party dependencies.
 """
 
 import argparse
@@ -20,12 +27,15 @@ import shutil
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional
-
-import requests
-from dotenv import load_dotenv
+from typing import Dict, List, Optional, Tuple
 
 from config import get_project_root, get_data_path, get_backup_dir
+
+# `requests` and `python-dotenv` are only needed by the network-facing steps
+# (ADS library cache / ADS metrics / Scholar timeline). They are imported lazily
+# inside those methods so that the pure helpers in this module — text
+# normalisation, de-duplication, argmax categorisation — can be imported by the
+# stdlib-only build scripts without the pipeline's third-party dependencies.
 
 # Set up logging
 logging.basicConfig(
@@ -67,6 +77,364 @@ FEATURED_PAPERS = [
         "description": "Van-Lane et al.",
     },
 ]
+
+
+# ---------------------------------------------------------------------------
+# Research areas
+# ---------------------------------------------------------------------------
+# Canonical order. `researchArea` is *derived*, never hand-set: it is always the
+# argmax of `categoryProbabilities`, so the accent stripe / filter bucket a paper
+# renders under can never contradict the badges it renders (see D5 in the audit).
+RESEARCH_AREAS = [
+    "Statistical Learning & AI",
+    "Interpretability & Insight",
+    "Inference & Computation",
+    "Discovery & Understanding",
+]
+
+
+def argmax_research_area(
+    probabilities: Optional[Dict[str, float]], fallback: Optional[str] = None
+) -> Optional[str]:
+    """Return the highest-probability research area.
+
+    Ties break toward the earlier entry in ``RESEARCH_AREAS`` so the result is
+    deterministic across runs. Returns ``fallback`` when there is nothing to
+    argmax over (no probabilities, or all of them zero/absent).
+    """
+    if not probabilities:
+        return fallback
+    scored = [
+        (float(probabilities.get(area, 0.0) or 0.0), -i, area)
+        for i, area in enumerate(RESEARCH_AREAS)
+    ]
+    best = max(scored)
+    return best[2] if best[0] > 0 else fallback
+
+
+# ---------------------------------------------------------------------------
+# Title / abstract normalisation
+# ---------------------------------------------------------------------------
+# ADS and arXiv hand back titles and abstracts that still carry publisher and
+# LaTeX artifacts: a leading "Abstract" label, `$…$` math, `\textit{}` wrappers,
+# TeX quote pairs and backslash symbol commands. The site writes abstracts into
+# the page as HTML, so we normalise once here rather than in the renderer.
+#
+# NOT touched: `<SUB>`/`<SUP>` markup (ADS's own, and rendered by the site) and
+# HTML entities.
+
+# `\cmd{…}` wrappers whose braces carry the visible text — unwrapped to the text.
+_TEX_WRAPPERS = (
+    "ensuremath", "textit", "textbf", "textrm", "texttt", "textsc", "textsf",
+    "emph", "text", "mathrm", "mathit", "mathbf", "mathcal", "mathbb", "mathsf",
+    "boldsymbol", "operatorname", "hat", "widehat", "tilde", "widetilde",
+    "bar", "overline", "vec", "rm", "it", "bf", "tt", "sf",
+)
+
+# `\cmd` symbol commands, mapped to the Unicode character they stand for.
+_TEX_SYMBOLS = {
+    # lower-case Greek
+    "alpha": "α", "beta": "β", "gamma": "γ", "delta": "δ", "epsilon": "ε",
+    "varepsilon": "ε", "zeta": "ζ", "eta": "η", "theta": "θ", "vartheta": "ϑ",
+    "iota": "ι", "kappa": "κ", "lambda": "λ", "mu": "μ", "nu": "ν", "xi": "ξ",
+    "pi": "π", "rho": "ρ", "sigma": "σ", "varsigma": "ς", "tau": "τ",
+    "upsilon": "υ", "phi": "φ", "varphi": "φ", "chi": "χ", "psi": "ψ",
+    "omega": "ω",
+    # upper-case Greek
+    "Gamma": "Γ", "Delta": "Δ", "Theta": "Θ", "Lambda": "Λ", "Xi": "Ξ",
+    "Pi": "Π", "Sigma": "Σ", "Upsilon": "Υ", "Phi": "Φ", "Psi": "Ψ",
+    "Omega": "Ω",
+    # relations and operators
+    "sim": "∼", "simeq": "≃", "approx": "≈", "propto": "∝", "equiv": "≡",
+    "times": "×", "pm": "±", "mp": "∓", "cdot": "·", "cdots": "⋯",
+    "ll": "≪", "gg": "≫", "le": "≤", "leq": "≤", "ge": "≥", "geq": "≥",
+    "lt": "<", "gt": ">", "ne": "≠", "neq": "≠",
+    "lesssim": "≲", "gtrsim": "≳", "sqrt": "√", "partial": "∂", "nabla": "∇",
+    "infty": "∞", "int": "∫", "sum": "∑", "prod": "∏",
+    # arrows and decorations
+    "rightarrow": "→", "Rightarrow": "⇒", "to": "→", "leftarrow": "←",
+    "Leftarrow": "⇐", "langle": "⟨", "rangle": "⟩",
+    # astronomy shorthands
+    "odot": "⊙", "oplus": "⊕", "star": "⋆", "ast": "∗", "prime": "′",
+    "deg": "°", "arcsec": "″", "arcmin": "′", "micron": "μm",
+    # dots / spacing / grouping that carry no glyph
+    "dots": "…", "ldots": "…", "quad": " ", "qquad": " ", "left": "", "right": "",
+    "displaystyle": "", "nonumber": "", "limits": "", "nolimits": "",
+    # bare font switches (`\\rm [Fe/H]`); the braced `{\\rm …}` form is unwrapped above
+    "rm": "", "it": "", "bf": "", "tt": "", "sf": "", "textstyle": "",
+    # word-shaped math operators keep their letters
+    "log": "log", "ln": "ln", "exp": "exp", "sin": "sin", "cos": "cos",
+    "tan": "tan", "max": "max", "min": "min",
+}
+
+# `\n` in this corpus is an escaped newline from the arXiv/ADS text dump, not a
+# LaTeX command — the only real `\n…` commands that occur in astronomy prose are
+# `\nu` and `\nabla`, guarded here explicitly.
+_TEX_ESCAPED_NEWLINE = re.compile(r"\\n(?!u(?![A-Za-z])|abla\b)")
+_TEX_LEADING_ABSTRACT = re.compile(r"^\s*Abstract\b[\s:.—–-]+")
+_TEX_COMMAND = re.compile(r"\\([A-Za-z]+)")
+# TeX spacing macros: `\,` `\;` `\:` and `\ ` are spaces, `\!` is negative space.
+_TEX_SPACING = re.compile(r"\\[,;:]|\\ ")
+_TEX_NEGSPACE = re.compile(r"\\!")
+_TEX_MATH = re.compile(r"\$([^$]*)\$")
+_TEX_ESCAPED_CHAR = re.compile(r"\\([%&_#{}$])")
+_WRAPPER_RE = re.compile(
+    r"\\(" + "|".join(_TEX_WRAPPERS) + r")\s*\{([^{}]*)\}"
+)
+# The `{\rm foo}` / `{\it foo}` form, where the switch lives inside the group.
+_SWITCH_GROUP_RE = re.compile(
+    r"\{\s*\\(" + "|".join(_TEX_WRAPPERS) + r")\s+([^{}]*)\}"
+)
+
+
+def _replace_tex_command(match: "re.Match") -> str:
+    """Substitute one `\\cmd` symbol command; leave unmapped macros verbatim.
+
+    Whitespace after the macro name is left in place — `\\sim 10^4` becomes
+    `∼ 10^4`, not `∼10^4` — so that word-shaped operators (`\\log N`) and
+    glyph-less font switches (`\\rm [Fe/H]`) can never run into the next token.
+    An unmapped macro is returned untouched so it stays visible and can be added
+    to `_TEX_SYMBOLS` rather than silently vanishing.
+    """
+    name = match.group(1)
+    return _TEX_SYMBOLS.get(name, match.group(0))
+
+
+def normalize_text(value: Optional[str]) -> Optional[str]:
+    """Normalise a publication title or abstract for display.
+
+    Idempotent: normalising already-normalised text is a no-op.
+
+    Steps, in order: collapse doubled backslashes; turn escaped newlines into
+    spaces; drop a leading "Abstract" label; unescape `\\%`-style characters;
+    unwrap `\\textit{…}`-style wrappers; map `\\alpha`-style commands to Unicode;
+    map TeX quote pairs to curly quotes; unwrap `$…$`; collapse whitespace.
+    """
+    if not isinstance(value, str) or not value:
+        return value
+
+    s = value
+    # 1. Doubled backslashes are a JSON/BibTeX escaping artifact (`$\\approx$`).
+    while "\\\\" in s:
+        s = s.replace("\\\\", "\\")
+    # 2. Escaped newlines from the source text dump, and TeX spacing macros.
+    s = _TEX_ESCAPED_NEWLINE.sub(" ", s)
+    s = _TEX_NEGSPACE.sub("", _TEX_SPACING.sub(" ", s))
+    # 3. Publisher's "Abstract" run-in label.
+    s = _TEX_LEADING_ABSTRACT.sub("", s)
+    # 4. Protect escaped literals (`\%`, `\&`, `\_`, `\$`) from steps 5-8.
+    s = _TEX_ESCAPED_CHAR.sub(lambda m: "\x00%d\x00" % ord(m.group(1)), s)
+    # 5. Wrappers, innermost first (`\textit{\rm x}` needs two passes).
+    for _ in range(4):
+        new = _SWITCH_GROUP_RE.sub(r"\2", _WRAPPER_RE.sub(r"\2", s))
+        if new == s:
+            break
+        s = new
+    # 6. Symbol commands. Unknown commands are left verbatim rather than eaten,
+    #    so an unmapped macro stays visible and can be added to _TEX_SYMBOLS.
+    s = _TEX_COMMAND.sub(_replace_tex_command, s)
+    # 7. TeX quote pairs. ADS writes arcseconds as `^''` — that is a double
+    #    prime, not a close quote. Sources also routinely write `` and '' with no
+    #    surrounding space ("models to``inverse problems''to infer"), so restore
+    #    one, but never against an HTML tag (`<SUB>` and friends).
+    s = s.replace("^''", "\u2033")
+    s = s.replace("``", "\u201c").replace("''", "\u201d")
+    s = re.sub(r"(?<=[^\s(\[{>])(\u201c)", r" \1", s)
+    s = re.sub(r"(\u201d)(?=[^\s.,;:!?)\]}<])", r"\1 ", s)
+    # 8. Inline math delimiters (content already de-TeX'd by step 6). Inside
+    #    math, `~` is a non-breaking space rather than "approximately".
+    for _ in range(4):
+        new = _TEX_MATH.sub(lambda m: m.group(1).replace("~", " "), s)
+        if new == s:
+            break
+        s = new
+    # 9. Restore protected literals and tidy whitespace.
+    s = re.sub(r"\x00(\d+)\x00", lambda m: chr(int(m.group(1))), s)
+    s = re.sub(r"[ \t\r\n\f\v]+", " ", s).strip()
+    return s
+
+
+# ---------------------------------------------------------------------------
+# Venue backfill
+# ---------------------------------------------------------------------------
+# Characters 5-9 of an ADS bibcode are the journal code. Google Scholar records
+# arrive with an empty `venue`, so a Scholar-only paper used to render with no
+# venue at all even when its bibcode named the journal (audit D14).
+BIBCODE_JOURNALS = {
+    "A&A..": "Astronomy and Astrophysics",
+    "A&ARv": "The Astronomy and Astrophysics Review",
+    "AJ...": "The Astronomical Journal",
+    "ApJ..": "The Astrophysical Journal",
+    "ApJL.": "The Astrophysical Journal Letters",
+    "ApJS.": "The Astrophysical Journal Supplement Series",
+    "ARA&A": "Annual Review of Astronomy and Astrophysics",
+    "BAAS.": "Bulletin of the American Astronomical Society",
+    "JCAP.": "Journal of Cosmology and Astroparticle Physics",
+    "JOSS.": "The Journal of Open Source Software",
+    "MLS&T": "Machine Learning: Science and Technology",
+    "MNRAS": "Monthly Notices of the Royal Astronomical Society",
+    "NatAs": "Nature Astronomy",
+    "Natur": "Nature",
+    "NRvMP": "Nature Reviews Methods Primers",
+    "OJAp.": "The Open Journal of Astrophysics",
+    "PASJ.": "Publications of the Astronomical Society of Japan",
+    "PASP.": "Publications of the Astronomical Society of the Pacific",
+    "PhRvD": "Physical Review D",
+    "PhRvL": "Physical Review Letters",
+    "PhDT.": "Ph.D. Thesis",
+    "RNAAS": "Research Notes of the American Astronomical Society",
+    "arXiv": "arXiv e-prints",
+    "ascl.": "Astrophysics Source Code Library",
+    "mla..": "Machine Learning for Astrophysics",
+}
+
+
+def journal_from_bibcode(bibcode: Optional[str]) -> Optional[str]:
+    """Map an ADS bibcode to its journal name, or None if the code is unknown."""
+    bibcode = (bibcode or "").strip()
+    if len(bibcode) < 9:
+        return None
+    return BIBCODE_JOURNALS.get(bibcode[4:9])
+
+
+# ---------------------------------------------------------------------------
+# Identifier-based de-duplication
+# ---------------------------------------------------------------------------
+
+
+def norm_doi(doi: Optional[str]) -> str:
+    """Normalise a DOI for use as a join key (lowercase, no URL/`doi:` prefix)."""
+    doi = (doi or "").strip().lower()
+    for prefix in ("https://doi.org/", "http://doi.org/",
+                   "https://dx.doi.org/", "http://dx.doi.org/", "doi:"):
+        if doi.startswith(prefix):
+            doi = doi[len(prefix):]
+            break
+    return doi.strip()
+
+
+def norm_arxiv(arxiv: Optional[str]) -> str:
+    """Normalise an arXiv id (drop an `arXiv:` prefix and any `v2` suffix)."""
+    arxiv = (arxiv or "").strip().lower()
+    if arxiv.startswith("arxiv:"):
+        arxiv = arxiv[len("arxiv:"):]
+    return re.sub(r"v\d+$", "", arxiv.strip()).strip()
+
+
+_ARXIV_BIBCODE = re.compile(r"^\d{4}arXiv(\d{4})(\d{5})", re.IGNORECASE)
+
+
+def arxiv_id_from_bibcode(bibcode: Optional[str]) -> Optional[str]:
+    """`2023arXiv230706378L` -> `2307.06378`; None for a journal bibcode."""
+    match = _ARXIV_BIBCODE.match((bibcode or "").strip())
+    return f"{match.group(1)}.{match.group(2)}" if match else None
+
+
+def identity_keys(pub: Dict) -> set:
+    """The set of identifier keys a publication can be joined on.
+
+    Two records that share *any* key are the same paper. An arXiv bibcode is
+    reduced to its arXiv id so that the preprint and the published record of one
+    paper collapse together.
+    """
+    keys = set()
+    doi = norm_doi(pub.get("doi"))
+    if doi:
+        keys.add(("doi", doi))
+    arxiv = norm_arxiv(pub.get("arxivId"))
+    for raw in (pub.get("bibcode"), pub.get("id")):
+        bibcode = (raw or "").strip()
+        if not bibcode:
+            continue
+        from_bibcode = arxiv_id_from_bibcode(bibcode)
+        if from_bibcode:
+            arxiv = arxiv or from_bibcode
+        else:
+            keys.add(("bibcode", bibcode))
+    if arxiv:
+        keys.add(("arxiv", arxiv))
+    return keys
+
+
+def _completeness_score(pub: Dict) -> Tuple:
+    """Sort key for "which of these duplicate records do we keep?"."""
+    return (
+        1 if pub.get("bibcode") or pub.get("id") else 0,
+        1 if pub.get("journal") else 0,
+        sum(1 for k in ("doi", "arxivId", "bibcode", "adsUrl") if pub.get(k)),
+        len(pub.get("sources") or []),
+        int(pub.get("citations") or 0),
+        sum(1 for v in pub.values() if v not in (None, "", [], {})),
+    )
+
+
+def deduplicate_publications(
+    publications: List[Dict],
+) -> Tuple[List[Dict], List[Dict]]:
+    """Collapse records that share a DOI, bibcode or arXiv id.
+
+    Google Scholar frequently lists the preprint and the published version of one
+    paper as two entries; before this step they both reached the site, so the
+    paper was double-counted, rendered twice and could carry two different
+    `researchArea` values (audit D4).
+
+    The most complete record wins. Fields only the losers carried are merged in,
+    and their `scholar_id`s are kept in `scholar_id_aliases` so the provenance of
+    the merge survives. Returns ``(kept, dropped)``; ``dropped`` records are
+    annotated with `_mergedInto` for logging.
+    """
+    parent: Dict[Tuple[str, str], int] = {}
+    groups: Dict[int, List[int]] = {}
+    for index, pub in enumerate(publications):
+        matched = {parent[k] for k in identity_keys(pub) if k in parent}
+        if matched:
+            target = min(matched)
+            for key in identity_keys(pub):
+                parent[key] = target
+            for other in matched - {target}:
+                for key, value in list(parent.items()):
+                    if value == other:
+                        parent[key] = target
+                groups[target].extend(groups.pop(other, []))
+            groups[target].append(index)
+        else:
+            groups[index] = [index]
+            for key in identity_keys(pub):
+                parent[key] = index
+
+    unkeyed = [i for i, p in enumerate(publications) if not identity_keys(p)]
+    for i in unkeyed:
+        groups.setdefault(i, [i])
+
+    kept: List[Dict] = []
+    dropped: List[Dict] = []
+    keeper_of: Dict[int, Dict] = {}
+    for members in groups.values():
+        ordered = sorted(set(members))
+        winner_index = max(ordered, key=lambda i: _completeness_score(publications[i]))
+        winner = publications[winner_index]
+        for i in ordered:
+            if i == winner_index:
+                continue
+            loser = publications[i]
+            for key, value in loser.items():
+                if key == "scholar_id":
+                    continue
+                if winner.get(key) in (None, "", [], {}) and value not in (None, "", [], {}):
+                    winner[key] = value
+            alias = loser.get("scholar_id")
+            if alias and alias != winner.get("scholar_id"):
+                aliases = winner.setdefault("scholar_id_aliases", [])
+                if alias not in aliases:
+                    aliases.append(alias)
+            loser["_mergedInto"] = winner.get("bibcode") or winner.get("doi") or winner.get("title")
+            dropped.append(loser)
+        keeper_of[winner_index] = winner
+
+    for index, pub in enumerate(publications):
+        if index in keeper_of:
+            kept.append(pub)
+    return kept, dropped
 
 
 class PostProcessor:
@@ -127,28 +495,126 @@ class PostProcessor:
         logger.info(f"Flagged {count} featured publications")
 
     # ------------------------------------------------------------------
-    # Step 2: Ensure categorization (sync LLM, strip dead weight)
+    # Step 2a: Normalise titles and abstracts
+    # ------------------------------------------------------------------
+
+    def normalize_publication_text(self):
+        """Strip publisher/LaTeX artifacts from every title and abstract.
+
+        ADS and arXiv hand back a leading "Abstract" label, `$...$` math,
+        ``\textit{}`` wrappers and TeX quote pairs; the site writes abstracts
+        into the page as HTML, so they are normalised here once (audit E6).
+        """
+        pubs = self.data.get("publications", [])
+        changed = {"title": 0, "abstract": 0}
+        for pub in pubs:
+            for field in ("title", "abstract"):
+                before = pub.get(field)
+                after = normalize_text(before)
+                if after != before:
+                    pub[field] = after
+                    changed[field] += 1
+        logger.info(
+            f"Normalised text: {changed['title']} titles, {changed['abstract']} abstracts"
+        )
+
+    # ------------------------------------------------------------------
+    # Step 2b: Backfill missing venues
+    # ------------------------------------------------------------------
+
+    def backfill_journals(self):
+        """Give every paper a venue string (audit D14).
+
+        Derived from the ADS bibcode's journal code where there is one; a paper
+        with an arXiv id and no bibcode is a preprint and gets "arXiv e-prints",
+        matching what the ADS-sourced preprints already carry. Anything left
+        (a workshop paper or an erratum with a DataCite-only DOI) is logged for a
+        hand-written venue rather than guessed at.
+        """
+        filled = 0
+        unresolved = []
+        for pub in self.data.get("publications", []):
+            if pub.get("journal"):
+                continue
+            venue = journal_from_bibcode(pub.get("bibcode") or pub.get("id"))
+            if not venue and norm_arxiv(pub.get("arxivId")):
+                venue = "arXiv e-prints"
+            if venue:
+                pub["journal"] = venue
+                filled += 1
+            else:
+                unresolved.append((pub.get("title") or "")[:70])
+        for title in unresolved:
+            logger.warning("No venue derivable — set `journal` by hand: %r", title)
+        logger.info(f"Backfilled venue for {filled} publications")
+
+    # ------------------------------------------------------------------
+    # Step 2c: De-duplicate by identifier
+    # ------------------------------------------------------------------
+
+    def deduplicate(self):
+        """Collapse records sharing a DOI, bibcode or arXiv id (audit D4).
+
+        `merge_data.py` de-duplicates by normalised title, which misses the case
+        where Google Scholar lists a preprint and its published version under
+        different titles. This is the identifier-level backstop.
+        """
+        pubs = self.data.get("publications", [])
+        kept, dropped = deduplicate_publications(pubs)
+        for loser in dropped:
+            logger.warning(
+                "Duplicate dropped: %r (merged into %s)",
+                (loser.get("title") or "")[:70], loser.get("_mergedInto"),
+            )
+        if dropped:
+            self.data["publications"] = kept
+            logger.info(
+                f"De-duplicated: {len(pubs)} -> {len(kept)} publications "
+                f"({len(dropped)} merged away)"
+            )
+        else:
+            logger.info(f"De-duplicated: no duplicates among {len(pubs)} publications")
+
+    # ------------------------------------------------------------------
+    # Step 2d: Ensure categorization (sync LLM, derive researchArea)
     # ------------------------------------------------------------------
 
     def ensure_categorization(self):
-        """Sync categoryProbabilities/researchArea from LLM data.
+        """Sync `categoryProbabilities` from LLM data and derive `researchArea`.
 
-        - Papers WITH llm_categorization: use its probabilities/area
-        - Papers WITHOUT: keep whatever the fetcher assigned
-        - Strip _scoring_info from all papers (keyword scoring artifact)
+        - Papers WITH `llm_categorization`: take its probabilities. The agents
+          write them under `categorization` (see `llm_categorization_rubric.md`);
+          `categoryProbabilities` is accepted as an alias.
+        - `researchArea` is ALWAYS recomputed as argmax(categoryProbabilities),
+          for every paper, so a card's accent stripe and filter bucket can never
+          contradict the badges it renders (audit D5). It is a derived field: do
+          not hand-edit it, edit the probabilities.
+        - Strip `_scoring_info` from all papers (keyword scoring artifact).
         """
         pubs = self.data.get("publications", [])
         synced = 0
         stripped = 0
+        rederived = 0
         for pub in pubs:
             # Sync from LLM categorization if present
             llm = pub.get("llm_categorization")
             if llm and isinstance(llm, dict):
-                if "categoryProbabilities" in llm:
-                    pub["categoryProbabilities"] = llm["categoryProbabilities"]
-                if "researchArea" in llm:
-                    pub["researchArea"] = llm["researchArea"]
-                synced += 1
+                probs = llm.get("categoryProbabilities") or llm.get("categorization")
+                if isinstance(probs, dict) and probs:
+                    pub["categoryProbabilities"] = probs
+                    synced += 1
+
+            # researchArea is derived, never authored
+            area = argmax_research_area(
+                pub.get("categoryProbabilities"), pub.get("researchArea")
+            )
+            if area and area != pub.get("researchArea"):
+                logger.debug(
+                    "researchArea %r -> %r for %s",
+                    pub.get("researchArea"), area, pub.get("title", "")[:60],
+                )
+                pub["researchArea"] = area
+                rederived += 1
 
             # Strip keyword scoring artifact
             if "_scoring_info" in pub:
@@ -161,7 +627,8 @@ class PostProcessor:
             logger.info("Stripped processing_history from top-level data")
 
         logger.info(
-            f"Categorization: synced {synced} from LLM, stripped _scoring_info from {stripped}"
+            f"Categorization: synced {synced} from LLM, re-derived researchArea for "
+            f"{rederived}, stripped _scoring_info from {stripped}"
         )
 
     # ------------------------------------------------------------------
@@ -275,6 +742,8 @@ class PostProcessor:
         self, library_id: str, headers: Dict
     ) -> List[str]:
         """Fetch all bibcodes from an ADS library with pagination."""
+        import requests
+
         url = f"https://api.adsabs.harvard.edu/v1/biblib/libraries/{library_id}"
         try:
             resp = requests.get(url, headers=headers, timeout=30)
@@ -335,41 +804,192 @@ class PostProcessor:
     # Step 5: Apply authorship categories
     # ------------------------------------------------------------------
 
-    def apply_authorship_categories(self, cache: Dict[str, List[str]]):
-        """Apply authorship categories based on ADS library cache."""
-        pubs = self.data.get("publications", [])
+    ROLE_PRIORITY = ("primary", "postdoc", "student", "significant")
 
-        primary = set(cache.get("primary", []))
-        significant = set(cache.get("significant", []))
-        student = set(cache.get("student", []))
-        postdoc = set(cache.get("postdoc", []))
+    def _publication_index(self) -> Dict[Tuple[str, str], Dict]:
+        """Map every identifier key a publication answers to onto that record."""
+        index: Dict[Tuple[str, str], Dict] = {}
+        for pub in self.data.get("publications", []):
+            for key in identity_keys(pub):
+                index.setdefault(key, pub)
+        return index
+
+    def _resolve_bibcode(self, bibcode: str, index: Dict[Tuple[str, str], Dict]):
+        """Find the publication a curated ADS bibcode refers to, or None.
+
+        A curated library can hold the arXiv bibcode of a paper the site stores
+        under its published bibcode (or the reverse), so the arXiv id is tried as
+        a second key. This is why the naive bibcode-equality match used to leave
+        71 papers uncategorised (audit C9/D7).
+        """
+        bibcode = (bibcode or "").strip()
+        if not bibcode:
+            return None
+        hit = index.get(("bibcode", bibcode))
+        if hit is not None:
+            return hit
+        arxiv = arxiv_id_from_bibcode(bibcode)
+        if arxiv:
+            return index.get(("arxiv", arxiv))
+        return None
+
+    def apply_authorship_categories(self, cache: Dict[str, List[str]]):
+        """Apply authorship categories from the curated ADS library cache.
+
+        The four curated ADS libraries are the single source of truth for
+        authorship role. Membership is resolved by bibcode *or* arXiv id, so a
+        library entry filed under a paper's preprint bibcode still lands on the
+        published record the site holds.
+        """
+        pubs = self.data.get("publications", [])
+        index = self._publication_index()
+
+        members: Dict[str, List[Dict]] = {}
+        unmatched: Dict[str, List[str]] = {}
+        for role in self.ROLE_PRIORITY:
+            resolved: List[Dict] = []
+            missing: List[str] = []
+            seen = set()
+            for bibcode in cache.get(role, []):
+                pub = self._resolve_bibcode(bibcode, index)
+                if pub is None:
+                    missing.append(bibcode)
+                elif id(pub) not in seen:
+                    seen.add(id(pub))
+                    resolved.append(pub)
+            members[role] = resolved
+            unmatched[role] = missing
+            logger.info(
+                "Library %s: %d bibcodes -> %d distinct papers (%d unmatched)",
+                role, len(cache.get(role, [])), len(resolved), len(missing),
+            )
+
+        # Clear first so a paper removed from a library loses its role.
+        for pub in pubs:
+            pub.pop("authorshipCategory", None)
+
+        # Priority: primary > postdoc > student > significant
+        assigned = 0
+        for role in self.ROLE_PRIORITY:
+            for pub in members[role]:
+                if "authorshipCategory" not in pub:
+                    pub["authorshipCategory"] = role
+                    assigned += 1
 
         logger.info(
-            f"Library cache: {len(primary)} primary, {len(significant)} significant, "
-            f"{len(student)} student, {len(postdoc)} postdoc"
+            f"Applied authorship categories to {assigned} of {len(pubs)} publications"
         )
+        self._role_membership = {r: len(members[r]) for r in self.ROLE_PRIORITY}
+        self._role_unmatched = {r: v for r, v in unmatched.items() if v}
+        return members
 
-        updated = 0
-        for pub in pubs:
-            bibcode = pub.get("bibcode", pub.get("id", ""))
-            if not bibcode:
+    # ------------------------------------------------------------------
+    # Step 5b: Reconcile role counts against the RIQ corpora
+    # ------------------------------------------------------------------
+
+    def reconcile_role_counts(self, cache: Dict[str, List[str]]):
+        """Record how the ADS libraries map onto the site's publication list.
+
+        The RIQ curves come back from the ADS Metrics API computed over the raw
+        bibcode lists, which are *larger* than the site's paper counts for two
+        reasons: a library can hold both the preprint and the published bibcode
+        of one paper, and it can hold records the site does not list at all. Both
+        are counted here and written into `metrics` so the numbers on the page
+        can be explained rather than guessed at (audit C9).
+        """
+        metrics = self.data.setdefault("metrics", {})
+        index = self._publication_index()
+        riq = metrics.get("riqByCategory") or {}
+
+        summary = {}
+        for role in ("all",) + self.ROLE_PRIORITY:
+            bibcodes = cache.get(role, [])
+            if not bibcodes:
                 continue
+            matched, missing = [], []
+            for bibcode in bibcodes:
+                pub = self._resolve_bibcode(bibcode, index)
+                (missing if pub is None else matched).append(
+                    bibcode if pub is None else id(pub)
+                )
+            distinct = len(set(matched))
+            summary[role] = {
+                "libraryBibcodes": len(bibcodes),
+                "papers": distinct,
+                "duplicateBibcodes": len(matched) - distinct,
+                "unmatchedBibcodes": sorted(missing),
+            }
+            entry = riq.get(role)
+            if isinstance(entry, dict):
+                entry["papers"] = distinct
+                entry["libraryBibcodes"] = len(bibcodes)
+                entry["unmatchedBibcodes"] = sorted(missing)
 
-            # Priority: primary > postdoc > student > significant
-            if bibcode in primary:
-                pub["authorshipCategory"] = "primary"
-                updated += 1
-            elif bibcode in postdoc:
-                pub["authorshipCategory"] = "postdoc"
-                updated += 1
-            elif bibcode in student:
-                pub["authorshipCategory"] = "student"
-                updated += 1
-            elif bibcode in significant:
-                pub["authorshipCategory"] = "significant"
-                updated += 1
+        # Bibcodes in a curated library with no record on the site. They are
+        # carried with a hand-written gloss (why the paper is not listed, or that
+        # it should be added) which survives across runs and is dropped
+        # automatically once the bibcode resolves.
+        previous = metrics.get("roleReconciliation") or {}
+        existing_notes = previous.get("unmatchedBibcodeNotes") or {}
+        all_unmatched = sorted(
+            {b for role in summary.values() for b in role["unmatchedBibcodes"]}
+        )
+        notes = {b: existing_notes[b] for b in all_unmatched if b in existing_notes}
+        for bibcode in all_unmatched:
+            if bibcode not in notes:
+                logger.warning(
+                    "ADS library bibcode %s has no publication record and no note — "
+                    "add one to metrics.roleReconciliation.unmatchedBibcodeNotes",
+                    bibcode,
+                )
+        metrics["roleReconciliation"] = {
+            "byRole": summary,
+            "unmatchedBibcodeNotes": notes,
+        }
+        if riq:
+            metrics["riqByCategory"] = riq
 
-        logger.info(f"Applied authorship categories to {updated} publications")
+        all_summary = summary.get("all", {})
+        pubs = self.data.get("publications", [])
+        total = len(pubs)
+        with_role = sum(1 for p in pubs if p.get("authorshipCategory"))
+        metrics["notes"] = {
+            "lastUpdated": (
+                "Timestamp of the last ADS/Scholar fetch, not of the last edit. "
+                "Corrections applied to the cache without a refetch are listed in "
+                "top-level `manualEdits`."
+            ),
+            "totalPapers": (
+                "Distinct publication records on the site. `researchArea` is derived "
+                "as argmax(categoryProbabilities); duplicates are collapsed by DOI / "
+                "bibcode / arXiv id in postprocessing.py."
+            ),
+            "totalCitations": (
+                "Google Scholar author total (a Scholar+ADS blend). It is deliberately "
+                "larger than the sum of the per-paper `citations` field, which is "
+                "ADS-only and matches citationsByPublicationYear."
+            ),
+            "riqByCategory": (
+                "RIQ series come from the ADS Metrics API computed over the curated ADS "
+                "libraries, so `libraryBibcodes` (what ADS measured) exceeds `papers` "
+                "(distinct site records): a library may hold both the preprint and the "
+                "published bibcode of one paper, and may hold records the site does not "
+                "list. `papers` agrees with the authorshipCategory tallies; "
+                "`unmatchedBibcodes` lists the library entries with no site record."
+            ),
+            "roleCoverage": (
+                f"{with_role} of {total} papers carry an authorshipCategory. The rest are "
+                "co-authored papers that sit in no curated role library; the roles "
+                'figure buckets them as "Other".'
+            ),
+        }
+        if all_summary:
+            logger.info(
+                "Role reconciliation: all library %d bibcodes -> %d distinct papers, "
+                "%d duplicate bibcodes, %d unmatched",
+                all_summary["libraryBibcodes"], all_summary["papers"],
+                all_summary["duplicateBibcodes"], len(all_summary["unmatchedBibcodes"]),
+            )
 
     # ------------------------------------------------------------------
     # Step 6: Fetch ADS bibliometric time series
@@ -464,6 +1084,8 @@ class PostProcessor:
         self, bibcodes: List[str], headers: Dict
     ) -> Optional[Dict]:
         """Call the ADS Metrics API."""
+        import requests
+
         try:
             resp = requests.post(
                 ADS_METRICS_ENDPOINT,
@@ -509,6 +1131,8 @@ class PostProcessor:
     def run_all(self):
         """Run the complete post-processing pipeline."""
         # Load .env for API keys
+        from dotenv import load_dotenv
+
         env_path = get_project_root() / ".env"
         if env_path.exists():
             load_dotenv(dotenv_path=env_path)
@@ -523,8 +1147,17 @@ class PostProcessor:
         logger.info("--- Step 1: Flag featured publications ---")
         self.flag_featured()
 
-        # Step 2: Ensure categorization
-        logger.info("--- Step 2: Ensure categorization ---")
+        # Step 2: Normalise text, de-duplicate, then categorise
+        logger.info("--- Step 2a: Normalise titles and abstracts ---")
+        self.normalize_publication_text()
+
+        logger.info("--- Step 2b: Backfill missing venues ---")
+        self.backfill_journals()
+
+        logger.info("--- Step 2c: De-duplicate by identifier ---")
+        self.deduplicate()
+
+        logger.info("--- Step 2d: Ensure categorization ---")
         self.ensure_categorization()
 
         # Step 3: Fix citations timeline
@@ -538,6 +1171,9 @@ class PostProcessor:
         # Step 5: Apply authorship categories
         logger.info("--- Step 5: Apply authorship categories ---")
         self.apply_authorship_categories(cache)
+
+        logger.info("--- Step 5b: Reconcile role counts ---")
+        self.reconcile_role_counts(cache)
 
         # Step 6: Fetch ADS metrics
         logger.info("--- Step 6: Fetch ADS bibliometric metrics ---")

@@ -2,6 +2,7 @@
 Google Scholar data fetcher for publication metrics.
 """
 
+import re
 import time
 import logging
 from typing import Dict, List, Optional
@@ -64,14 +65,19 @@ class GoogleScholarFetcher:
                         year = self._parse_year(bib.get("pub_year"))
 
                         if title:
-                            paper_list.append(
-                                {
-                                    "title": title,
-                                    "year": year,
-                                    "scholar_id": pub.get("author_pub_id", ""),
-                                    "source": "google_scholar",
-                                }
-                            )
+                            entry = {
+                                "title": title,
+                                "year": year,
+                                "scholar_id": pub.get("author_pub_id", ""),
+                                "source": "google_scholar",
+                            }
+                            # Carry the venue through the quick path too — papers
+                            # that never need a detailed fetch used to reach the
+                            # site with no venue at all (audit D14).
+                            venue = self._venue(bib)
+                            if venue:
+                                entry["journal"] = venue
+                            paper_list.append(entry)
 
                             # Log if paper has empty authors (common in quick fetch)
                             authors = bib.get("author", "")
@@ -254,7 +260,7 @@ class GoogleScholarFetcher:
                 "title": title,
                 "authors": self._parse_authors(bib.get("author", "")),
                 "year": self._parse_year(bib.get("pub_year")),
-                "journal": bib.get("venue", ""),
+                "journal": self._venue(bib),
                 "citations": pub.get("num_citations", 0),
                 "url": pub.get("pub_url", ""),
                 "abstract": bib.get("abstract", ""),
@@ -274,6 +280,21 @@ class GoogleScholarFetcher:
         except Exception as e:
             logger.warning(f"Failed to extract publication info: {e}")
             return None
+
+    @staticmethod
+    def _venue(bib: Dict) -> str:
+        """Scholar's venue for a paper, under whichever key it arrived in.
+
+        `scholarly` puts it in `venue` for the profile listing and in
+        `journal`/`booktitle`/`conference` once a record is filled; a paper whose
+        venue is missing from all of them is a preprint and is labelled as such
+        downstream by `postprocessing.backfill_journals`.
+        """
+        for key in ("journal", "venue", "booktitle", "conference", "publisher"):
+            value = (bib.get(key) or "").strip()
+            if value and value.lower() not in ("na", "n/a"):
+                return value
+        return ""
 
     def _parse_authors(self, author_string: str) -> List[str]:
         """Parse author string into list of authors."""
@@ -311,25 +332,47 @@ class GoogleScholarFetcher:
 
         return None
 
+    # A DOI embedded anywhere in a publisher URL path, e.g.
+    # iopscience.iop.org/article/10.3847/1538-4357/ae562d/meta
+    _DOI_IN_URL = re.compile(r"(10\.\d{4,9}/[^\s?#]+)")
+    _DOI_URL_SUFFIX = re.compile(r"/(?:meta|full|abstract|pdf|html)$", re.IGNORECASE)
+    _ARXIV_IN_URL = re.compile(
+        r"arxiv\.org/(?:abs|pdf)/([0-9]{4}\.[0-9]{4,5}|[a-z-]+/[0-9]{7})", re.IGNORECASE
+    )
+    _ADS_IN_URL = re.compile(r"ui\.adsabs\.harvard\.edu/abs/([^/?#]+)")
+
     def _extract_identifiers(self, publication: Dict, pub: Dict):
-        """Extract DOI, arXiv ID, and other identifiers."""
+        """Extract DOI, arXiv ID and ADS bibcode from the Scholar link.
+
+        Scholar's `pub_url` points at whichever landing page it resolved: a
+        doi.org redirect, a publisher article page that embeds the DOI in its
+        path, an arXiv abstract, or an ADS abstract. All four carry an identifier
+        the site would otherwise be missing, so all four are parsed.
+        """
         url = pub.get("pub_url", "")
+        if not url:
+            return
 
-        # Extract DOI
-        import re
-
-        doi_match = re.search(r"doi\.org/(.+)", url)
+        # DOI — from doi.org or from a publisher path that embeds one
+        doi_match = self._DOI_IN_URL.search(url)
         if doi_match:
-            publication["doi"] = doi_match.group(1)
+            doi = self._DOI_URL_SUFFIX.sub("", doi_match.group(1).rstrip("/"))
+            publication["doi"] = doi
 
-        # Extract arXiv ID
-        arxiv_match = re.search(r"arxiv\.org/abs/(.+)", url)
+        # arXiv id
+        arxiv_match = self._ARXIV_IN_URL.search(url)
         if arxiv_match:
             publication["arxivId"] = arxiv_match.group(1)
 
+        # ADS bibcode
+        ads_match = self._ADS_IN_URL.search(url)
+        if ads_match:
+            bibcode = ads_match.group(1)
+            publication["bibcode"] = bibcode
+            publication["adsUrl"] = f"https://ui.adsabs.harvard.edu/abs/{bibcode}"
+
         # Store original URL
-        if url:
-            publication["scholarUrl"] = url
+        publication["scholarUrl"] = url
 
     def _normalize_title(self, title: str) -> str:
         """Normalize title for comparison."""

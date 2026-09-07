@@ -62,8 +62,14 @@ class DataMerger:
             if merged_paper:
                 merged_publications.append(merged_paper)
 
-        # Check for duplicates before returning
+        # Check for duplicates before returning: first by normalised title, then
+        # by identifier. The identifier pass is the one that catches Google
+        # Scholar listing a preprint and its published version under different
+        # titles — the case that used to double-count a paper (audit D4).
         deduplicated_publications = self._check_for_duplicates(merged_publications)
+        deduplicated_publications = self._dedupe_by_identifier(
+            deduplicated_publications
+        )
 
         # Clean mathematical notation in titles and validate (if configured)
         cleaned_publications = deduplicated_publications
@@ -487,6 +493,30 @@ class DataMerger:
             )
 
         return deduplicated_list
+
+    @staticmethod
+    def _dedupe_by_identifier(publications: List[Dict]) -> List[Dict]:
+        """Collapse records that share a DOI, bibcode or arXiv id.
+
+        Title-based de-duplication misses records whose titles genuinely differ
+        (Scholar's preprint title vs the published title), so this second pass
+        joins on identifiers instead. The shared implementation lives in
+        `postprocessing.deduplicate_publications`, which the post-processing run
+        applies again as a backstop.
+        """
+        from postprocessing import deduplicate_publications
+
+        kept, dropped = deduplicate_publications(publications)
+        for loser in dropped:
+            logger.warning(
+                "Identifier duplicate removed: %r (merged into %s)",
+                (loser.get("title") or "")[:70], loser.get("_mergedInto"),
+            )
+        if dropped:
+            logger.info(
+                f"Identifier de-duplication: {len(publications)} -> {len(kept)}"
+            )
+        return kept
 
     def _merge_publications(self, ads_pub: Dict, scholar_pub: Dict) -> Dict:
         """Merge two publication records, preferring the most complete data."""

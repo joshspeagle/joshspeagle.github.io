@@ -28,24 +28,12 @@ A <position> may be:
 Some categories (e.g. "Manuscript Referee Service") carry "items"
 ({role, organization, period}) instead of "organizations"; both shapes render.
 Categories and organizations flagged "hidden": true are skipped, and categories
-with no visible cards produce no chip. Each category is color-coded via its slug
-(see .item.accent-<slug> / .d-<slug> in redesign.css).
+with no visible cards produce no chip. Each category declares its
+accent colour class in content.json (see .item.accent-<accent> / .d-<accent> in
+redesign.css); the filter-chip key is still the slugified title.
 """
-import re
-
-from pages_shared import scaffold, esc, attr_esc
-
-
-def _slug(s):
-    """Slugify a category title: lowercase, non-alphanumeric runs -> single hyphen."""
-    s = re.sub(r"<[^>]+>", "", str(s or ""))           # strip any HTML tags
-    s = re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
-    return s or "cat"
-
-
-def _strip_tags(s):
-    """Remove HTML tags for building plain searchable/sortable text."""
-    return re.sub(r"<[^>]+>", "", str(s or ""))
+from pages_shared import (accent_class, attr_esc, esc, period_end_year, scaffold, slug as _slug,
+                          strip_tags as _strip_tags, warn)
 
 
 def _period_text(pos):
@@ -55,15 +43,6 @@ def _period_text(pos):
     if isinstance(pos.get("periods"), list):
         return ", ".join(str(p).strip() for p in pos["periods"] if str(p).strip())
     return str(pos.get("term") or pos.get("period") or "").strip()
-
-
-def _end_year(period):
-    """End year for sorting (newest first): ongoing roles ('…-Present') sort top,
-    else the latest year mentioned, else 0."""
-    if "present" in str(period or "").lower():
-        return 9999
-    years = re.findall(r"(?:19|20)\d{2}", str(period or ""))
-    return max(int(y) for y in years) if years else 0
 
 
 def _organizations(category):
@@ -85,6 +64,12 @@ def generate_content(data):
             continue
         cat_title = category.get("title", "") or ""
         cat_slug = _slug(cat_title)
+        accent = category.get("accent")
+        if not accent:
+            warn(f"service category {cat_title!r} has no declared accent; "
+                 f"using a neutral stripe")
+            accent = "mute"
+        accent = accent_class(accent, f"service category {cat_title!r}")
         orgs = [o for o in _organizations(category) if not (isinstance(o, dict) and o.get("hidden"))]
         extra = [it for it in (category.get("items") or []) if not (isinstance(it, dict) and it.get("hidden"))]
 
@@ -114,16 +99,16 @@ def generate_content(data):
 
         if not cards:
             continue
-        filters.append((cat_slug, cat_title, len(cards)))
+        filters.append((cat_slug, cat_title, len(cards), accent))
 
         for title, byline, period, note in cards:
             search_src = " ".join(_strip_tags(x) for x in (title, byline, period, note, cat_title)).strip()
-            year = _end_year(period)
+            year = period_end_year(period)
             when_html = f'<span class="item-when">{esc(period)}</span>' if period else ""
             meta_html = f'<p class="item-meta">{esc(byline)}</p>' if byline else ""
             note_html = f'<p class="item-sub">{esc(note)}</p>' if note else ""
             items_html.append(
-                f'<article class="item accent-{attr_esc(cat_slug)}" data-lv-item '
+                f'<article class="item accent-{accent}" data-lv-item '
                 f'data-cat="{attr_esc(cat_slug)}" '
                 f'data-search="{attr_esc(search_src)}" '
                 f'data-year="{year}" data-num="{year}" '
@@ -131,7 +116,7 @@ def generate_content(data):
                 f'<div class="item-head"><h3 class="item-title">{esc(title)}</h3>{when_html}</div>'
                 f'{meta_html}{note_html}'
                 f'<div class="item-tags"><span class="badge talk-badge">'
-                f'<span class="dot d-{attr_esc(cat_slug)}"></span>{esc(cat_title)}</span></div>'
+                f'<span class="dot d-{accent}"></span>{esc(cat_title)}</span></div>'
                 f'</article>'
             )
             total += 1

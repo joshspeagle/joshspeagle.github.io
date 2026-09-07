@@ -1,3 +1,8 @@
+# Publication-pipeline dependencies only (uv pip install -r requirements.txt).
+# The front-end build scripts (build_html.py / build_tokens.py / setup_fonts.py /
+# fetch_software.py / export_bib.py) are stdlib-only, as are the pure helpers in
+# postprocessing.py (normalize_text, deduplicate_publications, argmax_research_area) —
+# requests and python-dotenv are imported lazily by the network-facing steps.
 scholarly>=1.7.11
 ads>=0.12.3
 beautifulsoup4>=4.12.2

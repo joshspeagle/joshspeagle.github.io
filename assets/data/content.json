@@ -1,83 +1,13 @@
 {
-    "header": {
-        "name": "Joshua S. Speagle",
-        "chineseName": "(沈佳士)",
-        "tagline": "Statistical AI for Cosmic Discovery"
+    "site": {
+        "lastUpdated": "2026-09-07",
+        "jobTitle": "Assistant Professor of Astrostatistics",
+        "affiliation": {
+            "name": "University of Toronto",
+            "url": "https://www.utoronto.ca/"
+        },
+        "credit": "Built, designed, and maintained in collaboration with Claude (Sonnet 4+, Opus 4+)."
     },
-    "quickLinks": [
-        {
-            "icon": "📄",
-            "text": "CV",
-            "url": "https://joshspeagle.com/bio-cv/CV_speagle.pdf",
-            "ariaLabel": "Download CV PDF"
-        },
-        {
-            "icon": "✨",
-            "text": "Research Group",
-            "url": "https://astrostatuoft.com/",
-            "ariaLabel": "Visit Astrostatistics Research Team website"
-        },
-        {
-            "icon": "github",
-            "text": "GitHub",
-            "url": "https://github.com/joshspeagle/",
-            "ariaLabel": "Visit GitHub profile"
-        },
-        {
-            "icon": "📋",
-            "text": "Academic",
-            "dropdown": true,
-            "ariaLabel": "Academic pages and resources",
-            "items": [
-                {
-                    "text": "Mentorship",
-                    "href": "mentorship.html"
-                },
-                {
-                    "text": "Publications",
-                    "href": "publications.html"
-                },
-                {
-                    "text": "Talks",
-                    "href": "talks.html"
-                },
-                {
-                    "text": "Teaching",
-                    "href": "teaching.html"
-                },
-                {
-                    "text": "Awards",
-                    "href": "awards.html"
-                },
-                {
-                    "text": "Service",
-                    "href": "service.html"
-                }
-            ]
-        }
-    ],
-    "navigation": [
-        {
-            "text": "About Me",
-            "href": "#about"
-        },
-        {
-            "text": "Our Team",
-            "href": "#team"
-        },
-        {
-            "text": "My Work",
-            "href": "#research"
-        },
-        {
-            "text": "Join Us",
-            "href": "#collaboration"
-        },
-        {
-            "text": "Biography",
-            "href": "#bio"
-        }
-    ],
     "sections": {
         "about": {
             "title": "Who am I?",
@@ -130,8 +60,6 @@
             ]
         },
         "research": {
-            "title": "What do I do?",
-            "intro": "<strong>My research focuses on four main areas:</strong>",
             "areas": [
                 {
                     "icon": "🤖",
@@ -370,56 +298,48 @@
             }
         },
         "biography": {
-            "title": "Short Biography",
             "timeline": [
                 {
                     "title": "Childhood",
                     "date": "1990s - 2011",
                     "content": "Shuttled between the US (around Milwaukee) and China (Beijing and Shanghai). Fell in love with astronomy at age 17 after reading <a href=\"https://en.wikipedia.org/wiki/From_Eternity_to_Here:_The_Quest_for_the_Ultimate_Theory_of_Time\">From Eternity to Here</a> by <a href=\"https://en.wikipedia.org/wiki/Sean_M._Carroll\">Sean Carroll</a>.",
-                    "location": "USA & China",
-                    "position": "left"
+                    "location": "USA & China"
                 },
                 {
                     "title": "Undergraduate",
                     "date": "2011 - 2015",
-                    "content": "Bachelor's Degree with Honors in Astrophysics and Physics at <a href=\"http://www.harvard.edu/\">Harvard University</a>. Participated in multiple research projects across astronomy.",
-                    "location": "Boston, Massachusetts",
-                    "position": "right"
+                    "content": "Bachelor's Degree with Honors in Astrophysics and Physics at <a href=\"https://www.harvard.edu/\">Harvard University</a>. Participated in multiple research projects across astronomy.",
+                    "location": "Boston, Massachusetts"
                 },
                 {
                     "title": "Project Academic Support Staff",
                     "date": "2015 - 2016",
-                    "content": "Worked with <a href=\"https://alexie.sites.ucsc.edu/\">Alexie Leauthaud</a> and <a href=\"https://www.ucolick.org/~kbundy/\">Kevin Bundy</a> at <a href=\"http://www.ipmu.jp/\">Kavli IPMU</a>. Began shifting my focus to astrostatistics and data science.",
-                    "location": "Kashiwa, Japan",
-                    "position": "left"
+                    "content": "Worked with <a href=\"https://alexie.sites.ucsc.edu/\">Alexie Leauthaud</a> and <a href=\"https://www.ucolick.org/~kbundy/\">Kevin Bundy</a> at <a href=\"https://www.ipmu.jp/\">Kavli IPMU</a>. Began shifting my focus to astrostatistics and data science.",
+                    "location": "Kashiwa, Japan"
                 },
                 {
                     "title": "Graduate School",
                     "date": "2016 - 2020",
-                    "content": "Master's and Doctoral Degrees at <a href=\"http://astronomy.fas.harvard.edu/\">Harvard</a>. Thesis: <a href=\"https://dash.harvard.edu/handle/1/37365889\">\"Mapping the Milky Way in the Age of Gaia\"</a> under <a href=\"https://faun.rc.fas.harvard.edu/nebel/dfink/\">Doug Finkbeiner</a>, <a href=\"http://scholar.harvard.edu/cconroy/home/\">Charlie Conroy</a>, and <a href=\"http://scholar.harvard.edu/deisenstein/\">Daniel Eisenstein</a>, with additional supervision by <a href=\"https://scholar.harvard.edu/agoodman\">Alyssa Goodman</a>.",
-                    "location": "Boston, Massachusetts",
-                    "position": "right"
+                    "content": "Master's and Doctoral Degrees at <a href=\"https://astronomy.fas.harvard.edu/\">Harvard</a>. Thesis: <a href=\"https://dash.harvard.edu/handle/1/37365889\">\"Mapping the Milky Way in the Age of Gaia\"</a> under <a href=\"https://faun.rc.fas.harvard.edu/nebel/dfink/\">Doug Finkbeiner</a>, <a href=\"https://scholar.harvard.edu/cconroy/home/\">Charlie Conroy</a>, and <a href=\"https://scholar.harvard.edu/deisenstein/\">Daniel Eisenstein</a>, with additional supervision by <a href=\"https://scholar.harvard.edu/agoodman\">Alyssa Goodman</a>.",
+                    "location": "Boston, Massachusetts"
                 },
                 {
                     "title": "Postdoctoral Fellow",
                     "date": "2020 - 2022",
                     "content": "<a href=\"https://banting.fellowships-bourses.gc.ca/en/2019-2020-eng.html\">Banting Fellow</a> and <a href=\"https://www.dunlap.utoronto.ca/people/dunlap-fellows/\">Dunlap Fellow</a> at <a href=\"https://www.utoronto.ca/\">University of Toronto</a>, working with <a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a>.",
-                    "location": "Toronto, Canada",
-                    "position": "left"
+                    "location": "Toronto, Canada"
                 },
                 {
                     "title": "Research Scientist",
                     "date": "Jan-Apr 2025",
                     "content": "While on leave from UofT, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on cutting-edge quantitative trading strategies for crypto assets.",
-                    "location": "Toronto, Canada (Remote)",
-                    "position": "left"
+                    "location": "Toronto, Canada (Remote)"
                 },
                 {
                     "title": "Assistant Professor",
                     "date": "2022 - Present",
                     "content": "Joint appointment in Astronomy & Astrophysics and Statistical Sciences. Co-leading the <a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a> with Gwen Eadie.",
                     "location": "Toronto, Canada",
-                    "position": "right",
                     "current": true
                 }
             ],
@@ -440,8 +360,6 @@
             ]
         },
         "mentorship": {
-            "title": "Mentorship & Supervision",
-            "tagline": "Guiding the next generation of astrostatisticians and data scientists",
             "introduction": {
                 "content": "I consider mentorship to be at the heart of my research and love working with students, postdocs, and visiting researchers across disciplines. I believe strongly in fostering an inclusive, collaborative research environment where diverse individuals can thrive and develop their unique research interests across AI, statistics, data science, and astrophysics."
             },
@@ -706,7 +624,7 @@
                             "timelinePeriod": "Fall 2022-2026",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling",
                             "myCareerStage": "Assistant Professor",
@@ -742,7 +660,7 @@
                             "project": "Evolution of massive stars in groups including post-common envelope binaries and dynamical interactions",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
                             "currentStatus": "PhD candidate",
-                            "outcome": "<a href=\"https://www.nserc-crsng.gc.ca/Students-Etudiants/PD-NP/PostDoc-PostDoc_eng.asp\">NSERC Postdoctoral Fellow</a> at <a href=\"https://ucsd.edu\">UC San Diego</a> working with <a href=\"http://www.broekgaarden.nl/floor/wordpress/\">Floor Broekgaarden</a> and <a href=\"http://www.kylekremer.com/\">Kyle Kremer</a>",
+                            "outcome": "<a href=\"https://www.nserc-crsng.gc.ca/Students-Etudiants/PD-NP/PostDoc-PostDoc_eng.asp\">NSERC Postdoctoral Fellow</a> at <a href=\"https://ucsd.edu\">UC San Diego</a> working with <a href=\"https://www.broekgaarden.nl/floor/wordpress/\">Floor Broekgaarden</a> and <a href=\"https://www.kylekremer.com/\">Kyle Kremer</a>",
                             "awards": [
                                 "<a href=\"https://www.nserc-crsng.gc.ca/students-etudiants/pg-cs/bellandpostgrad-belletsuperieures_eng.asp\">NSERC PGS-D</a>"
                             ]
@@ -923,7 +841,7 @@
                             "currentStatus": "Undergraduate student",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Estimating Stellar Abundances Across Surveys using Probabilistic Deep Learning",
                             "myCareerStage": "Assistant Professor",
@@ -1008,7 +926,7 @@
                             "timelinePeriod": "Summer 2024-Summer 2025",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "Mairead Heiger (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
                             ],
@@ -1056,7 +974,7 @@
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
                                 "<a href=\"https://andrew-saydjari.github.io/\">Andrew Saydjari</a> (<a href=\"https://web.astro.princeton.edu/\">Princeton University</a>)",
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Estimating Abundances from Stellar Spectra with Probabilistic Machine Learning",
                             "myCareerStage": "Assistant Professor",
@@ -1101,7 +1019,7 @@
                             "timelinePeriod": "Summer 2024",
                             "supervisionType": "Primary Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Galactic Paleontology with Probabilistic Machine Learning",
                             "myCareerStage": "Assistant Professor",
@@ -1260,7 +1178,7 @@
                             "timelinePeriod": "Summer 2023-Winter 2024",
                             "supervisionType": "Primary Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "Mairead Heiger (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Stellar Parameter Estimation with Likelihood-Free Frequentist Inference (LF2I)",
@@ -1321,7 +1239,7 @@
                             "timelinePeriod": "Summer 2023",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "Mairead Heiger (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Deriving Stellar Abundances in DESI using Machine Learning",
@@ -1426,7 +1344,7 @@
                             "timelinePeriod": "Summer 2022-Summer 2023",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Mapping the Milky Way with Blue Horizontal Branch Stars",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
@@ -1492,7 +1410,7 @@
                             "timelinePeriod": "Fall 2022-Winter 2023",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~abraham/web/Welcome.html\">Bob Abraham</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.astro.utoronto.ca/~abraham/\">Bob Abraham</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Rapid Focusing Algorithms for the Dragonfly Telephoto Array",
                             "myCareerStage": "Assistant Professor",
@@ -1516,7 +1434,7 @@
                             "timelinePeriod": "Fall 2021-Winter 2022",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~ting/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Estimating Photometric Metallicities with DECam and S5",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
@@ -1781,14 +1699,6 @@
             }
         },
         "publications": {
-            "title": "Publications & Research Output",
-            "tagline": "Peer-reviewed research and scholarly contributions",
-            "metrics": {
-                "totalPapers": "100+",
-                "hIndex": "40",
-                "citations": "11,000+",
-                "note": "Metrics updated regularly from ADS and Google Scholar"
-            },
             "featured": {
                 "title": "Featured Publications",
                 "papers": [
@@ -1832,18 +1742,20 @@
                 "ads": "https://ui.adsabs.harvard.edu/#search/q=%20author%3A%22speagle%2C%20j%22&sort=date%20desc%2C%20bibcode%20desc&p_=0",
                 "scholar": "https://scholar.google.com/citations?hl=en&user=Z6dqXGoAAAAJ",
                 "orcid": "https://orcid.org/0000-0003-2573-9832"
+            },
+            "libraries": {
+                "total": "YiaebBefTHKZdblrny2Vsw",
+                "primary": "Jy98AvjOQXqykOSJ-bn96Q",
+                "postdoc": "6-JKiyOATdqEzuDGuUMWwg",
+                "student": "yyWDBaVwS0GIrIkz2GKltg",
+                "significant": "X5RfsxxzRXC-BWjU11xa4A"
             }
         },
         "talks": {
-            "title": "Talks & Events",
-            "tagline": "Presentations, panels, and public engagement across academia and beyond",
             "categories": [
                 {
                     "id": "invited",
                     "name": "Invited Talks",
-                    "description": "Keynotes and invited presentations at major conferences",
-                    "badge": "invited",
-                    "color": "amber",
                     "talks": [
                         {
                             "title": "How AI has taken over the world and what it means for science",
@@ -1959,14 +1871,12 @@
                             "year": 2018,
                             "type": "Invited Talk"
                         }
-                    ]
+                    ],
+                    "accent": "invited"
                 },
                 {
                     "id": "colloquia",
                     "name": "Colloquia & Seminars",
-                    "description": "Department colloquia and research seminars",
-                    "badge": "academic",
-                    "color": "blue",
                     "talks": [
                         {
                             "title": "What exactly are we doing?",
@@ -2297,14 +2207,12 @@
                             "year": 2013,
                             "type": "Seminar"
                         }
-                    ]
+                    ],
+                    "accent": "colloquia"
                 },
                 {
                     "id": "contributed",
                     "name": "Contributed Talks",
-                    "description": "Conference presentations and workshop contributions",
-                    "badge": "contributed",
-                    "color": "green",
                     "talks": [
                         {
                             "title": "Uncertainty Quantification and Calibration in Stellar Parameter Estimation",
@@ -2426,14 +2334,12 @@
                             "year": 2016,
                             "type": "Contributed Talk"
                         }
-                    ]
+                    ],
+                    "accent": "contributed"
                 },
                 {
                     "id": "lectures",
                     "name": "Lectures & Tutorials",
-                    "description": "Educational workshops and tutorial sessions",
-                    "badge": "educational",
-                    "color": "purple",
                     "talks": [
                         {
                             "title": "A Conceptual Introduction to Deep Learning",
@@ -2531,14 +2437,12 @@
                             "year": 2020,
                             "type": "Tutorial"
                         }
-                    ]
+                    ],
+                    "accent": "lectures"
                 },
                 {
                     "id": "panels",
                     "name": "Panels",
-                    "description": "Panel discussions and roundtable sessions",
-                    "badge": "discussion",
-                    "color": "teal",
                     "talks": [
                         {
                             "title": "Panel on inductive biases and interpretability",
@@ -2572,14 +2476,12 @@
                             "year": 2021,
                             "type": "Panel Organizer & Chair"
                         }
-                    ]
+                    ],
+                    "accent": "panels"
                 },
                 {
                     "id": "posters",
                     "name": "Posters",
-                    "description": "Poster presentations at conferences and workshops",
-                    "badge": "visual",
-                    "color": "orange",
                     "talks": [
                         {
                             "title": "A machine-learning led search for extra-tidal stars of globular clusters",
@@ -2653,14 +2555,12 @@
                             "year": 2012,
                             "type": "Poster"
                         }
-                    ]
+                    ],
+                    "accent": "posters"
                 },
                 {
                     "id": "public",
                     "name": "Public Talks & Events",
-                    "description": "Public outreach and science communication",
-                    "badge": "public",
-                    "color": "pink",
                     "talks": [
                         {
                             "title": "Host",
@@ -2710,14 +2610,12 @@
                             "year": 2019,
                             "type": "Keynote Participant"
                         }
-                    ]
+                    ],
+                    "accent": "public"
                 },
                 {
                     "id": "media",
                     "name": "Media Appearances",
-                    "description": "Television, radio, and podcast appearances",
-                    "badge": "media",
-                    "color": "red",
                     "talks": [
                         {
                             "title": "Space bubble",
@@ -2727,13 +2625,12 @@
                             "year": 2022,
                             "type": "Radio Interview"
                         }
-                    ]
+                    ],
+                    "accent": "media"
                 }
             ]
         },
         "teaching": {
-            "title": "Teaching & Education",
-            "tagline": "Statistical methods and computational thinking for scientific discovery",
             "courseHistory": [
                 {
                     "code": "AST424",
@@ -2810,12 +2707,6 @@
                     "color": "blue"
                 }
             ],
-            "teachingStats": {
-                "totalOfferings": 10,
-                "uniqueCourses": 6,
-                "yearsTeaching": 5,
-                "departments": 3
-            },
             "philosophy": {
                 "title": "Teaching Philosophy",
                 "content": "I believe in hands-on learning that connects theoretical concepts to real-world applications. My courses emphasize computational skills, critical thinking, and the ability to communicate complex ideas clearly."
@@ -2894,11 +2785,15 @@
                         "Aug 2020"
                     ]
                 }
-            ]
+            ],
+            "accents": {
+                "Astronomy": "astronomy",
+                "Statistics": "statistics",
+                "workshops": "workshops",
+                "joint": "astrostat"
+            }
         },
         "awards": {
-            "title": "Awards & Honors",
-            "tagline": "Recognition and achievements in academia and research",
             "awards": [
                 {
                     "title": "Connaught New Researcher Award",
@@ -2927,8 +2822,6 @@
             ]
         },
         "service": {
-            "title": "Leadership & Service",
-            "tagline": "Professional service and community engagement",
             "categories": [
                 {
                     "title": "Professional Societies",
@@ -3006,7 +2899,8 @@
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    "accent": "sla"
                 },
                 {
                     "title": "University of Toronto",
@@ -3065,7 +2959,8 @@
                                 }
                             ]
                         }
-                    ]
+                    ],
+                    "accent": "ii"
                 },
                 {
                     "title": "Workshops & Conferences",
@@ -3107,7 +3002,8 @@
                             "role": "SOC Co-Chair, LOC",
                             "period": "2024"
                         }
-                    ]
+                    ],
+                    "accent": "du"
                 },
                 {
                     "title": "Manuscript Referee Service",
@@ -3153,13 +3049,12 @@
                             "organization": "American Astronomical Society (AAS) Journals (AJ, ApJ, ApJL, ApJS)",
                             "period": "2014-Present"
                         }
-                    ]
+                    ],
+                    "accent": "ic"
                 }
             ]
         },
         "software": {
-            "title": "Software & Code",
-            "tagline": "Open-source tools for inference, discovery, and keeping up with the literature",
             "githubUser": "joshspeagle",
             "groups": [
                 { "id": "inference", "label": "Inference & sampling", "accent": "ic" },
@@ -3177,6 +3072,8 @@
                 "title": "allsky",
                 "url": "http://allsky.s3-website.us-east-2.amazonaws.com/",
                 "image": "assets/images/allsky-showcase.jpg",
+                "imageWidth": 1800,
+                "imageHeight": 1020,
                 "blurb": "An animated, interactive all-sky map of stellar motion across the Milky Way — the visualization behind the 2021 Dunlap \"interactive map of the Milky Way\" feature."
             },
             "curation": {
@@ -3210,8 +3107,6 @@
             }
         },
         "news": {
-            "title": "News & Updates",
-            "tagline": "Recent papers, talks, and milestones",
             "items": [
                 {
                     "date": "Aug 2026",
@@ -3378,10 +3273,71 @@
                     "blurb": "The dynamic nested sampling package paper appeared in MNRAS; it is now cited 2,000+ times.",
                     "link": "https://doi.org/10.1093/mnras/staa278"
                 }
-            ]
+            ],
+            "types": {
+                "press": {
+                    "label": "Press",
+                    "accent": "press"
+                },
+                "paper": {
+                    "label": "Paper",
+                    "accent": "ic"
+                },
+                "talk": {
+                    "label": "Talk",
+                    "accent": "sla"
+                },
+                "award": {
+                    "label": "Award",
+                    "accent": "du"
+                },
+                "group": {
+                    "label": "Group",
+                    "accent": "ii"
+                },
+                "software": {
+                    "label": "Software",
+                    "accent": "violet"
+                }
+            }
         }
     },
     "pages": {
+        "home": {
+            "kicker": "Astrostatistics · University of Toronto",
+            "description": "Joshua S. Speagle, Assistant Professor of Astrostatistics at the University of Toronto — combining astronomy, statistics and AI to study stars and galaxies.",
+            "title": "Joshua S. Speagle",
+            "nameZh": "沈 佳 士",
+            "tagline": "Combining <span class=\"m\">astronomy, statistics, and AI</span> to understand how <span class=\"g\">stars and galaxies</span> form, behave, and evolve.",
+            "cta": [
+                {
+                    "text": "Explore the research",
+                    "url": "#research",
+                    "type": "primary"
+                },
+                {
+                    "text": "Publications →",
+                    "url": "publications.html",
+                    "type": "ghost"
+                }
+            ],
+            "sections": {
+                "about": {
+                    "kicker": "Who I am"
+                },
+                "research": {
+                    "kicker": "What I do",
+                    "title": "Statistics, AI & astronomy",
+                    "intro": "I develop statistical & machine-learning methods and apply them to the largest astronomical surveys — from billions of stars and galaxies down to individual objects."
+                },
+                "team": {
+                    "eyebrow": "✦ Research Group"
+                },
+                "join": {
+                    "kicker": "Join us"
+                }
+            }
+        },
         "publications": {
             "kicker": "Research output",
             "title": "Publications",
@@ -3426,10 +3382,16 @@
             "kicker": "About",
             "title": "Biography",
             "tagline": "A short career timeline."
+        },
+        "notfound": {
+            "kicker": "Error 404",
+            "title": "Lost in parameter space",
+            "body": "That page doesn't exist (or wandered off into a low-probability region). Let's get you back to a well-sampled part of the site.",
+            "description": "That page does not exist. Head back to the well-sampled parts of Joshua S. Speagle's astrostatistics site at the University of Toronto.",
+            "cta": {
+                "text": "Return home",
+                "url": "/index.html"
+            }
         }
-    },
-    "footer": {
-        "copyright": "© 2026 Joshua S. Speagle. This page was last updated on April 6, 2026.",
-        "credit": "Built, designed, and maintained in collaboration with Claude (Sonnet 4+, Opus 4+)."
     }
 }

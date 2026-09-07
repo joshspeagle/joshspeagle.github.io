@@ -48,11 +48,22 @@
     return { pts: [inp, a, b, d, land], nodes: [a, b, d], t: phase || 0, speed: R(0.055, 0.09), land };
   }
 
-  function build() {
+  // Positions are rolled once per layout; anything that depends on the palette is a
+  // stored 0..1 factor (star.af, galaxy.gi) so applyPalette() can re-tint the SAME
+  // scene on a theme change instead of re-rolling it (D10).
+  function applyPalette() {
+    for (const s of stars) s.a = lerp(0.08, pal.starMax, s.af);
+    for (const g of galaxies) g.tint = pal.gal[g.gi];
+    for (const p of inputs) p.tint = pal.gal[p.gi];
+  }
+
+  function layout() {
     const rect = canvas.getBoundingClientRect();
-    W = Math.max(640, rect.width); H = Math.max(420, rect.height);
+    // Buffer matches the element 1:1 — flooring the width squashed every circle
+    // horizontally on narrow screens (D11).
+    W = Math.max(1, rect.width); H = Math.max(1, rect.height);
     DPR = Math.min(2, window.devicePixelRatio || 1);
-    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
     PX = W * 0.875; PY = H * 0.50; pw = W * 0.045; ph = H * 0.095;   // sample x/y scales
@@ -60,7 +71,7 @@
     // faint full-width sky
     stars = [];
     for (let i = 0; i < Math.round(W * H / 6400); i++)
-      stars.push({ x: R(0, W), y: R(0, H), r: R(0.3, 1.4), a: R(0.08, pal.starMax), ph: R(0, 6.28), sp: R(0.5, 1.6) });
+      stars.push({ x: R(0, W), y: R(0, H), r: R(0.3, 1.4), af: Math.random(), a: 0, ph: R(0, 6.28), sp: R(0.5, 1.6) });
 
     // left "data" field: a deep field of galaxies (the observations). Distant/faint
     // on the far left, richer toward the network — a quiet nod to cosmic evolution.
@@ -70,9 +81,9 @@
     let tries = 0;
     const addGal = (fx, fy, depth, scale, alpha, forceType) => {
       const type = forceType || (depth < 0.4 ? (Math.random() < 0.6 ? 'd' : 'e') : (Math.random() < 0.5 ? 's' : 'e'));
-      galaxies.push({ x: W * fx, y: H * fy, rot: R(0, 6.28), ph: R(0, 6.28), type,
-        tint: pal.gal[type === 's' ? 0 : type === 'e' ? 1 : 2],
-        r: lerp(1.4, 4.6, depth) * scale, a: alpha });
+      const gi = type === 's' ? 0 : type === 'e' ? 1 : 2;
+      galaxies.push({ x: W * fx, y: H * fy, rot: R(0, 6.28), ph: R(0, 6.28), type, gi,
+        tint: pal.gal[gi], r: lerp(1.4, 4.6, depth) * scale, a: alpha });
     };
     while (galaxies.length < NG && tries < NG * 8) {
       tries++;
@@ -90,7 +101,8 @@
     // bright "input" galaxies adjacent to the network — pulses originate here
     inputs = [];
     for (let i = 0; i < 5; i++) inputs.push({ x: W * R(INPUT_X - 0.02, INPUT_X + 0.01), y: H * lerp(0.24, 0.76, i / 4) + R(-10, 10),
-      r: R(2.2, 3.2), rot: R(0, 6.28), ph: R(0, 6.28), a: R(0.7, 0.95), type: i % 2 === 0 ? 's' : 'e', tint: pal.gal[i % 2 === 0 ? 0 : 1] });
+      r: R(2.2, 3.2), rot: R(0, 6.28), ph: R(0, 6.28), a: R(0.7, 0.95), type: i % 2 === 0 ? 's' : 'e',
+      gi: i % 2 === 0 ? 0 : 1, tint: pal.gal[i % 2 === 0 ? 0 : 1] });
 
     // layered network (nodes styled as stars)
     layers = LAYER_X.map((fx, li) => {
@@ -118,6 +130,8 @@
       for (let i = 0; i < 95; i++) { const s = sampleTarget(); samples.push({ x: s.x, y: s.y, born: -1 }); }
       signals.forEach((s, i) => { s.t = (0.25 + 0.12 * i) % 1; });
     }
+
+    applyPalette();
   }
 
   function glow(cx, cy, r, rgb, a) { const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, `rgba(${rgb},${a})`); g.addColorStop(1, `rgba(${rgb},0)`); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.fill(); }
@@ -174,7 +188,7 @@
     for (const [a, b] of edges) { ctx.strokeStyle = `rgba(${pal.edge},${pal.edgeMax})`; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); }
 
     // reset activation, advance signals
-    for (const L of layers) for (const nd of L) nd.act *= 0.0;
+    for (const L of layers) for (const nd of L) nd.act = 0;
     for (const s of signals) {
       if (animating) s.t += s.speed * 0.6;
       if (s.t >= 1) { samples.push({ x: s.land.x, y: s.land.y, born: now }); if (samples.length > MAXS) samples.shift(); Object.assign(s, newSignal(0)); }
@@ -210,12 +224,13 @@
   function loop(now) { if (!running) return; if (now - lastT >= 33) { lastT = now; render(now / 1000); } rafId = requestAnimationFrame(loop); }
   function start() { if (running || reduce || !visible) return; running = true; animating = true; rafId = requestAnimationFrame(loop); }
   function stop() { running = false; if (rafId) cancelAnimationFrame(rafId); }
-  function init() { animating = !reduce; build(); if (reduce) drawOnce(); else start(); }
+  function init() { animating = !reduce; layout(); if (reduce) drawOnce(); else start(); }
 
   if ('IntersectionObserver' in window) new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) start(); else stop(); }, { threshold: 0.01 }).observe(canvas);
   document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
-  new MutationObserver(() => { const t = document.documentElement.getAttribute('data-theme') || 'dark'; if (t !== theme) { theme = t; pal = PAL[t] || PAL.dark; build(); if (reduce) drawOnce(); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { build(); if (reduce) drawOnce(); }, 200); });
+  // Theme change: re-tint in place. Only a resize re-rolls the scene.
+  new MutationObserver(() => { const t = document.documentElement.getAttribute('data-theme') || 'dark'; if (t !== theme) { theme = t; pal = PAL[t] || PAL.dark; applyPalette(); if (reduce) drawOnce(); } }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { layout(); if (reduce) drawOnce(); }, 200); });
 
   if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();

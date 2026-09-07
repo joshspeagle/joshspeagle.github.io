@@ -9,13 +9,11 @@ flat, date-sorted repo list with group filter chips (wired by listview.js).
 Repos absent from the curation map are bucketed into "scratch" (forks always go to scratch).
 """
 import json
+import re
 from datetime import datetime
-from pages_shared import esc, attr_esc, url_attr
 
-try:
-    from config import get_data_path
-except Exception:  # pragma: no cover - config always present in build env
-    get_data_path = None
+from config import get_data_path
+from pages_shared import accent_class, attr_esc, esc, listview_status, slug, url_attr
 
 # GitHub language -> (short label, css token)
 _LANG = {
@@ -28,13 +26,14 @@ _LANG = {
 
 
 def _load_cache():
-    """Load the software_data.json stats cache; return {} if unavailable."""
-    try:
-        path = get_data_path("software_data.json") if get_data_path else "assets/data/software_data.json"
-        with open(path, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
+    """Load the software_data.json stats cache.
+
+    A missing or corrupt cache raises (OSError / json.JSONDecodeError): build_html
+    reports the page as failed and exits non-zero, rather than silently publishing a
+    Software page with "0 repositories, 0 GitHub stars" (C4).
+    """
+    with open(get_data_path("software_data.json"), encoding="utf-8") as f:
+        return json.load(f)
 
 
 def _human(n):
@@ -101,8 +100,17 @@ def _showcase(sw, repos):
     img = sc.get("image", "")
     title = esc(sc.get("title", sc.get("repo", "")))
     blurb = esc(sc.get("blurb", ""))
-    img_html = (f'<div class="viz-img"><img src="{url_attr(img)}" loading="lazy" '
-                f'alt="Preview of the {title} visualization"></div>') if img else ""
+    # <picture> + webp sibling + intrinsic width/height (no layout shift), matching
+    # how every other photo on the site is served (D18).
+    dims = ""
+    if sc.get("imageWidth") and sc.get("imageHeight"):
+        dims = f' width="{int(sc["imageWidth"])}" height="{int(sc["imageHeight"])}"'
+    webp = re.sub(r"\.(jpe?g|png)$", ".webp", img, flags=re.I)
+    src_html = (f'<source srcset="{url_attr(webp)}" type="image/webp">'
+                if webp != img else "")
+    img_html = (f'<div class="viz-img"><picture>{src_html}'
+                f'<img src="{url_attr(img)}" loading="lazy" decoding="async"{dims} '
+                f'alt="Preview of the {title} visualization"></picture></div>') if img else ""
     return (
         '<section class="sw-showcase" aria-labelledby="sw-viz-head">'
         '<h2 id="sw-viz-head" class="pub-featured-head">Data visualization</h2>'
@@ -134,10 +142,22 @@ def _list_card(name, repo, cur, group_id, group_label, accent, featured):
         tags += '<span class="tag fork">fork</span>'
     if repo.get("external"):
         tags += '<span class="tag external">collaborator</span>'
-    search = attr_esc(f'{name} {cur.get("blurb","") or repo.get("description","")} {group_label}')
+    if repo.get("archived"):
+        tags += '<span class="tag archived">archived</span>'
+    # Search over everything the card actually shows: name, blurb, group, the language
+    # pill, and the fork / collaborator / archived tags (E8).
+    search_bits = [name, cur.get("blurb", "") or repo.get("description", ""), group_label,
+                   repo.get("language") or ""]
+    if repo.get("isFork"):
+        search_bits.append("fork")
+    if repo.get("external"):
+        search_bits.append("collaborator external")
+    if repo.get("archived"):
+        search_bits.append("archived")
+    search = attr_esc(" ".join(b for b in search_bits if b))
     num = (repo.get("pushed", "") or "")[:10].replace("-", "")
     return (
-        f'<article class="item accent-{accent}" data-lv-item data-cat="{group_id}" '
+        f'<article class="item accent-{accent}" data-lv-item data-cat="{slug(group_id)}" '
         f'data-num="{num}" data-title="{attr_esc(name)}" data-search="{search}">'
         f'<div class="item-head"><h3 class="item-title">{esc(name)}</h3>'
         f'<span class="item-when">{when}</span></div>'
@@ -153,7 +173,8 @@ def generate_content(data):
     curation = sw.get("curation", {})
     groups = sw.get("groups", [])
     group_label = {g["id"]: g["label"] for g in groups}
-    group_accent = {g["id"]: g.get("accent", "violet") for g in groups}
+    group_accent = {g["id"]: accent_class(g.get("accent", "violet"), f'software group {g["id"]!r}')
+                    for g in groups}
     group_order = [g["id"] for g in groups]
     featured_names = sw.get("featured", [])
 
@@ -195,7 +216,7 @@ def generate_content(data):
     for gid in group_order:
         if counts.get(gid):
             acc = group_accent[gid]
-            chips.append(f'<button class="chip" data-cat="{gid}" aria-pressed="false">'
+            chips.append(f'<button class="chip" data-cat="{slug(gid)}" aria-pressed="false">'
                          f'<span class="dot d-{acc}"></span>{esc(group_label[gid])} '
                          f'<span class="ct">{counts[gid]}</span></button>')
     cards = "".join(
@@ -212,6 +233,7 @@ def generate_content(data):
         '<option value="num">Recently updated</option><option value="az">A–Z</option></select>'
         f'<div class="pub-filters" data-lv-filters role="group" aria-label="Filter">{"".join(chips)}</div>'
         '</div>'
+        f'{listview_status()}'
         f'<div class="pub-list" data-lv-list>{cards}</div>'
         '<p class="pub-empty" data-lv-empty hidden>No repositories match your search or filters. '
         '<button type="button" class="linkbtn" data-lv-reset>Show all</button></p>'

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Joshua S. Speagle · News</title>
+    <link>https://joshspeagle.com/news.html</link>
+    <description>News and press from Joshua S. Speagle, astrostatistics at the University of Toronto.</description>
+    <language>en-us</language>
+    <atom:link href="https://joshspeagle.com/feed.xml" rel="self" type="application/rss+xml"/>
+    <lastBuildDate>07 Sep 2026 00:00:00 +0000</lastBuildDate>
+    <item>
+      <title>Mairead Heiger completes her PhD, joins UVA as a joint GECO/CosmicAI postdoctoral fellow</title>
+      <link>https://joshspeagle.com/news.html</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2026-08-01:news/mairead-heiger-completes-her-phd-joins-uva-as-a-joint-geco-c</guid>
+      <pubDate>01 Aug 2026 00:00:00 +0000</pubDate>
+      <category>Group</category>
+      <description>Mairead successfully defended her PhD in Astronomy &amp; Astrophysics and is moving on to a joint postdoctoral fellowship with GECO and CosmicAI at the University of Virginia.</description>
+    </item>
+    <item>
+      <title>Simran Nerval and Mairead Heiger win the Fieldus Award</title>
+      <link>https://www.astro.utoronto.ca/2026-fieldus-award-recipients-simran-nerval-and-mairead-heiger/</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2026-07-01:news/simran-nerval-and-mairead-heiger-win-the-fieldus-award</guid>
+      <pubDate>01 Jul 2026 00:00:00 +0000</pubDate>
+      <category>Group</category>
+      <description>Departmental recognition for a very high level of research acumen and service. Mairead was honoured for her spectroscopic follow-up of the ultra-faint dwarf galaxies Eridanus IV and Centaurus I, her DLEIY galactic chemical evolution framework, and her service as GASA co-chair.</description>
+    </item>
+    <item>
+      <title>New preprint: supernova yields from dwarf spheroidals</title>
+      <link>https://ui.adsabs.harvard.edu/abs/2026arXiv260222333H</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2026-02-01:news/new-preprint-supernova-yields-from-dwarf-spheroidals</guid>
+      <pubDate>01 Feb 2026 00:00:00 +0000</pubDate>
+      <category>Paper</category>
+      <description>Student-led work (Heiger et al.) constraining supernova yields and delay times from dwarf spheroidal galaxies.</description>
+    </item>
+    <item>
+      <title>A deep 3-D dust map of the southern Galactic plane</title>
+      <link>https://ui.adsabs.harvard.edu/abs/2025ApJ...992...39Z</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2025-10-01:news/a-deep-3-d-dust-map-of-the-southern-galactic-plane</guid>
+      <pubDate>01 Oct 2025 00:00:00 +0000</pubDate>
+      <category>Paper</category>
+      <description>Co-led a high-angular-resolution 3-D dust map of the southern Milky Way (Zucker, Saydjari &amp; Speagle, ApJ), built on the DECaPS2 survey with the brutus inference framework.</description>
+    </item>
+    <item>
+      <title>Steffani Grondin and Michael Poon win the 2025 Jui Lin (Allen) Yen Award</title>
+      <link>https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award-2/</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2025-09-01:news/steffani-grondin-and-michael-poon-win-the-2025-jui-lin-allen</guid>
+      <pubDate>01 Sep 2025 00:00:00 +0000</pubDate>
+      <category>Group</category>
+      <description>Departmental recognition for exceptional achievement in research by a graduate student. Steffani completed her PhD studying massive star clusters, including post-common-envelope binaries and dynamical interactions.</description>
+    </item>
+    <item>
+      <title>Sam Berek completes her PhD, joins UMass Amherst as an NSF postdoctoral fellow</title>
+      <link>https://samberek.github.io/samberek/index.html</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2025-08-01:news/sam-berek-completes-her-phd-joins-umass-amherst-as-an-nsf-po</guid>
+      <pubDate>01 Aug 2025 00:00:00 +0000</pubDate>
+      <category>Group</category>
+      <description>Sam successfully defended her PhD in the David A. Dunlap Department of Astronomy &amp; Astrophysics and is now an NSF Astronomy and Astrophysics Postdoctoral Fellow at UMass Amherst.</description>
+    </item>
+    <item>
+      <title>ChronoFlow: an AI model for the ages of stars</title>
+      <link>https://www.utoronto.ca/news/u-t-astronomers-develop-ai-model-determine-stars-ages</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2025-07-01:news/chronoflow-an-ai-model-for-the-ages-of-stars</guid>
+      <pubDate>01 Jul 2025 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>Student-led work (Van-Lane et al.) using normalizing flows for gyrochronology, co-supervised with Gwen Eadie. Covered by U of T News and Phys.org.</description>
+    </item>
+    <item>
+      <title>First white dwarf–main-sequence binary candidates in open star clusters</title>
+      <link>https://www.artsci.utoronto.ca/news/u-t-astronomers-discover-first-white-dwarf-main-sequence-binary-candidates-open-star-clusters</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2024-11-01:news/first-white-dwarf-main-sequence-binary-candidates-in-open-st</guid>
+      <pubDate>01 Nov 2024 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>Co-author on the discovery (Grondin et al., ApJ), also picked up by Phys.org and SciTechDaily.</description>
+    </item>
+    <item>
+      <title>Sam Berek and Shivan Khullar win the Jui Lin (Allen) Yen Award</title>
+      <link>https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2024-09-01:news/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award</guid>
+      <pubDate>01 Sep 2024 00:00:00 +0000</pubDate>
+      <category>Group</category>
+      <description>Sam was honoured for "Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models," introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model.</description>
+    </item>
+    <item>
+      <title>A 5-D map of the Milky Way — AAS Nova featured image</title>
+      <link>https://aasnova.org/2024/08/12/featured-image-a-5d-map-of-the-milky-way/</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2024-08-01:news/a-5-d-map-of-the-milky-way-aas-nova-featured-image</guid>
+      <pubDate>01 Aug 2024 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>My lead-author work (Speagle et al. 2024) highlighted as an AAS Nova featured image.</description>
+    </item>
+    <item>
+      <title>The Radcliffe Wave is waving</title>
+      <link>https://www.cfa.harvard.edu/news/radcliffe-wave-waving</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2024-02-01:news/the-radcliffe-wave-is-waving</guid>
+      <pubDate>01 Feb 2024 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>Co-author on the finding that the galaxy's largest gaseous structure oscillates (Konietzka et al., Nature). Widely covered — CfA, Phys.org, Universe Today, the Harvard Crimson.</description>
+    </item>
+    <item>
+      <title>Students train AI for the Galaxy Zoo: Euclid citizen-science project</title>
+      <link>https://www.statistics.utoronto.ca/news/exploring-universe-u-t-students%E2%80%99-journey-galaxy-zoo-project</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2024-01-01:news/students-train-ai-for-the-galaxy-zoo-euclid-citizen-science-</guid>
+      <pubDate>01 Jan 2024 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>U of T Statistical Sciences profiled undergraduates Khalid Edris and Junbo Li — co-mentored with Dunlap Fellow Mike Walmsley — on training the Zoobot AI to classify galaxies from the Euclid space telescope.</description>
+    </item>
+    <item>
+      <title>Connaught New Researcher Award</title>
+      <link>https://joshspeagle.com/news.html</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2024-01-01:news/connaught-new-researcher-award</guid>
+      <pubDate>01 Jan 2024 00:00:00 +0000</pubDate>
+      <category>Award</category>
+      <description>Awarded by the University of Toronto in support of early-career research.</description>
+    </item>
+    <item>
+      <title>DECaPS2: a survey of 3.3 billion objects in the Milky Way's plane</title>
+      <link>https://noirlab.edu/public/news/noirlab2301/</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2023-01-01:news/decaps2-a-survey-of-3-3-billion-objects-in-the-milky-way-s-p</guid>
+      <pubDate>01 Jan 2023 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>Co-author on the DECaPS2 survey and catalogue (Saydjari et al.). Covered by NOIRLab, Space.com, PBS NewsHour, and Salon.</description>
+    </item>
+    <item>
+      <title>2022 John Charles Polanyi Prize in Physics</title>
+      <link>https://www.utoronto.ca/celebrates/joshua-speagle-wins-2022-john-charles-polanyi-prize-physics</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2023-01-01:news/2022-john-charles-polanyi-prize-in-physics</guid>
+      <pubDate>01 Jan 2023 00:00:00 +0000</pubDate>
+      <category>Award</category>
+      <description>Recognized by the Government of Ontario for outstanding early-career research — "I'm honoured and humbled to receive the Polanyi Prize."</description>
+    </item>
+    <item>
+      <title>The Local Bubble: the Sun sits in a 1,000-light-year void that forms stars</title>
+      <link>https://www.cfa.harvard.edu/news/1000-light-year-wide-bubble-surrounding-earth-source-all-nearby-young-stars</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2022-01-01:news/the-local-bubble-the-sun-sits-in-a-1-000-light-year-void-tha</guid>
+      <pubDate>01 Jan 2022 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>Co-author on the Local Bubble result (Zucker et al., Nature). Covered by CfA, the Harvard Gazette, STScI, and the Smithsonian.</description>
+    </item>
+    <item>
+      <title>Mapping the Milky Way: an interactive tool for 170 million stars</title>
+      <link>https://www.dunlap.utoronto.ca/dunlap-postdoc-creates-interactive-map-of-the-milky-way/</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2021-07-01:news/mapping-the-milky-way-an-interactive-tool-for-170-million-st</guid>
+      <pubDate>01 Jul 2021 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>Profiled by the Dunlap Institute for building the first interactive map of the Milky Way's stars and dust — the basis of the allsky visualization.</description>
+    </item>
+    <item>
+      <title>The Radcliffe Wave — the largest gaseous structure in the galaxy</title>
+      <link>https://www.cfa.harvard.edu/news/radcliffe-wave</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2020-01-01:news/the-radcliffe-wave-the-largest-gaseous-structure-in-the-gala</guid>
+      <pubDate>01 Jan 2020 00:00:00 +0000</pubDate>
+      <category>Press</category>
+      <description>Co-author on the discovery of a 9,000-light-year wave of stellar nurseries near the Sun (Alves et al., Nature). Featured by CfA and the Harvard Gazette.</description>
+    </item>
+    <item>
+      <title>dynesty published in MNRAS</title>
+      <link>https://doi.org/10.1093/mnras/staa278</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2020-01-01:news/dynesty-published-in-mnras</guid>
+      <pubDate>01 Jan 2020 00:00:00 +0000</pubDate>
+      <category>Software</category>
+      <description>The dynamic nested sampling package paper appeared in MNRAS; it is now cited 2,000+ times.</description>
+    </item>
+  </channel>
+</rss>

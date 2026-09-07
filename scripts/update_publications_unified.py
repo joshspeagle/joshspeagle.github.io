@@ -336,8 +336,10 @@ class UnifiedPublicationPipeline:
         """Carry forward fields from existing data that fetchers don't produce.
 
         Fields like llm_categorization, categoryProbabilities, researchArea,
-        and featured are set by separate processes (LLM agents, post-processing)
-        and would be lost during the merge step since fetchers don't produce them.
+        identifierNote and featured are set by separate processes (LLM agents,
+        post-processing, hand annotation) and would be lost during the merge step
+        since fetchers don't produce them. Matching is by identifier first and
+        title second.
         """
         # Load existing data from the canonical path
         existing_path = get_data_path()
@@ -350,34 +352,52 @@ class UnifiedPublicationPipeline:
         except Exception:
             return 0
 
-        # Build lookup by normalized title
+        from postprocessing import identity_keys
+
+        # Look up an existing record by normalised title *or* by any identifier
+        # it answers to — a title-only lookup silently dropped hand-written
+        # annotations whenever a publisher retitled a paper between runs.
         existing_lookup = {}
         for pub in existing_data.get("publications", []):
             key = pub.get("title", "").strip().lower()
             if key:
-                existing_lookup[key] = pub
+                existing_lookup.setdefault(("title", key), pub)
+            for ident in identity_keys(pub):
+                existing_lookup.setdefault(ident, pub)
 
-        # Fields to preserve from existing data
+        # Fields to preserve from existing data. These are set by separate
+        # processes (LLM agents, post-processing, hand annotation) and no fetcher
+        # produces them, so without this they are lost on every run.
         preserve_fields = [
             "llm_categorization",
             "categoryProbabilities",
             "researchArea",
+            "identifierNote",
+            "featured",
+            "scholar_id_aliases",
+            "journal",
         ]
+
+        def _lookup(pub):
+            for ident in identity_keys(pub):
+                if ident in existing_lookup:
+                    return existing_lookup[ident]
+            return existing_lookup.get(("title", pub.get("title", "").strip().lower()))
 
         carried = 0
         for pub in merged_publications:
-            key = pub.get("title", "").strip().lower()
-            existing = existing_lookup.get(key)
+            existing = _lookup(pub)
             if not existing:
                 continue
 
-            for field in preserve_fields:
-                if field in existing and field not in pub:
-                    pub[field] = existing[field]
-
-            # Only count if we actually carried something
-            if any(field in pub for field in preserve_fields if field in existing):
+            # Fill gaps only: a fetched value always wins over a carried one.
+            if any(
+                field in existing and not pub.get(field) for field in preserve_fields
+            ):
                 carried += 1
+            for field in preserve_fields:
+                if field in existing and not pub.get(field):
+                    pub[field] = existing[field]
 
         return carried
 
