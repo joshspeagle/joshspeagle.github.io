@@ -14,8 +14,8 @@ Each stage maps to one of the four redesign category colors (postdoc->sla,
 doctoral->ii, masters->ic, bachelors->du) used for the card accent, stage badge,
 group-heading dot, and the breakdown chart bars.
 """
-from pages_shared import (attr_esc, card_meta, chip, esc, listview_status, parse_latest_year,
-                          period_end_key, strip_tags as _strip_tags)
+from pages_shared import (attr_esc, card_meta, chip, date_range, esc, listview_status,
+                          parse_latest_year, period_end_key, strip_tags as _strip_tags)
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
 _STAGES = [
@@ -31,7 +31,7 @@ _CHIP_LABEL = {
     "postdoc":   "Postdocs",
     "doctoral":  "Doctoral",
     "masters":   "Master's",
-    "bachelors": "Undergrad",
+    "bachelors": "Undergraduates",
     "secondary": "Secondary school",
 }
 
@@ -121,7 +121,7 @@ def _card(rec, cat, label, color, completed):
         f'data-cat="{cat} {"former" if completed else "current"}" '
         f'data-search="{data_search}" data-year="{data_year}" '
         f'data-num="{data_year}" data-title="{data_title}">'
-        f'{card_meta(period, label, (sup, True))}'
+        f'{card_meta(date_range(period), label, (sup, True))}'
         '<div class="item-head">'
         f'<div class="item-headline"><h4 class="item-title">{name_html}</h4></div>'
         '</div>'

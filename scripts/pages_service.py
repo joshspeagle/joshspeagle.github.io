@@ -32,8 +32,8 @@ with no visible cards produce no chip. Each category declares its
 accent colour class in content.json (see .item.accent-<accent> / .d-<accent> in
 redesign.css); the filter-chip key is still the slugified title.
 """
-from pages_shared import (accent_class, attr_esc, card_meta, esc, period_end_year, scaffold,
-                          slug as _slug, strip_tags as _strip_tags, warn)
+from pages_shared import (accent_class, attr_esc, card_meta, date_range, esc, period_end_year,
+                          scaffold, slug as _slug, strip_tags as _strip_tags, warn)
 
 
 def _period_text(pos):
@@ -117,7 +117,7 @@ def generate_content(data):
                 f'data-search="{attr_esc(search_src)}" '
                 f'data-year="{year}" data-num="{year}" '
                 f'data-title="{attr_esc(_strip_tags(title))}">'
-                f'{card_meta(period, (cat_title, True))}'
+                f'{card_meta(date_range(period), (cat_title, True))}'
                 f'<div class="item-head"><h3 class="item-title">{esc(title)}</h3></div>'
                 f'{meta_html}{note_html}{link_html}'
                 f'</article>'

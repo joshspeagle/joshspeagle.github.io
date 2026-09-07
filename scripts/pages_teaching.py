@@ -10,9 +10,9 @@ card's left stripe + badge dot is colored to match its chip.
 
 Per-item card contract is documented in pages_shared.py.
 """
-from pages_shared import (accent_class, all_years, attr_esc, card_meta, esc,
+from pages_shared import (accent_class, all_years, attr_esc, card_meta, date_range, esc,
                           parse_latest_year, scaffold, slug as _slug,
-                          strip_tags as _strip_tags, term_month as _term_month, warn, url_attr)
+                          strip_tags as _strip_tags, term_month as _term_month, url_attr, warn)
 
 
 def _link_html(rec, label="Course page"):
@@ -123,12 +123,12 @@ def generate_content(data):
             f'<article class="item accent-{accent}" data-lv-item '
             f'data-cat="{cat}" data-search="{data_search}" '
             f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
-            f'{card_meta(" · ".join(terms), (dept_display, True))}'
+            f'{card_meta(date_range(" · ".join(terms)), (dept_display, True))}'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title_display)}</h3>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
-            f'<div class="item-tags">{tags}{_link_html(c)}</div>'
+            f'<div class="item-tags">{tags}{_link_html(course)}</div>'
             f'</article>'
         )
 
@@ -153,7 +153,7 @@ def generate_content(data):
             f'<article class="item accent-{_accent(accents, "workshops")}" data-lv-item '
             f'data-cat="workshops" data-search="{data_search}" '
             f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
-            f'{card_meta(" · ".join(terms), ("Workshop", True))}'
+            f'{card_meta(date_range(" · ".join(terms)), ("Workshop", True))}'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title)}</h3>'
             f'</div>'
@@ -168,7 +168,7 @@ def generate_content(data):
         items_html,
         filters,
         total=len(courses) + len(short_courses),
-        sorts=[("year", "Most recent"), ("az", "A–Z")],
+        sorts=[("year", "Newest first"), ("az", "A–Z")],
         batch=0,
         search_ph="Search courses & workshops…",
         default_sort="year",

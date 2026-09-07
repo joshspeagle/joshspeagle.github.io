@@ -47,8 +47,10 @@ python -m http.server 8000       # local dev server
 ### Non-obvious file notes
 
 - `requirements.txt` pins deps for the **publication pipeline only** — the front-end build scripts are stdlib.
+- **The CV lives in this repo**: `CV_speagle.pdf` at the root, linked from the nav (desktop + mobile) via `CV_FILE` in `build_html.py`, root-prefix-aware like the icons. To update it, replace the file under the same name, bump `site.lastUpdated`, and rebuild — `npm run check` fails if it goes missing, since the link check covers non-HTML targets too. The old `joshspeagle.com/bio-cv/` site comes from the separate **`bio-cv`** repo, is no longer linked from here, and should be archived.
 - `scripts/generate_favicons.py` · `scripts/make_og_card.py` draw the `#mark` geometry (amber on `#06080f`) with Pillow and generate the favicon set + `site.webmanifest` and the OG/Twitter social card (`assets/images/og-card.png`). Both are deterministic and are NOT part of `npm run build` — re-run them by hand on rebrand. The OG card wants `fontTools` + `brotli` to read the vendored woff2 brand fonts (it falls back to a default font and says so).
 - Update `sitemap.xml` when adding pages.
+- **Two `http://` URLs in `content.json` must stay `http`**: the `allsky` S3 static-website endpoint (S3 website hosting serves no TLS) and `http://briandnord.com/` (its https certificate does not cover the apex domain, so an upgrade shows a full-page interstitial). Every other external link is https.
 - `assets/js/redesign/pubchart.js` only adds tooltips — the publication figures themselves are **inline SVG built in `build_html.py`** by `_citations_svg`/`_roles_svg`/`_riq_svg`. Edit the chart shapes there, not in the JS.
 - `assets/data/publications.bib` is generated from `publications_data.json` by `scripts/export_bib.py`; Publications links it as "BibTeX ↓" and `npm run check` fails when it drifts (`export_bib.py --check`).
 - `scripts/check_build.py` (`npm run check`, stdlib only) is the correctness gate: the `data-year` contract for any listview offering a year sort, non-empty content containers on every registered page, undefined CSS custom properties, raw hex outside `scripts/check_allow_hex.txt`, internal link/anchor/duplicate-id checks, tag balance, and a **warning** (with numbers) when the four `--cat-*` tokens sit too close in relative luminance.
@@ -68,7 +70,7 @@ python -m http.server 8000       # local dev server
 
 Detailed procedures live in `.claude/skills/` and load on demand:
 
-- **`website-content-update`** — the 15-category checklist to walk when the user asks to "update the website".
+- **`website-content-update`** — the 16-category checklist to walk when the user asks to "update the website" (including how to swap in a new CV).
 - **`adding-mentees`** — the `menteesByStage` schema and badge tagging vocabulary for the Mentorship page.
 - **`software-stats-pipeline`** — refreshing GitHub/PyPI stats and the `curation` map for the Software page.
 - **`publication-pipeline`** — the ADS/Scholar/OpenAlex pipeline, LLM paper categorization, and identifier-completeness auditing.

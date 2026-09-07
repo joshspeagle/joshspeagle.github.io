@@ -241,6 +241,36 @@ def period_end_key(period):
     return (year, season)
 
 
+_RANGE_OPEN = {"present", "now", "ongoing", "current"}
+_RANGE_WORDS = _RANGE_OPEN | set(_SEASON_ORD) | set(_MONTHS3) | {
+    "january", "february", "march", "april", "june", "july", "august",
+    "september", "sept", "october", "november", "december"}
+_RANGE_PAIR = re.compile(r"([A-Za-z0-9'’]+)\s*-\s*([A-Za-z0-9'’]+)")
+
+
+def _range_token(tok):
+    """True when a token can be one end of a date range (a year, a month, a season,
+    or an open end like 'Present')."""
+    t = tok.strip().lower()
+    return bool(re.search(r"\d", t)) or t in _RANGE_WORDS
+
+
+def date_range(text):
+    """A date/period string with an en dash between the two ends of a range:
+    "2011 - 2015" -> "2011–2015", "Fall 2026-Present" -> "Fall 2026–Present",
+    "Jan-Apr 2025" -> "Jan–Apr 2025".
+
+    Applied at render time (B14) so the ~50 date strings in content.json can stay
+    however they were typed and the year parsers keep seeing plain hyphens. A hyphen
+    inside a word ("Co-Supervisor", "post-common-envelope") is left alone: both sides
+    must look like the end of a date.
+    """
+    return _RANGE_PAIR.sub(
+        lambda m: f"{m.group(1)}–{m.group(2)}" if _range_token(m.group(1)) and _range_token(m.group(2))
+        else m.group(0),
+        str(text or ""))
+
+
 def term_month(term):
     """Representative month (1-12) for a term/date string; month names win over
     season words (winter/spring/summer/fall). 0 if nothing is recognized."""

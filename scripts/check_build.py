@@ -13,7 +13,9 @@ build that is reproducible and wrong.
                         redesign.css outside the allowlist (scripts/check_allow_hex.txt)
   4. palette            pairwise luminance separation of the four --cat-* tokens
                         per theme (WARNING only — reported with numbers)
-  5. links              internal links resolve, #anchors exist, ids are unique
+  5. links              internal links resolve, #anchors exist, ids are unique.
+                        Non-HTML targets count too: the nav's CV_speagle.pdf at the
+                        repo root fails this check if it is renamed or removed.
   6. well-formedness    tag balance via html.parser
 
 Exit status 1 if any check fails; warnings never fail the run.
@@ -235,6 +237,8 @@ def check_palette():
 # ---------------------------------------------------------------------------
 
 def check_links(docs):
+    """Every relative href must resolve to a file that exists — .html pages and the
+    CV PDF alike — and every #fragment must name a real id on the target page."""
     for key, (path, html, doc) in docs.items():
         ids = set(doc.ids)
         for href, _tag in doc.links:

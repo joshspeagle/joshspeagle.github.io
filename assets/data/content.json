@@ -10,8 +10,8 @@
     },
     "sections": {
         "about": {
-            "title": "Who am I?",
-            "content": "I am an <strong>Assistant Professor of Astrostatistics</strong> jointly appointed between the <a href=\"https://www.astro.utoronto.ca/\">David A. Dunlap Department of Astronomy & Astrophysics</a> and the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a> at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>. I am also an Associate Member of the <a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute for Astronomy & Astrophysics</a> as well as a Member of the <a href=\"https://datasciences.utoronto.ca/\">Data Sciences Institute</a>. For the 2026-2027 academic year, I am also serving as the (Interim) Director of the <a href=\"https://mscac.utoronto.ca/concentrations/ds/\">MScAc – Data Science Concentration</a> in the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a>.",
+            "title": "A bit about me",
+            "content": "I am an <strong>Assistant Professor of Astrostatistics</strong> jointly appointed between the <a href=\"https://www.astro.utoronto.ca/\">David A. Dunlap Department of Astronomy & Astrophysics</a> and the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a> at the <a href=\"https://www.utoronto.ca/\">University of Toronto</a>. I am also an Associate Member of the <a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute for Astronomy & Astrophysics</a> as well as a Member of the <a href=\"https://datasciences.utoronto.ca/\">Data Sciences Institute</a>. For the 2026–2027 academic year, I am also serving as the (Interim) Director of the <a href=\"https://mscac.utoronto.ca/concentrations/ds/\">MScAc – Data Science Concentration</a> in the <a href=\"https://www.statistics.utoronto.ca/\">Department of Statistical Sciences</a>.",
             "highlightBox": {
                 "title": "A Few Other Things",
                 "content": "I also teach both undergraduate and graduate courses in astronomy and statistics, serve on a few committees within the University of Toronto, and remain a member of several professional societies such as the <a href=\"https://aas.org/\">AAS</a>, <a href=\"https://astrostat.org/\">ASA-AIG</a>, and <a href=\"https://ssc.ca/en/about/sections-regions/data-science-and-analytics\">SSC-DSA</a>. I also help manage the <a href=\"https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/\">Astronomy & Astrophysics Summer Undergraduate Research Program (SURP)</a> (the largest of its kind in Canada!)."
@@ -36,17 +36,17 @@
             "content": "I am incredibly fortunate to co-lead the interdisciplinary <strong><a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a></strong> along with its founder <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>.",
             "highlights": [
                 {
-                    "title": "Cutting-Edge, Interdisciplinary Research",
-                    "content": "Pioneering new methods in astrophysics at the intersection of statistics and AI"
+                    "title": "New methods, real problems",
+                    "content": "We build statistical and AI methods for astrophysics and put them to work on real data"
                 },
                 {
-                    "title": "Collaborative, Inclusive Environment",
-                    "content": "Interdisciplinary team spanning astrophysics, statistics, and data science"
+                    "title": "One team, several fields",
+                    "content": "Astrophysicists, statisticians, and data scientists, in a group where everyone belongs"
                 }
             ],
             "cta": [
                 {
-                    "text": "Explore our research",
+                    "text": "Visit the ART site",
                     "url": "https://astrostatuoft.com/",
                     "type": "primary"
                 },
@@ -61,22 +61,22 @@
             "areas": [
                 {
                     "title": "Statistical Learning & AI",
-                    "description": "Developing novel methods to discover underlying patterns from (many) large, messy datasets."
+                    "description": "Developing new methods to find the patterns hiding in large, messy datasets."
                 },
                 {
                     "title": "Interpretability & Insight",
-                    "description": "Building up a rigorous understanding of how statistical methods work both in theory and in practice in order to extract novel scientific insights."
+                    "description": "Building a careful understanding of how statistical methods behave, in theory and in practice, so the insights we draw from them hold up."
                 },
                 {
                     "title": "Inference & Computation",
-                    "description": "Establishing robust frameworks and designing tractable algorithms to efficiently quantify how much we can learn from data."
+                    "description": "Designing frameworks and algorithms that make it practical to ask how much we can actually learn from a dataset."
                 },
                 {
                     "title": "Discovery & Understanding",
-                    "description": "Applying these methods to large-scale astronomical surveys to uncover new insights about the universe."
+                    "description": "Applying these methods to large astronomical surveys to learn something new about the universe."
                 }
             ],
-            "additionalContent": "This work often involves working with massive datasets from wide-field imaging and spectroscopic surveys containing observations ranging from billions of stars and galaxies to interstellar gas and dust, but can also include smaller datasets from targeted observations of individual objects along with everything in between.",
+            "additionalContent": "Most of that data comes from wide-field imaging and spectroscopic surveys — stars, galaxies, and the gas and dust in between — though a good deal of it comes from small, targeted observations too.",
             "publications": {
                 "title": "Publications",
                 "intro": "A mostly complete list of my publications can be found on:",
@@ -109,18 +109,18 @@
             }
         },
         "collaboration": {
-            "title": "Collaboration & Mentorship",
+            "title": "Collaboration & mentorship",
             "intro": "I consider collaboration and mentorship to be at the heart of my research and love working with students, postdocs, visiting researchers, and faculty across disciplines. If you're interested in working with me on a short-term or long-term project, please don't hesitate to reach out.",
             "values": {
                 "title": "Our Values",
                 "items": [
                     {
                         "title": "Equity, Diversity, and Inclusion",
-                        "content": "We strive to create an environment where diverse backgrounds are an integral and well-supported part of our research community as well as individual members' identities as researchers. All members should know they are always valued."
+                        "content": "We want a research community where people's different backgrounds are part of the group and part of who they are as researchers, and where that is actively supported. Everyone here should know they are valued."
                     },
                     {
                         "title": "Open and Accessible Science",
-                        "content": "We're committed to growing our community by engaging in reproducible research, releasing open-source tools and pedagogical materials, and mentoring the next generation of astrostatisticians and data scientists through hands-on learning."
+                        "content": "We do reproducible research and release our tools and teaching materials openly so other people can use them. Most of the training here happens hands-on, by working through real problems together."
                     }
                 ]
             },
@@ -129,7 +129,7 @@
                 "cards": [
                     {
                         "title": "Postdoctoral Researchers",
-                        "content": "Gwen and I are always happy to hear from enthusiastic postdoctoral researchers interested in the Astrostatistics Research Team. While openings depend on available funding, if you are interested in applying your skills to cutting-edge research in astrostatistics, please feel free to reach out to either me and/or Gwen.",
+                        "content": "Gwen and I are always glad to hear from postdocs who want to join the Astrostatistics Research Team. Openings depend on funding, so most people arrive through one of the fellowships below — if one looks like a fit, write to either of us.",
                         "fellowships": {
                             "intro": "Fellowship opportunities:",
                             "links": [
@@ -187,7 +187,7 @@
                     },
                     {
                         "title": "Graduate Students",
-                        "content": "I am always happy to hear from enthusiastic students interested in our research group. While I cannot directly admit graduate students, I encourage applications to our Master's/Doctoral programs. Please feel free to reach out if you are interested in learning more about my research and how it might fit into your potential graduate studies.",
+                        "content": "I cannot admit graduate students directly, so the first step is applying to one of our Master's or doctoral programs. If you would like to hear more about my research and how it might fit your plans, email me before you apply.",
                         "programs": {
                             "intro": "Programs:",
                             "links": [
@@ -204,7 +204,7 @@
                     },
                     {
                         "title": "University of Toronto Undergraduates",
-                        "content": "I love working with University of Toronto undergraduate students both throughout the year and over the summer. I often post opportunities through existing program streams to ensure equitable review processes.",
+                        "content": "I love working with University of Toronto undergraduates, both during the year and over the summer. I post most of these projects through the program streams below, which keeps the review equitable.",
                         "opportunities": [
                             {
                                 "name": "Research Opportunity Program",
@@ -232,7 +232,7 @@
                     },
                     {
                         "title": "Canadian Undergraduates",
-                        "content": "For Canadian undergraduate students, there are several excellent summer research programs available. These competitive programs provide structured research experiences with funding support.",
+                        "content": "If you are an undergraduate elsewhere in Canada, the summer programs below are the usual way in. They are competitive, but each one comes with funding and a structured research term.",
                         "opportunities": [
                             {
                                 "name": "Astronomy & Astrophysics SURP",
@@ -260,7 +260,7 @@
                     },
                     {
                         "title": "International Undergraduates",
-                        "content": "Several funded programs exist for international students to conduct research at Canadian universities. Eligibility varies by country of origin and program.",
+                        "content": "A few funded programs bring international students to Canadian universities for a research term. Eligibility depends on your home country and the program, so check the details below before you apply.",
                         "opportunities": [
                             {
                                 "name": "Mitacs Globalink Research Internship",
@@ -286,7 +286,7 @@
                     },
                     {
                         "title": "Visiting Researchers & External Collaborators",
-                        "content": "I am always happy to start up new collaborations or strengthen existing ones. If you are interested in coming to the University of Toronto for either a short visit or extended stay, please reach out so we can discuss potential projects and coordinate funding."
+                        "content": "I am always up for starting a new collaboration or deepening one that already exists. If you are thinking about a short visit or a longer stay in Toronto, get in touch and we can work out projects and funding."
                     }
                 ]
             }
@@ -302,7 +302,7 @@
                 {
                     "title": "Undergraduate",
                     "date": "2011 - 2015",
-                    "content": "Bachelor's Degree with Honors in Astrophysics and Physics at <a href=\"https://www.harvard.edu/\">Harvard University</a>. Participated in multiple research projects across astronomy.",
+                    "content": "Bachelor's Degree with Honors in Astrophysics and Physics at <a href=\"https://www.harvard.edu/\">Harvard University</a>. Worked on a handful of research projects across astronomy along the way.",
                     "location": "Boston, Massachusetts"
                 },
                 {
@@ -333,7 +333,7 @@
                 {
                     "title": "Research Scientist",
                     "date": "Jan-Apr 2025",
-                    "content": "While on leave from UofT, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on cutting-edge quantitative trading strategies for crypto assets.",
+                    "content": "While on leave from U of T, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on quantitative trading strategies for crypto assets.",
                     "location": "Toronto, Canada (Remote)",
                     "concurrent": true
                 }
@@ -349,14 +349,14 @@
                 },
                 {
                     "src": "assets/images/aki.JPG",
-                    "alt": "Aki - a medium-sized brown dauchshund mix with a sleek coat",
+                    "alt": "Aki - a medium-sized brown dachshund mix with a sleek coat",
                     "caption": "Photo of Aki courtesy of me!"
                 }
             ]
         },
         "mentorship": {
             "introduction": {
-                "content": "I consider mentorship to be at the heart of my research and love working with students, postdocs, and visiting researchers across disciplines. I believe strongly in fostering an inclusive, collaborative research environment where diverse individuals can thrive and develop their unique research interests across AI, statistics, data science, and astrophysics."
+                "content": "Mentorship is the part of my work I care about most. I try to keep the group collaborative and genuinely inclusive — a place where people from different backgrounds can settle in, find the questions that interest them across AI, statistics, data science, and astrophysics, and get real support while they chase them."
             },
             "menteesByStage": {
                 "postdoctoral": [
@@ -619,7 +619,7 @@
                             "timelinePeriod": "Fall 2022-2026",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling",
                             "myCareerStage": "Assistant Professor",
@@ -836,7 +836,7 @@
                             "currentStatus": "Undergraduate student",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Estimating Stellar Abundances Across Surveys using Probabilistic Deep Learning",
                             "myCareerStage": "Assistant Professor",
@@ -921,7 +921,7 @@
                             "timelinePeriod": "Summer 2024-Summer 2025",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "Mairead Heiger (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.statistics.utoronto.ca/\">Statistical Sciences</a>)"
                             ],
@@ -969,7 +969,7 @@
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
                                 "<a href=\"https://andrew-saydjari.github.io/\">Andrew Saydjari</a> (<a href=\"https://web.astro.princeton.edu/\">Princeton University</a>)",
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Estimating Abundances from Stellar Spectra with Probabilistic Machine Learning",
                             "myCareerStage": "Assistant Professor",
@@ -1014,7 +1014,7 @@
                             "timelinePeriod": "Summer 2024",
                             "supervisionType": "Primary Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Galactic Paleontology with Probabilistic Machine Learning",
                             "myCareerStage": "Assistant Professor",
@@ -1173,7 +1173,7 @@
                             "timelinePeriod": "Summer 2023-Winter 2024",
                             "supervisionType": "Primary Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "Mairead Heiger (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Stellar Parameter Estimation with Likelihood-Free Frequentist Inference (LF2I)",
@@ -1234,7 +1234,7 @@
                             "timelinePeriod": "Summer 2023",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)",
                                 "Mairead Heiger (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Deriving Stellar Abundances in DESI using Machine Learning",
@@ -1339,7 +1339,7 @@
                             "timelinePeriod": "Summer 2022-Summer 2023",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Mapping the Milky Way with Blue Horizontal Branch Stars",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
@@ -1405,7 +1405,7 @@
                             "timelinePeriod": "Fall 2022-Winter 2023",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/~abraham/\">Bob Abraham</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://www.robertoabraham.com/\">Bob Abraham</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Rapid Focusing Algorithms for the Dragonfly Telephoto Array",
                             "myCareerStage": "Assistant Professor",
@@ -1429,7 +1429,7 @@
                             "timelinePeriod": "Fall 2021-Winter 2022",
                             "supervisionType": "Co-Supervisor",
                             "coSupervisors": [
-                                "<a href=\"https://www.astro.utoronto.ca/people/faculty/name/ting-li-1/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+                                "<a href=\"https://sazabi4.github.io/\">Ting Li</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
                             ],
                             "project": "Estimating Photometric Metallicities with DECam and S5",
                             "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
@@ -1638,12 +1638,13 @@
                             ]
                         },
                         {
-                            "name": "Isabelle Huang",
+                            "name": "Isabelle (Liyuan) Huang",
                             "timelinePeriod": "Fall 2025-Winter 2026",
                             "currentStatus": "MSc Statistics student",
                             "supervisionType": "Primary Supervisor",
                             "project": "Time Series Forecasting with Deep Markov Models",
                             "myCareerStage": "Assistant Professor",
+                            "outcome": "Joined PhD program at <a href=\"https://www.utoronto.ca/\">University of Toronto</a>, continuing with me",
                             "courses": [
                                 "Research Course"
                             ]
@@ -2704,11 +2705,7 @@
             ],
             "philosophy": {
                 "title": "Teaching Philosophy",
-                "content": "I believe in hands-on learning that connects theoretical concepts to real-world applications. My courses emphasize computational skills, critical thinking, and the ability to communicate complex ideas clearly."
-            },
-            "resources": {
-                "title": "Educational Resources",
-                "content": "I develop and maintain several open educational resources including course materials, tutorials, and software packages designed to make astrostatistics more accessible to students and researchers."
+                "content": "I learn best by doing, and I teach that way too: most of my courses are built around working through real problems with real data. What I most want students to walk away with is the confidence to think critically about a method and to explain clearly what it does."
             },
             "workshops": {
                 "title": "Workshops & Training",
@@ -3116,7 +3113,7 @@
                     "year": 2026,
                     "type": "group",
                     "title": "<a href=\"https://simrannerval.github.io/\">Simran Nerval</a> and Mairead Heiger win the Fieldus Award",
-                    "blurb": "Departmental recognition for a very high level of research acumen and service. Mairead was honoured for her spectroscopic follow-up of the ultra-faint dwarf galaxies Eridanus IV and Centaurus I, her DLEIY galactic chemical evolution framework, and her service as GASA co-chair.",
+                    "blurb": "Departmental recognition for a very high level of research acumen and service. Mairead was honored for her spectroscopic follow-up of the ultra-faint dwarf galaxies Eridanus IV and Centaurus I, her DLEIY galactic chemical evolution framework, and her service as GASA co-chair.",
                     "outlet": "U of T Astronomy & Astrophysics",
                     "link": "https://www.astro.utoronto.ca/2026-fieldus-award-recipients-simran-nerval-and-mairead-heiger/"
                 },
@@ -3176,7 +3173,7 @@
                     "year": 2024,
                     "type": "group",
                     "title": "Sam Berek and <a href=\"https://shivankhullar.github.io/\">Shivan Khullar</a> win the Jui Lin (Allen) Yen Award",
-                    "blurb": "Sam was honoured for \"Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models,\" introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model.",
+                    "blurb": "Sam was honored for \"Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models,\" introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model.",
                     "outlet": "U of T Astronomy & Astrophysics",
                     "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/"
                 },
@@ -3197,15 +3194,6 @@
                     "blurb": "U of T Statistical Sciences profiled undergraduates Khalid Edris and Junbo Li — co-mentored with Dunlap Fellow Mike Walmsley — on training the Zoobot AI to classify galaxies from the Euclid space telescope.",
                     "outlet": "U of T Statistical Sciences",
                     "link": "https://www.statistics.utoronto.ca/news/exploring-universe-u-t-students%E2%80%99-journey-galaxy-zoo-project"
-                },
-                {
-                    "date": "Feb 2024",
-                    "year": 2024,
-                    "type": "press",
-                    "title": "The Radcliffe Wave is waving",
-                    "blurb": "Co-author on the finding that the galaxy's largest gaseous structure oscillates (Konietzka et al., Nature). Widely covered — CfA, Phys.org, Universe Today, the Harvard Crimson.",
-                    "outlet": "Center for Astrophysics | Harvard & Smithsonian",
-                    "link": "https://www.cfa.harvard.edu/news/radcliffe-wave-waving"
                 },
                 {
                     "date": "2024",
@@ -3300,7 +3288,7 @@
     "pages": {
         "home": {
             "kicker": "Astrostatistics · University of Toronto",
-            "description": "Joshua S. Speagle, Assistant Professor of Astrostatistics at the University of Toronto — combining astronomy, statistics and AI to study stars and galaxies.",
+            "description": "Joshua S. Speagle, Assistant Professor of Astrostatistics at the University of Toronto — combining astronomy, statistics, and AI to study stars and galaxies.",
             "title": "Joshua S. Speagle",
             "nameZh": "沈 佳 士",
             "tagline": "Combining <span class=\"m\">astronomy, statistics, and AI</span> to understand how <span class=\"g\">stars and galaxies</span> form, behave, and evolve.",
@@ -3336,32 +3324,32 @@
         "publications": {
             "kicker": "Research output",
             "title": "Publications",
-            "tagline": "Peer-reviewed research and scholarly contributions."
+            "tagline": "Methods papers, survey science, and the work my students and postdocs have led."
         },
         "talks": {
             "kicker": "Speaking & outreach",
             "title": "Talks & Events",
-            "tagline": "Presentations, panels, and public engagement across academia and beyond."
+            "tagline": "Invited talks, colloquia, contributed talks and posters, panels, tutorials, and the occasional public event."
         },
         "teaching": {
             "kicker": "Teaching & education",
             "title": "Teaching",
-            "tagline": "Statistical methods and computational thinking for scientific discovery — courses, short courses, and hands-on workshops."
+            "tagline": "Undergraduate and graduate courses in astronomy and statistics, plus short courses and workshops on Bayesian methods and computing."
         },
         "mentorship": {
             "kicker": "Mentoring & training",
             "title": "Mentorship & Supervision",
-            "tagline": "Guiding the next generation of astrostatisticians and data scientists."
+            "tagline": "The students, postdocs, and visiting researchers I have worked with, past and present."
         },
         "awards": {
             "kicker": "Recognition",
             "title": "Awards & Honors",
-            "tagline": "Recognition and achievements in academia and research."
+            "tagline": "A Polanyi Prize, a Connaught New Researcher Award, and two prizes from my graduate years."
         },
         "service": {
             "kicker": "Leadership & community",
             "title": "Service",
-            "tagline": "Professional service and community engagement — <strong>societies, university committees, and conference organization</strong>."
+            "tagline": "Where I pitch in outside my own research — <strong>professional societies, university committees, and conference organization</strong>."
         },
         "software": {
             "kicker": "Open source",
@@ -3371,7 +3359,7 @@
         "news": {
             "kicker": "In the news",
             "title": "News & Press",
-            "tagline": "Press coverage, media features, awards, and research milestones."
+            "tagline": "Press coverage, new papers, awards, and news from the group."
         },
         "biography": {
             "kicker": "About",
