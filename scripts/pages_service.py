@@ -76,12 +76,12 @@ def generate_content(data):
         # One card per role/position. title = the role (or an explicit `title`, in
         # which case the role drops into the byline); byline = parent org; the
         # period shows as the date, an optional `note` as a sub-line.
-        cards = []   # (title, byline, period, note)
+        cards = []   # (title, byline, period, note, url)
         for org in orgs:
             org_name = (org.get("name", "") or "").strip()
             for pos in (org.get("positions") or []):
                 if isinstance(pos, str):
-                    cards.append((pos.strip(), org_name, "", ""))
+                    cards.append((pos.strip(), org_name, "", "", ""))
                     continue
                 role = (pos.get("role") or "").strip()
                 period = _period_text(pos)
@@ -91,21 +91,24 @@ def generate_content(data):
                     byline = " · ".join(x for x in (role, org_name) if x)
                 else:
                     title, byline = role, org_name
-                cards.append((title, byline, period, note))
+                cards.append((title, byline, period, note, (pos.get("url") or "").strip()))
         for it in extra:                                   # {role, organization, period} shape
             cards.append(((it.get("organization", "") or "").strip(),
                           (it.get("role") or "").strip(),
-                          (it.get("period") or it.get("term") or "").strip(), ""))
+                          (it.get("period") or it.get("term") or "").strip(), "",
+                          (it.get("url") or "").strip()))
 
         if not cards:
             continue
         filters.append((cat_slug, cat_title, len(cards), accent))
 
-        for title, byline, period, note in cards:
+        for title, byline, period, note, url in cards:
             search_src = " ".join(_strip_tags(x) for x in (title, byline, period, note, cat_title)).strip()
             year = period_end_year(period)
             meta_html = f'<p class="item-meta">{esc(byline)}</p>' if byline else ""
             note_html = f'<p class="item-sub">{esc(note)}</p>' if note else ""
+            link_html = (f'<div class="item-tags"><a class="reslink" href="{url_attr(url)}" '
+                         f'target="_blank" rel="noopener">Details ↗</a></div>') if url else ""
             # The period and the kind of service place the role, so they lead the card
             # as its metadata line rather than sitting in a date slot and a badge.
             items_html.append(
@@ -116,7 +119,7 @@ def generate_content(data):
                 f'data-title="{attr_esc(_strip_tags(title))}">'
                 f'{card_meta(period, (cat_title, True))}'
                 f'<div class="item-head"><h3 class="item-title">{esc(title)}</h3></div>'
-                f'{meta_html}{note_html}'
+                f'{meta_html}{note_html}{link_html}'
                 f'</article>'
             )
             total += 1

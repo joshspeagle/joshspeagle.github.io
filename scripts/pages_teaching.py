@@ -12,7 +12,16 @@ Per-item card contract is documented in pages_shared.py.
 """
 from pages_shared import (accent_class, all_years, attr_esc, card_meta, esc,
                           parse_latest_year, scaffold, slug as _slug,
-                          strip_tags as _strip_tags, term_month as _term_month, warn)
+                          strip_tags as _strip_tags, term_month as _term_month, warn, url_attr)
+
+
+def _link_html(rec, label="Course page"):
+    """Optional outbound link for a record carrying a `url`."""
+    url = (rec.get("url") or "").strip() if isinstance(rec, dict) else ""
+    if not url:
+        return ""
+    return (f'<a class="reslink" href="{url_attr(url)}" target="_blank" rel="noopener">'
+            f'{esc(rec.get("urlLabel") or label)} ↗</a>')
 
 
 def _departments(course):
@@ -119,7 +128,7 @@ def generate_content(data):
             f'<h3 class="item-title">{esc(title_display)}</h3>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
-            f'<div class="item-tags">{tags}</div>'
+            f'<div class="item-tags">{tags}{_link_html(c)}</div>'
             f'</article>'
         )
 
@@ -149,6 +158,7 @@ def generate_content(data):
             f'<h3 class="item-title">{esc(title)}</h3>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
+            f'{_link_html(sc, "Details")}'
             f'</article>'
         )
 

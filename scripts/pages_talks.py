@@ -97,7 +97,7 @@ def _talk_item(talk, cat_id, cat_name, accent):
         f'</div>'
         f'<p class="item-meta">{meta_html}</p>'
         f'<div class="item-tags"><span class="badge talk-badge">'
-        f'<span class="dot d-{accent}"></span>{esc(cat_name)}</span></div>'
+        f'<span class="dot d-{accent}"></span>{esc(cat_name)}</span>{_link_html(talk)}</div>'
         f'</article>'
     )
 
@@ -127,7 +127,7 @@ def _featured_card(talk, cat_id, cat_name, accent):
         f'</div>'
         f'<p class="item-meta">{meta_html}</p>'
         f'<div class="item-tags"><span class="badge talk-badge">'
-        f'<span class="dot d-{accent}"></span>{esc(cat_name)}</span></div>'
+        f'<span class="dot d-{accent}"></span>{esc(cat_name)}</span>{_link_html(talk)}</div>'
         f'</article>'
     )
 
