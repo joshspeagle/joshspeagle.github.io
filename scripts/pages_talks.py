@@ -7,7 +7,16 @@ Exposes generate_content(data) -> str returning the inner HTML for the
 Talk records (sections.talks.categories[].talks[]) have these fields:
   title, event, location, date, year, type   (all plain text; no url/HTML)
 """
-from pages_shared import (accent_class, attr_esc, card_meta, esc, parse_latest_year,
+from pages_shared import (accent_class, attr_esc, card_meta, esc, parse_latest_year,, url_attr
+
+
+def _link_html(rec, label="Event"):
+    """Optional outbound link for a record carrying a `url` (event page, slides, recording)."""
+    url = (rec.get("url") or "").strip() if isinstance(rec, dict) else ""
+    if not url:
+        return ""
+    return (f'<a class="reslink" href="{url_attr(url)}" target="_blank" rel="noopener">'
+            f'{esc(rec.get("urlLabel") or label)} ↗</a>')
                           scaffold, slug, term_month, warn)
 
 
