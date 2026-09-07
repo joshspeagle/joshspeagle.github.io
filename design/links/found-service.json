@@ -1,0 +1,72 @@
+[
+ {
+  "id": "service:0:0:0",
+  "url": "https://aas.org/comms/working-group-astroinformatics-and-astrostatistics-wgaa",
+  "kind": "committee",
+  "confidence": "high",
+  "evidence": "Page lists Committee Members of the WGAA Steering Committee including 'Joshua Shen Speagle (He/Him/His) — University of Toronto — Term: Jun 2020 – Jun 2027'."
+ },
+ {
+  "id": "service:0:1:0",
+  "url": "https://astrostat.org/officers/2024/",
+  "kind": "org",
+  "confidence": "high",
+  "evidence": "Officers 2024 page lists 'Program Chair (interim): Josh Speagle (Toronto)'."
+ },
+ {
+  "id": "service:0:1:1",
+  "url": "https://astrostat.org/officers/2022/",
+  "kind": "org",
+  "confidence": "high",
+  "evidence": "Officers 2022 page lists 'Web Director (2021/2022): Josh Speagle (Toronto)' (also shown on the 2021 and 2023 officer pages)."
+ },
+ {
+  "id": "service:0:3:0",
+  "url": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics",
+  "kind": "org",
+  "confidence": "medium",
+  "evidence": "Section page's executive succession shows Joshua Speagle as President 2025-2026 and Past President 2026-2027, consistent with a President-Elect term the preceding year (2024-2025), though the page does not label a 'President-Elect' row by year explicitly."
+ },
+ {
+  "id": "service:0:3:1",
+  "url": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics",
+  "kind": "org",
+  "confidence": "high",
+  "evidence": "Past Presidents list on the section page reads '2025-2026: Joshua Speagle'."
+ },
+ {
+  "id": "service:0:3:2",
+  "url": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics",
+  "kind": "org",
+  "confidence": "high",
+  "evidence": "Current executive table reads 'Past President: Joshua Speagle (2026-07-01 - 2027-06-30)'."
+ },
+ {
+  "id": "service:0:4:0",
+  "url": "https://issc.science.lsst.org/pages/organization.html",
+  "kind": "org",
+  "confidence": "medium",
+  "evidence": "Publication Committee list reads 'Mariano Dominguez; Hermine Landt (chair); Alex Malz; Josh Speagle' — confirms Speagle on the Publication Committee, but this current snapshot shows Landt, not Speagle, as chair."
+ },
+ {
+  "id": "service:2:0:0",
+  "url": "https://statstro.com/",
+  "kind": "org",
+  "confidence": "high",
+  "evidence": "Organizing Committee section lists 'Josh Speagle — Co-Chair, Dept of Statistical Sciences / David A. Dunlap Dept of Astronomy & Astrophysics, UofT'."
+ },
+ {
+  "id": "service:2:item:0",
+  "url": "https://physics.mcmaster.ca/~reinacam/gcandtidaltails24/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Contact section states 'Marta Reina-Campos and Josh Speagle' serve as SOC co-chairs and 'Steffani Grondin and Josh Speagle' serve as LOC co-chairs for Globular Clusters and Their Tidal Tails (Toronto, May 2024)."
+ },
+ {
+  "id": "service:2:item:1",
+  "url": "https://cascato.ca/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "CASCATO 2024 (the CASCA annual meeting held in Toronto) lists 'Joshua Shen Speagle (Co-chair)' on the SOC and 'Joshua Shen Speagle' on the LOC."
+ }
+]

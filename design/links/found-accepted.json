@@ -1,0 +1,128 @@
+[
+ {
+  "id": "service:0:3:0",
+  "url": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics",
+  "kind": "org",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Section page's executive succession shows Joshua Speagle as President 2025-2026 and Past President 2026-2027, consistent with a President-Elect term the preceding year (2024-2025), though the page does not label a 'President-Elect' row by year explicitly."
+ },
+ {
+  "id": "service:0:4:0",
+  "url": "https://issc.science.lsst.org/pages/organization.html",
+  "kind": "org",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Publication Committee list reads 'Mariano Dominguez; Hermine Landt (chair); Alex Malz; Josh Speagle' \u2014 confirms Speagle on the Publication Committee, but this current snapshot shows Landt, not Speagle, as chair."
+ },
+ {
+  "id": "talk:invited:4",
+  "url": "https://raducraiu.com/the-fast-and-curious-ii-mcmc-in-action/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Organizer's event page confirms 'The Fast and Curious 2: MCMC in Action' conference (Toronto, Sep 25-27, 2025) matching event, location, and year; Speagle's name is not visible in the fetched page text (full speaker list is only in a linked PDF)."
+ },
+ {
+  "id": "talk:invited:8",
+  "url": "https://www.ipp.mpg.de/maxent2023",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Page confirms the 'Frontiers of Nested Sampling' meeting-within-a-meeting took place 'Wednesday, July 5th 2023' as part of MaxEnt 2023, matching event name and year; Speagle is not named on the page."
+ },
+ {
+  "id": "talk:invited:12",
+  "url": "https://www.ias.surrey.ac.uk/event/towards-a-cross-research-platform-for-hosting-bayesian-data-fitting-tools/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Event page titled 'Towards a Cross-Research Platform for Hosting Bayesian Data-Fitting Tools', dated 14 July 2021, matches the event title and year exactly; organizers (Das, Shestopaloff, Lloyd) are named but Speagle's keynote is not listed in the fetched text."
+ },
+ {
+  "id": "talk:colloquia:26",
+  "url": "https://www.youtube.com/watch?v=PvUsDBGlyGg",
+  "kind": "recording",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). YouTube video titled 'Mapping the Milky Way Near and Far - Josh Speagle', published April 29, 2022 \u2014 matches talk title, speaker, and month/year exactly; the CASCA/CANVAS series branding could not be independently confirmed from the fetched page."
+ },
+ {
+  "id": "course:1",
+  "url": "https://artsci.calendar.utoronto.ca/course/sta437h1",
+  "kind": "course",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Official Arts & Science calendar entry \"STA437H1: Methods for Multivariate Data\" matches code/title exactly; page lists no instructor (calendar pages never do), but Speagle's authorship of STA437 is corroborated by his RateMyProfessors listing and dept syllabus search hits."
+ },
+ {
+  "id": "course:2",
+  "url": "https://artsci.calendar.utoronto.ca/course/sta130h1",
+  "kind": "course",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Official Arts & Science calendar entry \"STA130H1: An Introduction to Statistical Reasoning and Data Science\" matches code/title exactly; page itself names no instructor, but Speagle's authorship is corroborated externally (RateMyProfessors, dept syllabus search hits)."
+ },
+ {
+  "id": "course:3",
+  "url": "https://www.astro.utoronto.ca/academics/graduate-studies/ast3101h-ethics/",
+  "kind": "course",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Dept. graduate-studies page titled exactly \"AST3101H Module: Ethics and Practice in Astronomy\"; describes the module content matching the entry but does not name an instructor for any specific term."
+ },
+ {
+  "id": "course:4",
+  "url": "https://www.astro.utoronto.ca/academics/graduate-studies/jas-1101h-astrostats/",
+  "kind": "course",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Dept. graduate-studies page for the cross-listed astrostatistics course, code JAS1101H (page's own title is \"Topics in Astrostatistics\", a variant of the entry's \"Introduction to Astrostatistics\"); course is co-created/co-taught with Gwen Eadie in the joint Astro/Statistics program, but no per-term instructor is listed on this page."
+ },
+ {
+  "id": "course:5",
+  "url": "http://www.astro.utoronto.ca/academics/graduate-studies/ast3101h-intro-sampling-methods/",
+  "kind": "course",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Dept. graduate-studies page titled exactly \"AST3101H Module: Introduction to Sampling Methods\", matching the entry's \"Introduction to Sampling\"; describes MCMC/Bayesian sampling content matching the module but does not name an instructor."
+ },
+ {
+  "id": "short:1",
+  "url": "https://sites.psu.edu/astrostatistics/su25",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Penn State \"Summer School in Statistics for Astronomers XX\" (June 2-6, 2025) instructor list: \"Joshua Speagle (University of Toronto) for nested sampling and ML/AI applications in astronomy\" \u2014 right event/venue/year (matches teaching page's \"June 2025, Penn State Summer School\"), but the page's phrasing for his topic doesn't literally say \"Deep Learning\"."
+ },
+ {
+  "id": "talk:colloquia:32",
+  "url": "https://canssiontario.utoronto.ca/event/data-science-ares-joshua_speagle/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Indexed page content (title 'Data Science ARES: Joshua Speagle - CANSSI Ontario') describes his talk 'Mapping the Milky Way in the Age of Gaia' and his then-postdoc bio matching the ~2021 timeframe; live fetch is blocked by a bot-verification interstitial so the exact date on-page could not be re-confirmed directly."
+ },
+ {
+  "id": "talk:invited:13",
+  "url": "https://cmsa.fas.harvard.edu/2018-big-data/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Harvard CMSA Big Data Conference (Aug 23-24, 2018) page lists \"Joshua Speagle\" among its speakers, though the individual talk title \"Revealing the Milky Way's Dust-iny\" is not printed on the page itself."
+ },
+ {
+  "id": "talk:lectures:7",
+  "url": "https://www.eso.org/sci/meetings/2023/2inaM/230914_Programme.pdf",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Official programme PDF for ESO's \"Two in a Million\" conference (Garching, Sep 2023) names \"Chair: Joshua Speagle\" for the Sep 13 Session VIII, and lists Steffani Grondin as a contributed speaker that week; the specific \"Machine Learning for Star Cluster Science\" tutorial title itself is not printed in this session program."
+ },
+ {
+  "id": "talk:invited:11",
+  "url": "http://helper.ipam.ucla.edu/publications/gwaws3/gwaws3_17076.pdf",
+  "kind": "slides",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). Search index shows this PDF's own title as 'An Introduction to (Dynamic) Nested Sampling Joshua S. Speagle' from IPAM's gravitational-wave workshop (gwaws3); direct fetch returned 503 so page content could not be re-verified live"
+ },
+ {
+  "id": "talk:posters:5",
+  "url": "https://aas.org/posts/news/2014/01/chambliss-student-poster-awards-aas-223",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). AAS news post on Chambliss Student Poster Awards for AAS 223 (Jan 2014, Washington DC); search indexing shows 'Josh Speagle from Harvard University received an Undergraduate Honorable Mention'; direct WebFetch was blocked with 403 so live page text could not be re-quoted"
+ },
+ {
+  "id": "talk:public:4",
+  "url": "https://www.ottawa.rasc.ca/meetings/monthly-meeting-2021-06-june/mappingmilkyway-joshspeagle-2021-06/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Accepted by Josh (2026-09-07). File found via search of RASC Ottawa's presentations archive with filename 'MappingMilkyWay-JoshSpeagle-2021-06.pdf' (matches title + June 2021); WebFetch only returned the site's bot-check interstitial, so content could not be re-verified live"
+ }
+]

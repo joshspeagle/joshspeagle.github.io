@@ -1,0 +1,79 @@
+[
+ {
+  "id": "course:0",
+  "url": "https://www.astro.utoronto.ca/academics/undergraduate-studies/courses/",
+  "kind": "course",
+  "confidence": "high",
+  "evidence": "Dept. undergrad courses & timetable page lists: \"AST424H1 – Introduction to Astrophysical Research – (Josh Speagle) – Fri – 3-5pm- Fall\""
+ },
+ {
+  "id": "course:1",
+  "url": "https://artsci.calendar.utoronto.ca/course/sta437h1",
+  "kind": "course",
+  "confidence": "medium",
+  "evidence": "Official Arts & Science calendar entry \"STA437H1: Methods for Multivariate Data\" matches code/title exactly; page lists no instructor (calendar pages never do), but Speagle's authorship of STA437 is corroborated by his RateMyProfessors listing and dept syllabus search hits."
+ },
+ {
+  "id": "course:2",
+  "url": "https://artsci.calendar.utoronto.ca/course/sta130h1",
+  "kind": "course",
+  "confidence": "medium",
+  "evidence": "Official Arts & Science calendar entry \"STA130H1: An Introduction to Statistical Reasoning and Data Science\" matches code/title exactly; page itself names no instructor, but Speagle's authorship is corroborated externally (RateMyProfessors, dept syllabus search hits)."
+ },
+ {
+  "id": "course:3",
+  "url": "https://www.astro.utoronto.ca/academics/graduate-studies/ast3101h-ethics/",
+  "kind": "course",
+  "confidence": "medium",
+  "evidence": "Dept. graduate-studies page titled exactly \"AST3101H Module: Ethics and Practice in Astronomy\"; describes the module content matching the entry but does not name an instructor for any specific term."
+ },
+ {
+  "id": "course:4",
+  "url": "https://www.astro.utoronto.ca/academics/graduate-studies/jas-1101h-astrostats/",
+  "kind": "course",
+  "confidence": "medium",
+  "evidence": "Dept. graduate-studies page for the cross-listed astrostatistics course, code JAS1101H (page's own title is \"Topics in Astrostatistics\", a variant of the entry's \"Introduction to Astrostatistics\"); course is co-created/co-taught with Gwen Eadie in the joint Astro/Statistics program, but no per-term instructor is listed on this page."
+ },
+ {
+  "id": "course:5",
+  "url": "http://www.astro.utoronto.ca/academics/graduate-studies/ast3101h-intro-sampling-methods/",
+  "kind": "course",
+  "confidence": "medium",
+  "evidence": "Dept. graduate-studies page titled exactly \"AST3101H Module: Introduction to Sampling Methods\", matching the entry's \"Introduction to Sampling\"; describes MCMC/Bayesian sampling content matching the module but does not name an instructor."
+ },
+ {
+  "id": "short:1",
+  "url": "https://sites.psu.edu/astrostatistics/su25",
+  "kind": "program",
+  "confidence": "medium",
+  "evidence": "Penn State \"Summer School in Statistics for Astronomers XX\" (June 2-6, 2025) instructor list: \"Joshua Speagle (University of Toronto) for nested sampling and ML/AI applications in astronomy\" — right event/venue/year (matches teaching page's \"June 2025, Penn State Summer School\"), but the page's phrasing for his topic doesn't literally say \"Deep Learning\"."
+ },
+ {
+  "id": "short:2",
+  "url": "https://sites.psu.edu/astrostatistics/su25",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Penn State \"Summer School in Statistics for Astronomers XX\" (June 2-6, 2025) instructor list explicitly credits: \"Joshua Speagle (University of Toronto) for nested sampling and ML/AI applications in astronomy\" — the su24 program page (sites.psu.edu/astrostatistics/su24) makes the same attribution for June 2024."
+ },
+ {
+  "id": "short:5",
+  "url": "https://github.com/alexandergagliano/InterpretabilityDemos/blob/main/JoshuaSpeagle_iaifi_bayesml_08-10-2023.pdf",
+  "kind": "slides",
+  "confidence": "high",
+  "evidence": "File confirmed live (name \"JoshuaSpeagle_iaifi_bayesml_08-10-2023.pdf\", 4.61MB) in Alex Gagliano's InterpretabilityDemos repo; linked from astroteaching.github.io/computational/ under \"Model Interpretability from the 2023 IAIFI Summer School by Alex Gagliano and Josh Speagle\"."
+ },
+ {
+  "id": "short:6",
+  "url": "https://sites.psu.edu/astrostatistics/scma8",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Official \"Statistical Challenges in Modern Astronomy VIII\" (SCMA8, June 2023) conference page lists \"Joshua Speagle (Department of Statistical Sciences, David A. Dunlap Department of Astronomy & Astrophysics, University of Toronto)\" as an invited speaker; exact tutorial title \"A Tutorial of (Dynamic) Nested Sampling\" not spelled out on the page itself but event/speaker/year match."
+ },
+ {
+  "id": "short:7",
+  "url": "https://github.com/AstroHackWeek/AstroHackWeek2020/wiki/Detailed-Schedule",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Astro Hack Week 2020 detailed schedule wiki names \"Machine Learning, Bayesian Inference: Joshua Speagle, Stephen Portillo, Dustin Lang, Kyle Boone\" and lists the session \"Bayesian Inference Tutorial: Introduction to Bayesian Inference with Linear Regression\" — an exact title match; the repo's bayesianinference-1 folder holds the matching notebook \"Introduction to Bayesian Inference with Linear Regression.ipynb\"."
+ }
+]

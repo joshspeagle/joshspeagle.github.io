@@ -1,0 +1,108 @@
+
+######## index.html ########
+Joshua S. Speagle · Astrostatistics 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Astrostatistics · University of Toronto 
+Joshua S. Speagle 沈 佳 士 
+Combining astronomy, statistics, and AI to understand how stars and galaxies form, behave, and evolve. 
+Explore the research Publications → 
+Observations Network Posterior 
+[aria] Astrostatistics Research Team Logo - A stylized constellation forming the letters ART
+Research Group astrostatuoft.com ↗ 
+The Astrostatistics Research Team 
+Where stars meet statistics 
+I am incredibly fortunate to co-lead the interdisciplinary Astrostatistics Research Team (ART) along with its founder Gwen Eadie . 
+New methods, real problems 
+We build statistical and AI methods for astrophysics and put them to work on real data 
+One team, several fields 
+Astrophysicists, statisticians, and data scientists, in a group where everyone belongs 
+Visit the ART site ↗ Join our team 
+A bit about me 
+I am an Assistant Professor of Astrostatistics jointly appointed between the David A. Dunlap Department of Astronomy & Astrophysics and the Department of Statistical Sciences at the University of Toronto . I am also an Associate Member of the Dunlap Institute for Astronomy & Astrophysics as well as a Member of the Data Sciences Institute . For the 2026–2027 academic year, I am also serving as the (Interim) Director of the MScAc – Data Science Concentration in the Department of Statistical Sciences . 
+A Few Other Things 
+I also teach both undergraduate and graduate courses in astronomy and statistics, serve on a few committees within the University of Toronto, and remain a member of several professional societies such as the AAS , ASA-AIG , and SSC-DSA . I also help manage the Astronomy & Astrophysics Summer Undergraduate Research Program (SURP) (the largest of its kind in Canada!). 
+Email j.speagle@utoronto.ca Office AB 206 (Astronomy & Astrophysics) and UY 9134 (Statistical Sciences) 
+[img alt] Josh Speagle
+Outside of work, I mostly enjoy hanging out at home or going out with my wife, our two dogs, and our son. I also watch way too much anime, play way too many video games, and have a supremely unhealthy love of junk food and soda. 
+[img alt] Kumo - a small white chihuahua mix with a fluffy coat
+Photo of Kumo courtesy of Laura Mackereth 
+[img alt] Aki - a medium-sized brown dachshund mix with a sleek coat
+Photo of Aki courtesy of me! 
+Statistics, AI & astronomy 
+I develop statistical & machine-learning methods and apply them to the largest astronomical surveys — from billions of stars and galaxies down to individual objects. 
+Statistical Learning & AI 
+Developing new methods to find the patterns hiding in large, messy datasets. 
+19 papers 
+Interpretability & Insight 
+Building a careful understanding of how statistical methods behave, in theory and in practice, so the insights we draw from them hold up. 
+11 papers 
+Inference & Computation 
+Building frameworks and algorithms that make it practical to ask how much we can actually learn from a dataset. 
+27 papers 
+Discovery & Understanding 
+Applying these methods to large astronomical surveys to learn something new about the universe. 
+79 papers 
+Most of that data comes from wide-field imaging and spectroscopic surveys — stars, galaxies, and the gas and dust in between — though a good deal of it comes from small, targeted observations of individual objects, and everything in between. 
+136 Papers 
+18,503 Citations 
+44 h-index 
+85 Mentees 
+A mostly complete list of my publications can be found on: SAO/NASA ADS Google Scholar arXiv ORCID Browse all publications, metrics & figures → 
+Collaboration & mentorship 
+I consider collaboration and mentorship to be at the heart of my research and love working with students, postdocs, visiting researchers, and faculty across disciplines. If you're interested in working with me on a short-term or long-term project, please don't hesitate to reach out. 
+Equity, Diversity, and Inclusion 
+We want a research community where people's different backgrounds are part of the group and part of who they are as researchers, and where that is actively supported. Everyone here should know they are valued. 
+Open and Accessible Science 
+We do reproducible research and release our tools and teaching materials openly so other people can use them. Most of the training here happens hands-on, by working through real problems together. 
+Opportunities 
+Postdoctoral Researchers 
+Gwen and I are always glad to hear from postdocs who want to join the Astrostatistics Research Team. Openings depend on funding, so most people arrive through one of the fellowships below — if one looks like a fit, write to either of us. 
+Fellowship opportunities: CPRA , CANSSI CDPF (when available) , CANSSI Ontario (when available) , Arts & Science , Research Excellence , PCRA (research top-up) , Provost (Black & Indigenous) , Dunlap , CITA , DSI (when available) , Schmidt AI in Science 
+Graduate Students 
+I cannot admit graduate students directly, so the first step is applying to one of our Master's or doctoral programs. If you would like to hear more about my research and how it might fit your plans, email me before you apply. 
+Programs: Astronomy & Astrophysics , Statistical Sciences 
+University of Toronto Undergraduates 
+I love working with University of Toronto undergraduates, both during the year and over the summer. I post most of these projects through the program streams below, which keeps the review equitable. 
+Programs: Research Opportunity Program (ROP), Work Study Program (WSP), University of Toronto Excellence Award (UTEA), independent study courses (AST, PHY, STA) , casual employment 
+Canadian Undergraduates 
+If you are an undergraduate elsewhere in Canada, the summer programs below are the usual way in. They are competitive, but each one comes with funding and a structured research term. 
+Programs: Astronomy & Astrophysics SURP , CITA SURF , DSI SUDS , UTSSRP (statistical sciences) , NSERC USRA (supervisor-nominated) 
+International Undergraduates 
+A few funded programs bring international students to Canadian universities for a research term. Eligibility depends on your home country and the program, so check the details below before you apply. 
+Programs: Mitacs Globalink Research Internship (12-week summer) , Mitacs Globalink Research Award (12-48 weeks, year-round) , ELAP (Latin America & Caribbean; institution-nominated) , Study in Canada Scholarships (Africa, Middle East, Asia, & others) 
+Visiting Researchers & External Collaborators 
+I am always up for starting a new collaboration or deepening one that already exists. If you are thinking about a short visit or a longer stay in Toronto, get in touch and we can work out projects and funding. 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026

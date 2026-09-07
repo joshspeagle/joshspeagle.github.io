@@ -1,0 +1,86 @@
+[
+ {
+  "id": "talk:invited:3",
+  "url": "https://www.cmstatistics.org/CFECMStatistics2025/fullprogramme.php",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Full programme lists Session CO245 'Starstruck statistics', Sat 13.12.2025 13:40-15:20, with talk 'Astro-statistical learning and uncertainty quantification' by 'J. Speagle'"
+ },
+ {
+  "id": "talk:invited:11",
+  "url": "http://helper.ipam.ucla.edu/publications/gwaws3/gwaws3_17076.pdf",
+  "kind": "slides",
+  "confidence": "medium",
+  "evidence": "Search index shows this PDF's own title as 'An Introduction to (Dynamic) Nested Sampling Joshua S. Speagle' from IPAM's gravitational-wave workshop (gwaws3); direct fetch returned 503 so page content could not be re-verified live"
+ },
+ {
+  "id": "talk:colloquia:13",
+  "url": "https://astronomy.osu.edu/events/ccapp-seminar-josh-speagle-u-toronto",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "OSU Astronomy events page titled 'CCAPP Seminar - Josh Speagle (U Toronto)', dated Tuesday, March 19, 2024"
+ },
+ {
+  "id": "talk:colloquia:21",
+  "url": "https://uwaterloo.ca/astrophysics-centre/events/astro-seminar-series-josh-speagle",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Waterloo Centre for Astrophysics event page: 'Wednesday, February 22, 2023, 11:30 am EST... Speaker: Josh Speagle... Title: \"From Panchromatic Images to Stellar Ages and Beyond\"'"
+ },
+ {
+  "id": "talk:colloquia:29",
+  "url": "https://rohanalexander.com/tdw.html",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Toronto Data Workshop page lists 'Friday, 29 October 2021, noon-1pm... Josh Speagle... Banting & Dunlap Postdoctoral Fellow at the University of Toronto' with a recording link, matching the Oct 2021 TDW entry"
+ },
+ {
+  "id": "talk:contributed:0",
+  "url": "https://ww2.amstat.org/meetings/jsm/2026/onlineprogram/person.cfm?id=19374",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "JSM 2026 person page for Joshua Speagle lists 'Statistical Advances Motivated by Astrophysics and Space Sciences' session, Tue Aug 4, 2:00 PM, presentation 'Uncertainty Quantification and Calibration in Stellar Parameter Estimation', Role: Speaker"
+ },
+ {
+  "id": "talk:contributed:8",
+  "url": "https://physics.mcmaster.ca/~nguyem50/clusters-2022/program.html",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "McMaster Clusters Workshop 2022 program, Day 2, 12:00, Speaker 'Josh Speagle', Title 'Panchromatic Modelling of Co-Eval Stellar Populations' (abstract mentions the 'brutus' package)"
+ },
+ {
+  "id": "talk:lectures:1",
+  "url": "https://sites.psu.edu/astrostatistics/su26/",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Penn State 2026 Summer School in Statistics for Astronomers page: 'Joshua Speagle (University of Toronto) for nested sampling and deep learning in astronomy'"
+ },
+ {
+  "id": "talk:lectures:5",
+  "url": "https://sites.psu.edu/astrostatistics/su25/",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Penn State 2025 Summer School in Statistics for Astronomers page: 'Joshua Speagle (University of Toronto) for nested sampling and ML/AI applications in astronomy'"
+ },
+ {
+  "id": "talk:lectures:9",
+  "url": "https://github.com/iaifi/summer-school-2023",
+  "kind": "syllabus",
+  "confidence": "high",
+  "evidence": "Repo README, 'Section 4. Astrostatistics', instructor Joshua Speagle, slides file 'JoshuaSpeagle_iaifi_bayesml_08-10-2023.pdf', tutorial by Alex Gagliano ('InterpretabilityDemos')"
+ },
+ {
+  "id": "talk:posters:5",
+  "url": "https://aas.org/posts/news/2014/01/chambliss-student-poster-awards-aas-223",
+  "kind": "event",
+  "confidence": "medium",
+  "evidence": "AAS news post on Chambliss Student Poster Awards for AAS 223 (Jan 2014, Washington DC); search indexing shows 'Josh Speagle from Harvard University received an Undergraduate Honorable Mention'; direct WebFetch was blocked with 403 so live page text could not be re-quoted"
+ },
+ {
+  "id": "talk:public:4",
+  "url": "https://www.ottawa.rasc.ca/files/presentations/MappingMilkyWay-JoshSpeagle-2021-06.pdf",
+  "kind": "slides",
+  "confidence": "medium",
+  "evidence": "File found via search of RASC Ottawa's presentations archive with filename 'MappingMilkyWay-JoshSpeagle-2021-06.pdf' (matches title + June 2021); WebFetch only returned the site's bot-check interstitial, so content could not be re-verified live"
+ }
+]

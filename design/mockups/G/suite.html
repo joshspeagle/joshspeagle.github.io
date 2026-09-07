@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Suite G</title>
+<script>document.documentElement.setAttribute('data-theme', localStorage.getItem('preferred-theme')||'dark')</script>
+<link rel="stylesheet" href="../../../assets/css/fonts.css"><link rel="stylesheet" href="board.css"><style>
+.sheet{padding:56px 0 40px}
+.panel{margin:0 0 56px}
+.panel>h2{font-size:1.4rem;margin:0 0 6px}
+.panel>p.note{color:var(--text-3);font-size:.9rem;margin:0 0 22px;max-width:70ch}
+.sw{display:grid;grid-template-columns:repeat(8,1fr);gap:12px}
+.sw div{height:64px;border:1px solid var(--border);border-radius:3px;position:relative}
+.sw div span{position:absolute;left:8px;bottom:6px;font-family:var(--font-mono);font-size:10px;color:var(--text-3);letter-spacing:.04em}
+.sw.grey div{filter:grayscale(1)}
+.row{display:flex;align-items:center;gap:28px;flex-wrap:wrap}
+.marks svg{color:var(--energy)}
+.lab{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin-top:8px;text-align:center}
+.pad-sq{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-2);border:1px solid var(--border-2);padding:6px 10px;border-radius:2px;background:var(--chip)}
+.pad-sq i{width:7px;height:7px;background:var(--text-3);display:inline-block}
+.pad-sq.sla i{background:var(--cat-sla)} .pad-sq.ii i{background:var(--cat-ii)} .pad-sq.ic i{background:var(--cat-ic)} .pad-sq.du i{background:var(--cat-du)}
+.pad-sq.on{border-color:var(--energy);color:var(--text)}
+.tl{position:relative;padding-left:40px;max-width:640px}
+.tl::before{content:"";position:absolute;left:11px;top:6px;bottom:0;width:1.25px;background:rgb(var(--copper-rgb)/.6)}
+.tl .ev{position:relative;padding:0 0 22px}
+.tl .ev::before{content:"";position:absolute;left:-34px;top:6px;width:9px;height:9px;border-radius:50%;border:1.8px solid rgb(var(--copper-rgb)/.9);background:var(--bg-0)}
+.tl .ev.now::before{background:var(--energy);border-color:var(--energy);box-shadow:0 0 10px rgb(var(--energy-rgb)/.8)}
+.tl .d{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;color:var(--text-3)} .tl h4{font-size:1.1rem;margin:2px 0} .tl p{margin:0;color:var(--text-2);font-size:.92rem}
+.chart{padding:22px 26px 18px 30px}
+.chart .t{font-family:var(--font-serif);font-size:1.05rem;margin:0 0 12px;display:flex;justify-content:space-between;align-items:baseline}
+.chart .t small{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:var(--text-3)}
+.card-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card-row .meta2{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin:0 0 10px}
+.card-row .meta2 b{color:var(--text-2);font-weight:600}
+.card-row h3{font-size:1.05rem}
+.card-row p{font-size:.9rem}
+.card-row .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.card-row .pins{display:flex;gap:16px;margin-top:12px;font-family:var(--font-mono);font-size:11px;letter-spacing:.06em}
+.card-row .pins a{color:var(--text);text-decoration:none;border-bottom:1px solid rgb(var(--copper-rgb)/.6)}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="star4" viewBox="0 0 8 8"><path d="M4 0 L4.9 3.1 L8 4 L4.9 4.9 L4 8 L3.1 4.9 L0 4 L3.1 3.1 Z" fill="currentColor"/></symbol>
+<symbol id="mark" viewBox="0 0 32 32"><path d="M5 26 L11 20 H19 L25 14 V7.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 20 L23 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5" cy="26" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="11" cy="20" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="23" cy="24" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="19" cy="20" r="2.4" fill="currentColor"/><g transform="translate(21.3,3.3) scale(.92)"><use href="#star4"/></g></symbol>
+<symbol id="mark-s" viewBox="0 0 32 32"><path d="M5 26 L11 20 H19 L25 14 V8" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M19 20 L23 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5" cy="26" r="2.6" fill="currentColor"/><circle cx="11" cy="20" r="2.6" fill="currentColor"/><circle cx="23" cy="24" r="2.6" fill="currentColor"/><circle cx="19" cy="20" r="2.9" fill="currentColor"/><g transform="translate(20.4,2.4) scale(1.15)"><use href="#star4"/></g></symbol>
+<symbol id="via" viewBox="0 0 16 16"><circle cx="8" cy="8" r="4.6" fill="none" stroke="currentColor" stroke-width="2.6"/></symbol>
+<symbol id="pad" viewBox="0 0 16 16"><circle cx="8" cy="8" r="3.6" fill="currentColor"/></symbol>
+<symbol id="gnd" viewBox="0 0 24 24"><path d="M12 3V11M4.5 11H19.5M7.5 15H16.5M10.5 19H13.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+<symbol id="ic-sla" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 5.9L8.2 9.7V12h2"/><path d="M4.4 18.1L8.2 14.3V12"/><path d="M14 12h1.8l3.8-3.8"/><path d="M14 12h6"/><path d="M14 12h1.8l3.8 3.8"/></g><circle cx="3.4" cy="5" r="1.25" fill="currentColor"/><circle cx="3.4" cy="19" r="1.25" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="20.6" cy="7.4" r="1.25" fill="currentColor"/><circle cx="21" cy="12" r="1.25" fill="currentColor"/><circle cx="20.6" cy="16.6" r="1.25" fill="currentColor"/></symbol>
+<symbol id="ic-ii" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 9.8V17.5A2 2 0 0 0 7.5 19.5H16.5A2 2 0 0 0 18.5 17.5V9.8"/><path d="M4.2 7.4L19.8 5"/><path d="M9.9 16.2H11.9L14.2 13.9"/></g><circle cx="9" cy="16.2" r="1.3" fill="currentColor"/><circle cx="15.5" cy="13.1" r="1.7" fill="none" stroke="currentColor"/></symbol>
+<symbol id="ic-ic" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="13.6" cy="13" rx="7.4" ry="5.4" transform="rotate(-20 13.6 13)"/><ellipse cx="13.6" cy="13" rx="4.9" ry="3.5" transform="rotate(-20 13.6 13)"/><ellipse cx="13.6" cy="13" rx="2.4" ry="1.7" transform="rotate(-20 13.6 13)"/><path d="M2.6 3.4h2.2l7.1 7.1"/></g><circle cx="1.9" cy="3.4" r="1.2" fill="currentColor"/><circle cx="13.6" cy="13" r="1.5" fill="currentColor"/></symbol>
+<symbol id="ic-du" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M7 9.4V6.4A1.4 1.4 0 0 1 8.4 5H11"/><path d="M15 5H17.6A1.4 1.4 0 0 1 19 6.4V9.4"/><path d="M19 13.6V16.6A1.4 1.4 0 0 1 17.6 18H15"/><path d="M11 18H8.4A1.4 1.4 0 0 1 7 16.6V13.6"/></g><g transform="translate(9.4,7.9) scale(.9)"><use href="#star4"/></g><circle cx="3.2" cy="16.6" r="1.15" fill="currentColor"/><circle cx="21.6" cy="3.4" r="0.95" fill="currentColor"/></symbol>
+</defs></svg><svg id="board" aria-hidden="true"></svg>
+<main><div class="container sheet">
+<div class="panel"><h2>Palette</h2><p class="note">Cool navy substrate, a slightly lighter chip surface, copper for every trace/ring/pin, orange only for energy (pulses, lit pins, one action per screen) — plus the four research-area tints, which stay the only hue-coded taxonomy. Second row is the same swatches in greyscale.</p><div class="sw"><div style="background:#06080f"><span>bg-0</span></div><div style="background:#0e1430"><span>chip</span></div><div style="background:rgb(184 128 94)"><span>copper</span></div><div style="background:#f28c28"><span>energy</span></div><div style="background:#8b7bff"><span>sla</span></div><div style="background:#34d3e0"><span>ii</span></div><div style="background:#5aa9ff"><span>ic</span></div><div style="background:#ffb454"><span>du</span></div></div><div style="height:12px"></div><div class="sw grey"><div style="background:#06080f"><span>bg-0</span></div><div style="background:#0e1430"><span>chip</span></div><div style="background:rgb(184 128 94)"><span>copper</span></div><div style="background:#f28c28"><span>energy</span></div><div style="background:#8b7bff"><span>sla</span></div><div style="background:#34d3e0"><span>ii</span></div><div style="background:#5aa9ff"><span>ic</span></div><div style="background:#ffb454"><span>du</span></div></div></div>
+<div class="panel"><h2>Mark · pins · vias · pads</h2><p class="note">The asterism mark from B (a trace that ends in a star) in the energy colour. On the board: a hollow ring is a via (junction), a filled square is a pin (where a trace enters a chip), a filled disc is a category pad.</p>
+<div class="row marks"><div><svg width="96" height="96"><use href="#mark"/></svg><div class="lab">96 · mark</div></div><div><svg width="40" height="40"><use href="#mark-s"/></svg><div class="lab">40 · nav</div></div><div><svg width="24" height="24"><use href="#mark-s"/></svg><div class="lab">24</div></div>
+<div style="width:1px;height:60px;background:var(--border)"></div>
+<div><svg width="40" height="40" style="color:var(--copper)"><use href="#via" width="40" height="40"/></svg><div class="lab">via</div></div><div><svg width="40" height="40"><rect x="12" y="15" width="16" height="10" fill="rgb(184 128 94)"/></svg><div class="lab">pin</div></div><div><svg width="40" height="40"><rect x="12" y="15" width="16" height="10" fill="#f28c28" style="filter:drop-shadow(0 0 5px #f28c28)"/></svg><div class="lab">pin · lit</div></div><div><svg width="40" height="40" style="color:var(--cat-ic)"><use href="#pad" width="40" height="40"/></svg><div class="lab">pad</div></div><div><svg width="40" height="40" style="color:var(--copper)"><use href="#gnd" x="8" y="8" width="24" height="24"/></svg><div class="lab">ground</div></div>
+<div style="width:1px;height:60px;background:var(--border)"></div>
+<div><svg width="36" height="36" style="color:var(--cat-sla)"><use href="#ic-sla"/></svg><div class="lab">SLA</div></div><div><svg width="36" height="36" style="color:var(--cat-ii)"><use href="#ic-ii"/></svg><div class="lab">II</div></div><div><svg width="36" height="36" style="color:var(--cat-ic)"><use href="#ic-ic"/></svg><div class="lab">IC</div></div><div><svg width="36" height="36" style="color:var(--cat-du)"><use href="#ic-du"/></svg><div class="lab">DU</div></div></div></div>
+<div class="panel"><h2>Actions · labels · filters</h2><p class="note">One solid energy action per screen; everything else is a text link with a copper underline. Labels and filter chips are square pads, not pills; the active one takes the energy border.</p>
+<div class="row"><a class="btn" href="#">Explore the research</a><a class="link" href="#">Publications →</a><a class="cv" href="#">Curriculum Vitae</a><span style="width:1px;height:36px;background:var(--border)"></span><span class="pad-sq on"><i style="background:var(--energy)"></i>All · 136</span><span class="pad-sq du"><i></i>Discovery · 79</span><span class="pad-sq ic"><i></i>Inference · 27</span><span class="pad-sq sla"><i></i>Stat. learning · 19</span><span class="pad-sq ii"><i></i>Interpretability · 11</span></div></div>
+<div class="panel"><h2>Chips as cards</h2><p class="note">Every list card is a component: a raised surface with square-ish corners, a pin-1 notch, a mono metadata line (year · venue · role), a serif title, and pads for categories. A trace arrives at its left pin; it lights when the card enters the viewport.</p>
+<div class="card-row">
+<article class="chip" data-chip><p class="meta2"><b>2025</b> · ApJ · <b>Student-led</b></p><h3>ChronoFlow: A Data-driven Model for Gyrochronology</h3><p>P. Van-Lane, <b>J. Speagle</b>, G. Eadie et al. · 13 citations</p><div class="tags"><span class="pad-sq sla"><i></i>Stat. learning</span><span class="pad-sq du"><i></i>Discovery</span></div><div class="pins"><a href="#">ADS</a><a href="#">arXiv</a><a href="#">DOI</a></div></article>
+<article class="chip" data-chip><p class="meta2"><b>Mar 2026</b> · Baltimore · <b>Invited</b></p><h3>AI for Scientists: Learning and Doing in the Era of VLMs</h3><p>Language AI in the Space Sciences · Invited talk</p><div class="tags"><span class="pad-sq"><i></i>Invited talks</span></div></article>
+<article class="chip" data-chip><p class="meta2"><b>Fall 2024 – present</b> · Postdoc · <b>Primary supervisor</b></p><h3>Ronan Kerr</h3><p>Reconstructing recent star formation history using Gaia and SDSS-V data of young stars.</p><div class="tags"><span class="pad-sq"><i></i>Dunlap Fellow</span></div></article>
+</div></div>
+<div class="panel"><h2>Timeline</h2><p class="note">One copper trace; events are vias; the current role is the lit one.</p>
+<div class="tl"><div class="ev"><div class="d">2016 — 2020 · CAMBRIDGE, MA</div><h4>Graduate school</h4><p>Master's and Doctoral degrees at Harvard. Thesis: Mapping the Milky Way in the Age of Gaia.</p></div><div class="ev"><div class="d">2020 — 2022 · TORONTO</div><h4>Postdoctoral Fellow</h4><p>Banting Fellow and Dunlap Fellow at the University of Toronto, working with Gwen Eadie.</p></div><div class="ev now"><div class="d">2022 — PRESENT · TORONTO</div><h4>Assistant Professor</h4><p>Joint appointment in Astronomy &amp; Astrophysics and Statistical Sciences; co-leads ART with Gwen Eadie.</p></div></div></div>
+<div class="panel"><h2>Figure</h2><p class="note">Charts live on chips too: copper silkscreen grid, one series, the latest point lit; the value is labelled directly.</p>
+<article class="chip chart" data-chip style="max-width:760px"><p class="t">Citations received per year</p>
+<svg viewBox="0 0 700 230" width="100%" style="display:block;overflow:visible;margin-top:22px">
+<g stroke="rgb(184 128 94 / .35)" stroke-width="1" stroke-dasharray="1 4"><line x1="40" y1="30" x2="690" y2="30"/><line x1="40" y1="80" x2="690" y2="80"/><line x1="40" y1="130" x2="690" y2="130"/></g>
+<line x1="40" y1="180" x2="690" y2="180" stroke="rgb(184 128 94 / .8)" stroke-width="1.25"/>
+<g font-family="JetBrains Mono" font-size="10" fill="var(--text-3)"><text x="8" y="34">3,000</text><text x="8" y="84">2,000</text><text x="8" y="134">1,000</text><text x="60" y="200">2015</text><text x="356" y="200">2020</text><text x="650" y="200">2025</text></g>
+<polyline fill="none" stroke="var(--cat-ic)" stroke-width="1.75" stroke-linejoin="round" points="70,175 130,172 190,170 250,155 310,144 370,119 430,97 490,69 550,55 610,31 670,0"/>
+<g fill="var(--cat-ic)"><circle cx="70" cy="175" r="2.4"/><circle cx="130" cy="172" r="2.4"/><circle cx="190" cy="170" r="2.4"/><circle cx="250" cy="155" r="2.4"/><circle cx="310" cy="144" r="2.4"/><circle cx="370" cy="119" r="2.4"/><circle cx="430" cy="97" r="2.4"/><circle cx="490" cy="69" r="2.4"/><circle cx="550" cy="55" r="2.4"/><circle cx="610" cy="31" r="2.4"/></g>
+<g transform="translate(664,-6)"><use href="#star4" width="12" height="12" style="color:var(--energy);filter:drop-shadow(0 0 5px var(--energy))"/></g>
+<text x="596" y="-14" font-family="JetBrains Mono" font-size="11" fill="var(--text)" font-weight="600">3,658 in 2025</text><text x="690" y="222" text-anchor="end" font-family="JetBrains Mono" font-size="9.5" letter-spacing="1.2" fill="var(--text-3)">SOURCE · NASA ADS</text>
+</svg></article></div>
+</div></main>
+<script src="board.js"></script></body></html>

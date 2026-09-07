@@ -1,0 +1,2459 @@
+
+######## publications.html ########
+Publications · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Research output 
+Publications 
+Peer-reviewed research and scholarly contributions. 
+[aria] Total papers: 136 papers (opens the ADS library)136 Total papers ADS ↗ 
+[aria] Primary author: 15 papers (opens the ADS library)15 Primary author ADS ↗ 
+[aria] Postdoc-led: 11 papers (opens the ADS library)11 Postdoc-led ADS ↗ 
+[aria] Student-led: 20 papers (opens the ADS library)20 Student-led ADS ↗ 
+[aria] Contributor: 26 papers (opens the ADS library)26 Contributor ADS ↗ 
+72 of 136 papers sit in one of these curated ADS libraries; the rest are co-authored work, counted in the total and shown as “Other” in the roles figure below. 
+Full author profiles ADS ↗ Google Scholar ↗ ORCID ↗ BibTeX ↓ 
+Research mix share of work by area 
+[aria] Research mix: Discovery 45%, Interpretability 21%, Inference 20%, Stat. learning 14%
+[aria] Discovery & Understanding: 45% of classified outputDiscovery 45% 
+[aria] Interpretability & Insight: 21% of classified outputInterpretability 21% 
+[aria] Inference & Computation: 20% of classified outputInference 20% 
+[aria] Statistical Learning & AI: 14% of classified outputStat. learning 14% 
+Discovery 45% Interpretability 21% Inference 20% Stat. learning 14% 
+Citations received per year 18,503 total · ADS + Google Scholar · 2026 partial, omitted 
+[aria] Citations received per year
+1,000 2,000 3,000 4,000 
+3,658 in 2025 
+[aria] 2015: 102 citations
+[aria] 2016: 160 citations
+[aria] 2017: 207 citations
+[aria] 2018: 494 citations
+[aria] 2019: 710 citations
+[aria] 2020: 1,220 citations
+[aria] 2021: 1,663 citations
+[aria] 2022: 2,219 citations
+[aria] 2023: 2,506 citations
+[aria] 2024: 2,978 citations
+[aria] 2025: 3,658 citations
+2016 2018 2020 2022 2024 
+Publications by year & role hover or tab through the bars 
+[aria] Publications per year by my authorship role
+5 10 15 20 
+[aria] 2011: 1 publication — 1 primary author
+[aria] 2014: 3 publications — 1 primary author, 2 contributor
+[aria] 2015: 1 publication — 1 other
+[aria] 2016: 2 publications — 1 primary author, 1 contributor
+[aria] 2017: 2 publications — 2 primary author
+[aria] 2018: 7 publications — 2 contributor, 5 other
+[aria] 2019: 14 publications — 3 primary author, 4 contributor, 7 other
+[aria] 2020: 14 publications — 2 primary author, 1 student-led, 4 contributor, 7 other
+[aria] 2021: 9 publications — 1 primary author, 1 contributor, 7 other
+[aria] 2022: 21 publications — 2 student-led, 3 contributor, 16 other
+[aria] 2023: 15 publications — 3 student-led, 4 contributor, 8 other
+[aria] 2024: 18 publications — 2 primary author, 1 postdoc-led, 8 student-led, 1 contributor, 6 other
+[aria] 2025: 19 publications — 2 primary author, 6 postdoc-led, 4 student-led, 2 contributor, 5 other
+[aria] 2026: 10 publications — 4 postdoc-led, 2 student-led, 2 contributor, 2 other
+2012 2014 2016 2018 2020 2022 2024 2026 
+Primary author Postdoc-led Student-led Contributor Other 
+Research impact by role RIQ vs. the typical astronomer range 
+[aria] Research Impact Quotient over time by authorship role
+100 200 300 400 500 
+Typical range 60–150 
+[aria] 2012 — All papers 27 · Primary 27
+[aria] 2013 — All papers 57 · Primary 57
+[aria] 2014 — All papers 58 · Primary 62 · Contributor 25
+[aria] 2015 — All papers 96 · Primary 96 · Contributor 51
+[aria] 2016 — All papers 134 · Primary 129 · Contributor 75
+[aria] 2017 — All papers 145 · Primary 137 · Contributor 83
+[aria] 2018 — All papers 155 · Primary 138 · Contributor 98
+[aria] 2019 — All papers 169 · Primary 144 · Contributor 113
+[aria] 2020 — All papers 266 · Primary 240 · Contributor 151
+[aria] 2021 — All papers 315 · Primary 281 · Contributor 181 · Student-led 53
+[aria] 2022 — All papers 361 · Primary 319 · Contributor 210 · Student-led 52
+[aria] 2023 — All papers 400 · Primary 352 · Contributor 230 · Student-led 65
+[aria] 2024 — All papers 432 · Primary 377 · Contributor 245 · Student-led 77 · Postdoc-led 81
+[aria] 2025 — All papers 471 · Primary 410 · Contributor 263 · Student-led 113 · Postdoc-led 130
+2012 2014 2016 2018 2020 2022 2024 
+471 All papers 410 Primary 263 Contributor 113 Student-led 130 Postdoc-led 
+Why these figures? I find it easier to see what I work on and the impact it’s had as a picture than as a list — so rather than just enumerate papers, these summarize the record a few ways. Research mix shows what the work is about, weighting each paper by its classification across the four areas. The role breakdowns separate work led as primary author from work led by postdocs, students, and larger collaborations — each with its own shade and hatch, so they separate without relying on colour. RIQ (Research Impact Quotient) normalizes citation impact by career length — roughly √(total citations) ÷ years active — so impact compares fairly across career stages instead of just growing with time; the shaded band is the 60–150 typical range for established astronomers ( Pepe & Kurtz 2012 ). 
+Featured work 
+2025 · ApJ 
+A Deep, High-angular-resolution 3D Dust Map of the Southern Galactic Plane 
+C. Zucker, A. Saydjari, J. Speagle et al. · 31 citations 
+★ Featured Inference & Computation Discovery & Understanding ADS arXiv DOI 
+We present a deep, high-angular-resolution 3D dust map of the southern Galactic plane over 239° < l < 6° and ∣ b ∣ < 10° built on photometry from the DECaPS2 survey, in combination with photometry from VISTA Variables in the Via Lactea, the Two Micron All Sky Survey, and “Unofficial” Wide-field Infrared Survey Explorer and… 
+2025 · ApJ · Student-led 
+ChronoFlow: A Data-driven Model for Gyrochronology 
+P. Van-Lane, J. Speagle , G. Eadie et al. · 13 citations 
+★ Featured Statistical Learning & AI Discovery & Understanding ADS arXiv DOI 
+Gyrochronology is a technique for constraining stellar ages using rotation periods, which change over a star’s main-sequence (MS) lifetime due to magnetic braking. This technique shows promise for MS FGKM stars, where other methods are imprecise. However, the observed dispersion in rotation rates for similar coeval stars has historically… 
+2025 · arXiv 
+Trustworthy scientific inference for inverse problems with generative models 
+J. Carzon, L. Masserano, J. Ingram et al. · 1 citation 
+★ Featured Statistical Learning & AI Interpretability & Insight Inference & Computation ADS arXiv 
+Generative artificial intelligence (AI) excels at producing complex data structures (text, images, videos) by learning patterns from training examples. Across scientific disciplines, researchers are now applying generative models to “inverse problems” to infer hidden parameters from observed data. While these methods can handle… 
+All publications 
+[aria] Search publications
+[aria] Sort publications
+Newest first 
+Most cited 
+[aria] Filter by research area
+All 136 Discovery & Understanding 79 Inference & Computation 27 Statistical Learning & AI 19 Interpretability & Insight 11 
+2026 · arXiv · Student-led 
+It's a matter of time: Empirical Constraints on Supernova Yields and Delay Times from Dwarf Spheroidal Galaxies 
+M. Heiger, A. Ji, J. Speagle et al. · 2 citations 
+Discovery & Understanding ADS arXiv DOI 
+2026 · ApJ · Postdoc-led 
+SPYGLASS. VII-B. Tracing the Fragments of Massive Star Formation Using Low-mass Associations 
+R. Kerr, A. Kraus, J. Tan et al. 
+Discovery & Understanding ADS arXiv DOI 
+2026 · ApJ · Postdoc-led 
+Disk Wind Feedback from High-mass Protostars. V. Application of Multimodal Machine Learning to Characterize Outflow Properties 
+D. Xu, I. Stelea, J. Speagle et al. 
+Statistical Learning & AI Interpretability & Insight ADS arXiv DOI 
+2026 · arXiv · Student-led 
+Integral Field Unit Spectroscopy with One Fiber 
+Z. Peng, B. Dey, C. Maddison et al. 
+Statistical Learning & AI ADS arXiv DOI 
+2026 · arXiv · Postdoc-led 
+On the correlation between globular clusters and the distribution of dark matter in galaxy clusters: the case of Abell 2744 
+M. Reina-Campos, J. Speagle , W. Harris 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2026 · arXiv 
+Homogeneous Stellar Parameters from Heterogeneous Spectra with Deep Learning 
+J. Shen, J. Speagle , S. Ho 
+Statistical Learning & AI Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2026 · The Astrophysical Journal 
+It’s More Complicated Than You Think: A Forward Model to Infer the Recent Star Formation History, Bursty or Not, of Galaxy Populations 
+E. Burnham, B. Wang, J. Leja et al. 
+Statistical Learning & AI Inference & Computation Discovery & Understanding arXiv DOI 
+2026 · ApJS · Postdoc-led 
+Assessing Zeeman Measurements of Magnetic Fields in Synthetic H I Observations 
+D. Xu, P. Martin, S. Offner et al. 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2026 · AI Foundation Models for Science (workshop) 
+Predicting Cherry Blossom Peak Bloom in Toronto Through Climate-Aware Tabular Foundation Models 
+K. McKinnon, J. Speagle , J. Li et al. 
+Statistical Learning & AI DOI 
+2026 · OJAp 
+Finding the boundary: Using galaxy membership to inform galaxy cluster extent through machine learning 
+C. Hao, S. O'Neil, M. Vogelsberger et al. 
+Statistical Learning & AI Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ · Postdoc-led 
+The FENIKS Survey: Spectroscopic Confirmation of Massive Quiescent Galaxies at z ∼ 3─5 
+J. Antwi-Danso, C. Papovich, J. Esdaile et al. · 56 citations 
+Discovery & Understanding ADS arXiv DOI 
+2025 · JCAP · Postdoc-led 
+Measuring σ 8 using DESI Legacy Imaging Surveys Emission-Line galaxies and Planck CMB lensing, and the impact of dust on parameter inference 
+T. Karim, S. Singh, M. Rezaie et al. · 32 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ 
+A Deep, High-angular-resolution 3D Dust Map of the Southern Galactic Plane 
+C. Zucker, A. Saydjari, J. Speagle et al. · 31 citations 
+★ Featured Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2025 · arXiv 
+MINERVA: A NIRCam Medium Band and MIRI Imaging Survey to Unlock the Hidden Gems of the Distant Universe 
+A. Muzzin, K. Suess, D. Marchesini et al. · 20 citations 
+Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ · Student-led 
+ChronoFlow: A Data-driven Model for Gyrochronology 
+P. Van-Lane, J. Speagle , G. Eadie et al. · 13 citations 
+★ Featured Statistical Learning & AI Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ · Student-led 
+Closing the Stellar Labels Gap: Stellar Label independent Evidence for [α/M] Information in Gaia BP/RP Spectra 
+A. Laroche, J. Speagle · 13 citations 
+Statistical Learning & AI Interpretability & Insight ADS arXiv DOI 
+2025 · ApJ 
+Discovery of Two Ultra-diffuse Galaxies with Unusually Bright Globular Cluster Luminosity Functions via a Mark-dependently Thinned Point Process (MATHPOP) 
+D. Li, G. Eadie, P. Brown et al. · 10 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ 
+How Does Feedback Affect the Star Formation Histories of Galaxies? 
+K. Iyer, T. Starkenburg, G. Bryan et al. · 9 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ · Postdoc-led 
+SPYGLASS. VI. Feedback-driven Star Formation in the Circinus Complex 
+R. Kerr, J. Farias, L. Prato et al. · 6 citations 
+Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ 
+Detecting Stellar Flares in Photometric Data Using Hidden Markov Models 
+J. Esquivel, Y. Shen, V. Leos-Barajas et al. · 6 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2025 · arXiv 
+Deriving Stellar Properties, Distances, and Reddenings using Photometry and Astrometry with BRUTUS 
+J. Speagle , C. Zucker, A. Beane et al. · 5 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2025 · AJ · Student-led 
+Improving Harmonic Analysis Using Multitapering: Precise Frequency Estimation of Stellar Oscillations Using the Harmonic F-test 
+A. Patil, G. Eadie, J. Speagle et al. · 5 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2025 · ApJ · Postdoc-led 
+SPYGLASS. VII-A. The Demographics and Ages of Small Nearby Young Associations 
+R. Kerr, F. Peŕez Paolino, J. Tan et al. · 2 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ 
+Early Evidence for Isotropic Planetary Obliquities in Young Super-Jupiter Systems 
+M. Poon, M. Bryan, H. Rein et al. · 1 citation 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2025 · arXiv 
+Trustworthy scientific inference for inverse problems with generative models 
+J. Carzon, L. Masserano, J. Ingram et al. · 1 citation 
+★ Featured Statistical Learning & AI Interpretability & Insight Inference & Computation ADS arXiv 
+2025 · arXiv · Postdoc-led 
+An Ancient Descendant of the First Galaxies 
+J. Antwi-Danso, A. Muzzin, L. Robbins et al. · 1 citation 
+Discovery & Understanding ADS arXiv DOI 
+2025 · arXiv · Postdoc-led 
+Galaxy Zoo Evo: 1 million human-annotated images of galaxies 
+M. Walmsley, S. Bamford, H. Dickinson et al. 
+Statistical Learning & AI Discovery & Understanding ADS arXiv DOI 
+2025 · arXiv 
+Data-Driven Stellar Spectral Modelling with GSPICE 
+D. Finkbeiner, J. Speagle , T. Karim 
+Statistical Learning & AI Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2025 · ApJ · Student-led 
+SF-R You Sure? The Conflicting Role of Star Formation Rates in Constraining the Evolution of Milky Way Analogs in Cosmological Simulations 
+A. Savelli, J. Speagle , J. Mackereth et al. 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2024 · A&A 
+A parsec-scale Galactic 3D dust map out to 1.25 kpc from the Sun 
+G. Edenhofer, C. Zucker, P. Frank et al. · 194 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2024 · ApJ 
+Stochastic Modeling of Star Formation Histories. III. Constraints from Physically Motivated Gaussian Processes 
+K. Iyer, J. Speagle , N. Caplar et al. · 34 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2024 · arXiv · Postdoc-led 
+Scaling Laws for Galaxy Images 
+M. Walmsley, M. Bowles, A. Scaife et al. · 28 citations 
+Statistical Learning & AI Interpretability & Insight ADS arXiv DOI 
+2024 · MNRAS 
+Extending the chemical reach of the H3 survey: detailed abundances of the dwarf-galaxy stellar stream Wukong/LMS-1 
+G. Limberg, A. Ji, R. Naidu et al. · 24 citations 
+Discovery & Understanding ADS arXiv DOI 
+2024 · MNRAS 
+DESI complete calibration of the colour-redshift relation (DC3R2): results from early DESI data 
+J. McCullough, D. Gruen, A. Amon et al. · 21 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2024 · MNRAS 
+Stochastic prior for non-parametric star-formation histories 
+J. Wan, S. Tacchella, B. Johnson et al. · 20 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2024 · MNRAS · Student-led 
+A catalogue of Galactic GEMS: Globular cluster Extra-tidal Mock Stars 
+S. Grondin, J. Webb, J. Lane et al. · 18 citations 
+Discovery & Understanding ADS arXiv DOI 
+2024 · ApJ · Student-led 
+The First Catalog of Candidate White Dwarf─Main-sequence Binaries in Open Star Clusters: A New Window into Common Envelope Evolution 
+S. Grondin, M. Drout, J. Nordhaus et al. · 15 citations 
+Discovery & Understanding ADS arXiv DOI 
+2024 · ApJ · Student-led 
+The Power of High-precision Broadband Photometry: Tracing the Milky Way Density Profile with Blue Horizontal Branch Stars in the Dark Energy Survey 
+F. Yu, T. Li, J. Speagle et al. · 13 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2024 · ApJ 
+Katachi (形): Decoding the Imprints of Past Star Formation on Present-day Morphology in Galaxies with Interpretable CNNs 
+J. Alfonzo, K. Iyer, M. Akiyama et al. · 12 citations 
+Statistical Learning & AI Interpretability & Insight ADS arXiv DOI 
+2024 · AJ · Student-led 
+Improving Power Spectrum Estimation Using Multitapering: Efficient Asteroseismic Analyses for Understanding Stars, the Milky Way, and Beyond 
+A. Patil, G. Eadie, J. Speagle et al. · 8 citations 
+Inference & Computation ADS arXiv DOI 
+2024 · AJ 
+Photometric Completeness Modelled with Neural Networks 
+W. Harris, J. Speagle · 7 citations 
+Statistical Learning & AI Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2024 · MNRAS 
+Dynamical masses across the Hertzsprung-Russell diagram 
+H. Hwang, Y. Ting, S. Cheng et al. · 7 citations 
+Statistical Learning & AI Discovery & Understanding ADS arXiv DOI 
+2024 · ApJ 
+Mapping the Milky Way in 5D with 170 Million Stars 
+J. Speagle , C. Zucker, A. Bonaca et al. · 5 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2024 · ApJ · Student-led 
+Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with (out) Zero-inflated Count Models 
+S. Berek, G. Eadie, J. Speagle et al. · 5 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2024 · MNRAS · Student-led 
+Hierarchical Bayesian inference of globular cluster properties 
+R. Wen, J. Speagle , J. Webb et al. · 2 citations 
+Inference & Computation ADS arXiv DOI 
+2024 · ApJ · Student-led 
+Disentangling Stellar Age Estimates from Galactic Chemodynamical Evolution 
+J. Shen, J. Speagle , J. Mackereth et al. · 2 citations 
+Statistical Learning & AI Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2024 · arXiv · Student-led 
+Estimating Probability Densities with Transformer and Denoising Diffusion 
+H. Leung, J. Bovy, J. Speagle 
+Statistical Learning & AI Interpretability & Insight ADS arXiv DOI 
+2023 · ApJ 
+JWST Reveals a Population of Ultrared, Flattened Galaxies at 2 ≲ z ≲ 6 Previously Missed by HST 
+E. Nelson, K. Suess, R. Bezanson et al. · 116 citations 
+Discovery & Understanding ADS arXiv DOI 
+2023 · ApJS 
+The Dark Energy Camera Plane Survey 2 (DECaPS2): More Sky, Less Bias, and Better Uncertainties 
+A. Saydjari, E. Schlafly, D. Lang et al. · 73 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2023 · ApJ 
+SBI ++ : Flexible, Ultra-fast Likelihood-free Inference Customized for Astronomical Applications 
+B. Wang, J. Leja, V. Villar et al. · 45 citations 
+Statistical Learning & AI Inference & Computation ADS arXiv DOI 
+2023 · MNRAS 
+Dwarf galaxy archaeology from chemical abundances and star-formation histories 
+J. Johnson, C. Conroy, B. Johnson et al. · 32 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2023 · ApJ 
+As Simple as Possible but No Simpler: Optimizing the Performance of Neural Net Emulators for Galaxy SED Fitting 
+E. Mathews, J. Leja, J. Speagle et al. · 24 citations 
+Statistical Learning & AI Interpretability & Insight ADS arXiv DOI 
+2023 · MNRAS · Student-led 
+Searching for the extra-tidal stars of globular clusters using high-dimensional analysis and a core particle spray code 
+S. Grondin, J. Webb, N. Leigh et al. · 16 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2023 · arXiv 
+Practical Guidance for Bayesian Inference in Astronomy 
+G. Eadie, J. Speagle , J. Cisewski-Kehe et al. · 16 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2023 · ApJ 
+Cool, Luminous, and Highly Variable Stars in the Magellanic Clouds. II. Spectroscopic and Environmental Analysis of Thorne-Żytkow Object and Super-AGB Star Candidates 
+A. O'Grady, M. Drout, B. Gaensler et al. · 15 citations 
+Discovery & Understanding ADS arXiv DOI 
+2023 · arXiv 
+Roman Early-Definition Astrophysics Survey Opportunity: Galactic Roman Infrared Plane Survey (GRIPS) 
+R. Paladini, C. Zucker, R. Benjamin et al. · 12 citations 
+Discovery & Understanding ADS arXiv DOI 
+2023 · arXiv 
+NANCY: Next-generation All-sky Near-infrared Community surveY 
+J. Han, A. Dey, A. Price-Whelan et al. · 10 citations 
+Discovery & Understanding ADS arXiv DOI 
+2023 · ApJ · Student-led 
+The HERBAL Model: A Hierarchical Errors-in-variables Bayesian Lognormal Hurdle Model for Galactic Globular Cluster Populations 
+S. Berek, G. Eadie, J. Speagle et al. · 8 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2023 · arXiv 
+Zephyr : Stitching Heterogeneous Training Data with Normalizing Flows for Photometric Redshift Inference 
+Z. Sun, J. Speagle , S. Huang et al. · 8 citations 
+Statistical Learning & AI Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2023 · arXiv 
+Learning Reionization History from Quasars with Simulation-Based Inference 
+H. Chen, J. Speagle , K. Rogers · 7 citations 
+Statistical Learning & AI Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2023 · Machine Learning for Astrophysics · Student-led 
+A Novel Application of Conditional Normalizing Flows: Stellar Age Inference with Gyrochronology 
+P. Van-Lane, J. Speagle , S. Douglas · 3 citations 
+Statistical Learning & AI Discovery & Understanding ADS arXiv 
+2023 · Machine Learning for Astrophysics 
+Closing the stellar labels gap: An unsupervised, generative model for Gaia BP/RP spectra 
+A. Laroche, J. Speagle 
+Statistical Learning & AI Interpretability & Insight ADS 
+2022 · Nature 
+Star formation near the Sun is driven by expansion of the Local Bubble 
+C. Zucker, A. Goodman, J. Alves et al. · 213 citations 
+Discovery & Understanding ADS arXiv DOI 
+2022 · ApJ 
+Fast, Slow, Early, Late: Quenching Massive Galaxies at z ∼ 0.8 
+S. Tacchella, C. Conroy, S. Faber et al. · 186 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2022 · ApJ 
+A New Census of the 0.2 < z < 3.0 Universe. II. The Star-forming Sequence 
+J. Leja, J. Speagle , Y. Ting et al. · 183 citations 
+Statistical Learning & AI Discovery & Understanding ADS arXiv DOI 
+2022 · Nature Reviews Methods Primers 
+Nested sampling for physical scientists 
+G. Ashton, N. Bernstein, J. Buchner et al. · 152 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2022 · arXiv 
+Birth of the Galactic Disk Revealed by the H3 Survey 
+C. Conroy, D. Weinberg, R. Naidu et al. · 128 citations 
+Discovery & Understanding ADS arXiv DOI 
+2022 · AJ 
+The Stellar Halo of the Galaxy is Tilted and Doubly Broken 
+J. Han, C. Conroy, B. Johnson et al. · 77 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2022 · ApJ 
+Evidence from Disrupted Halo Dwarfs that r-process Enrichment via Neutron Star Mergers is Delayed by ≳500 Myr 
+R. Naidu, A. Ji, C. Conroy et al. · 74 citations 
+Discovery & Understanding ADS arXiv DOI 
+2022 · Phys. Rev. D 
+Cosmological inference from an emulator based halo model. II. Joint analysis of galaxy-galaxy weak lensing and galaxy clustering from HSC-Y1 and SDSS 
+H. Miyatake, S. Sugiyama, M. Takada et al. · 64 citations 
+Statistical Learning & AI Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2022 · ApJ · Student-led 
+The Mass of the Milky Way from the H3 Survey 
+J. Shen, G. Eadie, N. Murray et al. · 57 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2022 · arXiv 
+Live Fast, Die α-Enhanced: The Mass-Metallicity-α Relation of the Milky Way's Disrupted Dwarf Galaxies 
+R. Naidu, C. Conroy, A. Bonaca et al. · 48 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2022 · ApJ 
+A Tilt in the Dark Matter Halo of the Galaxy 
+J. Han, R. Naidu, C. Conroy et al. · 39 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2022 · MNRAS 
+The outer stellar mass of massive galaxies: a simple tracer of halo mass with scatter comparable to richness and reduced projection effects 
+S. Huang, A. Leauthaud, C. Bradshaw et al. · 30 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2022 · MNRAS 
+Lensing without borders - I. A blind comparison of the amplitude of galaxy-galaxy lensing between independent imaging surveys 
+A. Leauthaud, A. Amon, S. Singh et al. · 23 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2022 · Phys. Rev. D 
+HSC Year 1 cosmology results with the minimal bias method: HSC ×BOSS galaxy-galaxy weak lensing and BOSS galaxy clustering 
+S. Sugiyama, M. Takada, H. Miyatake et al. · 23 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2022 · ApJ · Student-led 
+Characterizing the 3D Kinematics of Young Stars in the Radcliffe Wave 
+A. Tu, C. Zucker, J. Speagle et al. · 11 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2022 · MNRAS 
+Wide binaries from the H3 survey: the thick disc and halo have similar wide binary fractions 
+H. Hwang, Y. Ting, C. Conroy et al. · 11 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2022 · Nature Reviews Methods Primers 
+Author Correction: Nested sampling for physical scientists (Nature Reviews Methods Primers,(2022), 2, 1,(39), 10.1038/s43586-022-00121-x) 
+G. Ashton, N. Bernstein, J. Buchner et al. · 11 citations 
+Interpretability & Insight Inference & Computation DOI 
+2022 · ApJ 
+A Ghost in Boötes: The Least-Luminous Disrupted Dwarf Galaxy 
+V. Chandra, C. Conroy, N. Caldwell et al. · 10 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2022 · ApJ 
+On the Robustness of the Velocity Anisotropy Parameter in Probing the Stellar Kinematics in Milky Way-Like Galaxies: Takeaway from TNG50 Simulation 
+R. Emami, L. Hernquist, M. Vogelsberger et al. · 8 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2022 · arXiv 
+Monte Carlo Techniques for Addressing Large Errors and Missing Data in Simulation-based Inference 
+B. Wang, J. Leja, A. Villar et al. · 4 citations 
+Statistical Learning & AI Inference & Computation ADS arXiv DOI 
+2022 · arXiv 
+A Referee Primer for Early Career Astronomers 
+M. Ntampaka, A. Bonaca, S. Bose et al. 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2021 · ApJS 
+Stellar Population Inference with Prospector 
+B. Johnson, J. Leja, C. Conroy et al. · 806 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2021 · ApJ 
+Reconstructing the Last Major Merger of the Milky Way with the H3 Survey 
+R. Naidu, C. Conroy, A. Bonaca et al. · 199 citations 
+Discovery & Understanding ADS arXiv DOI 
+2021 · MNRAS 
+Spatially resolved star formation and inside-out quenching in the TNG50 simulation and 3D-HST observations 
+E. Nelson, S. Tacchella, B. Diemer et al. · 109 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2021 · ApJ 
+Orbital Clustering Identifies the Origins of Galactic Stellar Streams 
+A. Bonaca, R. Naidu, C. Conroy et al. · 102 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2021 · ApJ 
+On the Three-dimensional Structure of Local Molecular Clouds 
+C. Zucker, A. Goodman, J. Alves et al. · 99 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2021 · ApJ 
+Ancient Very Metal-poor Stars Associated with the Galactic Disk in the H3 Survey 
+C. Carter, C. Conroy, D. Zaritsky et al. · 26 citations 
+Discovery & Understanding ADS arXiv DOI 
+2021 · ApJ 
+Inferring the Morphology of Stellar Distribution in TNG50: Twisted and Twisted-stretched Shapes 
+R. Emami, L. Hernquist, C. Alcock et al. · 16 citations 
+Discovery & Understanding ADS arXiv DOI 
+2021 · ApJ 
+Data-driven Stellar Models 
+G. Green, H. Rix, L. Tschesche et al. · 14 citations 
+Statistical Learning & AI Discovery & Understanding ADS arXiv DOI 
+2021 · Nature Astron. 
+Making the sum greater than its parts 
+J. Speagle , G. Eadie 
+Interpretability & Insight Inference & Computation ADS DOI 
+2020 · MNRAS 
+DYNESTY: a dynamic nested sampling package for estimating Bayesian posteriors and evidences 
+J. Speagle · 2,351 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2020 · A&A 
+A compendium of distances to molecular clouds in the Star Formation Handbook 
+C. Zucker, J. Speagle , E. Schlafly et al. · 244 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2020 · Nature 
+A Galactic-scale gas wave in the solar neighbourhood 
+J. Alves, C. Zucker, A. Goodman et al. · 168 citations 
+Discovery & Understanding ADS arXiv DOI 
+2020 · ApJ 
+A New Census of the 0.2 < z < 3.0 Universe. I. The Stellar Mass Function 
+J. Leja, J. Speagle , B. Johnson et al. · 149 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2020 · A&A 
+Euclid preparation. X. The Euclid photometric-redshift challenge 
+Euclid Collaboration, G. Desprez, S. Paltani et al. · 116 citations 
+Statistical Learning & AI Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2020 · ApJ 
+MINESweeper: Spectrophotometric Modeling of Stars in the Gaia Era 
+P. Cargile, C. Conroy, B. Johnson et al. · 81 citations 
+Inference & Computation ADS arXiv DOI 
+2020 · ApJ 
+High-resolution Spectroscopy of the GD-1 Stellar Stream Localizes the Perturber near the Orbital Plane of Sagittarius 
+A. Bonaca, C. Conroy, D. Hogg et al. · 66 citations 
+Discovery & Understanding ADS arXiv DOI 
+2020 · MNRAS 
+Weak lensing reveals a tight connection between dark matter halo mass and the distribution of stellar mass in massive galaxies 
+S. Huang, A. Leauthaud, A. Hearin et al. · 57 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2020 · ApJ 
+A Diffuse Metal-poor Component of the Sagittarius Stream Revealed by the H3 Survey 
+B. Johnson, C. Conroy, R. Naidu et al. · 46 citations 
+Discovery & Understanding ADS arXiv DOI 
+2020 · MNRAS · Student-led 
+Constraining the distance to the North Polar Spur with Gaia DR2 
+K. Das, C. Zucker, J. Speagle et al. · 22 citations 
+Discovery & Understanding ADS arXiv DOI 
+2020 · ApJ 
+Discovery of Magellanic Stellar Debris in the H3 Survey 
+D. Zaritsky, C. Conroy, R. Naidu et al. · 22 citations 
+Discovery & Understanding ADS arXiv DOI 
+2020 · AJ 
+Photometric Biases in Modern Surveys 
+S. Portillo, J. Speagle , D. Finkbeiner · 18 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2020 · MNRAS 
+Searching for globular cluster chemical anomalies on the main sequence of a young massive cluster 
+I. Cabrera-Ziri, J. Speagle , E. Dalessandro et al. · 11 citations 
+Discovery & Understanding ADS arXiv DOI 
+2020 · PhD thesis 
+Mapping the Milky Way in the age of Gaia 
+J. Speagle · 1 citation 
+Inference & Computation Discovery & Understanding ADS 
+2019 · ApJ 
+A 3D Dust Map Based on Gaia, Pan-STARRS 1, and 2MASS 
+G. Green, E. Schlafly, C. Zucker et al. · 1,364 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2019 · ApJ 
+How to Measure Galaxy Star Formation Histories. II. Nonparametric Models 
+J. Leja, A. Carnall, B. Johnson et al. · 637 citations 
+Interpretability & Insight Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2019 · PASJ 
+Cosmology from cosmic shear power spectra with Subaru Hyper Suprime-Cam first-year data 
+C. Hikage, M. Oguri, T. Hamana et al. · 615 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2019 · ApJ 
+An Older, More Quiescent Universe from Panchromatic SED Fitting of the 3D-HST Survey 
+J. Leja, B. Johnson, C. Conroy et al. · 272 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2019 · ApJ 
+A Large Catalog of Accurate Distances to Local Molecular Clouds: The Gaia DR2 Edition 
+C. Zucker, J. Speagle , E. Schlafly et al. · 271 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2019 · arXiv 
+A Conceptual Introduction to Markov Chain Monte Carlo Methods 
+J. Speagle · 75 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2019 · MNRAS 
+Towards a radially resolved semi-analytic model for the evolution of disc galaxies tuned with machine learning 
+J. Forbes, M. Krumholz, J. Speagle · 42 citations 
+Discovery & Understanding ADS arXiv DOI 
+2019 · MNRAS 
+Galaxy-Galaxy lensing in HSC: Validation tests and the impact of heterogeneous spectroscopic training sets 
+J. Speagle , A. Leauthaud, S. Huang et al. · 34 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2019 · ApJ 
+Evidence for the Cross-correlation between Cosmic Microwave Background Polarization Lensing from Polarbear and Cosmic Shear from Subaru Hyper Suprime-Cam 
+T. Namikawa, Y. Chinone, H. Miyatake et al. · 30 citations 
+Discovery & Understanding ADS arXiv DOI 
+2019 · ApJ 
+Measuring the Delay Time Distribution of Binary Neutron Stars. III. Using the Individual Star Formation Histories of Gravitational-wave Event Host Galaxies in the Local Universe 
+M. Safarzadeh, E. Berger, J. Leja et al. · 19 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2019 · BAAS 
+The Next Decade of Astroinformatics and Astrostatistics 
+A. Siemiginowska, G. Eadie, I. Czekala et al. · 11 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2019 · ApJ 
+Measuring Star Formation Histories, Distances, and Metallicities with Pixel Color-Magnitude Diagrams. I. Model Definition and Mock Tests 
+B. Cook, C. Conroy, P. van Dokkum et al. · 9 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2019 · BAAS 
+Sustaining Community-Driven Software for Astronomy in the 2020s 
+E. Tollerud, A. Smith, A. Price-Whelan et al. · 1 citation 
+Inference & Computation ADS 
+2019 · BAAS 
+High-Dimensional Dust Mapping 
+G. Zasowski, D. Finkbeiner, G. Green et al. 
+Discovery & Understanding ADS arXiv DOI 
+2018 · PASJ 
+The Hyper Suprime-Cam SSP Survey: Overview and survey design 
+H. Aihara, N. Arimoto, R. Armstrong et al. · 1,194 citations 
+Discovery & Understanding ADS arXiv DOI 
+2018 · PASJ 
+First data release of the Hyper Suprime-Cam Subaru Strategic Program 
+H. Aihara, R. Armstrong, S. Bickerton et al. · 666 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2018 · PASJ 
+Photometric redshifts for Hyper Suprime-Cam Subaru Strategic Program Data Release 1 
+M. Tanaka, J. Coupon, B. Hsieh et al. · 333 citations 
+Statistical Learning & AI Discovery & Understanding ADS arXiv DOI 
+2018 · PASJ 
+The first-year shear catalog of the Subaru Hyper Suprime-Cam Subaru Strategic Program Survey 
+R. Mandelbaum, H. Miyatake, T. Hamana et al. · 264 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2018 · PASJ 
+An optically-selected cluster catalog at redshift 0.1 < z < 1.1 from the Hyper Suprime-Cam Subaru Strategic Program S16A data 
+M. Oguri, Y. Lin, S. Lin et al. · 189 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2018 · ApJ 
+Mapping Distances across the Perseus Molecular Cloud Using CO Observations, Stellar Photometry, and Gaia DR2 Parallax Measurements 
+C. Zucker, E. Schlafly, J. Speagle et al. · 126 citations 
+Inference & Computation Discovery & Understanding ADS arXiv DOI 
+2018 · PASJ 
+Source selection for cluster weak lensing measurements in the Hyper Suprime-Cam survey 
+E. Medezinski, M. Oguri, A. Nishizawa et al. · 90 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2017 · MNRAS 
+Deriving photometric redshifts using fuzzy archetypes and self-organizing maps - I. Methodology 
+J. Speagle , D. Eisenstein · 22 citations 
+Statistical Learning & AI Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2017 · MNRAS 
+Deriving photometric redshifts using fuzzy archetypes and self-organizing maps - II. Implementation 
+J. Speagle , D. Eisenstein · 19 citations 
+Statistical Learning & AI Interpretability & Insight ADS arXiv DOI 
+2016 · ApJ 
+The Impossibly Early Galaxy Problem 
+C. Steinhardt, P. Capak, D. Masters et al. · 109 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2016 · MNRAS 
+Exploring photometric redshifts as an optimization problem: an ensemble MCMC and simulated annealing-driven template-fitting approach 
+J. Speagle , P. Capak, D. Eisenstein et al. · 23 citations 
+Interpretability & Insight Inference & Computation ADS arXiv DOI 
+2015 · ApJ 
+Mapping the Galaxy Color-Redshift Relation: Optimal Photometric Redshift Calibration Strategies for Cosmology Surveys 
+D. Masters, P. Capak, D. Stern et al. · 208 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2014 · ApJS 
+A Highly Consistent Framework for the Evolution of the Star-Forming "Main Sequence" from z ~ 0-6 
+J. Speagle , C. Steinhardt, P. Capak et al. · 1,630 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2014 · ApJ 
+Star Formation at 4 < z < 6 from the Spitzer Large Area Survey with Hyper-Suprime-Cam (SPLASH) 
+C. Steinhardt, J. Speagle , P. Capak et al. · 209 citations 
+Discovery & Understanding ADS arXiv DOI 
+2014 · ApJ 
+A Uniform History for Galaxy Evolution 
+C. Steinhardt, J. Speagle · 18 citations 
+Interpretability & Insight Discovery & Understanding ADS arXiv DOI 
+2011 · ApJ 
+The X-Ray Counterpart of the High-B Pulsar PSR J0726-2612 
+J. Speagle , D. Kaplan, M. van Kerkwijk · 17 citations 
+Discovery & Understanding ADS arXiv DOI 
+No papers match your search/filters. Show all 
+Load more 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Data from SAO/NASA ADS & Google Scholar · Updated July 2026
+
+######## talks.html ########
+Talks & Events · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Speaking & outreach 
+Talks & Events 
+Presentations, panels, and public engagement across academia and beyond. 
+Featured talks 
+Mar 2026 · Invited Talk 
+AI for Scientists: Learning and Doing in the Era of VLMs 
+Language AI in the Space Sciences · Baltimore, USA 
+Invited Talks 
+Sep 2025 · Invited Talk 
+A Brief History of Time MCMC in Astronomy 
+The Fast and Curious 2: MCMC in Action · Toronto, Canada 
+Invited Talks 
+Oct 2025 · Seminar 
+A Conceptual Introduction to Deep Learning 
+UC Berkeley: BIDMAP Seminar · Berkeley, CA 
+Colloquia & Seminars 
+Results 
+[aria] Search talks, events, venues…
+[aria] Sort
+Newest first 
+[aria] Filter
+All 102 Invited Talks 14 Colloquia & Seminars 41 Contributed Talks 15 Lectures & Tutorials 12 Panels 4 Posters 9 Public Talks & Events 6 Media Appearances 1 
+Jun 2026 · Invited Talk 
+How AI has taken over the world and what it means for science 
+SETI Institute: Introduction to Artificial Intelligence Workshop (SSAIL) · Mountain View, USA 
+Invited Talks 
+May 2026 · Invited Talk 
+Adaptive 'Frasian' Inference under Data-Prior Conflict 
+STAMPS@CMU Workshop 2026 · Pittsburgh, USA 
+Invited Talks 
+Mar 2026 · Invited Talk 
+AI for Scientists: Learning and Doing in the Era of VLMs 
+Language AI in the Space Sciences · Baltimore, USA 
+Invited Talks 
+Dec 2025 · Invited Talk 
+Astro-Statistical Learning and Uncertainty Quantification 
+CFE-CMStatistics 2025: Starstruck Statistics · London, UK 
+Invited Talks 
+Sep 2025 · Invited Talk 
+A Brief History of Time MCMC in Astronomy 
+The Fast and Curious 2: MCMC in Action · Toronto, Canada 
+Invited Talks 
+Jun 2025 · Invited Talk 
+Bayesian Parameter Estimation and Model Selection Problems in Astrophysics 
+Bayes Comp 2025 · Singapore 
+Invited Talks 
+Jun 2024 · Invited Talk 
+AI SpAI with My (Little?) AI: Applications of Statistical Learning in Modern Astrophysics 
+AstroAI Summer Workshop · Cambridge, MA 
+Invited Talks 
+Aug 2023 · Invited Talk 
+Uncertainty and Interpretability in Machine Learning Models 
+NSF IAIFI Summer Workshop · Boston, MA 
+Invited Talks 
+Jul 2023 · Invited Talk 
+Musings on Nested Sampling from Interactions with Everyday Users 
+MaxEnt 2023 Workshop: Frontiers of Nested Sampling Meeting-within-a-Meeting · Virtual 
+Invited Talks 
+Jun 2023 · Invited Talk 
+Extending Bayesian Modeling Approaches to ML Applications 
+Statistical Challenges in Modern Astronomy VIII · State College, PA 
+Invited Talks 
+Aug 2022 · Invited Talk 
+Machine Learning in Astronomy: Possibilities and Pitfall: Incorporating Errors into Machine Learning Methods 
+IAU General Assembly 2022 · Virtual 
+Invited Talks 
+Nov 2021 · Invited Talk 
+An Introduction to (Dynamic) Nested Sampling 
+UCLA IPAM: Mathematical and Computational Challenges in the Era of Gravitational Wave Astronomy · Virtual 
+Invited Talks 
+Jul 2021 · Keynote Address 
+An Introduction to Nested Sampling 
+University of Surrey: Towards a Cross-Research Platform for Hosting Bayesian Data-Fitting Tools · Virtual 
+Invited Talks 
+Aug 2018 · Invited Talk 
+Revealing the Milky Way's Dust-iny 
+Harvard University: CMSA Big Data Conference · Cambridge, MA 
+Invited Talks 
+Aug 2026 · Seminar 
+What exactly are we doing? 
+Center for Astrophysics | Harvard & Smithsonian: AstroAI Lunch Seminar · Cambridge, MA 
+Colloquia & Seminars 
+Jun 2026 · Colloquium 
+A Deep Dive into Data-Driven Astrophysics 
+UC San Diego: Astronomy & Astrophysics Colloquium · La Jolla, USA 
+Colloquia & Seminars 
+Jun 2026 · Seminar 
+What the *** are we doing? (or: why do we do research?) 
+UC San Diego: SMASH (AI x Physical Sciences) Seminar · La Jolla, USA 
+Colloquia & Seminars 
+May 2026 · Colloquium 
+AI x Astrophysics 
+University of Toronto: 2nd Colloquium on Applications of AI · Toronto, ON 
+Colloquia & Seminars 
+Feb 2026 (rescheduled — new date TBD) · Colloquium 
+Learning and Doing Physics and Astronomy in the Age of AI 
+Wellesley College: Physics & Astronomy Colloquium · Wellesley, USA 
+Colloquia & Seminars 
+Dec 2025 · Seminar 
+A Conceptual Introduction to Deep Learning 
+Cambridge: Astrophysics Data Science Seminar · Cambridge, UK 
+Colloquia & Seminars 
+Dec 2025 · Seminar 
+A Conceptual Introduction to Deep Learning 
+University of Vienna: Astronomy & Astrophysics Seminar · Vienna, Austria 
+Colloquia & Seminars 
+Dec 2025 · Seminar 
+A Conceptual Introduction to Deep Learning 
+MPIA: Data Science Seminar · Heidelberg, Germany 
+Colloquia & Seminars 
+Oct 2025 · Seminar 
+A Conceptual Introduction to Deep Learning 
+UC Berkeley: BIDMAP Seminar · Berkeley, CA 
+Colloquia & Seminars 
+May 2025 · Seminar 
+A Conceptual Introduction to Deep Learning 
+Penn State University: Department of Astronomy and Astrophysics Seminar · State College, PA 
+Colloquia & Seminars 
+Apr 2025 · Colloquium 
+"Why should I believe you?" "Because I am an Astrophysics Foundation Model." 
+KIPAC Stanford: Astrophysics Colloquium · Stanford, CA 
+Colloquia & Seminars 
+Mar 2025 · Colloquium 
+Q: Why should I believe you? A: Because I am an Astrophysics Foundation Model 
+CCA Flatiron Institute: Colloquium · New York, NY 
+Colloquia & Seminars 
+Dec 2024 · Colloquium 
+Trust Me, I am an Astrophysics Foundation Model 
+Tsinghua University: Astrophysics Colloquium · Beijing, China 
+Colloquia & Seminars 
+Mar 2024 · Seminar 
+I Spy with my (Little?) AI: Applications of Statistical Learning in Modern Astrophysics 
+Ohio State University: CCAPP Seminar · Columbus, OH 
+Colloquia & Seminars 
+Oct 2023 · Seminar 
+Nested Sampling: Past, Present, & Future 
+University of Guelph: Math & Stats Seminar · Guelph, ON 
+Colloquia & Seminars 
+Oct 2023 · Seminar 
+Astrostatistical Thinking in Machine Learning Applications 
+Université de Montréal: Astrophysics Seminar · Montreal, QC 
+Colloquia & Seminars 
+Sep 2023 · Seminar 
+Nested Sampling: Past, Present, and Future 
+Carnegie Mellon University: STAMPS Seminar · Pittsburgh, PA 
+Colloquia & Seminars 
+Sep 2023 · Seminar 
+From Panchromatic Images to Stellar Ages and Beyond 
+University of Pittsburgh: Astronomy Seminar · Pittsburgh, PA 
+Colloquia & Seminars 
+Aug 2023 · Seminar 
+Extending Statistical Thinking to ML Applications 
+Center for Astrophysics | Harvard & Smithsonian: AstroAI Seminar · Cambridge, MA 
+Colloquia & Seminars 
+Apr 2023 · Seminar 
+From Panchromatic Images to Stellar Ages and Beyond 
+McMaster University: Astronomy Lunch Seminar · Hamilton, ON 
+Colloquia & Seminars 
+Apr 2023 · Colloquium 
+AI x Astrophysics 
+University of Toronto: Colloquium on Applications of LLMs · Toronto, ON 
+Colloquia & Seminars 
+Feb 2023 · Seminar 
+From Panchromatic Images to Stellar Ages and Beyond 
+University of Waterloo: Astroseminar · Waterloo, ON 
+Colloquia & Seminars 
+Nov 2022 · Colloquium 
+Galaxy Evolution through the Eyes of the Milky Way 
+NRC Herzberg Astronomy and Astrophysics Research Centre · Victoria, BC 
+Colloquia & Seminars 
+Nov 2022 · Seminar 
+Galaxy Evolution through the Eyes of the Milky Way 
+Queen's University: Astronomy Seminar · Kingston, ON 
+Colloquia & Seminars 
+Aug 2022 · Seminar 
+From Panchromatic Images to Stellar Ages and Beyond 
+Institute for Advanced Study: Astrophysics Seminar · Princeton, NJ 
+Colloquia & Seminars 
+Aug 2022 · Colloquium 
+More Data + More Parameters = More Fun with Galaxy Evolution 
+Saint Mary's University: Department of Astronomy and Physics Colloquium · Halifax, NS 
+Colloquia & Seminars 
+Apr 2022 · Seminar 
+Mapping the Milky Way Near and Far 
+CASCA: CANadian Virtual Astronomy Seminar (CANVAS) · Virtual 
+Colloquia & Seminars 
+Apr 2022 · Seminar 
+Statistical Challenges in Stellar Parameter Estimation from Theory and Data 
+IAU-IAA: Astrostats and Astroinfo Seminar · Virtual 
+Colloquia & Seminars 
+Jan 2022 · Seminar 
+An Introduction to (Dynamic) Nested Sampling 
+Saint Mary's University: Data Analytics Seminar · Halifax, NS 
+Colloquia & Seminars 
+Oct 2021 · Seminar 
+Stars, Galaxies, and Everything In-Between: Galaxy Evolution Near and Far with Large Datasets 
+University of Toronto: Toronto Data Workshop · Toronto, ON 
+Colloquia & Seminars 
+Sep 2021 · Colloquium 
+Mapping the Milky Way with Stars and Dust 
+Penn State University: Department of Astronomy and Astrophysics Colloquium · University Park, PA 
+Colloquia & Seminars 
+Apr 2021 · Seminar 
+Cosmological Cartography with Photometric Redshifts 
+University of Chicago: Kavli Institute for Cosmological Physics Seminar · Chicago, IL 
+Colloquia & Seminars 
+Feb 2021 · Seminar 
+Mapping the Milky Way in the Age of Gaia 
+CANSSI Ontario: Data Science Applied Research and Education Seminar · Virtual 
+Colloquia & Seminars 
+Sep 2020 · Colloquium 
+Enabling Data-Driven Discovery in the Milky Way and Beyond Using Large Astronomical Datasets 
+University of Florida: Department of Astronomy Colloquium · Gainesville, FL 
+Colloquia & Seminars 
+Oct 2019 · Colloquium 
+Exploring the Galaxy Near and Far in the Age of Gaia 
+Villanova University: Department of Astrophysics and Planetary Science Colloquium · Villanova, PA 
+Colloquia & Seminars 
+Jun 2019 · Colloquium 
+Charting Nearby Molecular Clouds with Gaia: A New Map of Our Local Interstellar Medium 
+Harvard University: Summer Colloquium (joint with Catherine Zucker) · Cambridge, MA 
+Colloquia & Seminars 
+Apr 2019 · Seminar 
+Mapping the 3-D Distribution of Dust in the Milky Way with Stellar Photometry 
+University of Cambridge: Data Intensive Science Seminar · Cambridge, UK 
+Colloquia & Seminars 
+Oct 2017 · Seminar 
+Big Data Inference: Using Hierarchical Bayes and Machine Learning to Improve Photometric Redshifts 
+UMass Amherst: Data Science Tea · Amherst, MA 
+Colloquia & Seminars 
+Sep 2017 · Seminar 
+An Introduction to Dynamic Nested Sampling 
+Harvard University: CHASC Astrostatistics Seminar · Cambridge, MA 
+Colloquia & Seminars 
+Mar 2016 · Seminar 
+Mapping, Visualizing, and Exploiting the Color-Redshift Relation 
+Kavli IPMU: Astronomy Lunch Seminar · Tokyo, Japan 
+Colloquia & Seminars 
+Aug 2013 · Seminar 
+The Evolution of Star-Forming Galaxies over Cosmic Time 
+University of Tsukuba: Theoretical Astrophysics Seminar · Tsukuba, Japan 
+Colloquia & Seminars 
+Aug 2026 · Topic-Contributed Paper Session 
+Uncertainty Quantification and Calibration in Stellar Parameter Estimation 
+JSM 2026: Statistical Advances Motivated by Astrophysics and Space Sciences (Topic-Contributed Paper Session) · Boston, MA 
+Contributed Talks 
+Jul 2026 · Contributed Talk 
+Data-Driven Stellar Abundances from All The Spectra 
+Fields Institute: Near Field Cosmology in the Era of Big Data - Local Group and Beyond · Toronto, ON 
+Contributed Talks 
+Nov 2023 · Contributed Talk 
+SBI++: Extending Simulation-Based Inference to Censored and Out-of-Distribution Data 
+Banff International Research Station: Astrostatistics in Canada and Beyond · Banff, AB 
+Contributed Talks 
+Aug 2023 · Contributed Talk 
+Rapid Stellar Parameter Inference with Probabilistic Machine Learning 
+University of Michigan: 2023 Clusters & Streams Workshop · Ann Arbor, MI 
+Contributed Talks 
+Aug 2023 · Invited Paper Session 
+Connecting Galaxy Evolution between Observation, Simulation, and Theory 
+JSM 2023: True North Strong and... Amazing at Astrostatistics! (Invited Paper Session) · Toronto, ON 
+Contributed Talks 
+Jun 2023 · Spotlight Talk 
+Uncovering Galaxy Evolution through the Eyes of the Milky Way at the Dunlap Institute 
+Dunlap Institute for Astronomy & Astrophysics: 15th Anniversary Homecoming Celebration Spotlight Talk · Toronto, ON 
+Contributed Talks 
+May 2023 · Contributed Talk 
+Photometric Biases in Modern Surveys 
+Surveys to Discovery (S2D) Conference · Montreal, QC 
+Contributed Talks 
+May 2023 · Contributed Talk 
+From Light to Mass and Back Again: Exploring Galaxy Evolution with 'New' Methods and 'Old' Outcomes 
+2023 Spring Research Conference (SRC) · Banff, AB 
+Contributed Talks 
+Aug 2022 · Contributed Talk 
+Panchromatic Modelling of Co-Eval Stellar Populations 
+McMaster University: 2022 Clusters Workshop · Hamilton, ON 
+Contributed Talks 
+Aug 2022 · Invited Paper Session 
+Mapping the Milky Way in 5-D with Big Data 
+JSM 2022: Advances in Astrostatistics in the Great White North (Invited Paper Session) · Washington, DC 
+Contributed Talks 
+May 2022 · Contributed Talk 
+Machine Learning in the Era of Astronomically Big Data 
+Seeing the Future: A Conference in Honour of Alyssa Goodman · Cambridge, MA 
+Contributed Talks 
+Jun 2021 · Discussant 
+Unaccounted Uncertainties: The Role of Systematics in Astrophysics 
+AAS 238: Special Session (Statistics Discussant) · Virtual 
+Contributed Talks 
+Aug 2020 · Student Paper Award 
+Photometric Biases in Modern Astronomical Surveys 
+JSM 2020: Astrostatistics Interest Group: Student Paper Award (Topic-Contributed Paper Session) · Virtual 
+Contributed Talks 
+Sep 2018 · Contributed Talk 
+Challenges Working with Posterior Distributions (with Alex Malz) 
+Lorentz Center: Colours of the Universe Workshop · Leiden, Netherlands 
+Contributed Talks 
+May 2016 · Contributed Talk 
+Improving Photometric Redshifts for Hyper Suprime-Cam 
+COSMO21 2016 · Chania, Greece 
+Contributed Talks 
+Jun 2026 · Tutorial 
+A Conceptual Introduction to Deep Learning 
+Penn State: Summer School in Statistics for Astronomers (2026) · Virtual 
+Lectures & Tutorials 
+Jun 2026 · Tutorial 
+Nested Sampling: Past, Present, and Future 
+Penn State: Summer School in Statistics for Astronomers (2026) · Virtual 
+Lectures & Tutorials 
+Jun 2026 · Tutorial 
+Bayesian Inference 
+University of Toronto Statistical Sciences Research Program (UTSSRP 2026) · Toronto, ON 
+Lectures & Tutorials 
+May 2026 · Workshop 
+AI and LLMs – Research Perspective 
+Statistical Society of Canada 2026 Annual Meeting · Hamilton, ON 
+Lectures & Tutorials 
+Jun 2025 · Tutorial 
+A Conceptual Introduction to Deep Learning 
+Penn State: Summer School in Statistics for Astronomers (2025) · Virtual 
+Lectures & Tutorials 
+Jun 2025 · Tutorial 
+Nested Sampling: Past, Present, and Future 
+Penn State: Summer School in Statistics for Astronomers (2025) · Virtual 
+Lectures & Tutorials 
+Jun 2024 · Tutorial 
+Nested Sampling: Past, Present, and Future 
+Penn State: Summer School in Statistics for Astronomers (2024) · Virtual 
+Lectures & Tutorials 
+Sep 2023 · Tutorial 
+Machine Learning for Star Cluster Science (with Steffani Grondin) 
+2023 ESO Conference: Two in a million – The interplay between binaries and star clusters · Garching, Germany 
+Lectures & Tutorials 
+Aug 2023 · Tutorial 
+Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Grondin) 
+University of Michigan: 2023 Clusters & Streams Workshop · Ann Arbor, MI 
+Lectures & Tutorials 
+Aug 2023 · Tutorial 
+Uncertainty and Interpretability in Machine Learning Models (with Alex Gagliano) 
+NSF IAIFI Summer School · Boston, MA 
+Lectures & Tutorials 
+Jun 2023 · Tutorial 
+A Tutorial of (Dynamic) Nested Sampling 
+Statistical Challenges in Modern Astronomy VIII · State College, PA 
+Lectures & Tutorials 
+Aug 2020 · Tutorial 
+Introduction to Bayesian Inference with Linear Regression 
+Astro Hack Week 2020 · Virtual 
+Lectures & Tutorials 
+Dec 2023 · Panelist 
+Panel on inductive biases and interpretability 
+NeurIPS 2023: Workshop on Machine Learning and the Physical Sciences · New Orleans, LA 
+Panels 
+Aug 2023 · Panelist 
+Career Panel 
+NSF IAIFI Summer School · Boston, MA 
+Panels 
+Jun 2023 · Panelist 
+From Dunlap to Diverse Careers: A Panel Discussion on Opportunities and Challenges for Astrophysics Graduates (Moderator) 
+Dunlap Institute for Astronomy & Astrophysics: 15th Anniversary Homecoming Celebration · Toronto, ON 
+Panels 
+Aug 2021 · Panel Organizer & Chair 
+Understanding a Data-Rich Universe with Data-Driven Approaches (Organizer & Chair) 
+JSM 2021: Joint Statistical Meetings · Virtual 
+Panels 
+Sep 2023 · Poster 
+A machine-learning led search for extra-tidal stars of globular clusters 
+2023 ESO Conference: Two in a million – The interplay between binaries and star clusters · Garching, Germany 
+Posters 
+May 2022 · Poster 
+Data Driven Stellar Spectral Modelling with GSPICE 
+2022 CASCA Annual General Meeting · Virtual 
+Posters 
+May 2021 · Poster 
+Deriving Stellar Properties, Distances, and Reddenings from Photometry (and Astrometry) with brutus 
+2021 CASCA Annual General Meeting · Virtual 
+Posters 
+Mar 2018 · Poster 
+Dynamic Nested Sampling with dynesty 
+Bayes Comp 2018 · Barcelona, Spain 
+Posters 
+Jan 2017 · Poster 
+Improving Photometric Redshifts for Hyper Suprime-Cam (HSC) with Hierarchical Bayes and Machine Learning 
+AAS 229 · Grapevine, TX 
+Posters 
+Jan 2014 · Poster 
+Parallel Galaxy Main Sequence and Quasar Evolution from z=0-6 (AAS Chamblis Award Honorable Mention) 
+AAS 223 · Washington, DC 
+Posters 
+Jan 2013 · Poster 
+An In-Depth Analysis of the Kepler Low-Amplitude Blazhko RR Lyrae Stars: First Steps and Comparing Data Reduction Methods 
+AAS 221 · Long Beach, CA 
+Posters 
+Jun 2012 · Poster 
+An In-Depth Analysis of the Kepler Low-Amplitude Blazhko RR Lyrae Stars: First Steps and Comparing Data Reduction Methods 
+2012 KASC Meeting · Balatonalmádi, Hungary 
+Posters 
+Jan 2012 · Poster 
+The X-ray Counterpart of the High-B Pulsar J0726-2612 (AAS Chamblis Award) 
+AAS 219 · Austin, TX 
+Posters 
+Jul 2024 · Event Host 
+Host 
+Astronomy on Tap (Toronto) · Toronto, ON 
+Public Talks & Events 
+Nov 2023 · Public Talk 
+The Role of AI in Modern Astrophysics 
+Christie Gardens Apartments & Care (Toronto) · Toronto, ON 
+Public Talks & Events 
+Nov 2022 · Public Talk 
+Mapping the Milky Way from the Inside Out 
+Astronomy on Tap (Toronto) · Toronto, ON 
+Public Talks & Events 
+Oct 2021 · Public Talk 
+Mapping the Milky Way in the Age of Gaia 
+RASC (Toronto Centre): Speaker's Night · Toronto, ON 
+Public Talks & Events 
+Jun 2021 · Public Talk 
+Mapping the Milky Way in the Age of Gaia 
+RASC (Ottawa Centre): Monthly Meeting · Ottawa, ON 
+Public Talks & Events 
+May 2019 · Keynote Participant 
+Keynote participant for open-source code contributions (dynesty) in the analysis of M87* by the EHT collaboration 
+GitHub Satellite 2019 · Berlin, Germany 
+Public Talks & Events 
+Jan 2022 · Radio Interview 
+Space bubble 
+CBC Calgary: Calgary Eyeopener with David Gray, Angela Knight · Radio Interview 
+Media Appearances 
+No items match your search or filters. Show all 
+Load more 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
+
+######## teaching.html ########
+Teaching · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Teaching & education 
+Teaching 
+Statistical methods and computational thinking for scientific discovery — courses, short courses, and hands-on workshops. 
+6 Courses 
+11 Offerings 
+6 Years active 
+Teaching Philosophy 
+I believe in hands-on learning that connects theoretical concepts to real-world applications. My courses emphasize computational skills, critical thinking, and the ability to communicate complex ideas clearly. 
+Results 
+[aria] Search courses & workshops…
+[aria] Sort
+Most recent 
+A–Z 
+[aria] Filter
+All 14 Astronomy 4 Statistics 3 Workshops 8 
+Fall 2026 · Fall 2025 · Full Year 2023-2024 · Astronomy 
+AST424 · Introduction to Astrophysical Research 
+Research methods and project-based learning in astrophysics 
+Undergraduate 
+Winter 2026 · Statistics 
+STA437 · Methods for Multivariate Data 
+Practical techniques for multivariate data analysis including dimensionality reduction, classification, and inference 
+Undergraduate 
+Winter 2024 · Winter 2023 · Statistics 
+STA130 · Introduction to Statistical Reasoning and Data Science 
+Foundational course in statistical thinking and data analysis 
+Undergraduate 
+Winter 2024 · Winter 2022 · Astronomy 
+AST3101 · Module: Ethics and Practice in Astronomy 
+Research ethics and professional practice in astronomy 
+Graduate 
+Fall 2022 · Winter 2022 (partial) · Astronomy / Statistics 
+JAS1101 · Introduction to Astrostatistics 
+Statistical methods for astronomical research 
+Graduate 
+Fall 2021 · Astronomy 
+AST3101 · Module: Introduction to Sampling 
+Advanced sampling techniques in astronomical data analysis 
+Graduate 
+Jun 2026 · Workshop 
+Bayesian Inference 
+University of Toronto Statistical Sciences Research Program (UTSSRP) · Toronto, ON 
+Jun 2025 · Workshop 
+A Conceptual Introduction to Deep Learning 
+Penn State: Summer School in Statistics for Astronomers · Virtual 
+Jun 2025 · Jun 2024 · Workshop 
+Nested Sampling: Past, Present, and Future 
+Penn State: Summer School in Statistics for Astronomers · Virtual 
+Sep 2023 · Workshop 
+Machine Learning for Star Cluster Science (with Steffani Grondin) 
+2023 ESO Conference: Two in a million · Garching, Germany 
+Aug 2023 · Workshop 
+Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Grondin) 
+University of Michigan: 2023 Clusters & Streams Workshop · Ann Arbor, MI 
+Aug 2023 · Workshop 
+Uncertainty and Interpretability in Machine Learning Models (with Alex Gagliano) 
+NSF IAIFI Summer School · Boston, MA 
+Jun 2023 · Workshop 
+A Tutorial of (Dynamic) Nested Sampling 
+Statistical Challenges in Modern Astronomy VIII · State College, PA 
+Aug 2020 · Workshop 
+Introduction to Bayesian Inference with Linear Regression 
+Astro Hack Week 2020 · Virtual 
+No items match your search or filters. Show all 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
+
+######## mentorship.html ########
+Mentorship & Supervision · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Mentoring & training 
+Mentorship & Supervision 
+Guiding the next generation of astrostatisticians and data scientists. 
+On Mentorship 
+I consider mentorship to be at the heart of my research and love working with students, postdocs, and visiting researchers across disciplines. I believe strongly in fostering an inclusive, collaborative research environment where diverse individuals can thrive and develop their unique research interests across AI, statistics, data science, and astrophysics. 
+85 Total mentees 
+15 Current 
+70 Former 
+Mentees by career stage 
+Postdocs 
+[aria] postdocs: 8 current, 1 former (9 total)
+[title] postdocs: 8 current, 1 former (9 total)9 
+Doctoral 
+[aria] doctoral: 6 current, 8 former (14 total)
+[title] doctoral: 6 current, 8 former (14 total)14 
+Master's 
+[aria] master's: 0 current, 4 former (4 total)
+[title] master's: 0 current, 4 former (4 total)4 
+Undergrad 
+[aria] undergrad: 1 current, 56 former (57 total)
+[title] undergrad: 1 current, 56 former (57 total)57 
+Secondary school 
+[aria] secondary school: 0 current, 1 former (1 total)
+[title] secondary school: 0 current, 1 former (1 total)1 
+Current Former 
+Totals above are all-time and do not change with the search or filters below. 
+[aria] Search mentees
+[aria] Filter by career stage
+All stages 85 Postdocs 9 Doctoral 14 Master's 4 Undergrad 57 Secondary school 1 
+[aria] Filter by current or former
+Current & former 85 Current 15 Former 70 
+Current mentees 15 
+Postdocs 8 
+Fall 2026-Present · Postdoc · Co-Supervisor 
+Christian Kragh Jespersen 
+Building inductive biases and geometric and physical constraints into well-calibrated Bayesian and machine learning models for galaxy formation and cosmology 
+Co-supervised with Aviad Levis ( Computer Science ), Laurence Perreault-Levasseur ( Université de Montréal ) 
+Schmidt AI in Science Fellow CITA National Fellow 
+My career stage then: Assistant Professor 
+Fall 2026-Present · Postdoc · Co-Supervisor 
+Maryum Sayeed 
+Using large photometric and spectroscopic surveys and asteroseismology to probe the formation and evolution of the Milky Way and the stars within it 
+Co-supervised with Gwen Eadie ( Astronomy & Astrophysics ) 
+Arts & Science Fellow 
+My career stage then: Assistant Professor 
+Fall 2026-Present · Postdoc · Co-Supervisor 
+Chloe Cheng 
+Using ultra-deep spectroscopy to measure elemental abundances and stellar population parameters, unravelling the formation and assembly histories of massive quiescent galaxies 
+Co-supervised with Seiji Fujimoto ( Astronomy & Astrophysics ) 
+Research Excellence Fellow 
+My career stage then: Assistant Professor 
+Fall 2024-Present · Postdoc · Primary Supervisor 
+Ronan Kerr 
+Reconstructing recent star formation history using Gaia and SDSS-V data of young stars 
+Dunlap Fellow 
+My career stage then: Assistant Professor 
+Fall 2024-Present · Postdoc · Co-Supervisor 
+Duo Xu 
+Using AI to understand star formation, stellar feedback, and turbulence 
+Co-supervised with Peter Martin ( CITA ) 
+Schmidt AI in Science Fellow CITA Fellow 
+My career stage then: Assistant Professor 
+Fall 2024-Present · Postdoc · Primary Supervisor 
+Biprateep Dey 
+Developing novel statistical machine learning tools to study formation and evolution of galaxies 
+Schmidt AI in Science Fellow CITA Fellow Dunlap Fellow 
+My career stage then: Assistant Professor 
+Fall 2023-Present · Postdoc · Co-Supervisor 
+Tanveer Karim 
+Developing frameworks to constrain cosmological models by cross-correlating multiple surveys (DESI and DESC collaborations) 
+Co-supervised with Renée Hložek ( Dunlap Institute ) 
+Arts & Science Fellow Dunlap Fellow 
+My career stage then: Assistant Professor 
+Fall 2023-Present · Postdoc · Co-Supervisor 
+Jacqueline Antwi-Danso 
+Searching for the most massive galaxies in the distant Universe 
+Co-supervised with Adam Muzzin ( York University ) 
+Banting Fellow Dunlap Fellow 
+My career stage then: Assistant Professor 
+Doctoral 6 
+Fall 2026-Present · Doctoral · Co-Supervisor 
+Ian Zhang 
+Robust and Generalized Bayesian Inference 
+Co-supervised with Thibault Randrianarisoa ( Statistical Sciences ) 
+PhD student 
+My career stage then: Assistant Professor 
+Fall 2026-Present · Doctoral · Primary Supervisor 
+Isabelle (Liyuan) Huang 
+Statistical Challenges in Gravitationally-Lensed Galaxy Surveys 
+Co-supervised with Aviad Levis ( Computer Science ), Seiji Fujimoto ( Astronomy & Astrophysics ) 
+PhD student 
+CANSSI Ontario Mdoc 
+My career stage then: Assistant Professor 
+Winter 2026-Present · Doctoral · Informal Supervisor 
+Pinchen Fan 
+SETI, biosignature detection, exoplanet characterization, and gravitational waves 
+Co-supervised with Jason Wright ( Penn State ), Keith Vanderlinde ( Dunlap Institute ) 
+PhD candidate 
+Penn State IVGS 
+My career stage then: Assistant Professor 
+Fall 2024-Present · Doctoral · Co-Supervisor 
+Leo Watson 
+Statistical learning, quantum computing, and MCMC methods for astronomical Bayesian inference 
+Co-supervised with Radu Craiu ( Statistical Sciences ) 
+PhD candidate 
+NSERC CGS-D 
+My career stage then: Assistant Professor 
+Fall 2022-Present · Doctoral · Co-Supervisor 
+Alex Laroche 
+Machine learning and stellar evolution to discover rare stellar populations in large-scale surveys 
+Co-supervised with Maria Drout ( Astronomy & Astrophysics ) 
+PhD candidate 
+NSERC CGS-M NSERC CGS-D DSI Fellowship 
+My career stage then: Assistant Professor 
+Fall 2022-Present · Doctoral · Co-Supervisor 
+Phil Van-Lane 
+Machine learning stellar dating methods using rotation and magnetic activity for M-dwarf exoplanet demographics 
+Co-supervised with Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ), Ryan Cloutier ( McMaster University ) 
+PhD candidate 
+NSERC CGS-M NSERC PGS-D 
+My career stage then: Assistant Professor 
+Undergrad 1 
+Summer 2026 · Undergraduate · Co-Supervisor 
+Leo (Hanbang) Wu 
+alphaUniverse: The AI Virtual Observatory 
+Co-supervised with Biprateep Dey , Nolan Koblischke 
+Undergraduate student 
+A&A SURP 
+My career stage then: Assistant Professor 
+Former mentees 70 
+Postdocs 1 
+Fall 2023-Fall 2025 · Postdoc · Primary Supervisor 
+Mike Walmsley 
+Building AI foundation models to interpret astronomical images 
+Dunlap Fellow 
+My career stage then: Assistant Professor 
+Doctoral 8 
+Spring 2026 · Doctoral · Informal Supervisor 
+Siyang Li 
+Developing an astrostatistics-oriented software package 
+Co-supervised with David van Dyk ( Imperial College London ) 
+Imperial College London IVGS 
+My career stage then: Assistant Professor 
+Fall 2022-Spring 2026 · Doctoral · Informal Supervisor 
+Alicia Savelli 
+Hot plasma simulations in AGN accretion disks and Milky Way analogues in cosmological simulations 
+Co-supervised with Bart Ripperda ( CITA ), Norm Murray ( CITA ) 
+NSERC CGS-M NSERC PGS-D 
+My career stage then: Assistant Professor 
+Fall 2022-2026 · Doctoral · Co-Supervisor 
+Mairead Heiger 
+Galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ) 
+DSI Fellowship 
+My career stage then: Assistant Professor 
+Winter 2022-2025 · Doctoral · Co-Supervisor 
+Sam Berek 
+Galaxy formation and evolution using globular cluster populations with Bayesian hierarchical modeling 
+Co-supervised with Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ), Monica Alexander ( Statistical Sciences ) 
+DSI Fellowship 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Winter 2021-2025 · Doctoral · Informal Supervisor 
+Steffani Grondin 
+Evolution of massive stars in groups including post-common envelope binaries and dynamical interactions 
+Co-supervised with Maria Drout ( Astronomy & Astrophysics ), Jeremy Webb ( York University ) 
+NSERC PGS-D 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Fall 2023-Summer 2024 · Doctoral · Secondary Supervisor 
+Henry Leung 
+Deep learning applications to stellar spectra and foundation models for astronomical data 
+Co-supervised with Jo Bovy ( Astronomy & Astrophysics ) 
+DSI Fellowship 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Doctoral · Co-Supervisor 
+Maggie Zhai 
+Image analysis and machine learning applications in astrostatistics 
+Co-supervised with Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ) 
+My career stage then: Assistant Professor 
+Winter 2021-Winter 2023 · Doctoral · Informal Supervisor 
+Aarya Patil 
+Data-driven mathematical models of the Milky Way Galaxy using asteroseismology with multitaper methods 
+Co-supervised with Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ), Jo Bovy ( Astronomy & Astrophysics ), Sebastian Jaimungal ( Statistical Sciences ) 
+DSI Fellowship 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Master's 4 
+Winter 2026 · Master's · Primary Supervisor 
+Philip Loewen 
+Understanding Architectural Biases in Neural Time Series Models 
+Research Course 
+My career stage then: Assistant Professor 
+Fall 2025-Winter 2026 · Master's · Primary Supervisor 
+Isabelle Huang 
+Time Series Forecasting with Deep Markov Models 
+Research Course 
+My career stage then: Assistant Professor 
+Fall 2025-Winter 2026 · Master's · Co-Supervisor 
+Alex Brisebois 
+Exploring the Feasibility of Detecting a Time-Dependent σ 8 with LSST 
+Co-supervised with Renée Hložek ( Dunlap Institute ), Tanveer Karim ( Dunlap Institute ) 
+Research Course 
+My career stage then: Assistant Professor 
+Summer 2021-Summer 2022 · Master's · Secondary Supervisor 
+Yunyi Shen 
+Modelling Stellar Flares with Hidden Markov Models 
+Co-supervised with Vianey Leos Barajas ( Statistical Sciences / School of the Environment), Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ) 
+UW-Madison 
+My career stage then: Postdoctoral Fellow 
+Undergrad 56 
+Fall 2025-Summer 2026 · Undergraduate · Co-Supervisor 
+Chuxuan Ai 
+Hamiltonian Optimization and Sampling for Deep Learning; Exploring the Chaotic Dynamics of Repelling-Attracting Hamiltonian Monte Carlo Systems 
+Co-supervised with Ricardo Baptista 
+DSI SUDS Senior Thesis 
+My career stage then: Assistant Professor 
+Summer 2026 · Undergraduate · Co-Supervisor 
+Yasir Alsugair 
+Hamiltonian Optimization and Sampling for Deep Learning 
+Co-supervised with Ricardo Baptista 
+KAUST DSI SUDS 
+My career stage then: Assistant Professor 
+Summer 2026 · Undergraduate · Secondary Supervisor 
+Tristan Fattedad 
+Photometric redshift calibration for the Vera C. Rubin Observatory 
+Co-supervised with Biprateep Dey ( Statistical Sciences ) 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Summer 2026 · Undergraduate · Secondary Supervisor 
+Sargun Jassal 
+Surveying Ultra-Low-Mass Stellar Populations in the Solar Neighborhood 
+Co-supervised with Ronan Kerr ( Dunlap Institute ) 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Summer 2024-Winter 2026 · Undergraduate · Co-Supervisor 
+Zehao "Harry" Peng 
+Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning; Infilling and Extending DESI Spectra with Masked Autoencoders; Multimodal Astronomical Learning with DESI Images and Spectra 
+Co-supervised with Alicia Savelli ( CITA ), Biprateep Dey ( Statistical Sciences ), Chris Maddison ( Statistical Sciences ) 
+A&A SURP A&S ROP Junior Thesis NSERC USRA 
+My career stage then: Assistant Professor 
+Fall 2025-Winter 2026 · Undergraduate · Co-Supervisor 
+Diego Martinez Noriega 
+Estimating Stellar Abundances Across Surveys using Probabilistic Deep Learning 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ) 
+University of Waterloo Co-op Program 
+My career stage then: Assistant Professor 
+Winter 2026 · Undergraduate · Secondary Supervisor 
+Isabella Rivera 
+Tracing Star Formation Histories and Evolution in Rho Ophiuchi 
+Co-supervised with Ronan Kerr ( Dunlap Institute ) 
+Research Course 
+My career stage then: Assistant Professor 
+Winter 2026 · Undergraduate · Primary Supervisor 
+Mehmet Bükücü 
+Galaxy evolution with a single star? 
+Research Course 
+My career stage then: Assistant Professor 
+Fall 2025 · Undergraduate · Secondary Supervisor 
+Mayesha Rahaman 
+Kinematic and Demographic Analysis of the SCYA-89 Stellar Association 
+Co-supervised with Ronan Kerr ( Dunlap Institute ) 
+Research Course 
+My career stage then: Assistant Professor 
+Summer 2024-Summer 2025 · Undergraduate · Co-Supervisor 
+Alejandro Ortega Cruz Prieto 
+Building a Multi-Modal Model for Variable Star Spectra and Light Curves; Applying cross-modal foundation models to Faraday spectra and images from POSSUM 
+Co-supervised with Alex Laroche ( Astronomy & Astrophysics ), Erik Osinga ( Dunlap Institute ), Bryan Gaensler ( UC Santa Cruz ) 
+A&A SURP Research Course Aurora Borealis Fellow 
+My career stage then: Assistant Professor 
+Summer 2024-Summer 2025 · Undergraduate · Co-Supervisor 
+Isabelle Laing 
+Estimating Stellar Abundances from DESI Spectra with Deep Learning 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ), Mairead Heiger ( Astronomy & Astrophysics ), Biprateep Dey ( Statistical Sciences ) 
+A&A SURP 
+My career stage then: Assistant Professor 
+Spring-Summer 2025 · Undergraduate · Co-Supervisor 
+Anna Tsvetkova 
+Identifying and Characterizing Strong Gravitational Lensing Systems Using Probabilistic Machine Learning 
+Co-supervised with Biprateep Dey ( Statistical Sciences ), Mike Walmsley ( Dunlap Institute ) 
+UKMA MITACS Globalink 
+My career stage then: Assistant Professor 
+Fall 2023-Summer 2025 · Undergraduate · Co-Supervisor 
+Matthew Kustec 
+Exploring Galaxy Assembly Histories Across Cosmological Simulations 
+Co-supervised with Alicia Savelli ( CITA ) 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Summer 2024-Fall 2024 · Undergraduate · Co-Supervisor 
+Zack Steine 
+Estimating Abundances from Stellar Spectra with Probabilistic Machine Learning 
+Co-supervised with Andrew Saydjari ( Princeton University ), Ting Li ( Astronomy & Astrophysics ) 
+DSI SUDS 
+My career stage then: Assistant Professor 
+Summer 2024 · Undergraduate · Secondary Supervisor 
+Michelle Denny 
+Counting Massive Galaxies in the Early Universe with JWST 
+Co-supervised with Jacqueline Antwi-Danso ( Astronomy & Astrophysics ), Sam Berek ( Astronomy & Astrophysics ) 
+Ontario Tech University A&A SURP 
+My career stage then: Assistant Professor 
+Summer 2024 · Undergraduate · Co-Supervisor 
+Cissy Kuang 
+Exploring Galaxy Evolution in Cosmological Simulations with Machine Learning 
+Co-supervised with Alicia Savelli ( CITA ) 
+A&S ROP 
+My career stage then: Assistant Professor 
+Summer 2024 · Undergraduate · Primary Supervisor 
+Weizhi "Luke" Shen 
+Galactic Paleontology with Probabilistic Machine Learning 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ) 
+DSI SUDS 
+My career stage then: Assistant Professor 
+Summer 2024 · Undergraduate · Co-Supervisor 
+Khalid Edris 
+Identifying Strong Lenses in Euclid Data with Active Learning 
+Co-supervised with Mike Walmsley ( Dunlap Institute ) 
+DoSS SURA NSERC USRA 
+My career stage then: Assistant Professor 
+Summer 2024 · Undergraduate · Co-Supervisor 
+Junbo "Felix" Li 
+Identifying Strong Lenses in Euclid Data with Active Learning 
+Co-supervised with Mike Walmsley ( Dunlap Institute ) 
+DoSS SURA UTEA 
+My career stage then: Assistant Professor 
+Summer 2024 · Undergraduate · Co-Supervisor 
+Seo Won "Sean" Yi 
+Assessing the Robustness of Bayesian Model Comparison in Cosmological Analysis 
+Co-supervised with Tanveer Karim ( Dunlap Institute ) 
+DoSS SURA UTEA 
+My career stage then: Assistant Professor 
+Summer 2024 · Undergraduate · Co-Supervisor 
+Semoore Tijani 
+Making the next generation of 3D Interstellar Medium Dust Temperature Maps 
+Co-supervised with Ioana Zelko ( CITA ) 
+A&A SURP Aurora Borealis Fellow 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Undergraduate · Primary Supervisor 
+Patrice Yee 
+Population Demographics of Exoplanets and their Host Stars 
+Junior Thesis 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Undergraduate · Primary Supervisor 
+Jimmy Yang 
+Population Demographics of Exoplanets and their Host Stars 
+Junior Thesis 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Undergraduate · Primary Supervisor 
+Xinpeng Xing 
+Population Demographics of Exoplanets and their Host Stars 
+Junior Thesis 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Undergraduate · Primary Supervisor 
+Wanshi Liang 
+Population Demographics of Exoplanets and their Host Stars 
+Junior Thesis 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Undergraduate · Primary Supervisor 
+Yonatan Eyob 
+Population Demographics of Exoplanets and their Host Stars 
+Junior Thesis 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Undergraduate · Co-Supervisor 
+Maximilian Zabrodski 
+Multiple Stellar Populations: Observations, Origins, and Onetime Solutions 
+Co-supervised with Steffani Grondin ( Astronomy & Astrophysics ) 
+Junior Thesis 
+My career stage then: Assistant Professor 
+Fall 2023-Winter 2024 · Undergraduate · Primary Supervisor 
+Qianyu "Rita" Fan 
+Latent Parameter Inference with Probabilistic Dimensionality Reduction 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Summer 2023-Winter 2024 · Undergraduate · Primary Supervisor 
+Yihan "Christine" Wang 
+Stellar Parameter Estimation with Likelihood-Free Frequentist Inference (LF2I) 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ), Mairead Heiger ( Astronomy & Astrophysics ) 
+DSI SUDS Senior Thesis 
+My career stage then: Assistant Professor 
+Summer 2023-Fall 2023 · Undergraduate · Co-Supervisor 
+Belle Pensamiento 
+Classifying PLAsTiCC Transient Simulations with Recurrent Neural Networks 
+Co-supervised with Brian Nord ( Fermilab ) 
+George Brown College Co-op Program 
+My career stage then: Assistant Professor 
+Summer 2023 · Undergraduate · Primary Supervisor 
+Guiping Zhao 
+Deriving Stellar Properties with Spectrophotometric Modelling 
+DoSS SURA 
+My career stage then: Assistant Professor 
+Summer 2023 · Undergraduate · Co-Supervisor 
+Shu Yan "Alice" Wang 
+Applications of Bayesian Predictive Model Comparison in Astronomy 
+Co-supervised with Sam Berek ( Astronomy & Astrophysics ), Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ) 
+DoSS SURA 
+My career stage then: Assistant Professor 
+Summer 2023 · Undergraduate · Co-Supervisor 
+Stephanie Lee 
+Deriving Stellar Abundances in DESI using Machine Learning 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ), Mairead Heiger ( Astronomy & Astrophysics ) 
+A&A SURP 
+My career stage then: Assistant Professor 
+Summer 2023 · Undergraduate · Co-Supervisor 
+Eshal Ahmed 
+Exploring Galaxy Assembly Histories Across Cosmological Simulations 
+Co-supervised with Alicia Savelli ( CITA ) 
+A&A SURP 
+My career stage then: Assistant Professor 
+Fall 2022-Summer 2023 · Undergraduate · Co-Supervisor 
+Ryan Wang 
+Identifying Extra-Tidal Stars in APOGEE Globular Clusters 
+Co-supervised with Jeremy Webb ( Astronomy & Astrophysics ), Steffani Grondin ( Astronomy & Astrophysics ) 
+A&A SURP Senior Thesis 
+My career stage then: Assistant Professor 
+Fall 2022-Summer 2023 · Undergraduate · Co-Supervisor 
+Rosalind Liang 
+Identifying Extra-Tidal Stars in APOGEE Globular Clusters 
+Co-supervised with Jeremy Webb ( Astronomy & Astrophysics ), Steffani Grondin ( Astronomy & Astrophysics ) 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Fall 2022-Summer 2023 · Undergraduate · Primary Supervisor 
+Milica Ivetic 
+Probabilistic Dimensionality Reduction Methods for Stellar Chemodynamics 
+Co-supervised with Jeremy Webb ( Astronomy & Astrophysics ), Steffani Grondin ( Astronomy & Astrophysics ) 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Fall 2022-Summer 2023 · Undergraduate · Primary Supervisor 
+Ian Chow 
+Probabilistic Dimensionality Reduction Methods for Stellar Chemodynamics 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Summer 2022-Summer 2023 · Undergraduate · Co-Supervisor 
+Fengqing "Grace" Yu 
+Mapping the Milky Way with Blue Horizontal Branch Stars 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ) 
+DSI SUDS Research Course 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Summer 2022-Summer 2023 · Undergraduate · Co-Supervisor 
+Jinoo Kim 
+Estimating Galaxy Sizes from Panchromatic Images 
+Co-supervised with Lamiya Mowla ( Dunlap Institute / Wellesley College ), Kartheik Iyer ( Dunlap Institute / Columbia University ) 
+A&A SURP 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Summer 2022-Summer 2023 · Undergraduate · Primary Supervisor 
+Robin Wen 
+Hierarchical Modelling of Globular Cluster Properties 
+Co-supervised with Jeremy Webb ( York University ), Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ) 
+University of Waterloo A&A SURP 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Winter 2023 · Undergraduate · Co-Supervisor 
+Ishika Bangari 
+Exploring Definitions of Milky Way Analogues with Cosmological Simulations 
+Co-supervised with Alicia Savelli ( CITA ) 
+Research Course 
+My career stage then: Assistant Professor 
+Summer 2022-Winter 2023 · Undergraduate · Co-Supervisor 
+Feiyu Quan 
+Investigating Warped Disk Galaxies in IllustrisTNG 
+Co-supervised with Neige Frankel ( CITA ) 
+CITA SURF 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Fall 2022-Winter 2023 · Undergraduate · Co-Supervisor 
+Shahmeer Athar 
+Rapid Focusing Algorithms for the Dragonfly Telephoto Array 
+Co-supervised with Bob Abraham ( Astronomy & Astrophysics ) 
+Senior Thesis 
+My career stage then: Assistant Professor 
+Fall 2022 · Undergraduate · Primary Supervisor 
+Siqi Zheng 
+Applications of Bayesian Predictive Model Comparison in Astronomy 
+My career stage then: Assistant Professor 
+Summer 2021-Fall 2022 · Undergraduate · Primary Supervisor 
+Ava Oveisi 
+Imaging Cosmic Dust with Machine Learning 
+Co-supervised with Kristen Menou ( Astronomy & Astrophysics ) 
+A&A SURP Research Course 
+My career stage then: Postdoctoral Fellow 
+Fall 2020-Fall 2022 · Undergraduate · Primary Supervisor 
+Zhiya Lou 
+Bayesian Model Selection with Globular Clusters 
+Co-supervised with Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ), Jeremy Webb ( Astronomy & Astrophysics ) 
+A&A SURP Research Course 
+My career stage then: Postdoctoral Fellow 
+Summer 2021-Summer 2022 · Undergraduate · Co-Supervisor 
+Alicia Savelli 
+Milky Way Analogues in Cosmological Simulations 
+Co-supervised with J. Ted Mackereth ( CITA ) 
+Brock University A&A SURP 
+My career stage then: Postdoctoral Fellow 
+Winter 2020-Summer 2022 · Undergraduate · Co-Supervisor 
+Jeff Shen 
+Estimating Stellar Parameters using 220M Gaia DR3 BP/RP Spectra; Disentangling Stellar Age Estimates from Galactic Chemodynamical Evolution; Estimating the Mass of the Milky Way with the H3 Survey 
+Co-supervised with Neige Frankel ( CITA ), J. Ted Mackereth ( CITA ), Gwen Eadie ( Astronomy & Astrophysics / Statistical Sciences ), Norm Murray ( CITA ), Dennis Zaritsky ( University of Arizona ) 
+Research Course Senior Thesis 
+My career stage then: Postdoctoral Fellow 
+Fall 2020-Summer 2022 · Undergraduate · Primary Supervisor 
+Mingxuan Teng 
+Detecting and Characterizing Outliers in Machine Learning Applications 
+Co-supervised with Renée Hložek ( Dunlap Institute ) 
+A&A SURP Research Course 
+My career stage then: Postdoctoral Fellow 
+Fall 2021-Winter 2022 · Undergraduate · Co-Supervisor 
+Charlie Hughes 
+Estimating Photometric Metallicities with DECam and S5 
+Co-supervised with Ting Li ( Astronomy & Astrophysics ) 
+Senior Thesis 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Fall 2021-Winter 2022 · Undergraduate · Co-Supervisor 
+Eric Conenna 
+High-Dimensional Analysis of APOGEE Data 
+Co-supervised with Jeremy Webb ( Astronomy & Astrophysics ), Steffani Grondin ( Astronomy & Astrophysics ) 
+Senior Thesis 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Fall 2021-Winter 2022 · Undergraduate · Primary Supervisor 
+Daniel Ding 
+Latent Space Decompositions of APOGEE Spectra 
+Co-supervised with Jo Bovy ( Astronomy & Astrophysics ) 
+Senior Thesis 
+My career stage then: Postdoctoral Fellow and Assistant Professor 
+Summer 2021 · Undergraduate · Co-Supervisor 
+Sina Babaei Zadeh 
+Studying Galaxy Assembly Histories in Cosmological Simulations 
+Co-supervised with J. Ted Mackereth ( CITA ), Lamiya Mowla ( Dunlap Institute ) 
+Western University A&A SURP Aurora Borealis Fellow 
+My career stage then: Postdoctoral Fellow 
+Summer 2020-Summer 2021 · Undergraduate · Co-Supervisor 
+Alan Tu 
+Kinematics of Young Stars in the Radcliffe Wave 
+Co-supervised with Catherine Zucker ( Harvard University ), Gus Beane ( Harvard University ) 
+Harvard University 
+My career stage then: Postdoctoral Fellow 
+Summer 2019-Fall 2020 · Undergraduate · Co-Supervisor 
+Kaustav Das 
+Constraining the Distance to the North Polar Spur 
+Co-supervised with Catherine Zucker ( Harvard University ) 
+IIT Kanpur 
+My career stage then: Postdoctoral Fellow 
+Secondary school 1 
+Fall 2021-Winter 2022 · Secondary school · Primary Supervisor 
+Liam Pilarski 
+Estimating Galaxy Properties from Images with Probabilistic Deep Learning 
+Millburn HS 
+My career stage then: Postdoctoral Fellow 
+No mentees match your search or filters. Show all 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
+
+######## awards.html ########
+Awards & Honors · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Recognition 
+Awards & Honors 
+Recognition and achievements in academia and research. 
+Results 
+[aria] Search awards…
+[aria] Sort
+Newest first 
+A–Z 
+[aria] Filter
+All 4 
+2024 · University of Toronto 
+Connaught New Researcher Award 
+Supports new faculty members in their research endeavors during their first few years at the University of Toronto 
+2022 · Council of Ontario Universities 
+John Charles Polanyi Prize in Physics 
+Annual award recognizing recent achievement by young researchers at an Ontario university in the field of physics 
+2020 · American Statistical Association (ASA) Astrostatistics Interest Group (AIG) 
+Best Astrostatistics Student Paper Award 
+Recognition for outstanding student research in the field of astrostatistics 
+2020 · Harvard University 
+Eric R. Keto Prize for Best Thesis in Theoretical Astrophysics 
+Annual prize for the best PhD thesis in theoretical astrophysics at Harvard University 
+No items match your search or filters. Show all 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
+
+######## service.html ########
+Service · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Leadership & community 
+Service 
+Professional service and community engagement — societies, university committees, and conference organization . 
+Results 
+[aria] Search service…
+[aria] Sort
+Newest first 
+By category 
+[aria] Filter
+All 18 Professional Societies 8 University of Toronto 7 Workshops & Conferences 3 
+2020-2026 · Professional Societies 
+Working Group on Astroinformatics & Astrostatistics Steering Committee 
+American Astronomical Society (AAS) 
+2023-2024 · Professional Societies 
+Astrostatistics Interest Group (AIG): Program Chair (Interim) 
+American Statistical Association (ASA) 
+2020-2023 · Professional Societies 
+Astrostatistics Interest Group (AIG): Web Director 
+American Statistical Association (ASA) 
+2020-2023 · Professional Societies 
+Postdoc Committee 
+Canadian Astronomical Society (CASCA) 
+2024-2025 · Professional Societies 
+Data Science and Analytics Section: President Elect 
+Statistical Society of Canada (SSC) 
+2025-2026 · Professional Societies 
+Data Science and Analytics Section: President 
+Statistical Society of Canada (SSC) 
+2026-2027 · Professional Societies 
+Data Science and Analytics Section: Past President 
+Statistical Society of Canada (SSC) 
+2024 · Professional Societies 
+Publication Committee: Chair 
+LSST Informatics & Statistics Science Collaboration 
+2023-2024, 2025-2026 · University of Toronto 
+Undergraduate Curriculum Committee 
+Department of Astronomy & Astrophysics 
+2022-2024 · University of Toronto 
+Summer Undergraduate Research Program (SURP) Committee: Chair 
+Department of Astronomy & Astrophysics 
+2026-Present, 2021-2022 · University of Toronto 
+Summer Undergraduate Research Program (SURP) Committee 
+Department of Astronomy & Astrophysics 
+2021-2023 · University of Toronto 
+Training & Mentoring Committee: Co-Chair 
+Department of Astronomy & Astrophysics 
+2021 · University of Toronto 
+Graduate Admissions Committee 
+Department of Astronomy & Astrophysics 
+2026-2027 · University of Toronto 
+Interim Director, MScAc – Data Science Concentration 
+Department of Statistical Sciences 
+2022-Present · University of Toronto 
+Graduate Admissions Committee 
+Department of Statistical Sciences 
+2021-Present · Workshops & Conferences 
+STATSTRO Workshop 
+Co-Organizer · University of Toronto 
+Formerly Stellar Stats (2021–2024) 
+2024 · Workshops & Conferences 
+Globular Clusters & Their Tidal Tails 
+SOC Co-Chair, LOC Co-Chair 
+2024 · Workshops & Conferences 
+CASCA Annual General Meeting 
+SOC Co-Chair, LOC 
+No items match your search or filters. Show all 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
+
+######## software.html ########
+Software & Code · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Open source 
+Software & Code 
+Open-source tools for inference, discovery, and keeping up with the literature. 
+34 repositories 
+557 GitHub stars 
+173k downloads / mo 
+Featured tools 
+Python · Updated Jun 2026 
+dynesty 
+Dynamic nested sampling for Bayesian posteriors & evidences 
+416 stars 
+88 forks 
+172k downloads / mo 
+$ pip install dynesty 
+GitHub Docs Paper 
+Jupyter · Updated Jun 2026 
+brutus 
+Stellar properties, distances & extinctions via brute-force Bayesian inference 
+55 stars 
+11 forks 
+326 downloads / mo 
+$ pip install astro-brutus 
+GitHub Docs Paper 
+JavaScript · Updated Jun 2026 
+aparture 
+An LLM-powered tool to help sift through the arXiv 
+20 stars 
+4 forks 
+GitHub Docs 
+Data visualization 
+[img alt] Preview of the allsky visualization
+allsky 
+An animated, interactive all-sky map of stellar motion across the Milky Way — the visualization behind the 2021 Dunlap "interactive map of the Milky Way" feature. 
+Open the live visualization ↗ 
+All repositories 
+[aria] Search repositories
+[aria] Sort
+Recently updated 
+A–Z 
+[aria] Filter
+All 34 Inference & sampling 5 Stellar & Galactic 2 Extragalactic & cosmology 1 Data visualization 1 Literature & LLM tools 1 Teaching & tutorials 8 Websites 5 Scratch & misc 11 
+Python · Updated Aug 2026 
+lf2i 
+★ 23 · 2 forks · 17/mo 
+Likelihood-free frequentist inference with finite-sample coverage guarantees 
+collaborator GitHub 
+Python · Updated Aug 2026 
+jumufraktiv 
+Model evidence, posterior density & moments via fractional derivatives of prior MGFs (with Siyang Li) 
+collaborator GitHub 
+JavaScript · Updated Jul 2026 
+allsky 
+★ 5 · 1 fork 
+An animated, interactive 3-D map of Galactic motion 
+GitHub 
+Python · Updated Jun 2026 
+dynesty 
+★ 416 · 88 forks · 172k/mo 
+Dynamic nested sampling for Bayesian posteriors & evidences 
+★ Featured GitHub Docs Paper 
+Jupyter · Updated Jun 2026 
+brutus 
+★ 55 · 11 forks · 326/mo 
+Stellar properties, distances & extinctions via brute-force Bayesian inference 
+★ Featured GitHub Docs Paper 
+JavaScript · Updated Jun 2026 
+aparture 
+★ 20 · 4 forks 
+An LLM-powered tool to help sift through the arXiv 
+★ Featured GitHub Docs 
+Python · Updated Jun 2026 
+cd_sbi 
+★ 1 
+Confidence Distributions + Simulation-Based Inference 
+GitHub 
+Jupyter · Updated Jun 2026 
+utssrp-2026 
+★ 1 · 2 forks 
+Research project from the UTSSRP 2026 summer program 
+GitHub 
+Web · Updated Jun 2026 
+joshspeagle.github.io 
+1 fork 
+Personal website 
+GitHub 
+Web · Updated Jun 2026 
+STATSTRO 
+Website for annual STATSTRO meeting 
+GitHub 
+Python · Updated Jun 2026 
+ssc-2026-AI-LLM-demo 
+Materials from SSC 2026 AI-LLM Live Demo 
+GitHub 
+Python · Updated May 2026 
+frasian_tilting 
+★ 1 
+Testing out some ideas for Frequentist-Bayes inference 
+GitHub 
+Web · Updated Apr 2026 
+bio-cv 
+curriculum vitae 
+GitHub 
+Updated Mar 2026 
+multimodal 
+fork GitHub 
+Python · Updated Jan 2026 
+dorothy 
+★ 1 
+Data-driven stellar abundances 
+GitHub 
+Web · Updated Dec 2025 
+astrostat_uoft 
+★ 1 
+Astrostatistics Research Team (ART) Website 
+GitHub 
+Jupyter · Updated Nov 2025 
+ScAIentists_hackathon 
+1 fork 
+fork GitHub 
+Jupyter · Updated Oct 2025 
+lc-gen 
+fork GitHub 
+Jupyter · Updated Oct 2025 
+ast424-2025 
+★ 1 · 2 forks 
+Code for AST424 in the 2025F term 
+GitHub 
+Python · Updated Aug 2025 
+arxivy 
+★ 1 · 132/mo 
+Helping keep up with the arXiv 
+GitHub 
+Jupyter · Updated May 2023 
+typical_sets 
+★ 3 · 1 fork 
+The role of typical sets in (MCMC) sampling 
+GitHub 
+Updated Mar 2023 
+STA130-W23 
+Files for STA130 for the 2023 Winter Term at the University of Toronto 
+GitHub 
+Jupyter · Updated Feb 2023 
+nrp_astrobayes 
+★ 4 
+Worked example accompanying Eadie et al. (2023) 
+GitHub 
+Updated Nov 2022 
+STA130_ProblemSet8-Week10 
+Fall 2022 STA130 (Week 10) Problem Set 8 (Due 5 p.m. ET Thursday) 
+fork GitHub 
+Web · Updated Sep 2022 
+research 
+research projects 
+GitHub 
+Jupyter · Updated Sep 2019 
+phot_bias 
+★ 2 · 1 fork 
+Biases in maximum-likelihood photometry (paper companion) 
+GitHub 
+Jupyter · Updated Jul 2019 
+harvardastro_MLJC 
+★ 1 · 1 fork 
+Harvard astronomy ML journal club 
+GitHub 
+Jupyter · Updated Feb 2019 
+AY191 
+★ 1 
+Statistical exercises for Astronomy 191 (Spring 2019) at Harvard 
+GitHub 
+Python · Updated Oct 2018 
+frankenz 
+★ 18 · 3 forks · 57/mo 
+Photometric redshift estimation (a photo-z monstrosity) 
+GitHub 
+Python · Updated Aug 2017 
+prospector 
+Python code for Stellar Population Inference from Spectra and SEDs 
+fork GitHub 
+Python · Updated May 2017 
+nestle 
+Pure Python, MIT-licensed implementation of nested sampling algorithms for evaluating Bayesian evidence. 
+fork GitHub 
+Jupyter · Updated Apr 2017 
+PCAT 
+Probabilistic Cataloging 
+GitHub 
+Jupyter · Updated Dec 2016 
+exopop 
+★ 1 
+Inferring the population of exoplanets 
+fork GitHub 
+Jupyter · Updated Dec 2016 
+UCSC-Python-Coffee 
+★ 1 
+Simple demonstration of scikit-learn for Python Coffee at UCSC on 12/8/2016. 
+GitHub 
+No repositories match your search or filters. Show all 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated August 2026
+
+######## news.html ########
+News & Press · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+In the news 
+News & Press 
+Press coverage, media features, awards, and research milestones. 
+Results 
+[aria] Search updates…
+[aria] Sort
+Newest first 
+[aria] Filter
+All 19 Group 5 Paper 2 Press 9 Award 2 Software 1 
+Aug 2026 · Group 
+Mairead Heiger completes her PhD, joins UVA as a joint GECO/CosmicAI postdoctoral fellow 
+Mairead successfully defended her PhD in Astronomy & Astrophysics and is moving on to a joint postdoctoral fellowship with GECO and CosmicAI at the University of Virginia . 
+Jul 2026 · Group 
+Simran Nerval and Mairead Heiger win the Fieldus Award 
+Departmental recognition for a very high level of research acumen and service. Mairead was honoured for her spectroscopic follow-up of the ultra-faint dwarf galaxies Eridanus IV and Centaurus I, her DLEIY galactic chemical evolution framework, and her service as GASA co-chair. Read at U of T Astronomy & Astrophysics → 
+U of T Astronomy & Astrophysics 
+Feb 2026 · Paper 
+New preprint: supernova yields from dwarf spheroidals 
+Student-led work (Heiger et al.) constraining supernova yields and delay times from dwarf spheroidal galaxies. Read more → 
+Oct 2025 · Paper 
+A deep 3-D dust map of the southern Galactic plane 
+Co-led a high-angular-resolution 3-D dust map of the southern Milky Way (Zucker, Saydjari & Speagle, ApJ), built on the DECaPS2 survey with the brutus inference framework. Read more → 
+Sep 2025 · Group 
+Steffani Grondin and Michael Poon win the 2025 Jui Lin (Allen) Yen Award 
+Departmental recognition for exceptional achievement in research by a graduate student. Steffani completed her PhD studying massive star clusters, including post-common-envelope binaries and dynamical interactions. Read at U of T Astronomy & Astrophysics → 
+U of T Astronomy & Astrophysics 
+Aug 2025 · Group 
+Sam Berek completes her PhD, joins UMass Amherst as an NSF postdoctoral fellow 
+Sam successfully defended her PhD in the David A. Dunlap Department of Astronomy & Astrophysics and is now an NSF Astronomy and Astrophysics Postdoctoral Fellow at UMass Amherst . Read more → 
+Jul 2025 · Press 
+ChronoFlow: an AI model for the ages of stars 
+Student-led work (Van-Lane et al.) using normalizing flows for gyrochronology, co-supervised with Gwen Eadie. Covered by U of T News and Phys.org. Read at U of T News → 
+U of T News 
+Nov 2024 · Press 
+First white dwarf–main-sequence binary candidates in open star clusters 
+Co-author on the discovery (Grondin et al., ApJ), also picked up by Phys.org and SciTechDaily. Read at U of T Arts & Science → 
+U of T Arts & Science 
+Sep 2024 · Group 
+Sam Berek and Shivan Khullar win the Jui Lin (Allen) Yen Award 
+Sam was honoured for "Should Zeros Count? Modeling the Galaxy–Globular Cluster Scaling Relation with(out) Zero-inflated Count Models," introducing zero-inflated count models to astronomy and showing that a negative binomial model fits observed globular cluster counts better than a Poisson model. Read at U of T Astronomy & Astrophysics → 
+U of T Astronomy & Astrophysics 
+Aug 2024 · Press 
+A 5-D map of the Milky Way — AAS Nova featured image 
+My lead-author work (Speagle et al. 2024) highlighted as an AAS Nova featured image. Read at AAS Nova → 
+AAS Nova 
+2024 · Press 
+Students train AI for the Galaxy Zoo: Euclid citizen-science project 
+U of T Statistical Sciences profiled undergraduates Khalid Edris and Junbo Li — co-mentored with Dunlap Fellow Mike Walmsley — on training the Zoobot AI to classify galaxies from the Euclid space telescope. Read at U of T Statistical Sciences → 
+U of T Statistical Sciences 
+Feb 2024 · Press 
+The Radcliffe Wave is waving 
+Co-author on the finding that the galaxy's largest gaseous structure oscillates (Konietzka et al., Nature). Widely covered — CfA, Phys.org, Universe Today, the Harvard Crimson. Read at Center for Astrophysics | Harvard & Smithsonian → 
+Center for Astrophysics | Harvard & Smithsonian 
+2024 · Award 
+Connaught New Researcher Award 
+Awarded by the University of Toronto in support of early-career research. 
+Jan 2023 · Press 
+DECaPS2: a survey of 3.3 billion objects in the Milky Way's plane 
+Co-author on the DECaPS2 survey and catalogue (Saydjari et al.). Covered by NOIRLab, Space.com, PBS NewsHour, and Salon. Read at NSF NOIRLab → 
+NSF NOIRLab 
+Jan 2023 · Award 
+2022 John Charles Polanyi Prize in Physics 
+Recognized by the Government of Ontario for outstanding early-career research — "I'm honoured and humbled to receive the Polanyi Prize." Read at University of Toronto → 
+University of Toronto 
+Jan 2022 · Press 
+The Local Bubble: the Sun sits in a 1,000-light-year void that forms stars 
+Co-author on the Local Bubble result (Zucker et al., Nature). Covered by CfA, the Harvard Gazette, STScI, and the Smithsonian. Read at Center for Astrophysics | Harvard & Smithsonian → 
+Center for Astrophysics | Harvard & Smithsonian 
+Jul 2021 · Press 
+Mapping the Milky Way: an interactive tool for 170 million stars 
+Profiled by the Dunlap Institute for building the first interactive map of the Milky Way's stars and dust — the basis of the allsky visualization. Read at Dunlap Institute → 
+Dunlap Institute 
+Jan 2020 · Press 
+The Radcliffe Wave — the largest gaseous structure in the galaxy 
+Co-author on the discovery of a 9,000-light-year wave of stellar nurseries near the Sun (Alves et al., Nature). Featured by CfA and the Harvard Gazette. Read at Center for Astrophysics | Harvard & Smithsonian → 
+Center for Astrophysics | Harvard & Smithsonian 
+2020 · Software 
+dynesty published in MNRAS 
+The dynamic nested sampling package paper appeared in MNRAS; it is now cited 2,000+ times. Read more → 
+No items match your search or filters. Show all 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
+
+######## biography.html ########
+Biography · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+About 
+Biography 
+A short career timeline. 
+1990s - 2011 
+Childhood 
+USA & China 
+Shuttled between the US (around Milwaukee) and China (Beijing and Shanghai). Fell in love with astronomy at age 17 after reading From Eternity to Here by Sean Carroll . 
+2011 - 2015 
+Undergraduate 
+Boston, Massachusetts 
+Bachelor's Degree with Honors in Astrophysics and Physics at Harvard University . Participated in multiple research projects across astronomy. 
+2015 - 2016 
+Project Academic Support Staff 
+Kashiwa, Japan 
+Worked with Alexie Leauthaud and Kevin Bundy at Kavli IPMU . Began shifting my focus to astrostatistics and data science. 
+2016 - 2020 
+Graduate School 
+Boston, Massachusetts 
+Master's and Doctoral Degrees at Harvard . Thesis: "Mapping the Milky Way in the Age of Gaia" under Doug Finkbeiner , Charlie Conroy , and Daniel Eisenstein , with additional supervision by Alyssa Goodman . 
+2020 - 2022 
+Postdoctoral Fellow 
+Toronto, Canada 
+Banting Fellow and Dunlap Fellow at University of Toronto , working with Gwen Eadie . 
+2022 - Present 
+Assistant Professor Now 
+Toronto, Canada 
+Joint appointment in Astronomy & Astrophysics and Statistical Sciences. Co-leading the Astrostatistics Research Team (ART) with Gwen Eadie. 
+Jan-Apr 2025 
+Research Scientist Concurrent 
+Toronto, Canada (Remote) 
+While on leave from UofT, worked as a Research Scientist at River Run Trading on cutting-edge quantitative trading strategies for crypto assets. 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
+
+######## 404.html ########
+Page not found · Joshua S. Speagle 
+[title] Joshua S. Speagle · NewsSkip to main content 
+[aria] Primary
+Joshua S. Speagle 
+Home 
+Research ▾ 
+Publications Software Talks 
+Teaching & Mentoring ▾ 
+Teaching Mentorship Group / ART ↗ 
+About ▾ 
+Biography News Awards Service 
+Curriculum Vitae 
+Curriculum Vitae 
+[aria] Toggle dark/light mode☾ 
+[aria] Open menu☰ 
+Error 404 
+Lost in parameter space 
+That page doesn't exist (or wandered off into a low-probability region). Let's get you back to a well-sampled part of the site. 
+Return home 
+Joshua S. Speagle 
+Assistant Professor of Astrostatistics · University of Toronto 
+Research 
+Publications 
+Software 
+Talks 
+Teaching & Mentoring 
+Teaching 
+Mentorship 
+Group / ART 
+About 
+Biography 
+News 
+Awards 
+Service 
+Elsewhere 
+ADS 
+Google Scholar 
+GitHub 
+ORCID 
+© 2026 Joshua S. Speagle · 沈佳士 Astronomy · Statistics · AI · Updated September 2026
