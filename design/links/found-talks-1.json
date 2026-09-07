@@ -1,0 +1,79 @@
+[
+ {
+  "id": "talk:invited:4",
+  "url": "https://raducraiu.com/the-fast-and-curious-ii-mcmc-in-action/",
+  "kind": "event",
+  "confidence": "medium",
+  "evidence": "Organizer's event page confirms 'The Fast and Curious 2: MCMC in Action' conference (Toronto, Sep 25-27, 2025) matching event, location, and year; Speagle's name is not visible in the fetched page text (full speaker list is only in a linked PDF)."
+ },
+ {
+  "id": "talk:invited:8",
+  "url": "https://www.ipp.mpg.de/maxent2023",
+  "kind": "event",
+  "confidence": "medium",
+  "evidence": "Page confirms the 'Frontiers of Nested Sampling' meeting-within-a-meeting took place 'Wednesday, July 5th 2023' as part of MaxEnt 2023, matching event name and year; Speagle is not named on the page."
+ },
+ {
+  "id": "talk:invited:12",
+  "url": "https://www.ias.surrey.ac.uk/event/towards-a-cross-research-platform-for-hosting-bayesian-data-fitting-tools/",
+  "kind": "event",
+  "confidence": "medium",
+  "evidence": "Event page titled 'Towards a Cross-Research Platform for Hosting Bayesian Data-Fitting Tools', dated 14 July 2021, matches the event title and year exactly; organizers (Das, Shestopaloff, Lloyd) are named but Speagle's keynote is not listed in the fetched text."
+ },
+ {
+  "id": "talk:colloquia:10",
+  "url": "https://kipac.stanford.edu/events/astrophysics-colloquium/human-why-should-i-believe-you-ai-because-i-am-astrophysics",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Page states 'Speaker: Josh Speagle (University of Toronto)', title matches exactly ('Human: \"Why should I believe you?\" AI: \"Because I am an Astrophysics Foundation Model.\"'), and date is 'Thursday, April 17, 2025'."
+ },
+ {
+  "id": "talk:colloquia:14",
+  "url": "https://mathstat.uoguelph.ca/node/569",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Page title reads 'Nested Sampling: Past, Present, and Future (Dr. Joshua Speagle)', exactly matching the talk title and speaker."
+ },
+ {
+  "id": "talk:colloquia:26",
+  "url": "https://www.youtube.com/watch?v=PvUsDBGlyGg",
+  "kind": "recording",
+  "confidence": "medium",
+  "evidence": "YouTube video titled 'Mapping the Milky Way Near and Far - Josh Speagle', published April 29, 2022 — matches talk title, speaker, and month/year exactly; the CASCA/CANVAS series branding could not be independently confirmed from the fetched page."
+ },
+ {
+  "id": "talk:colloquia:38",
+  "url": "https://hea-www.cfa.harvard.edu/AstroStat/CHASC_1718/index.html",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "CHASC AstroStat Talks 2017-2018 schedule lists: 'Josh Speagle (CfA) 26 Sep 2017 ... Dynamic Nested Sampling', matching speaker, topic, and date."
+ },
+ {
+  "id": "talk:contributed:1",
+  "url": "http://www.fields.utoronto.ca/activities/26-27/Nearfieldcosmology",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Fields Institute program page for 'Near Field Cosmology in the Era of Big Data' lists, for Wednesday July 22 2026, 11:45-12:00: 'Data-Driven Stellar Abundances from All The Spectra', speaker Joshua Speagle, University of Toronto — exact title/speaker/year match."
+ },
+ {
+  "id": "talk:contributed:9",
+  "url": "https://ww2.amstat.org/meetings/jsm/2022/onlineprogram/AbstractDetails.cfm?abstractid=320588",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "JSM 2022 abstract page: Activity 316 'Advances in Astrostatistics in the Great White North', Tue Aug 9 2022, 2:30 PM, title 'Mapping the Milky Way in 5-D with Big Data', author 'Joshua Shen Speagle, University of Toronto' — exact match."
+ },
+ {
+  "id": "talk:lectures:6",
+  "url": "https://sites.psu.edu/astrostatistics/su24/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Penn State 2024 Summer School in Statistics for Astronomers page lists 'Joshua Speagle (University of Toronto) for nested sampling' as an instructor, matching event, topic, and year."
+ },
+ {
+  "id": "talk:lectures:10",
+  "url": "https://sites.psu.edu/astrostatistics/scma8/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Statistical Challenges in Modern Astronomy VIII page lists 'Joshua Speagle (Department of Statistical Sciences, David A. Dunlap Department of Astronomy & Astrophysics, University of Toronto)' as an invited speaker, matching event and speaker."
+ }
+]

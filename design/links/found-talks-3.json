@@ -1,0 +1,86 @@
+[
+ {
+  "id": "talk:invited:2",
+  "url": "https://www.stsci.edu/files/live/sites/www/files/home/events/event-assets/2026/_documents/2026-workshop-language-agenda",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Official 'Language AI in the Space Sciences' (STScI, Baltimore, Mar 9-12 2026) schedule PDF lists 'Session 5 ... 11:15am ... Joshua Speagle (I) Auditorium' on Wed March 11, 2026 (talk title in the PDF is 'Bringing the arxiv into focus with aparture')."
+ },
+ {
+  "id": "talk:invited:6",
+  "url": "https://astroai.cfa.harvard.edu/workshop2024/abstracts/keynote_talks/speagle.html",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Page reads 'Keynote Speaker: Joshua Speagle (University of Toronto) ... Title: AI SpAI with My (Little?) AI: Applications of Statistical Learning in Modern Astrophysics', AstroAI Summer Workshop 2024, Monday June 17."
+ },
+ {
+  "id": "talk:invited:10",
+  "url": "https://sites.astro.caltech.edu/IAUS368/WebScheduleP.pdf",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Official IAUS368 ('Machine Learning in Astronomy: Possibilities and Pitfalls', IAU GA, Busan) daily schedule PDF lists on 4-Aug: 'Contributed Joshua Speagle 707 Incorporating Errors in Machine Learning Methods Remote 15 Minutes'."
+ },
+ {
+  "id": "talk:colloquia:0",
+  "url": "https://astroai.cfa.harvard.edu/posts/speagle/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "AstroAI Lunch Talks archive entry: 'August 3 — Josh Speagle — What exactly are we doing?' matching the 2026 AstroAI Lunch Seminar."
+ },
+ {
+  "id": "talk:colloquia:8",
+  "url": "https://bidmap.berkeley.edu/seminars/josh-speagle-conceptual-introduction-deep-learning",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Page: 'Thursday, October 9, 2025, 12:00 PM - 1:00 PM' seminar page for 'Josh Speagle: A Conceptual Introduction to Deep Learning' at UC Berkeley BIDMaP."
+ },
+ {
+  "id": "talk:colloquia:12",
+  "url": "https://calendar.astro.tsinghua.edu.cn/index/Colloquium/17.htm",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Tsinghua Astronomy colloquium calendar lists 'Trust me, I am an Astrophysics Foundation Model [EN] - December 12, 2024', matching title and month/year exactly."
+ },
+ {
+  "id": "talk:colloquia:32",
+  "url": "https://canssiontario.utoronto.ca/event/data-science-ares-joshua_speagle/",
+  "kind": "event",
+  "confidence": "medium",
+  "evidence": "Indexed page content (title 'Data Science ARES: Joshua Speagle - CANSSI Ontario') describes his talk 'Mapping the Milky Way in the Age of Gaia' and his then-postdoc bio matching the ~2021 timeframe; live fetch is blocked by a bot-verification interstitial so the exact date on-page could not be re-confirmed directly."
+ },
+ {
+  "id": "talk:lectures:0",
+  "url": "https://sites.psu.edu/astrostatistics/su26",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Penn State Summer School in Statistics for Astronomers XXI (June 1-5, 2026) page lists Joshua Speagle (University of Toronto) as instructor covering nested sampling and ML/AI applications in astronomy."
+ },
+ {
+  "id": "talk:lectures:4",
+  "url": "https://sites.psu.edu/astrostatistics/su25",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Penn State Summer School in Statistics for Astronomers XX (June 2-6, 2025) page lists Joshua Speagle (University of Toronto) as instructor covering nested sampling and ML/AI applications in astronomy."
+ },
+ {
+  "id": "talk:panels:0",
+  "url": "https://ml4physicalsciences.github.io/2023/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "NeurIPS 2023 ML4PS workshop schedule: 'Panel: Inductive biases and interpretability in machine learning and the physical sciences — Anuj Karpatne, Joshua Speagle, Shubhendu Trivedi, Savannah Thais (moderator)', 09:20-10:15."
+ },
+ {
+  "id": "talk:posters:0",
+  "url": "https://www.eso.org/sci/meetings/2023/2inaM/230908_List_of_confirmed_posters.pdf",
+  "kind": "program",
+  "confidence": "high",
+  "evidence": "Official 'Two in a Million' (ESO, Garching, Sep 2023) confirmed-posters PDF: '14 Joshua Speagle (University of Toronto) in-person — A Machine Learning-Led Search for Extra-Tidal Stars in Globular Clusters'."
+ },
+ {
+  "id": "talk:public:3",
+  "url": "https://rascto.ca/content/asx-star-talk-mapping-milky-way-age-gaia-online",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "RASC Toronto Centre event page: 'Mapping the Milky Way in the Age of Gaia' presented by Dr. Joshua Speagle, October 29, 2021, co-hosted with the U of T Astronomy & Space Exploration Society."
+ }
+]

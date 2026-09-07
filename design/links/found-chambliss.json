@@ -1,0 +1,9 @@
+[
+  {
+    "id": "talk:posters:8",
+    "url": "https://aas.org/grants-and-prizes/chambliss-astronomy-achievement-student-awards",
+    "kind": "award",
+    "confidence": "high",
+    "evidence": "On the official AAS Chambliss Astronomy Achievement Student Awards page, under the heading '219th Meeting: 8-12 January 2012, Austin, Texas' > 'Undergraduate', the results table (columns 'Recipients' | 'Honorable Mentions') lists 'Josh Speagle' in the table cell marked data-title=\"Recipients\" (i.e. the medal-winner column, not the Honorable Mentions column): raw HTML row is <td data-index=\"0\" data-title=\"Recipients\">Josh Speagle</td><td data-index=\"1\" data-title=\"Honorable Mentions\">&nbsp;</td>. The page's intro text states 'Awardees are honored with a Chambliss medal and recognition on AAS's website,' so this is a full Chambliss medal, not an honorable mention. This matches content.json's own poster entry 'The X-ray Counterpart of the High-B Pulsar J0726-2612 (AAS Chamblis Award)' at AAS 219, Austin TX, Jan 2012. Note: he was NOT found listed under the 221st Meeting (Jan 2013, Long Beach) table on the same page, so AAS 221 was not the correct meeting -- AAS 219 (Jan 2012) is. Separately, the same page also confirms the already-documented AAS 223 (Jan 2014, Washington DC) result: Speagle appears in a third, unlabeled Honorable-Mentions overflow column of the Undergraduate table for that meeting, consistent with the AAS news post cited in the task (honorable mention, not medal)."
+  }
+]

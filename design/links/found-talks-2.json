@@ -1,0 +1,79 @@
+[
+ {
+  "id": "talk:invited:1",
+  "url": "https://www.cmu.edu/dietrich/statistics-datascience/stamps/workshop/schedule.html",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "STAMPS@CMU workshop schedule lists \"Joshua S Speagle\" giving \"Adaptive 'Frasian' Inference under Data-Prior Conflict\" Friday, May 15 at 2:30 PM, with slides/recording."
+ },
+ {
+  "id": "talk:invited:9",
+  "url": "https://sites.psu.edu/astrostatistics/scma8-program/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "SCMA VIII program lists Speagle's Invited Talk \"Extending Bayesian Modeling Approaches to ML Applications\" on Thursday June 15, 10:30-11:10am (plus his separate nested-sampling tutorial the same day)."
+ },
+ {
+  "id": "talk:invited:13",
+  "url": "https://cmsa.fas.harvard.edu/2018-big-data/",
+  "kind": "event",
+  "confidence": "medium",
+  "evidence": "Harvard CMSA Big Data Conference (Aug 23-24, 2018) page lists \"Joshua Speagle\" among its speakers, though the individual talk title \"Revealing the Milky Way's Dust-iny\" is not printed on the page itself."
+ },
+ {
+  "id": "talk:colloquia:3",
+  "url": "https://ischool.utoronto.ca/event/2nd-colloquium-on-applications-of-ai/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Event page for U of T's 2nd Colloquium on Applications of AI (Fri May 1, 2026) lists \"Josh Speagle, Department of Statistical Sciences and the David A. Dunlap Department of Astronomy & Astrophysics, University of Toronto\" at 9:00-9:45am."
+ },
+ {
+  "id": "talk:colloquia:11",
+  "url": "https://www.simonsfoundation.org/event/joshuaspeagle/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "Page titled \"CCA Colloquium: Joshua Speagle\", Friday March 21, 2025, with talk title \"Q: Why should I believe you? A: Because I am an Astrophysics Foundation Model\" and his UofT bio/abstract."
+ },
+ {
+  "id": "talk:colloquia:15",
+  "url": "https://www.craq-astro.ca/activities/colloquia-and-seminars/?lang=en",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "CRAQ (Universite de Montreal astrophysics group) colloquia/seminars listing includes \"Joshua Speagle (October 12, 2023)\" at Pavillon MIL A-3561, matching the Oct 2023 date (talk title shown there as TBA)."
+ },
+ {
+  "id": "talk:colloquia:27",
+  "url": "https://researchseminars.org/seminar/Astrostats",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "IAU-IAA Astrostats & Astroinfo seminar series page lists Josh Speagle's talk \"Statistical Challenges in Stellar Parameter Estimation from Theory and Data\" on Tuesday, April 12 (2022), matching the Apr 2022 virtual seminar."
+ },
+ {
+  "id": "talk:colloquia:31",
+  "url": "https://kicpseminar.github.io/",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "KICP Seminar site lists \"Joshua Speagle (University of Toronto)\" - \"Cosmological cartography with photometric redshifts\" - April 15, 2021, with flyer/podcast links."
+ },
+ {
+  "id": "talk:contributed:2",
+  "url": "https://www.birs.ca/events/2023/5-day-workshops/23w5094/videos/watch/202311020949-Speagle.html",
+  "kind": "recording",
+  "confidence": "high",
+  "evidence": "BIRS video page titled \"Josh Speagle, 'SBI++: Extending Simulation-Based Inference to Censored and Out-of-Distribution data'\" from the Nov 2023 \"Astrostatistics in Canada and Beyond\" workshop (23w5094) in Banff."
+ },
+ {
+  "id": "talk:lectures:3",
+  "url": "https://ssc.ca/en/meeting/annual/workshop/data-science-and-analytics-workshop-1",
+  "kind": "event",
+  "confidence": "high",
+  "evidence": "SSC 2026 Annual Meeting (Hamilton) workshop page: \"Presenter(s) Joshua Speagle, University of Toronto\", workshop \"AI and LLMs - Research Perspective\", Sun 05/31/2026 09:00-16:30."
+ },
+ {
+  "id": "talk:lectures:7",
+  "url": "https://www.eso.org/sci/meetings/2023/2inaM/230914_Programme.pdf",
+  "kind": "event",
+  "confidence": "medium",
+  "evidence": "Official programme PDF for ESO's \"Two in a Million\" conference (Garching, Sep 2023) names \"Chair: Joshua Speagle\" for the Sep 13 Session VIII, and lists Steffani Grondin as a contributed speaker that week; the specific \"Machine Learning for Star Cluster Science\" tutorial title itself is not printed in this session program."
+ }
+]
