@@ -171,13 +171,18 @@ def format_entry(pub, used):
     """Render one publication as a single `@article{...}` entry."""
     fields = []
 
-    def add(name, value, braced=True):
+    def add(name, value, braced=True, protect=False):
+        """Append one field. `braced` wraps the value in the field's braces; `protect`
+        adds an inner pair as well ("{{...}}"), the BibTeX idiom that stops styles
+        from lower-casing a title — deliberate for titles, nowhere else."""
         if value in (None, "", []):
             return
+        if protect:
+            value = "{%s}" % value
         fields.append((name, "{%s}" % value if braced else str(value)))
 
     add("author", format_authors(pub.get("authors")))
-    add("title", "{%s}" % latex_escape(pub.get("title")))
+    add("title", latex_escape(pub.get("title")), protect=True)
     add("journal", latex_escape(pub.get("journal")))
     if pub.get("year"):
         add("year", pub["year"], braced=False)

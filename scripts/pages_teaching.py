@@ -15,6 +15,11 @@ from pages_shared import (accent_class, all_years, attr_esc, card_meta, date_ran
                           strip_tags as _strip_tags, term_month as _term_month, url_attr, warn)
 
 
+def _tags_row(inner):
+    """The card's tag/link row, omitted entirely when there is nothing to put in it."""
+    return f'<div class="item-tags">{inner}</div>' if inner else ""
+
+
 def _link_html(rec, label="Course page"):
     """Optional outbound link for a record carrying a `url`."""
     url = (rec.get("url") or "").strip() if isinstance(rec, dict) else ""
@@ -158,7 +163,7 @@ def generate_content(data):
             f'<h3 class="item-title">{esc(title)}</h3>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
-            f'{_link_html(sc, "Details")}'
+            f'{_tags_row(_link_html(sc, "Details"))}'
             f'</article>'
         )
 

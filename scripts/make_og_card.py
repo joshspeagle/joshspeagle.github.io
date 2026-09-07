@@ -46,7 +46,10 @@ def brand_font(woff2_name, size):
         return ImageFont.truetype(str(tmp), size)
     except Exception as e:                       # pragma: no cover - cosmetic fallback
         print(f"  (font {woff2_name} unavailable: {e}; using the default font)")
-        return ImageFont.load_default(size=size)
+        try:
+            return ImageFont.load_default(size=size)      # Pillow >= 10.1 takes a size
+        except TypeError:                                 # older Pillow: no-arg only
+            return ImageFont.load_default()
 
 
 def main():
