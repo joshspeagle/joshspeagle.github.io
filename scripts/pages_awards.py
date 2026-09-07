@@ -4,7 +4,7 @@ Exposes generate_content(data) -> str, returning the inner HTML for the
 #awards-content container: one .item card per award, wrapped in the generic
 interactive listview via pages_shared.scaffold().
 """
-from pages_shared import scaffold, esc, attr_esc
+from pages_shared import attr_esc, card_meta, esc, scaffold
 
 
 def generate_content(data):
@@ -30,8 +30,7 @@ def generate_content(data):
         data_title = attr_esc(title)
         data_search = attr_esc(f"{title} {organization}")
 
-        meta = f"{esc(organization)} — {esc(description)}"
-
+        # year + awarding body place the award; the description is the card's prose.
         items.append(
             f'<article class="item accent-du" data-lv-item '
             f'data-cat="award" '
@@ -39,11 +38,11 @@ def generate_content(data):
             f'data-year="{year_num}" '
             f'data-num="{year_num}" '
             f'data-title="{data_title}">'
+            f'{card_meta(str(year), (organization, True))}'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title)}</h3>'
-            f'<span class="item-when">{esc(year)}</span>'
             f'</div>'
-            f'<p class="item-meta">{meta}</p>'
+            f'<p class="item-meta">{esc(description)}</p>'
             f'</article>'
         )
 

@@ -10,9 +10,9 @@ card's left stripe + badge dot is colored to match its chip.
 
 Per-item card contract is documented in pages_shared.py.
 """
-from pages_shared import (accent_class, all_years, attr_esc, esc, parse_latest_year,
-                          scaffold, slug as _slug, strip_tags as _strip_tags,
-                          term_month as _term_month, warn)
+from pages_shared import (accent_class, all_years, attr_esc, card_meta, esc,
+                          parse_latest_year, scaffold, slug as _slug,
+                          strip_tags as _strip_tags, term_month as _term_month, warn)
 
 
 def _departments(course):
@@ -84,7 +84,6 @@ def generate_content(data):
         depts = _departments(course)
 
         cat = " ".join(_slug(d) for d in depts) or "other"
-        when = esc(" · ".join(terms))
         dept_display = " / ".join(depts)
         title_display = " · ".join(p for p in [code, title] if p)
         year = parse_latest_year(terms)
@@ -97,16 +96,12 @@ def generate_content(data):
         data_search = attr_esc(search_src)
         data_title = attr_esc(_strip_tags(title_display))
 
-        # Description carries the meta line; level + department(s) become badges.
+        # Description carries the meta line; the level stays a badge, while the terms
+        # and the department(s) move up into the card's mono metadata line (they are
+        # what places the course, and the department is already the card's accent).
         meta = esc(description) if description else ""
 
-        level_badge = f'<span class="badge">{esc(level)}</span>' if level else ""
-        dept_badges = "".join(
-            f'<span class="badge talk-badge"><span class="dot d-{_accent(accents, d)}"></span>'
-            f'{esc(d)}</span>'
-            for d in depts
-        )
-        tags = level_badge + dept_badges
+        tags = f'<span class="badge">{esc(level)}</span>' if level else ""
         # left stripe: the joint accent for multi-department courses, else the dept accent
         if len(depts) >= 2:
             accent = _accent(accents, "joint", "joint-course stripe")
@@ -119,9 +114,9 @@ def generate_content(data):
             f'<article class="item accent-{accent}" data-lv-item '
             f'data-cat="{cat}" data-search="{data_search}" '
             f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
+            f'{card_meta(" · ".join(terms), (dept_display, True))}'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title_display)}</h3>'
-            f'<span class="item-when">{when}</span>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
             f'<div class="item-tags">{tags}</div>'
@@ -134,7 +129,6 @@ def generate_content(data):
         program = sc.get("program", "")
         location = sc.get("location", "")
         terms = sc.get("terms", []) or []
-        when = esc(" · ".join(terms))
         year = parse_latest_year(terms)
 
         meta = " · ".join(p for p in [esc(program), esc(location)] if p)
@@ -150,13 +144,11 @@ def generate_content(data):
             f'<article class="item accent-{_accent(accents, "workshops")}" data-lv-item '
             f'data-cat="workshops" data-search="{data_search}" '
             f'data-year="{year}" data-num="{_sort_key(terms)}" data-title="{data_title}">'
+            f'{card_meta(" · ".join(terms), ("Workshop", True))}'
             f'<div class="item-head">'
             f'<h3 class="item-title">{esc(title)}</h3>'
-            f'<span class="item-when">{when}</span>'
             f'</div>'
             f'<p class="item-meta">{meta}</p>'
-            f'<div class="item-tags"><span class="badge talk-badge">'
-            f'<span class="dot d-{_accent(accents, "workshops")}"></span>Workshop</span></div>'
             f'</article>'
         )
 

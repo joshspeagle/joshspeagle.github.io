@@ -264,6 +264,28 @@ def listview_status():
     return '<p class="sr-only" data-lv-status role="status" aria-live="polite"></p>'
 
 
+def card_meta(*parts, lead_html=""):
+    """The mono metadata line every list card carries (design G §3).
+
+    One ' · '-separated line of mono caps at the top of a card — the fields that
+    place it (when · where · what kind), with the load-bearing one (the role, the
+    type) in text-2 600. Pass a plain string for a quiet field or a (text, True)
+    tuple for an emphasised one; `lead_html` is pre-built markup (a <time> element)
+    that goes first. Every field must already be shown NOWHERE else on the card:
+    the point of the line is to replace scattered date/type chrome, not add to it.
+    """
+    out = [lead_html] if lead_html else []
+    for part in parts:
+        strong = False
+        if isinstance(part, tuple):
+            part, strong = part
+        text = str(part or "").strip()
+        if not text:
+            continue
+        out.append(f"<b>{esc(text)}</b>" if strong else esc(text))
+    return f'<p class="card-meta">{" · ".join(out)}</p>' if out else ""
+
+
 def chip(cat, label, count, accent=None, active=False):
     """One filter chip. `accent` names the CSS colour class for the dot (defaults to
     the category key); `count` may be None to omit the tally.

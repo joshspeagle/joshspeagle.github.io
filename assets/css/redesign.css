@@ -232,8 +232,6 @@ main, footer { position: relative; z-index: 1; }
 .d-astrostat  { --pad-hue: var(--acc-astronomy); }
 .accent-astrostat::after { background: linear-gradient(90deg, var(--acc-astronomy) 0 50%, var(--acc-statistics) 50% 100%); }
 /* Authorship + mentorship pads */
-.tag.stu { --pad-hue: var(--acc-student); }
-.tag.pd  { --pad-hue: var(--acc-postdoc); }
 .tag.feat { --pad-hue: var(--energy); }
 .tag-program { --pad-hue: var(--cat-ii); }
 .tag-award   { --pad-hue: var(--acc-invited); }
@@ -242,10 +240,6 @@ main, footer { position: relative; z-index: 1; }
 .tag-institution, .tag-course { --pad-hue: var(--text-3); }
 .talk-badge { --pad-hue: var(--text-3); }
 /* Software language + status pads */
-.tag.lang-py { --pad-hue: var(--acc-py); }
-.tag.lang-js { --pad-hue: var(--acc-js); }
-.tag.lang-jn { --pad-hue: var(--acc-jn); }
-.tag.lang-web, .tag.lang-x, .tag.lang { --pad-hue: var(--text-3); }
 .tag.fork, .tag.external, .tag.archived { --pad-hue: var(--text-3); color: var(--text-3); border-style: dashed; }
 
 /* ---------------- Inputs ---------------- */
@@ -338,6 +332,9 @@ main, footer { position: relative; z-index: 1; }
 .item-when, .card-meta, .item-foot, .pub-fig-head .m, .news-outlet {
   font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3);
 }
+/* one line per card: when · where · what kind, with the load-bearing field lit */
+.card-meta { margin: 0 0 7px; line-height: 1.5; }
+.card-meta b { color: var(--text-2); font-weight: 600; }
 
 /* count line with a hollow via */
 .meta-via { display: flex; align-items: center; gap: 8px; margin-top: 14px;
@@ -407,22 +404,49 @@ main, footer { position: relative; z-index: 1; }
 .opp-card .opp-links strong { color: var(--text-2); }
 .opp-note { color: var(--text-3); }
 
-/* ---------------- Biography timeline ---------------- */
+/* ---------------- Biography timeline ----------------
+   One copper trunk, a hollow via per event, the current role as an energy star.
+   The trunk is drawn segment-per-item (.tl-item::after) instead of once for the
+   whole column, so the last entry can fade its own tail out. A "concurrent" entry
+   (a leave that ran alongside the current role) hangs off the trunk on a branch:
+   45 deg out, parallel down, 45 deg back in — built from one span so it stays
+   aligned however long the entry's text runs. */
 .timeline { position: relative; margin-top: var(--space-6); padding-left: 40px; }
-.timeline::before { content: ""; position: absolute; left: 11px; top: 6px; bottom: 6px; width: 1.25px; background: rgb(var(--copper-rgb) / 0.6); }
 .tl-item { position: relative; padding: 0 0 var(--space-6); }
 .tl-item:last-child { padding-bottom: 0; }
-.tl-item::before { content: ""; position: absolute; left: -34px; top: 6px; width: 9px; height: 9px;
+/* trunk segment through this entry (top of the first one starts at its via) */
+.tl-item::after { content: ""; position: absolute; left: -30.1px; top: 0; bottom: 0; width: 1.25px;
+  background: rgb(var(--copper-rgb) / 0.6); }
+.tl-item:first-child::after { top: 6px; }
+.tl-item.tl-tail::after { background: linear-gradient(180deg,
+  rgb(var(--copper-rgb) / 0.6) 0 40%, rgb(var(--copper-rgb) / 0) 100%); }
+/* event via */
+.tl-item::before { content: ""; position: absolute; left: -34px; top: 6px; width: 9px; height: 9px; z-index: 1;
   border-radius: 50%; border: 1.8px solid rgb(var(--copper-rgb) / 0.9); background: var(--bg-0); }
-.tl-item.current::before { background: var(--energy); border-color: var(--energy); box-shadow: 0 0 10px rgb(var(--energy-rgb) / 0.8); }
+/* the current role is the lit one: an energy star, not a via */
+.tl-item.current::before { display: none; }
+.tl-star { position: absolute; left: -36.6px; top: 3.5px; width: 14px; height: 14px; z-index: 1;
+  color: var(--energy); filter: drop-shadow(0 0 6px rgb(var(--energy-rgb) / 0.85)); }
+/* concurrent sub-entry: indented, on its own branch off the trunk */
+.tl-item.concurrent { padding-left: 16px; }
+.tl-branch { position: absolute; left: -30.1px; top: -2px; bottom: 16.6px; width: 16.6px;
+  border-right: 1.25px solid rgb(var(--copper-rgb) / 0.6); }
+.tl-branch::before, .tl-branch::after { content: ""; position: absolute; left: 0; width: 23.3px; height: 0;
+  border-top: 1.25px solid rgb(var(--copper-rgb) / 0.6); }
+.tl-branch::before { top: -16.6px; transform-origin: 0 0; transform: rotate(45deg); }
+.tl-branch::after { bottom: -16.6px; transform-origin: 0 100%; transform: rotate(-45deg); }
+.tl-item.concurrent::before { left: -18px; }        /* the via rides the branch, not the trunk */
 .tl-date { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); }
 .tl-title { font-family: var(--font-serif); font-size: 1.1rem; margin: 2px 0; color: var(--text); }
+.tl-item.concurrent .tl-title { font-size: 1rem; }
 .tl-loc { font-size: var(--fs-small); color: var(--text-3); }
 .tl-content { color: var(--text-2); font-size: var(--fs-small); margin-top: 6px; line-height: 1.55; max-width: 70ch; }
-.tl-now { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; vertical-align: middle;
+.tl-now, .tl-conc { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; vertical-align: middle;
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--text); border: 1px solid var(--energy-text); border-radius: var(--radius-sm); padding: 1px 7px; }
-.tl-now::before { content: ""; width: 6px; height: 6px; background: var(--energy); }
+.tl-now::before, .tl-conc::before { content: ""; width: 6px; height: 6px; background: var(--energy); }
+.tl-conc { color: var(--text-3); border-color: rgb(var(--copper-rgb) / 0.55); }
+.tl-conc::before { background: none; border: 1.6px solid rgb(var(--copper-rgb) / 0.9); border-radius: 50%; }
 
 /* ---------------- Secondary-page header band ---------------- */
 .pub-header { position: relative; padding: 64px 0 44px; border-bottom: 1px solid var(--border); }
@@ -453,7 +477,9 @@ main, footer { position: relative; z-index: 1; }
 }
 .paper-title a:hover { border-bottom: 1px solid rgb(var(--copper-rgb) / 0.7); }
 .item-when { white-space: nowrap; }
-.item-meta, .paper-meta { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; }
+/* margin 0: .item-meta is a <p> on most pages and a <div> on News — without this the
+   two shapes sit at different distances from the title. */
+.item-meta, .paper-meta { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; margin: 0; }
 .item-meta strong, .paper-meta strong { color: var(--text); font-weight: 600; }
 .item-sub { color: var(--text-2); font-size: var(--fs-small); line-height: 1.5; margin: 3px 0 0; }
 .item-sub .md-label { color: var(--text); font-weight: 600; }
@@ -515,43 +541,122 @@ main, footer { position: relative; z-index: 1; }
 [data-theme="light"] .pub-fig .fig-light { display: block; }
 .pub-fig-note { color: var(--text-2); font-size: var(--fs-small); line-height: 1.65; max-width: 82ch; margin: 0 0 var(--space-8); }
 
-/* Inline SVG figures (silkscreen grid, copper baseline; tooltip via pubchart.js) */
-.pf-svg { width: 100%; height: auto; display: block; font-family: var(--font-mono); }
-.pf-grid { stroke: rgb(var(--copper-rgb) / 0.35); stroke-width: 1; stroke-dasharray: 1 4; }
-.pf-axis { fill: var(--text-3); font-size: 11px; }
-.pf-legend { fill: var(--text-2); font-size: 11px; }
-.pf-seg { transition: opacity 0.12s ease; }
-.pf-seg:hover { opacity: 0.82; }
-.pf-col { fill: transparent; pointer-events: none; }
-.pf-col:focus { outline: none; }
-.pf-col:focus-visible { fill: rgb(var(--energy-rgb) / 0.12); stroke: var(--energy-text); stroke-width: 1.5; }
-.seg-primary { fill: var(--role-primary); } .seg-postdoc { fill: var(--role-postdoc); }
-.seg-student { fill: var(--role-student); } .seg-significant { fill: var(--role-significant); }
-.seg-other { fill: var(--role-other); } .seg-all { fill: var(--text-3); }
+/* ---------------- Publication figures ----------------
+   HTML around SVG: the axis ticks, the legend keys and the direct labels are HTML
+   text in the grid AROUND .pf-plot, so their size is a real CSS px size and never
+   scales with the drawing. Only geometry lives inside the plot; the line/area
+   paths sit in a stretched <svg preserveAspectRatio="none"> and keep their stroke
+   width with vector-effect:non-scaling-stroke. */
+.pub-fig { container-type: inline-size; }
+.pf-chart { --pf-yc: 4; --pf-rc: 12;   /* axis / label gutters, in mono characters (set per chart) */
+  display: grid; grid-template-columns: calc(var(--pf-yc) * 1ch + 9px) minmax(0, 1fr);
+  grid-template-areas: "y plot" "sp x" "leg leg";
+  font-family: var(--font-mono); font-size: 11px; line-height: 1.1; color: var(--text-3); }
+.pf-y { grid-area: y; position: relative; }
+.pf-plot { grid-area: plot; position: relative; height: 168px; }
+.pf-x { grid-area: x; position: relative; height: 15px; margin-top: 7px; }
+.pf-leg { grid-area: leg; display: flex; flex-wrap: wrap; gap: 5px 16px; margin-top: 14px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-2); }   /* also used outside .pf-chart, by the mentorship chart */
+@container (min-width: 420px) { .pf-plot { height: 200px; } .pf-chart, .pf-chart .pf-leg { font-size: 12px; } }
+@container (min-width: 700px) { .pf-plot { height: 232px; } }
+
+.pf-yt { position: absolute; right: 9px; transform: translateY(-50%); white-space: nowrap; }
+.pf-xt { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+.pf-gl { position: absolute; left: 0; right: 0; height: 1px; transform: translateY(-0.5px);
+  background: repeating-linear-gradient(to right, rgb(var(--copper-rgb) / 0.5) 0 1px, transparent 1px 5px); }
+.pf-base { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgb(var(--copper-rgb) / 0.8); }
+.pf-geo { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+
+/* single-series line (citations) */
+.pf-area { fill: var(--cat-ic); opacity: 0.13; }
+.pf-cit-line { stroke: var(--cat-ic); stroke-width: 1.75; fill: none; stroke-linejoin: round; stroke-linecap: round; }
+.pf-pt { position: absolute; width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; border-radius: 50%; background: var(--cat-ic); }
+.pf-star { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; color: var(--energy);
+  filter: drop-shadow(0 0 5px rgb(var(--energy-rgb) / 0.9)); }
+.pf-dl { position: absolute; transform: translateY(-160%); color: var(--text); font-weight: 600;
+  white-space: nowrap; padding-right: 12px; }
+
+/* stacked bars (roles). Neutral lightness ramp + a per-role hatch, so the stack
+   survives greyscale and the legend is never keyed by colour alone. */
+.pf-bar { position: absolute; bottom: 0; display: flex; flex-direction: column-reverse; }
+.pf-seg, .pf-kw { display: block; }
+.pf-seg { width: 100%; }
+.pf-kw { width: 11px; height: 11px; flex: 0 0 auto; }
+.seg-primary { background-color: var(--role-primary); }
+.seg-postdoc { background-color: var(--role-postdoc);
+  background-image: repeating-linear-gradient(45deg, transparent 0 3.5px, var(--chip) 3.5px 4.5px); }
+.seg-student { background-color: var(--role-student);
+  background-image: repeating-linear-gradient(-45deg, transparent 0 3.5px, var(--chip) 3.5px 4.5px); }
+.seg-significant { background-color: var(--role-significant);
+  background-image: repeating-linear-gradient(to right, transparent 0 3.5px, var(--chip) 3.5px 4.5px); }
+.seg-other { background-color: var(--role-other);
+  background-image: repeating-linear-gradient(to bottom, transparent 0 3.5px, var(--chip) 3.5px 4.5px); }
+.pf-key { display: inline-flex; align-items: center; gap: 7px; }
+
+/* multi-series lines (RIQ): the ramp plus a dash pattern per series */
+.pf-ln { fill: none; stroke-width: 1.75; stroke-linejoin: round; stroke-linecap: butt; }
+.ln-all { stroke: var(--text-3); stroke-dasharray: 5 3; }
+.ln-primary { stroke: var(--role-primary); }
+.ln-significant { stroke: var(--role-significant); stroke-dasharray: 1 3; stroke-linecap: round; }
+.ln-student { stroke: var(--role-student); stroke-dasharray: 9 4; }
+.ln-postdoc { stroke: var(--role-postdoc); stroke-dasharray: 3 3; }
+.pf-band-typ { position: absolute; left: 0; right: 0; background: rgb(var(--copper-rgb) / 0.09);
+  border-block: 1px dashed rgb(var(--copper-rgb) / 0.45); }
+.pf-band-typ i { position: absolute; left: 3px; top: 50%; transform: translateY(-50%);
+  font-style: normal; letter-spacing: 0.06em; text-transform: uppercase; z-index: 3;
+  color: var(--text-2); background: var(--chip); padding: 1px 4px; white-space: nowrap; }
+.pf-mean { position: absolute; left: 0; right: 0; height: 0; border-top: 1px dashed rgb(var(--copper-rgb) / 0.8); }
+/* direct labels at the right edge (a swatch legend would key the series by colour) */
+.pf-rl { --y: 50%;   /* the series' last plotted point, set per label */
+  --sw: var(--role-other);
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; color: var(--text-2); }
+.pf-rl::before { content: ""; width: 17px; height: 2px; flex: 0 0 auto; background: var(--sw); }
+.pf-rl.ln-all::before { background: repeating-linear-gradient(to right, var(--sw) 0 5px, transparent 5px 8px); }
+.pf-rl.ln-significant::before { background: repeating-linear-gradient(to right, var(--sw) 0 1px, transparent 1px 4px); }
+.pf-rl.ln-student::before { background: repeating-linear-gradient(to right, var(--sw) 0 9px, transparent 9px 13px); }
+.pf-rl.ln-postdoc::before { background: repeating-linear-gradient(to right, var(--sw) 0 3px, transparent 3px 6px); }
+.pf-rl b { color: var(--text); font-weight: 600; }
+.pf-rl.ln-all { --sw: var(--text-3); }
+.pf-rl.ln-primary { --sw: var(--role-primary); }
+.pf-rl.ln-significant { --sw: var(--role-significant); }
+.pf-rl.ln-student { --sw: var(--role-student); }
+.pf-rl.ln-postdoc { --sw: var(--role-postdoc); }
+@container (min-width: 460px) {
+  .pf-chart.has-r { grid-template-columns: calc(var(--pf-yc) * 1ch + 9px) minmax(0, 1fr) calc(var(--pf-rc) * 1ch + 12px);
+    grid-template-areas: "y plot leg" "sp x ."; }
+  .pf-chart.has-r .pf-leg { display: block; position: relative; margin: 0; }
+  .pf-chart.has-r .pf-rl { position: absolute; left: 0; top: var(--y); transform: translateY(-50%); }
+}
+
+/* hit targets (tooltip + keyboard); pubchart.js reads data-tip */
+.pf-col, .pf-band, .mix-seg { cursor: default; }
+.pf-col, .pf-band { position: absolute; top: 0; bottom: 0; background: transparent; }
+.pf-col:hover, .pf-band:hover { background: rgb(var(--energy-rgb) / 0.07); }
+.pf-col:focus, .pf-band:focus { outline: none; }
+.pf-col:focus-visible, .pf-band:focus-visible { background: rgb(var(--energy-rgb) / 0.12);
+  outline: 1.5px solid var(--energy-text); outline-offset: -1px; }
 .pf-tip { position: fixed; z-index: 60; pointer-events: none; background: var(--chip); color: var(--text);
   border: 1px solid var(--border-2); border-radius: var(--radius-chip); padding: 6px 10px;
   font-family: var(--font-mono); font-size: 12px; line-height: 1.3; box-shadow: var(--shadow-card); max-width: 320px; }
 .pf-tip[hidden] { display: none; }
-.pf-area { fill: var(--cat-ic); opacity: 0.14; }
-.pf-cit-line { stroke: var(--cat-ic); stroke-width: 2; fill: none; }
-.pf-dot { fill: var(--cat-ic); }
-.pf-band { fill: transparent; }
-.pf-band:hover { fill: rgb(var(--energy-rgb) / 0.07); }
-.pf-band:focus { outline: none; }
-.pf-band:focus-visible { fill: rgb(var(--energy-rgb) / 0.12); stroke: var(--energy-text); stroke-width: 1.5; }
-.pf-ln { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.ln-all { stroke: var(--text-3); stroke-width: 1.6; stroke-dasharray: 5 3; }
-.ln-primary { stroke: var(--role-primary); } .ln-significant { stroke: var(--role-significant); }
-.ln-student { stroke: var(--role-student); } .ln-postdoc { stroke: var(--role-postdoc); }
-.pf-sw { stroke: none; }
-.pf-band-typ { fill: var(--text-3); opacity: 0.08; }
-.pf-mean { stroke: rgb(var(--copper-rgb) / 0.8); stroke-dasharray: 4 3; }
-.mix-seg { transition: opacity 0.12s ease; }
-.mix-seg:hover { opacity: 0.82; }
+
+/* research mix: one hard-segmented 100% bar, each share labelled inside its segment */
+.pf-mix { display: flex; gap: 3px; height: 34px; }
+.mix-seg { display: flex; align-items: center; gap: 5px; min-width: 0; overflow: hidden;
+  padding: 0 6px; color: var(--chip); font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap; }
+.mix-seg b { font-weight: 500; min-width: 0; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
+.mix-seg i { font-style: normal; font-weight: 700; flex: 0 0 auto; }
 .mix-seg:focus { outline: none; }
-.mix-seg:focus-visible { stroke: var(--text); stroke-width: 2; }
-.mix-sla, .mix-dot.mix-sla { fill: var(--cat-sla); } .mix-ii, .mix-dot.mix-ii { fill: var(--cat-ii); }
-.mix-ic, .mix-dot.mix-ic { fill: var(--cat-ic); } .mix-du, .mix-dot.mix-du { fill: var(--cat-du); }
+.mix-seg:focus-visible { outline: 2px solid var(--energy-text); outline-offset: -2px; }
+.mix-sla { background: var(--cat-sla); } .mix-ii { background: var(--cat-ii); }
+.mix-ic { background: var(--cat-ic); } .mix-du { background: var(--cat-du); }
+.pf-leg-mix { font-size: 11px; }
+.pf-leg-mix .pf-kw { border-radius: 50%; width: 9px; height: 9px; }
+/* the area names only fit inside the segments once the card is this wide; below
+   that each segment keeps its own share and the key line carries the names. */
+@container (min-width: 1000px) { .pf-leg-mix { display: none; } .mix-seg { font-size: 12px; } }
+@container (max-width: 999.98px) { .mix-seg b { display: none; } }
 
 /* ---------------- Mentorship ---------------- */
 .highlight-box { margin: var(--space-6) 0 var(--space-7); padding: 26px 30px 26px 34px; }
@@ -560,18 +665,20 @@ main, footer { position: relative; z-index: 1; }
 .highlight-box p { color: var(--text-2); font-size: 1rem; line-height: 1.7; margin: 0; max-width: 78ch; }
 .highlight-box p + p { margin-top: 12px; }
 .mentor-chart { margin: var(--space-6) 0 var(--space-5); max-width: 660px; padding: 22px 26px 22px 30px; }
-.mc-cap { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; }
-.mc-legend { display: flex; gap: 16px; margin-bottom: 12px; font-size: var(--fs-label); color: var(--text-3); font-family: var(--font-mono); }
-.mc-key { display: inline-flex; align-items: center; gap: 6px; }
-.mc-key::before { content: ""; width: 10px; height: 10px; background: var(--text-2); }
-.mc-faded-key::before { background: repeating-linear-gradient(45deg, var(--text-2) 0 1.5px, transparent 1.5px 4px); }
+/* the stage breakdown speaks the publication figures' language: mono caps, a copper
+   baseline under the tracks, and the same hatch that separates the roles chart's
+   series — former mentees are a broken fill, never just a dimmer one (audit A15). */
+.mc-cap { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
+.mc-rows { border-bottom: 1px solid rgb(var(--copper-rgb) / 0.8); padding-bottom: 8px; }
 .mc-row { display: grid; grid-template-columns: 96px 1fr 3ch; align-items: center; gap: 12px; margin: 7px 0; }
 .mc-label { font-size: var(--fs-small); color: var(--text-2); }
 .mc-track { display: flex; height: 16px; background: var(--chip-2); border: 1px solid var(--border); }
 .mc-seg { height: 100%; }
-.mc-faded { background-image: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.45) 0 2px, transparent 2px 5px); }
-.mc-sla { background: var(--cat-sla); } .mc-ii { background: var(--cat-ii); }
-.mc-ic { background: var(--cat-ic); } .mc-du { background: var(--cat-du); } .mc-sec { background: var(--cat-sec); }
+.mc-sla { background-color: var(--cat-sla); } .mc-ii { background-color: var(--cat-ii); }
+.mc-ic { background-color: var(--cat-ic); } .mc-du { background-color: var(--cat-du); }
+.mc-sec { background-color: var(--cat-sec); }
+.mc-faded, .mc-kw-former { background-image: repeating-linear-gradient(45deg, transparent 0 3.5px, var(--chip) 3.5px 4.5px); }
+.mc-kw-current, .mc-kw-former { background-color: var(--text-2); }
 .mc-total { font-family: var(--font-mono); font-size: var(--fs-small); color: var(--text-3); text-align: right; }
 .mentor-block { margin-top: var(--space-7); }
 .mentor-group { margin-top: var(--space-5); }
@@ -717,8 +824,19 @@ main, footer { position: relative; z-index: 1; }
   .item, .card, .callout, .highlight-box, .paper, .badge, .tag, .chip, .pub-stat, .feat-card,
   .research-card, .opp-card, .pub-fig, .art-panel, .mentor-chart, .pub-metrics-chip {
     background: #fff !important; border-color: color-mix(in srgb, #000 40%, #fff) !important; }
-  .pf-axis, .pf-legend { fill: #000 !important; }
-  .pf-grid, .pf-mean { stroke: color-mix(in srgb, #000 40%, #fff) !important; }
+  /* figures: print the fills, and take the role ramp down to ink on paper */
+  .pf-seg, .pf-kw, .mix-seg, .pf-pt, .pf-area { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .pf-gl { background: color-mix(in srgb, #000 28%, #fff) !important; }
+  .pf-base { background: #000 !important; }
+  .pf-mean, .pf-band-typ { border-color: color-mix(in srgb, #000 45%, #fff) !important; background: none !important; }
+  .pf-cit-line, .pf-ln { stroke: #000 !important; }
+  .pf-area { fill: color-mix(in srgb, #000 12%, #fff) !important; }
+  .seg-primary { background-color: color-mix(in srgb, #000 82%, #fff) !important; }
+  .seg-postdoc { background-color: color-mix(in srgb, #000 64%, #fff) !important; }
+  .seg-student { background-color: color-mix(in srgb, #000 46%, #fff) !important; }
+  .seg-significant { background-color: color-mix(in srgb, #000 30%, #fff) !important; }
+  .seg-other { background-color: color-mix(in srgb, #000 15%, #fff) !important; }
+  .tl-item.tl-tail::after { background: rgb(var(--copper-rgb) / 0.6) !important; }
   .nav, .skip-link, .theme-toggle, .hamburger,
   .pub-controls, [data-lv-filters], [data-lv-more], .pub-loadmore-wrap, #pub-loadmore,
   .hero canvas, .hero .scrim, .hero-labels {

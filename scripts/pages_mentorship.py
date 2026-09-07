@@ -14,7 +14,7 @@ Each stage maps to one of the four redesign category colors (postdoc->sla,
 doctoral->ii, masters->ic, bachelors->du) used for the card accent, stage badge,
 group-heading dot, and the breakdown chart bars.
 """
-from pages_shared import (attr_esc, chip, esc, listview_status, parse_latest_year,
+from pages_shared import (attr_esc, card_meta, chip, esc, listview_status, parse_latest_year,
                           period_end_key, strip_tags as _strip_tags)
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
@@ -97,13 +97,10 @@ def _card(rec, cat, label, color, completed):
     # "My career stage then" is a quiet footnote at the very bottom of the card.
     foot_html = f'<p class="item-foot">My career stage then: {esc(career)}</p>' if career else ""
 
-    # tags: role (formal/informal) + stage + Alum + programs + course/thesis + awards
-    # Supervisory role sits up on the title row (see below), not in the tag cluster.
-    role_html = ""
-    if sup:
-        role_cls = "role-badge role-informal" if "informal" in sup.lower() else "role-badge"
-        role_html = f'<span class="badge {role_cls}">{esc(sup)}</span>'
-    tags = [f'<span class="badge b-{color}">{esc(label)}</span>']
+    # The period, the career stage and my supervisory role place the mentee, so they
+    # lead the card as its metadata line; the tag cluster keeps only what is specific
+    # to this person (institution, programs, courses, awards).
+    tags = []
     institution = rec.get("institution") or ""
     if institution:                                  # home institution for non-Toronto students
         tags.append(f'<span class="badge tag-institution">{esc(institution)}</span>')
@@ -114,7 +111,7 @@ def _card(rec, cat, label, color, completed):
         tags.append(f'<span class="badge tag-course">{esc(crs)}</span>')
     for aw in (rec.get("awards") or []):
         tags.append(f'<span class="badge tag-award">{esc(aw)}</span>')
-    tags_html = "".join(tags)
+    tags_block = f'<div class="item-tags">{"".join(tags)}</div>' if tags else ""
     meta_html = f'<p class="item-meta">{meta}</p>' if meta else ""
 
     # data-cat carries both filter dimensions (career stage + current/former); the two
@@ -124,13 +121,13 @@ def _card(rec, cat, label, color, completed):
         f'data-cat="{cat} {"former" if completed else "current"}" '
         f'data-search="{data_search}" data-year="{data_year}" '
         f'data-num="{data_year}" data-title="{data_title}">'
+        f'{card_meta(period, label, (sup, True))}'
         '<div class="item-head">'
-        f'<div class="item-headline"><h4 class="item-title">{name_html}</h4>{role_html}</div>'
-        f'<span class="item-when">{esc(period)}</span>'
+        f'<div class="item-headline"><h4 class="item-title">{name_html}</h4></div>'
         '</div>'
         f'{meta_html}'
         f'{subs_html}'
-        f'<div class="item-tags">{tags_html}</div>'
+        f'{tags_block}'
         f'{foot_html}'
         '</article>'
     )
@@ -162,16 +159,17 @@ def _breakdown_chart(mbs, completed):
             '</div>'
         )
 
+    # Same key markup as the publication figures, so the two charts read as one system.
     legend = (
-        '<div class="mc-legend" aria-hidden="true">'
-        '<span class="mc-key">Current</span>'
-        '<span class="mc-key mc-faded-key">Former</span>'
+        '<div class="pf-leg" aria-hidden="true">'
+        '<span class="pf-key"><i class="pf-kw mc-kw-current"></i>Current</span>'
+        '<span class="pf-key"><i class="pf-kw mc-kw-former"></i>Former</span>'
         '</div>'
     )
     return (
         '<figure class="mentor-chart" data-chip>'
         '<figcaption class="mc-cap">Mentees by career stage</figcaption>'
-        f'{legend}{"".join(rows)}'
+        f'<div class="mc-rows">{"".join(rows)}</div>{legend}'
         '</figure>'
     )
 

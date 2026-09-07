@@ -13,7 +13,7 @@ import re
 from datetime import datetime
 
 from config import get_data_path
-from pages_shared import accent_class, attr_esc, esc, listview_status, slug, url_attr
+from pages_shared import accent_class, attr_esc, card_meta, esc, listview_status, slug, url_attr
 
 # GitHub language -> (short label, css token)
 _LANG = {
@@ -49,13 +49,6 @@ def _fdate(s):
         return ""
 
 
-def _lang_tag(lang):
-    if not lang or lang not in _LANG:
-        return ""
-    label, tok = _LANG[lang]
-    return f'<span class="tag lang lang-{tok}">{esc(label)}</span>'
-
-
 def _links(repo, cur):
     out = [f'<a class="reslink" href="{url_attr(repo["url"])}" target="_blank" rel="noopener">GitHub</a>']
     if cur.get("docs"):
@@ -81,13 +74,16 @@ def _feat_card(name, repo, cur):
     if cur.get("pypi"):
         install = f'<div class="install">$ pip install {esc(cur["pypi"])}</div>'
     blurb = esc(cur.get("blurb") or repo.get("description") or "")
+    pushed = _fdate(repo.get("pushed", ""))
+    lang = _LANG.get(repo.get("language") or "", ("", ""))[0]
     return (
         f'<article class="item feat-card accent-violet">'
+        f'{card_meta((lang, True), f"Updated {pushed}" if pushed else "")}'
         f'<div class="item-head"><h3 class="item-title">{esc(name)}</h3></div>'
         f'<div class="item-meta">{blurb}</div>'
         f'<div class="tool-stats">{stats_html}</div>'
         f'{install}'
-        f'<div class="item-tags">{_lang_tag(repo.get("language"))}'
+        f'<div class="item-tags">'
         f'<span class="paper-links">{_links(repo, cur)}</span></div>'
         f'</article>')
 
@@ -123,6 +119,8 @@ def _showcase(sw, repos):
 
 
 def _list_card(name, repo, cur, group_id, group_label, accent, featured):
+    # The date slot keeps the live numbers; the card's metadata line says what the
+    # repo is written in and when it last moved.
     when_bits = []
     if repo.get("stars"):
         when_bits.append(f'★ {repo["stars"]}')
@@ -132,10 +130,11 @@ def _list_card(name, repo, cur, group_id, group_label, accent, featured):
     dl = _human(repo.get("downloads_month"))
     if dl:
         when_bits.append(f'{dl}/mo')
-    when_bits.append(f'Updated {_fdate(repo.get("pushed", ""))}')
     when = esc(" · ".join(b for b in when_bits if b))
+    pushed = _fdate(repo.get("pushed", ""))
+    lang = _LANG.get(repo.get("language") or "", ("", ""))[0]
     blurb = esc(cur.get("blurb") or repo.get("description") or "")
-    tags = _lang_tag(repo.get("language"))
+    tags = ""
     if featured:
         tags += '<span class="tag feat">★ Featured</span>'
     if repo.get("isFork"):
@@ -159,6 +158,7 @@ def _list_card(name, repo, cur, group_id, group_label, accent, featured):
     return (
         f'<article class="item accent-{accent}" data-lv-item data-cat="{slug(group_id)}" '
         f'data-num="{num}" data-title="{attr_esc(name)}" data-search="{search}">'
+        f'{card_meta((lang, True), f"Updated {pushed}" if pushed else "")}'
         f'<div class="item-head"><h3 class="item-title">{esc(name)}</h3>'
         f'<span class="item-when">{when}</span></div>'
         f'<div class="item-meta">{blurb}</div>'

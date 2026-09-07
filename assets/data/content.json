@@ -36,24 +36,22 @@
             "content": "I am incredibly fortunate to co-lead the interdisciplinary <strong><a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a></strong> along with its founder <a href=\"https://www.astro.utoronto.ca/~eadie/cover.html\">Gwen Eadie</a>.",
             "highlights": [
                 {
-                    "icon": "🔬",
                     "title": "Cutting-Edge, Interdisciplinary Research",
                     "content": "Pioneering new methods in astrophysics at the intersection of statistics and AI"
                 },
                 {
-                    "icon": "👥",
                     "title": "Collaborative, Inclusive Environment",
                     "content": "Interdisciplinary team spanning astrophysics, statistics, and data science"
                 }
             ],
             "cta": [
                 {
-                    "text": "Explore Our Research",
+                    "text": "Explore our research",
                     "url": "https://astrostatuoft.com/",
                     "type": "primary"
                 },
                 {
-                    "text": "Join Our Team",
+                    "text": "Join our team",
                     "url": "#join",
                     "type": "secondary"
                 }
@@ -62,22 +60,18 @@
         "research": {
             "areas": [
                 {
-                    "icon": "🤖",
                     "title": "Statistical Learning & AI",
                     "description": "Developing novel methods to discover underlying patterns from (many) large, messy datasets."
                 },
                 {
-                    "icon": "🔍",
                     "title": "Interpretability & Insight",
                     "description": "Building up a rigorous understanding of how statistical methods work both in theory and in practice in order to extract novel scientific insights."
                 },
                 {
-                    "icon": "⚡",
                     "title": "Inference & Computation",
                     "description": "Establishing robust frameworks and designing tractable algorithms to efficiently quantify how much we can learn from data."
                 },
                 {
-                    "icon": "🌌",
                     "title": "Discovery & Understanding",
                     "description": "Applying these methods to large-scale astronomical surveys to uncover new insights about the universe."
                 }
@@ -330,17 +324,18 @@
                     "location": "Toronto, Canada"
                 },
                 {
-                    "title": "Research Scientist",
-                    "date": "Jan-Apr 2025",
-                    "content": "While on leave from UofT, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on cutting-edge quantitative trading strategies for crypto assets.",
-                    "location": "Toronto, Canada (Remote)"
-                },
-                {
                     "title": "Assistant Professor",
                     "date": "2022 - Present",
                     "content": "Joint appointment in Astronomy & Astrophysics and Statistical Sciences. Co-leading the <a href=\"https://astrostatuoft.com/\">Astrostatistics Research Team (ART)</a> with Gwen Eadie.",
                     "location": "Toronto, Canada",
                     "current": true
+                },
+                {
+                    "title": "Research Scientist",
+                    "date": "Jan-Apr 2025",
+                    "content": "While on leave from UofT, worked as a Research Scientist at <a href=\"https://www.linkedin.com/company/river-run-trading/\">River Run Trading</a> on cutting-edge quantitative trading strategies for crypto assets.",
+                    "location": "Toronto, Canada (Remote)",
+                    "concurrent": true
                 }
             ],
             "personalNote": "Outside of work, I mostly enjoy hanging out at home or going out with my wife, our two dogs, and our son. I also watch way too much anime, play way too many video games, and have a supremely unhealthy love of junk food and soda.",
@@ -3331,7 +3326,7 @@
                     "intro": "I develop statistical & machine-learning methods and apply them to the largest astronomical surveys — from billions of stars and galaxies down to individual objects."
                 },
                 "team": {
-                    "eyebrow": "✦ Research Group"
+                    "eyebrow": "Research Group"
                 },
                 "join": {
                     "kicker": "Join us"

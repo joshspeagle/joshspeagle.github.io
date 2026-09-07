@@ -30,7 +30,7 @@ FEED_XML = PROJECT_ROOT / FEED_FILE
 
 # Redesign per-page content generators (scripts/ on path so they import cleanly)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from pages_shared import (SPRITE, attr_esc, clean_text, esc,  # noqa: E402
+from pages_shared import (SPRITE, attr_esc, card_meta, clean_text, esc,  # noqa: E402
                           esc_text, listview_status, percent_shares, slug,
                           strip_tags, term_month, url_attr, warn)
 from pages_talks import generate_content as gen_talks          # noqa: E402
@@ -1016,20 +1016,44 @@ def generate_biography(data):
 
     The page shell supplies the title/tagline header band, so this emits only the
     timeline. (Personal note + dog photos live in the Home 'About' section.)
+
+    The timeline is drawn as a board trace: entries run chronologically top->bottom,
+    each event is a hollow via on a copper trunk, the current role is an energy #star4
+    (plus the NOW pad), and an entry flagged `"concurrent": true` in content.json hangs
+    off the trunk as an indented branch (45 deg out, parallel, 45 deg back in) instead
+    of pretending to be the next step in the sequence. The trunk segment is drawn per
+    item (.tl-item::after) rather than once for the whole column, so the LAST entry can
+    fade its own tail out below the current role without any magic offsets.
     """
     bio = data["sections"]["biography"]
-    items = "".join(
-        f'<div class="tl-item{" current" if t.get("current") else ""}">'
-        f'<div class="tl-date">{esc(t.get("date", ""))}</div>'
-        f'<div class="tl-title">{esc(t.get("title", ""))}'
-        + ('<span class="tl-now">Now</span>' if t.get("current") else "")
-        + '</div>'
-        f'<div class="tl-loc">{esc(t.get("location", ""))}</div>'
-        f'<div class="tl-content">{t.get("content", "")}</div>'
-        "</div>"
-        for t in bio.get("timeline", [])
-    )
-    return f'<div class="container">\n<div class="timeline">{items}</div>\n</div>'
+    timeline = bio.get("timeline", []) or []
+    star = '<svg class="tl-star" aria-hidden="true" focusable="false"><use href="#star4"/></svg>'
+    parts = []
+    for i, t in enumerate(timeline):
+        cls = "tl-item"
+        if t.get("current"):
+            cls += " current"
+        if t.get("concurrent"):
+            cls += " concurrent"
+        if i == len(timeline) - 1:
+            cls += " tl-tail"           # the trunk fades out under the last entry
+        flags = ""
+        if t.get("current"):
+            flags += '<span class="tl-now">Now</span>'
+        if t.get("concurrent"):
+            flags += '<span class="tl-conc">Concurrent</span>'
+        branch = '<span class="tl-branch" aria-hidden="true"></span>' if t.get("concurrent") else ""
+        parts.append(
+            f'<div class="{cls}">{branch}'
+            + (star if t.get("current") else "")
+            + f'<div class="tl-date">{esc(t.get("date", ""))}</div>'
+            f'<div class="tl-title">{esc(t.get("title", ""))}{flags}</div>'
+            f'<div class="tl-loc">{esc(t.get("location", ""))}</div>'
+            f'<div class="tl-content">{t.get("content", "")}</div>'
+            "</div>"
+        )
+    items = "".join(parts)
+    return (f'<div class="container">\n<div class="timeline" data-chip>{items}</div>\n</div>')
 
 
 # ---------------------------------------------------------------------------
@@ -1170,13 +1194,10 @@ def _generate_paper_card(pub, board=False):
     elif is_postdoc:
         cls += " postdoc"
 
-    tags = ""
-    if is_featured:
-        tags += '<span class="tag feat">★ Featured</span>'
-    if is_student:
-        tags += '<span class="tag stu">Student-led</span>'
-    elif is_postdoc:
-        tags += '<span class="tag pd">Postdoc-led</span>'
+    # The role rides the card's metadata line (and the chip's top edge), so it is not
+    # also a tag in the same hue as the category badges beside it (audit A5).
+    role_label = "Student-led" if is_student else ("Postdoc-led" if is_postdoc else "")
+    tags = '<span class="tag feat">★ Featured</span>' if is_featured else ""
 
     # Badges for every area >= 0.20; the filter key/accent is the argmax area only.
     badges = "".join(f'<span class="badge b-{k}">{_PUB_CAT_LABEL[k]}</span>'
@@ -1206,9 +1227,9 @@ def _generate_paper_card(pub, board=False):
 
     authors_html = _format_authors_html(authors)
     cite_str = f"{cites_comma} citation{'s' if cites_int != 1 else ''}" if cites_int else ""
-    meta = " · ".join(
-        part for part in [authors_html, esc(journal), str(year), cite_str] if part
-    )
+    # byline = who wrote it and how often it has been cited; the year, the venue and my
+    # role are the card's metadata line above the title.
+    meta = " · ".join(part for part in [authors_html, cite_str] if part)
 
     abstract_html = ""
     if board and pub.get("abstract"):
@@ -1221,6 +1242,7 @@ def _generate_paper_card(pub, board=False):
         f'<article class="{cls}"{lv} data-cat="{catkey}" data-year="{year}" '
         f'data-num="{cites_int}" data-title="{attr_esc(title)}" '
         f'data-search="{attr_esc(title + " " + " ".join(authors))}">'
+        f'{card_meta(str(year), _venue_short(pub), (role_label, True))}'
         f'<h3 class="paper-title">{title_html}</h3>'
         f'<div class="paper-meta">{meta}</div>'
         f'<div class="paper-badges">{tags}{badges}'
@@ -1247,6 +1269,27 @@ _BIBCODE_JOURNALS = {
 }
 
 
+# Bibcode journal code -> the short venue the card's metadata line prints. Codes not
+# listed here (or papers with no bibcode) fall back to _venue()'s full journal name.
+_VENUE_SHORT = {
+    "ApJ": "ApJ", "ApJS": "ApJS", "ApJL": "ApJL", "AJ": "AJ", "MNRAS": "MNRAS",
+    "A&A": "A&A", "PASJ": "PASJ", "PASP": "PASP", "JCAP": "JCAP", "OJAp": "OJAp",
+    "BAAS": "BAAS", "arXiv": "arXiv", "Natur": "Nature", "NatAs": "Nature Astron.",
+    "PhRvD": "Phys. Rev. D", "PhDT": "PhD thesis",
+}
+
+
+def _venue_short(pub):
+    """Compact venue for a card's metadata line: the bibcode's journal code when it is
+    a familiar abbreviation, else the full journal name _venue() already derives."""
+    bibcode = str(pub.get("bibcode") or "")
+    if len(bibcode) >= 9:
+        short = _VENUE_SHORT.get(bibcode[4:9].strip("."))
+        if short:
+            return short
+    return _venue(pub)
+
+
 def _venue(pub):
     """Display venue: the stored journal, else derived from the bibcode journal code."""
     journal = (pub.get("journal") or "").strip()
@@ -1256,6 +1299,90 @@ def _venue(pub):
     if len(bibcode) >= 9:
         return _BIBCODE_JOURNALS.get(bibcode[4:9].strip("."), "")
     return ""
+
+
+# ---------------------------------------------------------------------------
+# Publication figures
+#
+# Every figure is HTML first: the axis ticks, the legend keys and the direct
+# labels are real HTML text laid out in a CSS grid AROUND the plot box, so they
+# never scale with the drawing. (When the whole chart was one viewBox-scaled SVG,
+# the 11px axis type rendered at 6.6px on a 1440 desktop and 3.9px on a phone —
+# audit A4.) Only geometry lives inside .pf-plot: bars, dots, gridlines and hit
+# targets as positioned HTML, and line/area paths in a stretched
+# <svg preserveAspectRatio="none"> whose strokes are non-scaling.
+#
+# The per-year hit targets are tab stops carrying an aria-label (and a data-tip
+# for the visual tooltip in pubchart.js). They deliberately do NOT carry
+# role="img": that role marks an atomic, non-interactive graphic, which
+# contradicts a tab stop (D21). The chart root stays role="group" + aria-label,
+# the correct container role for a graphic that holds focusable children.
+# ---------------------------------------------------------------------------
+
+def _n(v):
+    """Compact number for an inline style/coordinate (no trailing zeros)."""
+    return f"{v:.2f}".rstrip("0").rstrip(".") or "0"
+
+
+def _tip(text):
+    """A focusable, hoverable hit target's shared attributes."""
+    t = esc(text).replace('"', "&quot;")
+    return f'tabindex="0" aria-label="{t}" data-tip="{t}"'
+
+
+def _pf_grid(ticks, yp):
+    """Copper dotted silkscreen gridlines at the given values."""
+    return "".join(f'<span class="pf-gl" style="top:{_n(yp(t))}%"></span>'
+                   for t in ticks if t > 0)
+
+
+def _pf_yticks(ticks, yp, fmt="{:,}"):
+    return "".join(f'<span class="pf-yt" style="top:{_n(yp(t))}%">{fmt.format(t)}</span>'
+                   for t in ticks if t > 0)
+
+
+def _pf_xticks(items):
+    """items: [(x%, label)]. Every label is centred on its own tick — the end ones
+    overflow into the axis gutter / the card's padding rather than being clamped to
+    the plot edge, which would shift them into their neighbour."""
+    return "".join(f'<span class="pf-xt" style="left:{_n(x)}%">{label}</span>'
+                   for x, label in items)
+
+
+def _pf_chart(plot, yticks="", xticks="", legend="", aria="", cls="", ycol=5, rcol=0):
+    """The chart frame: a grid of [y-axis | plot | legend] over [_ | x-axis].
+
+    ycol/rcol are widths in mono characters, so the axis gutter follows the tick
+    text at whatever size the breakpoint renders it.
+    """
+    style = f"--pf-yc:{ycol}"
+    if rcol:
+        style += f";--pf-rc:{rcol}"
+    aria_attr = f' role="group" aria-label="{esc(aria)}"' if aria else ""
+    return (
+        f'<div class="pf-chart{cls}" style="{style}"{aria_attr}>'
+        f'<div class="pf-y">{yticks}</div>'
+        f'<div class="pf-plot">{plot}<span class="pf-base"></span></div>'
+        f'<div class="pf-x">{xticks}</div>'
+        f'<div class="pf-leg">{legend}</div>'
+        '</div>'
+    )
+
+
+def _spread(tops, gap):
+    """Push overlapping direct labels apart, keeping their order and staying inside
+    0-100%. tops is a list of (index, top%) sorted by top."""
+    out = list(tops)
+    for i in range(1, len(out)):
+        if out[i][1] - out[i - 1][1] < gap:
+            out[i] = (out[i][0], out[i - 1][1] + gap)
+    overflow = out[-1][1] - 100 if out and out[-1][1] > 100 else 0
+    if overflow:
+        for i in range(len(out) - 1, -1, -1):
+            out[i] = (out[i][0], out[i][1] - overflow)
+            if i and out[i][1] - out[i - 1][1] >= gap:
+                break
+    return dict(out)
 
 
 _ROLE_META = [
@@ -1274,17 +1401,13 @@ def _nice_ticks(maxv, target=4):
     return list(range(0, math.ceil(maxv) + step, step))
 
 
-# The per-year / per-bar hit rects below are tab stops carrying an aria-label (and a
-# data-tip for the visual tooltip in pubchart.js). They deliberately do NOT carry
-# role="img": that role marks an atomic, non-interactive graphic, which contradicts a
-# tab stop (D21). The <svg> root stays role="group" + aria-label, which is the correct
-# container role for a graphic that holds focusable children.
 def _roles_svg(pubs):
-    """Hand-rolled, theme-aware, accessible inline SVG: publications/year by role.
+    """Publications per year, stacked by my authorship role.
 
-    Each segment carries data-tip (styled JS tooltip on hover); each year has a
-    focusable transparent overlay with an aria-label summary (keyboard + screen
-    reader). Colors come from CSS classes so one SVG adapts to both themes.
+    The five roles are not research areas, so they take a neutral lightness ramp
+    (--role-*) plus a per-role hatch: the stack still separates in greyscale and
+    the legend swatches carry the same fill+hatch, so nothing is keyed by colour
+    alone (audit A2/A3). Each year is one focusable hit target.
     """
     from collections import defaultdict, Counter
     by_year = defaultdict(Counter)
@@ -1296,94 +1419,94 @@ def _roles_svg(pubs):
         return ""
     years = list(range(min(by_year), max(by_year) + 1))
     maxstack = max((sum(by_year[y].values()) for y in years), default=1)
-    ticks = _nice_ticks(maxstack)
-    scale = max(maxstack, ticks[-1])
+    # Headroom is a fixed 12%, and gridlines above the data are dropped, so a bar
+    # chart never sits in the bottom two thirds of its own plot.
+    ticks = _nice_ticks(maxstack, 5)
+    scale = maxstack * 1.12
+    ticks = [t for t in ticks if t <= scale]
+    n = len(years)
+    slot = 100 / n
+    yp = lambda v: (1 - v / scale) * 100
 
-    esc_attr = lambda x: esc(x).replace('"', "&quot;")
-    W, H, ml, mr, mt, mb = 820, 300, 46, 14, 40, 30
-    pw, ph, n = W - ml - mr, H - mt - mb, len(years)
-    bw = pw / n * 0.64
-    xc = lambda i: ml + (i + 0.5) * pw / n
-    yv = lambda v: mt + ph - (v / scale) * ph
-
-    s = [f'<svg class="pf-svg" viewBox="0 0 {W} {H}" role="group" '
-         f'aria-label="Publications per year by my authorship role" preserveAspectRatio="xMinYMin meet">']
-    for t in ticks:
-        s.append(f'<line class="pf-grid" x1="{ml}" y1="{yv(t):.1f}" x2="{W - mr}" y2="{yv(t):.1f}"/>')
-        s.append(f'<text class="pf-axis" x="{ml - 6}" y="{yv(t) + 3:.1f}" text-anchor="end">{t}</text>')
+    plot = [_pf_grid(ticks, yp)]
     for i, y in enumerate(years):
         col = by_year[y]
-        base = 0
-        for key, label in _ROLE_META:
-            v = col.get(key, 0)
-            if not v:
-                continue
-            y1, h = yv(base + v), (yv(base) - yv(base + v))
-            tip = f"{y} · {label}: {v} publication" + ("s" if v != 1 else "")
-            s.append(f'<rect class="pf-seg seg-{key}" x="{xc(i) - bw / 2:.1f}" y="{y1:.1f}" '
-                     f'width="{bw:.1f}" height="{h:.1f}" data-tip="{esc_attr(tip)}"/>')
-            base += v
-        if base:
+        total = sum(col.values())
+        left = i * slot + slot * 0.18
+        width = slot * 0.64
+        if total:
+            segs = "".join(
+                f'<i class="pf-seg seg-{key}" style="height:{_n(col[key] / total * 100)}%"></i>'
+                for key, _ in _ROLE_META if col.get(key)
+            )
+            plot.append(f'<span class="pf-bar" style="left:{_n(left)}%;width:{_n(width)}%;'
+                        f'height:{_n(100 - yp(total))}%">{segs}</span>')
             parts = ", ".join(f"{col[k]} {lab.lower()}" for k, lab in _ROLE_META if col.get(k))
-            summ = f"{y}: {base} publication" + ("s" if base != 1 else "") + f" — {parts}"
-            s.append(f'<rect class="pf-col" x="{xc(i) - bw / 2 - 2:.1f}" y="{mt}" width="{bw + 4:.1f}" '
-                     f'height="{ph}" tabindex="0" aria-label="{esc_attr(summ)}" data-tip="{esc_attr(summ)}"/>')
-        if y % 2 == 0:
-            s.append(f'<text class="pf-axis" x="{xc(i):.1f}" y="{H - mb + 16}" text-anchor="middle">{y}</text>')
-    lx = ml
-    for key, label in _ROLE_META:
-        s.append(f'<rect class="pf-sw seg-{key}" x="{lx:.0f}" y="14" width="10" height="10" rx="2"/>')
-        s.append(f'<text class="pf-legend" x="{lx + 14:.0f}" y="23">{label}</text>')
-        lx += 14 + len(label) * 6.4 + 16
-    s.append("</svg>")
-    return "".join(s)
+            summ = f"{y}: {total} publication" + ("s" if total != 1 else "") + f" — {parts}"
+            plot.append(f'<span class="pf-col" style="left:{_n(i * slot)}%;width:{_n(slot)}%" '
+                        f'{_tip(summ)}></span>')
+    xt = [(i * slot + slot / 2, str(y)) for i, y in enumerate(years) if y % 2 == 0]
+    legend = "".join(f'<span class="pf-key"><i class="pf-kw seg-{key}"></i>{label}</span>'
+                     for key, label in _ROLE_META)
+    return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt),
+                     legend=legend, ycol=3,
+                     aria="Publications per year by my authorship role")
 
 
 def _citations_svg(metrics):
-    """Inline SVG: citations received per year (√ scale), with per-year hover/focus bands."""
+    """Citations received per year — one cat-ic series on a linear scale, with the
+    latest complete year lit as an energy star and labelled directly, so the peak
+    is read off the mark rather than off a legend."""
     cpy = {int(y): v for y, v in (metrics.get("citationsPerYear") or {}).items()}
     if not cpy:
         return ""
     cur = max(cpy)
     years = [y for y in sorted(cpy) if y < cur] or sorted(cpy)
     vmax = max(cpy[y] for y in years)
-    ticks = [t for t in (100, 500, 1000, 2000, 3000, 5000) if t <= vmax * 1.05] or [vmax]
-    smax = math.sqrt(max(vmax, ticks[-1])) * 1.06
-    W, H, ml, mr, mt, mb = 820, 290, 52, 14, 18, 30
-    pw, ph, n = W - ml - mr, H - mt - mb, len(years)
-    xc = lambda i: ml + (i * pw / (n - 1) if n > 1 else pw / 2)
-    yv = lambda v: mt + ph - (math.sqrt(max(v, 0)) / smax) * ph
-    esc_attr = lambda x: esc(x).replace('"', "&quot;")
-    s = [f'<svg class="pf-svg" viewBox="0 0 {W} {H}" role="group" aria-label="Citations received per year" preserveAspectRatio="xMinYMin meet">']
-    for t in ticks:
-        s.append(f'<line class="pf-grid" x1="{ml}" y1="{yv(t):.1f}" x2="{W - mr}" y2="{yv(t):.1f}"/>')
-        s.append(f'<text class="pf-axis" x="{ml - 6}" y="{yv(t) + 3:.1f}" text-anchor="end">{t:,}</text>')
-    pts = [(xc(i), yv(cpy[y])) for i, y in enumerate(years)]
-    area = f"M{pts[0][0]:.1f},{mt + ph:.1f} " + " ".join(f"L{x:.1f},{y:.1f}" for x, y in pts) + f" L{pts[-1][0]:.1f},{mt + ph:.1f} Z"
-    s.append(f'<path class="pf-area" d="{area}"/>')
-    s.append('<path class="pf-cit-line" d="M' + " L".join(f"{x:.1f},{y:.1f}" for x, y in pts) + '"/>')
-    for x, y in pts:
-        s.append(f'<circle class="pf-dot" cx="{x:.1f}" cy="{y:.1f}" r="3"/>')
+    ticks = [t for t in _nice_ticks(vmax, 5) if t <= vmax * 1.12]
+    scale = vmax * 1.12
+    n = len(years)
+    xp = lambda i: (i / (n - 1) * 100) if n > 1 else 50
+    yp = lambda v: (1 - v / scale) * 100
+    pts = [(xp(i), yp(cpy[y])) for i, y in enumerate(years)]
+
+    line = " ".join(f"{'M' if i == 0 else 'L'}{_n(x)},{_n(y)}" for i, (x, y) in enumerate(pts))
+    area = f"M{_n(pts[0][0])},100 " + " ".join(f"L{_n(x)},{_n(y)}" for x, y in pts) + \
+           f" L{_n(pts[-1][0])},100 Z"
+    plot = [_pf_grid(ticks, yp),
+            '<svg class="pf-geo" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'
+            f'<path class="pf-area" d="{area}"/>'
+            f'<path class="pf-cit-line" d="{line}" vector-effect="non-scaling-stroke"/>'
+            '</svg>']
+    for x, y in pts[:-1]:
+        plot.append(f'<span class="pf-pt" style="left:{_n(x)}%;top:{_n(y)}%"></span>')
+    lx, ly = pts[-1]
+    plot.append(f'<svg class="pf-star" style="left:{_n(lx)}%;top:{_n(ly)}%" aria-hidden="true" '
+                'focusable="false"><use href="#star4"/></svg>')
+    plot.append(f'<span class="pf-dl" style="right:2px;top:{_n(ly)}%">'
+                f'{cpy[years[-1]]:,} in {years[-1]}</span>')
+    step = 100 / (n - 1) if n > 1 else 100
     for i, y in enumerate(years):
-        if y % 2 == 0:
-            s.append(f'<text class="pf-axis" x="{xc(i):.1f}" y="{H - mb + 16}" text-anchor="middle">{y}</text>')
-    step = pw / (n - 1) if n > 1 else pw
-    for i, y in enumerate(years):
-        tip = f"{y}: {cpy[y]:,} citations"
-        s.append(f'<rect class="pf-band" x="{xc(i) - step / 2:.1f}" y="{mt}" width="{step:.1f}" height="{ph}" '
-                 f'tabindex="0" aria-label="{esc_attr(tip)}" data-tip="{esc_attr(tip)}"/>')
-    s.append("</svg>")
-    return "".join(s)
+        left = max(0, xp(i) - step / 2)
+        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;'
+                    f'width:{_n(min(step, 100 - left))}%" {_tip(f"{y}: {cpy[y]:,} citations")}></span>')
+    xt = [(xp(i), str(y)) for i, y in enumerate(years) if y % 2 == 0]
+    return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt), ycol=5,
+                     aria="Citations received per year")
 
 
+# RIQ series: (key, right-edge label). The typical-range band bounds (audit A14).
 _RIQ_SERIES = [
-    ("all", "All papers"), ("primary", "Primary author"),
+    ("all", "All papers"), ("primary", "Primary"),
     ("significant", "Contributor"), ("student", "Student-led"), ("postdoc", "Postdoc-led"),
 ]
+_RIQ_BAND = (60, 150)
 
 
 def _riq_svg(metrics):
-    """Inline SVG: RIQ over time by authorship role, with the typical-range band."""
+    """RIQ over time by authorship role. Five series in the neutral role ramp, each
+    with its own dash pattern and a direct label at the right edge carrying its last
+    plotted value — no swatch legend, and the typical-range band prints its bounds."""
     riq = metrics.get("riqByCategory") or {}
     data = {}
     for key, _ in _RIQ_SERIES:
@@ -1397,57 +1520,60 @@ def _riq_svg(metrics):
     if not years:
         return ""
     vmax = max((v for pts in data.values() for _, v in pts), default=1)
-    ticks = _nice_ticks(vmax)
-    smax = max(vmax, ticks[-1]) * 1.06
-    W, H, ml, mr, mt, mb = 820, 300, 46, 14, 40, 30
-    pw, ph = W - ml - mr, H - mt - mb
+    ticks = [t for t in _nice_ticks(vmax, 5) if t <= vmax * 1.12]
+    scale = vmax * 1.12
     y0, y1 = years[0], years[-1]
-    xc = lambda yr: ml + ((yr - y0) / (y1 - y0) * pw if y1 > y0 else pw / 2)
-    yv = lambda v: mt + ph - (v / smax) * ph
-    esc_attr = lambda x: esc(x).replace('"', "&quot;")
-    s = [f'<svg class="pf-svg" viewBox="0 0 {W} {H}" role="group" aria-label="Research Impact Quotient over time by authorship role" preserveAspectRatio="xMinYMin meet">']
-    s.append(f'<rect class="pf-band-typ" x="{ml}" y="{yv(150):.1f}" width="{pw:.1f}" height="{yv(60) - yv(150):.1f}"/>')
-    s.append(f'<line class="pf-mean" x1="{ml}" y1="{yv(100):.1f}" x2="{W - mr}" y2="{yv(100):.1f}"/>')
-    s.append(f'<text class="pf-axis" x="{ml + 4}" y="{yv(100) - 4:.1f}">typical range</text>')
-    for t in ticks:
-        s.append(f'<line class="pf-grid" x1="{ml}" y1="{yv(t):.1f}" x2="{W - mr}" y2="{yv(t):.1f}"/>')
-        s.append(f'<text class="pf-axis" x="{ml - 6}" y="{yv(t) + 3:.1f}" text-anchor="end">{t}</text>')
+    xp = lambda yr: ((yr - y0) / (y1 - y0) * 100) if y1 > y0 else 50
+    yp = lambda v: (1 - v / scale) * 100
+
+    lo, hi = _RIQ_BAND
+    plot = [f'<span class="pf-band-typ" style="top:{_n(yp(hi))}%;height:{_n(yp(lo) - yp(hi))}%">'
+            f'<i>Typical range {lo}–{hi}</i></span>',
+            f'<span class="pf-mean" style="top:{_n(yp(100))}%"></span>',
+            _pf_grid(ticks, yp)]
+    paths = []
     for key, _ in _RIQ_SERIES:
         pts = data[key]
         if len(pts) < 2:
             continue
-        s.append(f'<path class="pf-ln ln-{key}" d="M' + " L".join(f"{xc(yr):.1f},{yv(v):.1f}" for yr, v in pts) + '"/>')
+        d = " ".join(f"{'M' if i == 0 else 'L'}{_n(xp(yr))},{_n(yp(v))}"
+                     for i, (yr, v) in enumerate(pts))
+        paths.append(f'<path class="pf-ln ln-{key}" d="{d}" vector-effect="non-scaling-stroke"/>')
+    plot.append('<svg class="pf-geo" viewBox="0 0 100 100" preserveAspectRatio="none" '
+                f'aria-hidden="true">{"".join(paths)}</svg>')
+    step = 100 / (len(years) - 1) if len(years) > 1 else 100
     for yr in years:
-        if yr % 2 == 0:
-            s.append(f'<text class="pf-axis" x="{xc(yr):.1f}" y="{H - mb + 16}" text-anchor="middle">{yr}</text>')
-    step = pw / (len(years) - 1) if len(years) > 1 else pw
-    for yr in years:
-        bits = []
-        for key, label in _RIQ_SERIES:
-            dy = {y: v for y, v in data[key]}
-            if yr in dy:
-                bits.append(f"{label} {round(dy[yr])}")
+        bits = [f"{label} {round(dict(data[key])[yr])}"
+                for key, label in _RIQ_SERIES if yr in dict(data[key])]
         if not bits:
             continue
-        tip = f"{yr} — " + " · ".join(bits)
-        s.append(f'<rect class="pf-band" x="{xc(yr) - step / 2:.1f}" y="{mt}" width="{step:.1f}" height="{ph}" '
-                 f'tabindex="0" aria-label="{esc_attr(tip)}" data-tip="{esc_attr(tip)}"/>')
-    lx = ml
-    for key, label in _RIQ_SERIES:
-        cur = (riq.get(key) or {}).get("current")
-        lab = f"{label} ({cur})" if cur is not None else label
-        s.append(f'<rect class="pf-sw seg-{key}" x="{lx:.0f}" y="14" width="10" height="10" rx="2"/>')
-        s.append(f'<text class="pf-legend" x="{lx + 14:.0f}" y="23">{lab}</text>')
-        lx += 14 + len(lab) * 6.2 + 16
-    s.append("</svg>")
-    return "".join(s)
+        left = max(0, xp(yr) - step / 2)
+        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;width:{_n(min(step, 100 - left))}%" '
+                    f'{_tip(f"{yr} — " + " · ".join(bits))}></span>')
+    xt = [(xp(yr), str(yr)) for yr in years if yr % 2 == 0]
+
+    # direct labels at the right edge, nudged apart so no two overlap
+    ends = [(key, label, data[key][-1][1]) for key, label in _RIQ_SERIES if data[key]]
+    order = sorted(range(len(ends)), key=lambda i: yp(ends[i][2]))
+    spread = _spread([(i, yp(ends[i][2])) for i in order], 8.0)
+    legend = "".join(
+        f'<span class="pf-rl ln-{ends[i][0]}" style="--y:{_n(spread[i])}%">'
+        f'<b>{round(ends[i][2]):,}</b> {ends[i][1]}</span>'
+        for i in range(len(ends))
+    )
+    rcol = max(len(f"{round(v):,} {label}") for _, label, v in ends) + 2
+    return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt), legend=legend,
+                     cls=" has-r", ycol=3, rcol=rcol,
+                     aria="Research Impact Quotient over time by authorship role")
 
 
 def _mix_svg(pubs):
-    """Inline SVG: a full-width 100% horizontal bar of research mix (by area)."""
+    """Research mix: one hard-segmented 100% bar, each share labelled INSIDE its own
+    segment (the old detached legend put "Interpretability 21%" inside the Discovery
+    segment — audit A12). Shares come from percent_shares(), so they total 100."""
     from collections import defaultdict
-    # (full name, key, short legend label)
-    areas = [("Statistical Learning & AI", "sla", "Statistical Learning"),
+    # (full name, key, short label)
+    areas = [("Statistical Learning & AI", "sla", "Stat. learning"),
              ("Interpretability & Insight", "ii", "Interpretability"),
              ("Inference & Computation", "ic", "Inference"),
              ("Discovery & Understanding", "du", "Discovery")]
@@ -1462,28 +1588,22 @@ def _mix_svg(pubs):
     grand = sum(agg.values())
     if grand <= 0:
         return ""
-    fr = sorted(((key, name, short, agg[name] / grand) for name, key, short in areas), key=lambda r: -r[3])
-    # Whole-number shares that always total 100 (independent rounding can read 101%).
+    fr = sorted(((key, name, short, agg[name] / grand) for name, key, short in areas),
+                key=lambda r: -r[3])
     pcts = percent_shares([row[3] for row in fr])
-    esc_attr = lambda x: esc(x).replace('"', "&quot;")
-    W, H, bx0, bx1, by, bh = 820, 62, 2, 818, 6, 30
-    bw = bx1 - bx0
-    s = [f'<svg class="pf-svg pf-mix" viewBox="0 0 {W} {H}" role="group" aria-label="Research mix: share of work by area" preserveAspectRatio="xMinYMin meet">']
-    x = bx0
-    for (key, name, short, frac), pct in zip(fr, pcts):
-        w = frac * bw
+
+    segs, keys = [], []
+    for (key, name, short, _frac), pct in zip(fr, pcts):
         tip = f"{name}: {pct}% of classified output"
-        s.append(f'<rect class="mix-seg mix-{key}" x="{x:.1f}" y="{by}" width="{max(0, w - 2):.1f}" height="{bh}" rx="3" '
-                 f'tabindex="0" aria-label="{esc_attr(tip)}" data-tip="{esc_attr(tip)}"/>')
-        x += w
-    lx, ly = bx0, H - 7
-    for (key, name, short, frac), pct in zip(fr, pcts):
-        label = f"{short} {pct}%"
-        s.append(f'<circle class="mix-dot mix-{key}" cx="{lx + 4:.0f}" cy="{ly - 4:.0f}" r="4"/>')
-        s.append(f'<text class="pf-legend" x="{lx + 13:.0f}" y="{ly:.0f}">{esc(label)}</text>')
-        lx += 13 + len(label) * 6.3 + 20
-    s.append("</svg>")
-    return "".join(s)
+        # Below ~10% a segment is too narrow to hold its own name; it keeps the
+        # percentage inside and leans on the key line for the area.
+        inner = (f'<b>{esc(short)}</b><i>{pct}%</i>' if pct >= 10 else f'<i>{pct}%</i>')
+        segs.append(f'<span class="mix-seg mix-{key}" style="flex:{pct}" {_tip(tip)}>{inner}</span>')
+        keys.append(f'<span class="pf-key"><i class="pf-kw mix-{key}"></i>{esc(short)} {pct}%</span>')
+    total_txt = ", ".join(f"{short} {pct}%" for (_k, _n_, short, _f), pct in zip(fr, pcts))
+    return (f'<div class="pf-mix" role="group" aria-label="Research mix: {esc(total_txt)}">'
+            f'{"".join(segs)}</div>'
+            f'<div class="pf-leg pf-leg-mix" aria-hidden="true">{"".join(keys)}</div>')
 
 
 # Authorship dashboard tiles: (role key in publications_data + content.json libraries, label)
@@ -1576,13 +1696,11 @@ def generate_publications_redesign(data):
         f'{prof_links}</div>'
     ) if prof_links else ""
     cpy = {int(y): v for y, v in metrics.get("citationsPerYear", {}).items()}
-    peak_txt = f"{total_citations:,} total (ADS + Google Scholar)"
+    # The peak is a direct label on the mark now, and the scale is plain linear, so the
+    # head carries only the total, its provenance and the year the chart leaves out.
+    peak_txt = f"{total_citations:,} total · ADS + Google Scholar"
     if cpy:
-        cur = max(cpy)
-        complete = {y: v for y, v in cpy.items() if y < cur} or cpy
-        py = max(complete, key=complete.get)
-        peak_txt = (f"{total_citations:,} total (ADS + Google Scholar) · "
-                    f"peak {complete[py]:,} in {py} · √ scale")
+        peak_txt += f" · {max(cpy)} partial, omitted"
 
     def _fig(title, meta, svg, wide=False):
         cls = "pub-fig wide" if wide else "pub-fig"
@@ -1605,11 +1723,11 @@ def generate_publications_redesign(data):
         'summarize the record a few ways. <strong>Research '
         'mix</strong> shows what the work is about, weighting each paper by its classification across the four '
         'areas. The <strong>role breakdowns</strong> separate work led as primary author from work led by '
-        'postdocs, students, and larger collaborations. (Citations use a square-root scale so the '
-        'early years stay legible; the current partial year is omitted.) <strong>RIQ</strong> '
+        'postdocs, students, and larger collaborations — each with its own shade and hatch, so they '
+        'separate without relying on colour. <strong>RIQ</strong> '
         '(Research Impact Quotient) normalizes citation impact by career length — roughly √(total citations) ÷ '
         'years active — so impact compares fairly across career stages instead of just growing with time; the '
-        'shaded band is the typical range for established astronomers '
+        'shaded band is the 60–150 typical range for established astronomers '
         '(<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" rel="noopener">Pepe &amp; Kurtz 2012</a>).</p>'
     )
 

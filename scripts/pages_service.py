@@ -32,8 +32,8 @@ with no visible cards produce no chip. Each category declares its
 accent colour class in content.json (see .item.accent-<accent> / .d-<accent> in
 redesign.css); the filter-chip key is still the slugified title.
 """
-from pages_shared import (accent_class, attr_esc, esc, period_end_year, scaffold, slug as _slug,
-                          strip_tags as _strip_tags, warn)
+from pages_shared import (accent_class, attr_esc, card_meta, esc, period_end_year, scaffold,
+                          slug as _slug, strip_tags as _strip_tags, warn)
 
 
 def _period_text(pos):
@@ -104,19 +104,19 @@ def generate_content(data):
         for title, byline, period, note in cards:
             search_src = " ".join(_strip_tags(x) for x in (title, byline, period, note, cat_title)).strip()
             year = period_end_year(period)
-            when_html = f'<span class="item-when">{esc(period)}</span>' if period else ""
             meta_html = f'<p class="item-meta">{esc(byline)}</p>' if byline else ""
             note_html = f'<p class="item-sub">{esc(note)}</p>' if note else ""
+            # The period and the kind of service place the role, so they lead the card
+            # as its metadata line rather than sitting in a date slot and a badge.
             items_html.append(
                 f'<article class="item accent-{accent}" data-lv-item '
                 f'data-cat="{attr_esc(cat_slug)}" '
                 f'data-search="{attr_esc(search_src)}" '
                 f'data-year="{year}" data-num="{year}" '
                 f'data-title="{attr_esc(_strip_tags(title))}">'
-                f'<div class="item-head"><h3 class="item-title">{esc(title)}</h3>{when_html}</div>'
+                f'{card_meta(period, (cat_title, True))}'
+                f'<div class="item-head"><h3 class="item-title">{esc(title)}</h3></div>'
                 f'{meta_html}{note_html}'
-                f'<div class="item-tags"><span class="badge talk-badge">'
-                f'<span class="dot d-{accent}"></span>{esc(cat_title)}</span></div>'
                 f'</article>'
             )
             total += 1
