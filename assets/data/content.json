@@ -1767,7 +1767,8 @@
                             "location": "Pittsburgh, USA",
                             "date": "May 2026",
                             "year": 2026,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://www.cmu.edu/dietrich/statistics-datascience/stamps/workshop/schedule.html"
                         },
                         {
                             "featured": true,
@@ -1776,7 +1777,8 @@
                             "location": "Baltimore, USA",
                             "date": "Mar 2026",
                             "year": 2026,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://www.stsci.edu/files/live/sites/www/files/home/events/event-assets/2026/_documents/2026-workshop-language-agenda"
                         },
                         {
                             "title": "Astro-Statistical Learning and Uncertainty Quantification",
@@ -1784,7 +1786,8 @@
                             "location": "London, UK",
                             "date": "Dec 2025",
                             "year": 2025,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://www.cmstatistics.org/CFECMStatistics2025/fullprogramme.php"
                         },
                         {
                             "featured": true,
@@ -1793,7 +1796,8 @@
                             "location": "Toronto, Canada",
                             "date": "Sep 2025",
                             "year": 2025,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://raducraiu.com/the-fast-and-curious-ii-mcmc-in-action/"
                         },
                         {
                             "title": "Bayesian Parameter Estimation and Model Selection Problems in Astrophysics",
@@ -1809,7 +1813,8 @@
                             "location": "Cambridge, MA",
                             "date": "Jun 2024",
                             "year": 2024,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://astroai.cfa.harvard.edu/workshop2024/abstracts/keynote_talks/speagle.html"
                         },
                         {
                             "title": "Uncertainty and Interpretability in Machine Learning Models",
@@ -1825,7 +1830,8 @@
                             "location": "Virtual",
                             "date": "Jul 2023",
                             "year": 2023,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://www.ipp.mpg.de/maxent2023"
                         },
                         {
                             "title": "Extending Bayesian Modeling Approaches to ML Applications",
@@ -1833,7 +1839,8 @@
                             "location": "State College, PA",
                             "date": "Jun 2023",
                             "year": 2023,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://sites.psu.edu/astrostatistics/scma8-program/"
                         },
                         {
                             "title": "Machine Learning in Astronomy: Possibilities and Pitfall: Incorporating Errors into Machine Learning Methods",
@@ -1841,7 +1848,8 @@
                             "location": "Virtual",
                             "date": "Aug 2022",
                             "year": 2022,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://sites.astro.caltech.edu/IAUS368/WebScheduleP.pdf"
                         },
                         {
                             "title": "An Introduction to (Dynamic) Nested Sampling",
@@ -1849,7 +1857,8 @@
                             "location": "Virtual",
                             "date": "Nov 2021",
                             "year": 2021,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "http://helper.ipam.ucla.edu/publications/gwaws3/gwaws3_17076.pdf"
                         },
                         {
                             "title": "An Introduction to Nested Sampling",
@@ -1857,7 +1866,8 @@
                             "location": "Virtual",
                             "date": "Jul 2021",
                             "year": 2021,
-                            "type": "Keynote Address"
+                            "type": "Keynote Address",
+                            "url": "https://www.ias.surrey.ac.uk/event/towards-a-cross-research-platform-for-hosting-bayesian-data-fitting-tools/"
                         },
                         {
                             "title": "Revealing the Milky Way's Dust-iny",
@@ -1865,7 +1875,8 @@
                             "location": "Cambridge, MA",
                             "date": "Aug 2018",
                             "year": 2018,
-                            "type": "Invited Talk"
+                            "type": "Invited Talk",
+                            "url": "https://cmsa.fas.harvard.edu/2018-big-data/"
                         }
                     ],
                     "accent": "invited"
@@ -1880,7 +1891,8 @@
                             "location": "Cambridge, MA",
                             "date": "Aug 2026",
                             "year": 2026,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://astroai.cfa.harvard.edu/posts/speagle/"
                         },
                         {
                             "title": "A Deep Dive into Data-Driven Astrophysics",
@@ -1904,7 +1916,8 @@
                             "location": "Toronto, ON",
                             "date": "May 2026",
                             "year": 2026,
-                            "type": "Colloquium"
+                            "type": "Colloquium",
+                            "url": "https://ischool.utoronto.ca/event/2nd-colloquium-on-applications-of-ai/"
                         },
                         {
                             "title": "Learning and Doing Physics and Astronomy in the Age of AI",
@@ -1945,7 +1958,8 @@
                             "location": "Berkeley, CA",
                             "date": "Oct 2025",
                             "year": 2025,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://bidmap.berkeley.edu/seminars/josh-speagle-conceptual-introduction-deep-learning"
                         },
                         {
                             "title": "A Conceptual Introduction to Deep Learning",
@@ -1961,7 +1975,8 @@
                             "location": "Stanford, CA",
                             "date": "Apr 2025",
                             "year": 2025,
-                            "type": "Colloquium"
+                            "type": "Colloquium",
+                            "url": "https://kipac.stanford.edu/events/astrophysics-colloquium/human-why-should-i-believe-you-ai-because-i-am-astrophysics"
                         },
                         {
                             "title": "Q: Why should I believe you? A: Because I am an Astrophysics Foundation Model",
@@ -1969,7 +1984,8 @@
                             "location": "New York, NY",
                             "date": "Mar 2025",
                             "year": 2025,
-                            "type": "Colloquium"
+                            "type": "Colloquium",
+                            "url": "https://www.simonsfoundation.org/event/joshuaspeagle/"
                         },
                         {
                             "title": "Trust Me, I am an Astrophysics Foundation Model",
@@ -1977,7 +1993,8 @@
                             "location": "Beijing, China",
                             "date": "Dec 2024",
                             "year": 2024,
-                            "type": "Colloquium"
+                            "type": "Colloquium",
+                            "url": "https://calendar.astro.tsinghua.edu.cn/index/Colloquium/17.htm"
                         },
                         {
                             "title": "I Spy with my (Little?) AI: Applications of Statistical Learning in Modern Astrophysics",
@@ -1985,7 +2002,8 @@
                             "location": "Columbus, OH",
                             "date": "Mar 2024",
                             "year": 2024,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://astronomy.osu.edu/events/ccapp-seminar-josh-speagle-u-toronto"
                         },
                         {
                             "title": "Nested Sampling: Past, Present, & Future",
@@ -1993,7 +2011,8 @@
                             "location": "Guelph, ON",
                             "date": "Oct 2023",
                             "year": 2023,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://mathstat.uoguelph.ca/node/569"
                         },
                         {
                             "title": "Astrostatistical Thinking in Machine Learning Applications",
@@ -2001,7 +2020,8 @@
                             "location": "Montreal, QC",
                             "date": "Oct 2023",
                             "year": 2023,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://www.craq-astro.ca/activities/colloquia-and-seminars/?lang=en"
                         },
                         {
                             "title": "Nested Sampling: Past, Present, and Future",
@@ -2049,7 +2069,8 @@
                             "location": "Waterloo, ON",
                             "date": "Feb 2023",
                             "year": 2023,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://uwaterloo.ca/astrophysics-centre/events/astro-seminar-series-josh-speagle"
                         },
                         {
                             "title": "Galaxy Evolution through the Eyes of the Milky Way",
@@ -2089,7 +2110,8 @@
                             "location": "Virtual",
                             "date": "Apr 2022",
                             "year": 2022,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://www.youtube.com/watch?v=PvUsDBGlyGg"
                         },
                         {
                             "title": "Statistical Challenges in Stellar Parameter Estimation from Theory and Data",
@@ -2097,7 +2119,8 @@
                             "location": "Virtual",
                             "date": "Apr 2022",
                             "year": 2022,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://researchseminars.org/seminar/Astrostats"
                         },
                         {
                             "title": "An Introduction to (Dynamic) Nested Sampling",
@@ -2113,7 +2136,8 @@
                             "location": "Toronto, ON",
                             "date": "Oct 2021",
                             "year": 2021,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://rohanalexander.com/tdw.html"
                         },
                         {
                             "title": "Mapping the Milky Way with Stars and Dust",
@@ -2129,7 +2153,8 @@
                             "location": "Chicago, IL",
                             "date": "Apr 2021",
                             "year": 2021,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://kicpseminar.github.io/"
                         },
                         {
                             "title": "Mapping the Milky Way in the Age of Gaia",
@@ -2137,7 +2162,8 @@
                             "location": "Virtual",
                             "date": "Feb 2021",
                             "year": 2021,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://canssiontario.utoronto.ca/event/data-science-ares-joshua_speagle/"
                         },
                         {
                             "title": "Enabling Data-Driven Discovery in the Milky Way and Beyond Using Large Astronomical Datasets",
@@ -2185,7 +2211,8 @@
                             "location": "Cambridge, MA",
                             "date": "Sep 2017",
                             "year": 2017,
-                            "type": "Seminar"
+                            "type": "Seminar",
+                            "url": "https://hea-www.cfa.harvard.edu/AstroStat/CHASC_1718/index.html"
                         },
                         {
                             "title": "Mapping, Visualizing, and Exploiting the Color-Redshift Relation",
@@ -2216,7 +2243,8 @@
                             "location": "Boston, MA",
                             "date": "Aug 2026",
                             "year": 2026,
-                            "type": "Topic-Contributed Paper Session"
+                            "type": "Topic-Contributed Paper Session",
+                            "url": "https://ww2.amstat.org/meetings/jsm/2026/onlineprogram/person.cfm?id=19374"
                         },
                         {
                             "title": "Data-Driven Stellar Abundances from All The Spectra",
@@ -2224,7 +2252,8 @@
                             "location": "Toronto, ON",
                             "date": "Jul 2026",
                             "year": 2026,
-                            "type": "Contributed Talk"
+                            "type": "Contributed Talk",
+                            "url": "http://www.fields.utoronto.ca/activities/26-27/Nearfieldcosmology"
                         },
                         {
                             "title": "SBI++: Extending Simulation-Based Inference to Censored and Out-of-Distribution Data",
@@ -2232,7 +2261,8 @@
                             "location": "Banff, AB",
                             "date": "Nov 2023",
                             "year": 2023,
-                            "type": "Contributed Talk"
+                            "type": "Contributed Talk",
+                            "url": "https://www.birs.ca/events/2023/5-day-workshops/23w5094/videos/watch/202311020949-Speagle.html"
                         },
                         {
                             "title": "Rapid Stellar Parameter Inference with Probabilistic Machine Learning",
@@ -2280,7 +2310,8 @@
                             "location": "Hamilton, ON",
                             "date": "Aug 2022",
                             "year": 2022,
-                            "type": "Contributed Talk"
+                            "type": "Contributed Talk",
+                            "url": "https://physics.mcmaster.ca/~nguyem50/clusters-2022/program.html"
                         },
                         {
                             "title": "Mapping the Milky Way in 5-D with Big Data",
@@ -2288,7 +2319,8 @@
                             "location": "Washington, DC",
                             "date": "Aug 2022",
                             "year": 2022,
-                            "type": "Invited Paper Session"
+                            "type": "Invited Paper Session",
+                            "url": "https://ww2.amstat.org/meetings/jsm/2022/onlineprogram/AbstractDetails.cfm?abstractid=320588"
                         },
                         {
                             "title": "Machine Learning in the Era of Astronomically Big Data",
@@ -2343,7 +2375,8 @@
                             "location": "Virtual",
                             "date": "Jun 2026",
                             "year": 2026,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://sites.psu.edu/astrostatistics/su26"
                         },
                         {
                             "title": "Nested Sampling: Past, Present, and Future",
@@ -2351,7 +2384,8 @@
                             "location": "Virtual",
                             "date": "Jun 2026",
                             "year": 2026,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://sites.psu.edu/astrostatistics/su26/"
                         },
                         {
                             "title": "Bayesian Inference",
@@ -2367,7 +2401,8 @@
                             "location": "Hamilton, ON",
                             "date": "May 2026",
                             "year": 2026,
-                            "type": "Workshop"
+                            "type": "Workshop",
+                            "url": "https://ssc.ca/en/meeting/annual/workshop/data-science-and-analytics-workshop-1"
                         },
                         {
                             "title": "A Conceptual Introduction to Deep Learning",
@@ -2375,7 +2410,8 @@
                             "location": "Virtual",
                             "date": "Jun 2025",
                             "year": 2025,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://sites.psu.edu/astrostatistics/su25"
                         },
                         {
                             "title": "Nested Sampling: Past, Present, and Future",
@@ -2383,7 +2419,8 @@
                             "location": "Virtual",
                             "date": "Jun 2025",
                             "year": 2025,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://sites.psu.edu/astrostatistics/su25/"
                         },
                         {
                             "title": "Nested Sampling: Past, Present, and Future",
@@ -2391,7 +2428,8 @@
                             "location": "Virtual",
                             "date": "Jun 2024",
                             "year": 2024,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://sites.psu.edu/astrostatistics/su24/"
                         },
                         {
                             "title": "Machine Learning for Star Cluster Science (with Steffani Grondin)",
@@ -2399,7 +2437,8 @@
                             "location": "Garching, Germany",
                             "date": "Sep 2023",
                             "year": 2023,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://www.eso.org/sci/meetings/2023/2inaM/230914_Programme.pdf"
                         },
                         {
                             "title": "Dimensionality Reduction: Applications to Star Cluster Science (with Steffani Grondin)",
@@ -2415,7 +2454,8 @@
                             "location": "Boston, MA",
                             "date": "Aug 2023",
                             "year": 2023,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://github.com/iaifi/summer-school-2023"
                         },
                         {
                             "title": "A Tutorial of (Dynamic) Nested Sampling",
@@ -2423,7 +2463,8 @@
                             "location": "State College, PA",
                             "date": "Jun 2023",
                             "year": 2023,
-                            "type": "Tutorial"
+                            "type": "Tutorial",
+                            "url": "https://sites.psu.edu/astrostatistics/scma8/"
                         },
                         {
                             "title": "Introduction to Bayesian Inference with Linear Regression",
@@ -2446,7 +2487,8 @@
                             "location": "New Orleans, LA",
                             "date": "Dec 2023",
                             "year": 2023,
-                            "type": "Panelist"
+                            "type": "Panelist",
+                            "url": "https://ml4physicalsciences.github.io/2023/"
                         },
                         {
                             "title": "Career Panel",
@@ -2485,7 +2527,8 @@
                             "location": "Garching, Germany",
                             "date": "Sep 2023",
                             "year": 2023,
-                            "type": "Poster"
+                            "type": "Poster",
+                            "url": "https://www.eso.org/sci/meetings/2023/2inaM/230908_List_of_confirmed_posters.pdf"
                         },
                         {
                             "title": "Data Driven Stellar Spectral Modelling with GSPICE",
@@ -2520,12 +2563,13 @@
                             "type": "Poster"
                         },
                         {
-                            "title": "Parallel Galaxy Main Sequence and Quasar Evolution from z=0-6 (AAS Chamblis Award Honorable Mention)",
+                            "title": "Parallel Galaxy Main Sequence and Quasar Evolution from z=0-6 (AAS Chambliss Award Honorable Mention)",
                             "event": "AAS 223",
                             "location": "Washington, DC",
                             "date": "Jan 2014",
                             "year": 2014,
-                            "type": "Poster"
+                            "type": "Poster",
+                            "url": "https://aas.org/posts/news/2014/01/chambliss-student-poster-awards-aas-223"
                         },
                         {
                             "title": "An In-Depth Analysis of the Kepler Low-Amplitude Blazhko RR Lyrae Stars: First Steps and Comparing Data Reduction Methods",
@@ -2544,12 +2588,13 @@
                             "type": "Poster"
                         },
                         {
-                            "title": "The X-ray Counterpart of the High-B Pulsar J0726-2612 (AAS Chamblis Award)",
+                            "title": "The X-ray Counterpart of the High-B Pulsar J0726-2612 (AAS Chambliss Award)",
                             "event": "AAS 219",
                             "location": "Austin, TX",
                             "date": "Jan 2012",
                             "year": 2012,
-                            "type": "Poster"
+                            "type": "Poster",
+                            "url": "https://aas.org/grants-and-prizes/chambliss-astronomy-achievement-student-awards"
                         }
                     ],
                     "accent": "posters"
@@ -2588,7 +2633,8 @@
                             "location": "Toronto, ON",
                             "date": "Oct 2021",
                             "year": 2021,
-                            "type": "Public Talk"
+                            "type": "Public Talk",
+                            "url": "https://rascto.ca/content/asx-star-talk-mapping-milky-way-age-gaia-online"
                         },
                         {
                             "title": "Mapping the Milky Way in the Age of Gaia",
@@ -2596,7 +2642,8 @@
                             "location": "Ottawa, ON",
                             "date": "Jun 2021",
                             "year": 2021,
-                            "type": "Public Talk"
+                            "type": "Public Talk",
+                            "url": "https://www.ottawa.rasc.ca/meetings/monthly-meeting-2021-06-june/mappingmilkyway-joshspeagle-2021-06/"
                         },
                         {
                             "title": "Keynote participant for open-source code contributions (dynesty) in the analysis of M87* by the EHT collaboration",
@@ -2639,7 +2686,8 @@
                     "level": "Undergraduate",
                     "department": "Astronomy",
                     "description": "Research methods and project-based learning in astrophysics",
-                    "color": "blue"
+                    "color": "blue",
+                    "url": "https://www.astro.utoronto.ca/academics/undergraduate-studies/courses/"
                 },
                 {
                     "code": "STA437",
@@ -2650,7 +2698,8 @@
                     "level": "Undergraduate",
                     "department": "Statistics",
                     "description": "Practical techniques for multivariate data analysis including dimensionality reduction, classification, and inference",
-                    "color": "green"
+                    "color": "green",
+                    "url": "https://artsci.calendar.utoronto.ca/course/sta437h1"
                 },
                 {
                     "code": "STA130",
@@ -2662,7 +2711,8 @@
                     "level": "Undergraduate",
                     "department": "Statistics",
                     "description": "Foundational course in statistical thinking and data analysis",
-                    "color": "green"
+                    "color": "green",
+                    "url": "https://artsci.calendar.utoronto.ca/course/sta130h1"
                 },
                 {
                     "code": "AST3101",
@@ -2674,7 +2724,8 @@
                     "level": "Graduate",
                     "department": "Astronomy",
                     "description": "Research ethics and professional practice in astronomy",
-                    "color": "blue"
+                    "color": "blue",
+                    "url": "https://www.astro.utoronto.ca/academics/graduate-studies/ast3101h-ethics/"
                 },
                 {
                     "code": "JAS1101",
@@ -2689,7 +2740,8 @@
                         "Statistics"
                     ],
                     "description": "Statistical methods for astronomical research",
-                    "color": "purple"
+                    "color": "purple",
+                    "url": "https://www.astro.utoronto.ca/academics/graduate-studies/jas-1101h-astrostats/"
                 },
                 {
                     "code": "AST3101",
@@ -2700,7 +2752,8 @@
                     "level": "Graduate",
                     "department": "Astronomy",
                     "description": "Advanced sampling techniques in astronomical data analysis",
-                    "color": "blue"
+                    "color": "blue",
+                    "url": "http://www.astro.utoronto.ca/academics/graduate-studies/ast3101h-intro-sampling-methods/"
                 }
             ],
             "philosophy": {
@@ -2726,7 +2779,8 @@
                     "location": "Virtual",
                     "terms": [
                         "Jun 2025"
-                    ]
+                    ],
+                    "url": "https://sites.psu.edu/astrostatistics/su25"
                 },
                 {
                     "title": "Nested Sampling: Past, Present, and Future",
@@ -2735,7 +2789,8 @@
                     "terms": [
                         "Jun 2025",
                         "Jun 2024"
-                    ]
+                    ],
+                    "url": "https://sites.psu.edu/astrostatistics/su25"
                 },
                 {
                     "title": "Machine Learning for Star Cluster Science (with Steffani Grondin)",
@@ -2759,7 +2814,8 @@
                     "location": "Boston, MA",
                     "terms": [
                         "Aug 2023"
-                    ]
+                    ],
+                    "url": "https://github.com/alexandergagliano/InterpretabilityDemos/blob/main/JoshuaSpeagle_iaifi_bayesml_08-10-2023.pdf"
                 },
                 {
                     "title": "A Tutorial of (Dynamic) Nested Sampling",
@@ -2767,7 +2823,8 @@
                     "location": "State College, PA",
                     "terms": [
                         "Jun 2023"
-                    ]
+                    ],
+                    "url": "https://sites.psu.edu/astrostatistics/scma8"
                 },
                 {
                     "title": "Introduction to Bayesian Inference with Linear Regression",
@@ -2775,7 +2832,8 @@
                     "location": "Virtual",
                     "terms": [
                         "Aug 2020"
-                    ]
+                    ],
+                    "url": "https://github.com/AstroHackWeek/AstroHackWeek2020/wiki/Detailed-Schedule"
                 }
             ],
             "accents": {
@@ -2825,7 +2883,8 @@
                                     "role": "Working Group on Astroinformatics & Astrostatistics Steering Committee",
                                     "periods": [
                                         "2020-2026"
-                                    ]
+                                    ],
+                                    "url": "https://aas.org/comms/working-group-astroinformatics-and-astrostatistics-wgaa"
                                 }
                             ]
                         },
@@ -2836,13 +2895,15 @@
                                     "role": "Astrostatistics Interest Group (AIG): Program Chair (Interim)",
                                     "periods": [
                                         "2023-2024"
-                                    ]
+                                    ],
+                                    "url": "https://astrostat.org/officers/2024/"
                                 },
                                 {
                                     "role": "Astrostatistics Interest Group (AIG): Web Director",
                                     "periods": [
                                         "2020-2023"
-                                    ]
+                                    ],
+                                    "url": "https://astrostat.org/officers/2022/"
                                 }
                             ]
                         },
@@ -2864,19 +2925,22 @@
                                     "role": "Data Science and Analytics Section: President Elect",
                                     "periods": [
                                         "2024-2025"
-                                    ]
+                                    ],
+                                    "url": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics"
                                 },
                                 {
                                     "role": "Data Science and Analytics Section: President",
                                     "periods": [
                                         "2025-2026"
-                                    ]
+                                    ],
+                                    "url": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics"
                                 },
                                 {
                                     "role": "Data Science and Analytics Section: Past President",
                                     "periods": [
                                         "2026-2027"
-                                    ]
+                                    ],
+                                    "url": "https://ssc.ca/en/about/sections-regions/data-science-and-analytics"
                                 }
                             ]
                         },
@@ -2887,7 +2951,8 @@
                                     "role": "Publication Committee: Chair",
                                     "periods": [
                                         "2024"
-                                    ]
+                                    ],
+                                    "url": "https://issc.science.lsst.org/pages/organization.html"
                                 }
                             ]
                         }
@@ -2966,7 +3031,8 @@
                                     "periods": [
                                         "2021-Present"
                                     ],
-                                    "note": "Formerly Stellar Stats (2021–2024)"
+                                    "note": "Formerly Stellar Stats (2021–2024)",
+                                    "url": "https://statstro.com/"
                                 }
                             ]
                         },
@@ -2987,12 +3053,14 @@
                         {
                             "organization": "Globular Clusters & Their Tidal Tails",
                             "role": "SOC Co-Chair, LOC Co-Chair",
-                            "period": "2024"
+                            "period": "2024",
+                            "url": "https://physics.mcmaster.ca/~reinacam/gcandtidaltails24/"
                         },
                         {
                             "organization": "CASCA Annual General Meeting",
                             "role": "SOC Co-Chair, LOC",
-                            "period": "2024"
+                            "period": "2024",
+                            "url": "https://cascato.ca/"
                         }
                     ],
                     "accent": "du"
@@ -3049,16 +3117,52 @@
         "software": {
             "githubUser": "joshspeagle",
             "groups": [
-                { "id": "inference", "label": "Inference & sampling", "accent": "ic" },
-                { "id": "stellar", "label": "Stellar & Galactic", "accent": "du" },
-                { "id": "extragal", "label": "Extragalactic & cosmology", "accent": "ii" },
-                { "id": "dataviz", "label": "Data visualization", "accent": "sla" },
-                { "id": "literature", "label": "Literature & LLM tools", "accent": "violet" },
-                { "id": "teaching", "label": "Teaching & tutorials", "accent": "teal" },
-                { "id": "websites", "label": "Websites", "accent": "gray" },
-                { "id": "scratch", "label": "Scratch & misc", "accent": "mute" }
+                {
+                    "id": "inference",
+                    "label": "Inference & sampling",
+                    "accent": "ic"
+                },
+                {
+                    "id": "stellar",
+                    "label": "Stellar & Galactic",
+                    "accent": "du"
+                },
+                {
+                    "id": "extragal",
+                    "label": "Extragalactic & cosmology",
+                    "accent": "ii"
+                },
+                {
+                    "id": "dataviz",
+                    "label": "Data visualization",
+                    "accent": "sla"
+                },
+                {
+                    "id": "literature",
+                    "label": "Literature & LLM tools",
+                    "accent": "violet"
+                },
+                {
+                    "id": "teaching",
+                    "label": "Teaching & tutorials",
+                    "accent": "teal"
+                },
+                {
+                    "id": "websites",
+                    "label": "Websites",
+                    "accent": "gray"
+                },
+                {
+                    "id": "scratch",
+                    "label": "Scratch & misc",
+                    "accent": "mute"
+                }
             ],
-            "featured": ["dynesty", "brutus", "aparture"],
+            "featured": [
+                "dynesty",
+                "brutus",
+                "aparture"
+            ],
             "showcase": {
                 "repo": "allsky",
                 "title": "allsky",
@@ -3069,33 +3173,115 @@
                 "blurb": "An animated, interactive all-sky map of stellar motion across the Milky Way — the visualization behind the 2021 Dunlap \"interactive map of the Milky Way\" feature."
             },
             "curation": {
-                "dynesty": { "group": "inference", "pypi": "dynesty", "docs": "https://dynesty.readthedocs.io", "paper": "https://doi.org/10.1093/mnras/staa278", "blurb": "Dynamic nested sampling for Bayesian posteriors & evidences" },
-                "jumufraktiv": { "group": "inference", "external": "JSiyangLi/jumufraktiv", "pypi": "jumufraktiv", "blurb": "Model evidence, posterior density & moments via fractional derivatives of prior MGFs (with Siyang Li)" },
-                "lf2i": { "group": "inference", "external": "lee-group-cmu/lf2i", "pypi": "lf2i", "blurb": "Likelihood-free frequentist inference with finite-sample coverage guarantees" },
-                "brutus": { "group": "stellar", "pypi": "astro-brutus", "docs": "https://brutus.readthedocs.io", "paper": "https://ui.adsabs.harvard.edu/abs/2025arXiv250302227S", "blurb": "Stellar properties, distances & extinctions via brute-force Bayesian inference" },
-                "aparture": { "group": "literature", "docs": "https://joshspeagle.com/aparture/", "blurb": "An LLM-powered tool to help sift through the arXiv" },
-                "frankenz": { "group": "extragal", "pypi": "frankenz", "blurb": "Photometric redshift estimation (a photo-z monstrosity)" },
-                "allsky": { "group": "dataviz", "url": "http://allsky.s3-website.us-east-2.amazonaws.com/", "blurb": "An animated, interactive 3-D map of Galactic motion" },
-                "dorothy": { "group": "stellar", "blurb": "Data-driven stellar abundances" },
-                "phot_bias": { "group": "inference", "blurb": "Biases in maximum-likelihood photometry (paper companion)" },
-                "nrp_astrobayes": { "group": "inference", "blurb": "Worked example accompanying Eadie et al. (2023)" },
-                "typical_sets": { "group": "teaching", "blurb": "The role of typical sets in (MCMC) sampling" },
-                "ast424-2025": { "group": "teaching" },
-                "AY191": { "group": "teaching" },
-                "STA130-W23": { "group": "teaching" },
-                "UCSC-Python-Coffee": { "group": "teaching" },
-                "harvardastro_MLJC": { "group": "teaching", "blurb": "Harvard astronomy ML journal club" },
-                "ssc-2026-AI-LLM-demo": { "group": "teaching" },
-                "utssrp-2026": { "group": "teaching", "blurb": "Research project from the UTSSRP 2026 summer program" },
-                "joshspeagle.github.io": { "group": "websites" },
-                "STATSTRO": { "group": "websites" },
-                "astrostat_uoft": { "group": "websites" },
-                "bio-cv": { "group": "websites" },
-                "research": { "group": "websites" },
-                "cd_sbi": { "group": "scratch" },
-                "frasian_tilting": { "group": "scratch" },
-                "PCAT": { "group": "scratch" },
-                "arxivy": { "group": "scratch", "pypi": "arxivy", "blurb": "Helping keep up with the arXiv" }
+                "dynesty": {
+                    "group": "inference",
+                    "pypi": "dynesty",
+                    "docs": "https://dynesty.readthedocs.io",
+                    "paper": "https://doi.org/10.1093/mnras/staa278",
+                    "blurb": "Dynamic nested sampling for Bayesian posteriors & evidences"
+                },
+                "jumufraktiv": {
+                    "group": "inference",
+                    "external": "JSiyangLi/jumufraktiv",
+                    "pypi": "jumufraktiv",
+                    "blurb": "Model evidence, posterior density & moments via fractional derivatives of prior MGFs (with Siyang Li)"
+                },
+                "lf2i": {
+                    "group": "inference",
+                    "external": "lee-group-cmu/lf2i",
+                    "pypi": "lf2i",
+                    "blurb": "Likelihood-free frequentist inference with finite-sample coverage guarantees"
+                },
+                "brutus": {
+                    "group": "stellar",
+                    "pypi": "astro-brutus",
+                    "docs": "https://brutus.readthedocs.io",
+                    "paper": "https://ui.adsabs.harvard.edu/abs/2025arXiv250302227S",
+                    "blurb": "Stellar properties, distances & extinctions via brute-force Bayesian inference"
+                },
+                "aparture": {
+                    "group": "literature",
+                    "docs": "https://joshspeagle.com/aparture/",
+                    "blurb": "An LLM-powered tool to help sift through the arXiv"
+                },
+                "frankenz": {
+                    "group": "extragal",
+                    "pypi": "frankenz",
+                    "blurb": "Photometric redshift estimation (a photo-z monstrosity)"
+                },
+                "allsky": {
+                    "group": "dataviz",
+                    "url": "http://allsky.s3-website.us-east-2.amazonaws.com/",
+                    "blurb": "An animated, interactive 3-D map of Galactic motion"
+                },
+                "dorothy": {
+                    "group": "stellar",
+                    "blurb": "Data-driven stellar abundances"
+                },
+                "phot_bias": {
+                    "group": "inference",
+                    "blurb": "Biases in maximum-likelihood photometry (paper companion)"
+                },
+                "nrp_astrobayes": {
+                    "group": "inference",
+                    "blurb": "Worked example accompanying Eadie et al. (2023)"
+                },
+                "typical_sets": {
+                    "group": "teaching",
+                    "blurb": "The role of typical sets in (MCMC) sampling"
+                },
+                "ast424-2025": {
+                    "group": "teaching"
+                },
+                "AY191": {
+                    "group": "teaching"
+                },
+                "STA130-W23": {
+                    "group": "teaching"
+                },
+                "UCSC-Python-Coffee": {
+                    "group": "teaching"
+                },
+                "harvardastro_MLJC": {
+                    "group": "teaching",
+                    "blurb": "Harvard astronomy ML journal club"
+                },
+                "ssc-2026-AI-LLM-demo": {
+                    "group": "teaching"
+                },
+                "utssrp-2026": {
+                    "group": "teaching",
+                    "blurb": "Research project from the UTSSRP 2026 summer program"
+                },
+                "joshspeagle.github.io": {
+                    "group": "websites"
+                },
+                "STATSTRO": {
+                    "group": "websites"
+                },
+                "astrostat_uoft": {
+                    "group": "websites"
+                },
+                "bio-cv": {
+                    "group": "websites"
+                },
+                "research": {
+                    "group": "websites"
+                },
+                "cd_sbi": {
+                    "group": "scratch"
+                },
+                "frasian_tilting": {
+                    "group": "scratch"
+                },
+                "PCAT": {
+                    "group": "scratch"
+                },
+                "arxivy": {
+                    "group": "scratch",
+                    "pypi": "arxivy",
+                    "blurb": "Helping keep up with the arXiv"
+                }
             }
         },
         "news": {
