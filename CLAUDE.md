@@ -36,6 +36,10 @@ python -m http.server 8000       # local dev server
 - **`pages_shared.py` owns all escaping and validation** — `esc` (bare `&`), `esc_text` (+`<`/`>`), `attr_esc` (tag-stripped, lowercased, for `data-search`/`data-title`), `url_attr` (every `href`/`src`) — `accent_class` (a declared accent must look like a CSS identifier or it falls back to `mute`) — plus `clean_text()` (strips arXiv "Abstract " prefixes and unwraps simple TeX in pipeline prose at render time), the shared year/period parsers (`parse_latest_year`, `all_years`, `period_end_year`, `period_end_key`) and `percent_shares()` (whole-number shares that always total 100). `build_html.py` imports them; nothing redefines them.
 - **Accents are declared, not derived**: talks categories, service categories, teaching departments (`sections.teaching.accents`) and news types (`sections.news.types`) each name their CSS colour class in `content.json`. A missing one prints a build WARNING and falls back to a neutral stripe instead of emitting a class no stylesheet defines.
 
+### Design system
+
+`DESIGN.md` is the locked visual spec ("chips on the board": cool navy substrate, copper traces routed into chip pins by `board.js`, amber energy, the feed-forward hero in `hero.js`, chip anatomy, the density rule of at most eight traced chips per page). Read it before changing tokens, CSS, the hero or the board layer.
+
 ### Design tokens & fonts
 
 - `assets/data/tokens.json` → `scripts/build_tokens.py` → `assets/css/tokens.css` (single source of truth: `:root` dark + `[data-theme="light"]`; `_`-prefixed keys are notes, not tokens).
