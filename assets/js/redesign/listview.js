@@ -142,6 +142,22 @@
     compute();
   }
 
-  function init() { document.querySelectorAll('[data-listview]').forEach(initRoot); }
+  function initTimelineExpand() {
+    document.querySelectorAll('[data-tm-expand]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        const key = btn.getAttribute('data-tm-expand');
+        const open = btn.getAttribute('aria-expanded') !== 'true';
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        document.querySelectorAll('[data-tm-sub="' + key + '"]').forEach(function (row) {
+          row.classList.toggle('is-hidden', !open);
+        });
+      });
+    });
+  }
+
+  function init() {
+    document.querySelectorAll('[data-listview]').forEach(initRoot);
+    initTimelineExpand();
+  }
   if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();
