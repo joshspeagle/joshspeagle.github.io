@@ -445,30 +445,40 @@ def render_structured_data(key, page, data):
     return "\n".join(_json_ld(b) for b in blocks)
 
 
-def _footer_elsewhere(data):
+def _footer_elsewhere(data, root=""):
     """The "Elsewhere" footer column: the author profiles declared in
-    sections.publications.links, plus the GitHub account software_data.json fetches."""
+    sections.publications.links, plus arXiv, the GitHub account software_data.json
+    fetches, and the CV PDF."""
     declared = ((data.get("sections", {}).get("publications", {}) or {}).get("links") or {})
-    labels = [("ads", "ADS"), ("scholar", "Google Scholar"), ("orcid", "ORCID")]
-    links = [(label, declared[key]) for key, label in labels if declared.get(key)]
+    labels = [("ads", "SAO/NASA ADS"), ("scholar", "Google Scholar"), ("orcid", "ORCID")]
+    links = [(label, declared[key], True) for key, label in labels if declared.get(key)]
+    res_links = ((data.get("sections", {}).get("research", {}) or {})
+                 .get("publications", {}) or {}).get("links") or []
+    for item in res_links:
+        if item.get("icon") == "arxiv" and item.get("url"):
+            links.insert(2, ("arXiv", item["url"], True))
+            break
     user = load_data_file("software").get("githubUser")
     if user:
-        links.insert(2, ("GitHub", f"https://github.com/{user}"))
+        links.insert(min(3, len(links)), ("GitHub", f"https://github.com/{user}", True))
+    links.append(("Curriculum Vitae (PDF)", f"{root}{CV_FILE}", True))
     return "".join(
-        f'<li><a href="{url_attr(url)}" target="_blank" rel="noopener">{esc(name)}</a></li>'
-        for name, url in links)
+        f'<li><a href="{url_attr(url)}"'
+        f'{" target=\"_blank\" rel=\"noopener\"" if ext else ""}>{esc(name)}</a></li>'
+        for name, url, ext in links)
 
 
 def render_footer(page, data, root):
-    """Site footer: the brand lockup, one link column per NAV group plus "Elsewhere",
-    and the copyright line. Both dates come from the data files (see data_date): the
-    stamp from this page's own sources, the © year from the newest of all of them."""
+    """Site footer: the brand lockup, departmental affiliations & contact info,
+    one link column per NAV group plus "Elsewhere", the copyright/stamp bar,
+    and the site build credit."""
     note = page.get("footer", DEFAULT_FOOTER_NOTE)
     stamp = source_date(page)
     updated = f' · Updated {stamp.strftime("%B %Y")}' if stamp else ""
     year = site_updated()
     copyright_ = f"© {year.year} " if year else ""
     site = data.get("site", {}) or {}
+    contact = ((data.get("sections", {}).get("about", {}) or {}).get("contactInfo") or {})
 
     columns = []
     for entry in NAV:                       # the nav registry IS the footer sitemap
@@ -479,14 +489,40 @@ def render_footer(page, data, root):
             href, label, _cur, ext = _nav_link(item, None, root)
             rows += f'<li><a href="{href}"{ext}>{label}</a></li>'
         columns.append((entry["label"], rows))
-    columns.append(("Elsewhere", _footer_elsewhere(data)))
+    columns.append(("Elsewhere", _footer_elsewhere(data, root)))
     cols_html = "".join(
         f'        <div><h2>{label}</h2><ul>{rows}</ul></div>\n'
         for label, rows in columns if rows)
 
     blurb = esc(site.get("jobTitle", ""))
-    if site.get("affiliation", {}).get("name"):
-        blurb = f'{blurb} · {esc(site["affiliation"]["name"])}' if blurb else esc(site["affiliation"]["name"])
+    aff = site.get("affiliation") or {}
+    if aff.get("name"):
+        aff_html = (f'<a href="{url_attr(aff["url"])}" target="_blank" rel="noopener">'
+                    f'{esc(aff["name"])}</a>' if aff.get("url") else esc(aff["name"]))
+        blurb = f"{blurb} · {aff_html}" if blurb else aff_html
+
+    depts = site.get("departments") or []
+    depts_html = " · ".join(
+        f'<a href="{url_attr(d["url"])}" target="_blank" rel="noopener">{esc(d["name"])}</a>'
+        if d.get("url") else esc(d.get("name", ""))
+        for d in depts if d.get("name")
+    )
+    depts_line = f'          <p class="foot-meta">{depts_html}</p>\n' if depts_html else ""
+
+    email = contact.get("email", "")
+    office = contact.get("office", "")
+    contact_bits = []
+    if email:
+        contact_bits.append(f'<a href="mailto:{url_attr(email)}">{esc(email)}</a>')
+    if office:
+        contact_bits.append(esc(office))
+    contact_line = (f'          <p class="foot-meta">{" · ".join(contact_bits)}</p>\n'
+                    if contact_bits else "")
+
+    credit = site.get("credit", "")
+    credit_line = (f'      <p class="foot-credit">{esc(credit)}</p>\n'
+                   if credit else "")
+
     return ('  <footer class="site-footer">\n'
             '    <div class="container">\n'
             '      <div class="foot">\n'
@@ -495,6 +531,8 @@ def render_footer(page, data, root):
             f'<svg class="mark" aria-hidden="true" focusable="false"><use href="#mark-s"/></svg>'
             f'{SITE_NAME}</a>\n'
             f'          <p class="foot-blurb">{blurb}</p>\n'
+            f'{depts_line}'
+            f'{contact_line}'
             '        </div>\n'
             f'{cols_html}'
             '      </div>\n'
@@ -502,6 +540,7 @@ def render_footer(page, data, root):
             f'        <span>{copyright_}{SITE_NAME} · <span class="zh">沈佳士</span></span>\n'
             f'        <span>{note}{updated}</span>\n'
             '      </div>\n'
+            f'{credit_line}'
             '    </div>\n'
             '  </footer>')
 
