@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the site favicon set + web manifest from the Design G brand mark.
+"""Generate the site favicon set + web manifest from the site brand mark.
 
 The mark is the sprite's #mark (see pages_shared.SPRITE): a copper-style trace that
 steps up out of a via, branches once, and ends in a four-point star — drawn here in
