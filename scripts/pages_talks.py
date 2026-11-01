@@ -52,6 +52,8 @@ _CITY_COORDS = {
     "new orleans, la": ("New Orleans, LA", 29.95, -90.07, "na", "New Orleans"),
     "grapevine, tx": ("Dallas / Grapevine, TX", 32.93, -97.08, "na", "Grapevine"),
     "austin, tx": ("Austin, TX", 30.27, -97.74, "na", "Austin"),
+    "tucson, az": ("Tucson, AZ", 32.22, -110.97, "na", "Tucson"),
+    "tucson, usa": ("Tucson, AZ", 32.22, -110.97, "na", "Tucson"),
     "berkeley, ca": ("Bay Area (Berkeley / Stanford), CA", 37.60, -122.20, "na", "Berkeley"),
     "stanford, ca": ("Bay Area (Berkeley / Stanford), CA", 37.60, -122.20, "na", "Stanford"),
     "mountain view, usa": ("Bay Area (Berkeley / Stanford), CA", 37.60, -122.20, "na", "Mountain View"),

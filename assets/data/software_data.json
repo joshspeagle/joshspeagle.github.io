@@ -8,8 +8,21 @@
       "summary": "Added the external repos `jumufraktiv` and `lf2i` by hand (commit f723960) without re-running fetch_software.py; their stars/forks/downloads are as of that date, every other repo's are as of lastFetched."
     }
   ],
-  "reposChecksum": "055dcc7deb4d55b11ef92c1740e5ad77737d2751b54ab62589fe0c1deec70271",
+  "reposChecksum": "912a5340296f12ac26d40d14e803ee8b8b8588cf6fa4cb700dd4db4f64d140ea",
   "repos": {
+    "joshspeagle.github.io": {
+      "url": "https://github.com/joshspeagle/joshspeagle.github.io",
+      "homepage": "https://joshspeagle.github.io",
+      "hasPages": true,
+      "stars": 0,
+      "forks": 1,
+      "language": "HTML",
+      "description": "Personal website",
+      "pushed": "2026-11-01",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": null
+    },
     "binference": {
       "url": "https://github.com/joshspeagle/binference",
       "homepage": null,
@@ -136,19 +149,6 @@
       "language": "Python",
       "description": "Astrostatistics Research Team (ART) Website",
       "pushed": "2026-09-09",
-      "archived": false,
-      "isFork": false,
-      "downloads_month": null
-    },
-    "joshspeagle.github.io": {
-      "url": "https://github.com/joshspeagle/joshspeagle.github.io",
-      "homepage": "https://joshspeagle.github.io",
-      "hasPages": true,
-      "stars": 0,
-      "forks": 1,
-      "language": "HTML",
-      "description": "Personal website",
-      "pushed": "2026-09-07",
       "archived": false,
       "isFork": false,
       "downloads_month": null

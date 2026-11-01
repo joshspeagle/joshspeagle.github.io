@@ -248,8 +248,9 @@ def normalize_text(value: Optional[str]) -> Optional[str]:
         if new == s:
             break
         s = new
-    # 9. Restore protected literals and tidy whitespace.
+    # 9. Restore protected literals, escape bare `<` inequalities (preserving <SUB>/<SUP>), and tidy whitespace.
     s = re.sub(r"\x00(\d+)\x00", lambda m: chr(int(m.group(1))), s)
+    s = re.sub(r"<(?![/]?su[bp]>)", "&lt;", s, flags=re.IGNORECASE)
     s = re.sub(r"[ \t\r\n\f\v]+", " ", s).strip()
     return s
 
@@ -277,6 +278,7 @@ BIBCODE_JOURNALS = {
     "Natur": "Nature",
     "NRvMP": "Nature Reviews Methods Primers",
     "OJAp.": "The Open Journal of Astrophysics",
+    "PASA.": "Publications of the Astronomical Society of Australia",
     "PASJ.": "Publications of the Astronomical Society of Japan",
     "PASP.": "Publications of the Astronomical Society of the Pacific",
     "PhRvD": "Physical Review D",
@@ -353,6 +355,10 @@ def identity_keys(pub: Dict) -> set:
             keys.add(("bibcode", bibcode))
     if arxiv:
         keys.add(("arxiv", arxiv))
+    for sid in [pub.get("scholar_id")] + list(pub.get("scholar_id_aliases") or []):
+        sid = (sid or "").strip()
+        if sid:
+            keys.add(("scholar", sid))
     return keys
 
 
@@ -1130,14 +1136,16 @@ class PostProcessor:
 
     def run_all(self):
         """Run the complete post-processing pipeline."""
-        # Load .env for API keys
-        from dotenv import load_dotenv
-
-        env_path = get_project_root() / ".env"
-        if env_path.exists():
-            load_dotenv(dotenv_path=env_path)
-        else:
-            load_dotenv()
+        # Load .env for API keys when python-dotenv is available
+        try:
+            from dotenv import load_dotenv
+            env_path = get_project_root() / ".env"
+            if env_path.exists():
+                load_dotenv(dotenv_path=env_path)
+            else:
+                load_dotenv()
+        except ImportError:
+            pass
         self.ads_api_key = os.getenv("ADS_API_KEY")
 
         # Load data

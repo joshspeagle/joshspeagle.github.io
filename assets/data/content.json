@@ -1,12 +1,22 @@
 {
   "site": {
-    "lastUpdated": "2026-10-31",
+    "lastUpdated": "2026-11-01",
     "jobTitle": "Assistant Professor of Astrostatistics",
     "affiliation": {
       "name": "University of Toronto",
       "url": "https://www.utoronto.ca/"
     },
-    "credit": "Built, designed, and maintained in collaboration with Claude (Sonnet 4+, Opus 4+)."
+    "credit": "Built, designed, and maintained in collaboration with Claude (Sonnet 4+, Opus 4+) & Gemini (3.1 Pro).",
+    "departments": [
+      {
+        "name": "David A. Dunlap Dept. of Astronomy & Astrophysics",
+        "url": "https://www.astro.utoronto.ca/"
+      },
+      {
+        "name": "Dept. of Statistical Sciences",
+        "url": "https://www.statistics.utoronto.ca/"
+      }
+    ]
   },
   "sections": {
     "about": {
@@ -577,7 +587,7 @@
         "bachelors": [
           {
             "name": "Leo (Hanbang) Wu",
-            "timelinePeriod": "Summer 2026",
+            "timelinePeriod": "Summer 2026-Present",
             "supervisionType": "Co-Supervisor",
             "coSupervisors": [
               "<a href=\"https://biprateep.de/\">Biprateep Dey</a>",
@@ -1764,6 +1774,14 @@
           "name": "Invited Talks",
           "talks": [
             {
+              "title": "Omnimodal Search over Astronomical Data",
+              "event": "Fields Institute: Foundation Models for Cosmology and Particle Physics",
+              "location": "Toronto, ON",
+              "date": "Oct 2026",
+              "year": 2026,
+              "type": "Invited Talk"
+            },
+            {
               "title": "How AI has taken over the world and what it means for science",
               "event": "SETI Institute: Introduction to Artificial Intelligence Workshop",
               "location": "Mountain View, USA",
@@ -1897,6 +1915,30 @@
           "name": "Colloquia & Seminars",
           "talks": [
             {
+              "title": "A Deep Dive into Data-Driven Astrophysics",
+              "event": "University of Arizona: TAP Computation & Data Initiative Colloquium",
+              "location": "Tucson, AZ",
+              "date": "Dec 2026",
+              "year": 2026,
+              "type": "Colloquium"
+            },
+            {
+              "title": "Learning and Doing Astronomy in the Age of AI",
+              "event": "European Space Agency (ESA): Space Science AI/ML Seminar Series",
+              "location": "Virtual",
+              "date": "Oct 2026",
+              "year": 2026,
+              "type": "Seminar"
+            },
+            {
+              "title": "Foundations of LLM Agents, and the State of the Art",
+              "event": "NASA Cosmic Origins AI/ML STIG Seminar Series",
+              "location": "Virtual",
+              "date": "Sep 2026",
+              "year": 2026,
+              "type": "Seminar"
+            },
+            {
               "title": "What exactly are we doing?",
               "event": "Center for Astrophysics | Harvard & Smithsonian: AstroAI Lunch Seminar",
               "location": "Cambridge, MA",
@@ -1929,6 +1971,14 @@
               "year": 2026,
               "type": "Colloquium",
               "url": "https://ischool.utoronto.ca/event/2nd-colloquium-on-applications-of-ai/"
+            },
+            {
+              "title": "GWTC-6: The Bleeding Edge of Gravitational-Wave Populations (Why Do We Do Astrostatistics?)",
+              "event": "Canadian Institute for Theoretical Astrophysics (CITA): Seminar",
+              "location": "Toronto, ON",
+              "date": "Apr 2026",
+              "year": 2026,
+              "type": "Seminar"
             },
             {
               "title": "Learning and Doing Physics and Astronomy in the Age of AI",
@@ -2400,6 +2450,14 @@
           "name": "Lectures & Tutorials",
           "talks": [
             {
+              "title": "Tabular Foundation Models and Machine Learning Interpretability in Astronomy",
+              "event": "University of Arizona: TAP Computation & Data Initiative Workshop",
+              "location": "Tucson, AZ",
+              "date": "Dec 2026",
+              "year": 2026,
+              "type": "Workshop"
+            },
+            {
               "title": "A Conceptual Introduction to Deep Learning",
               "event": "Penn State: Summer School in Statistics for Astronomers",
               "location": "Virtual",
@@ -2430,6 +2488,15 @@
             },
             {
               "title": "AI and LLMs – Research Perspective",
+              "event": "Statistical Society of Canada 2026 Annual Meeting",
+              "location": "Hamilton, ON",
+              "date": "May 2026",
+              "year": 2026,
+              "type": "Workshop",
+              "url": "https://ssc.ca/en/meeting/annual/workshop/data-science-and-analytics-workshop-1"
+            },
+            {
+              "title": "One Tool, the Whole Ladder: AI-Assisted Research from a Single CLI Agent",
               "event": "Statistical Society of Canada 2026 Annual Meeting",
               "location": "Hamilton, ON",
               "date": "May 2026",

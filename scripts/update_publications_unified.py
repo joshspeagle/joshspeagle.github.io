@@ -369,6 +369,14 @@ class UnifiedPublicationPipeline:
         # processes (LLM agents, post-processing, hand annotation) and no fetcher
         # produces them, so without this they are lost on every run.
         preserve_fields = [
+            "bibcode",
+            "id",
+            "adsUrl",
+            "arxivId",
+            "arxivUrl",
+            "doi",
+            "doiUrl",
+            "pdfUrl",
             "llm_categorization",
             "categoryProbabilities",
             "researchArea",
@@ -442,6 +450,15 @@ class UnifiedPublicationPipeline:
         merged_metrics = self.merger.merge_metrics_multisource(
             scholar_metrics, ads_metrics, openalex_metrics
         )
+        existing_path = get_data_path()
+        if existing_path.exists():
+            try:
+                with open(existing_path, "r", encoding="utf-8") as f:
+                    prev_rr = (json.load(f).get("metrics") or {}).get("roleReconciliation")
+                if prev_rr and "roleReconciliation" not in merged_metrics:
+                    merged_metrics["roleReconciliation"] = prev_rr
+            except Exception:
+                pass
 
         # Create final data structure
         self.merged_data = {

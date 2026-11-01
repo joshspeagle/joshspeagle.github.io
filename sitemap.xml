@@ -2,12 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://joshspeagle.com/</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://joshspeagle.com/publications.html</loc>
-        <lastmod>2026-07-13</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
@@ -17,37 +17,37 @@
     </url>
     <url>
         <loc>https://joshspeagle.com/talks.html</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>https://joshspeagle.com/teaching.html</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>https://joshspeagle.com/mentorship.html</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.8</priority>
     </url>
     <url>
         <loc>https://joshspeagle.com/biography.html</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>https://joshspeagle.com/news.html</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>https://joshspeagle.com/awards.html</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.6</priority>
     </url>
     <url>
         <loc>https://joshspeagle.com/service.html</loc>
-        <lastmod>2026-10-31</lastmod>
+        <lastmod>2026-11-01</lastmod>
         <priority>0.6</priority>
     </url>
 </urlset>
