@@ -73,7 +73,7 @@ class GoogleScholarFetcher:
                             }
                             # Carry the venue through the quick path too — papers
                             # that never need a detailed fetch used to reach the
-                            # site with no venue at all (audit D14).
+                            # site with no venue at all.
                             venue = self._venue(bib)
                             if venue:
                                 entry["journal"] = venue

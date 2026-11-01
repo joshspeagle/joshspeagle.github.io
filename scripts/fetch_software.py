@@ -138,8 +138,7 @@ def _warn_if_hand_edited(previous):
     """Report a cache whose repos{} no longer matches the checksum it shipped with.
 
     `repos{}` is pipeline-owned. Hand-adding a repo without re-running this script
-    leaves the file advertising a `lastUpdated` older than the data it contains
-    (audit C16); this is where that gets caught and named.
+    leaves the file advertising a `lastUpdated` older than the data it contains; this is where that gets caught and named.
     """
     stored = previous.get("reposChecksum")
     if not stored:
@@ -151,11 +150,29 @@ def _warn_if_hand_edited(previous):
               "replaces it with freshly fetched data.")
 
 
+def _infer_group(repo):
+    """Heuristic group suggestion for a newly discovered public repository."""
+    text = f"{repo.get('name', '')} {repo.get('description') or ''}".lower()
+    if any(k in text for k in ("course", "lecture", "tutorial", "workshop", "school", "book", "intro")):
+        return "teaching"
+    if any(k in text for k in ("sampler", "nested", "mcmc", "bayes", "inference", "sbi", "flow")):
+        return "inference"
+    if any(k in text for k in ("star", "galaxy", "dust", "photometry", "sed", "spectra", "astro", "gaia")):
+        return "astro"
+    if any(k in text for k in ("arxiv", "paper", "llm", "agent", "workflow", "bot")):
+        return "workflow"
+    if any(k in text for k in ("web", "site", "github.io", "viz", "map")):
+        return "viz"
+    return "research"
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--user", default=None, help="GitHub username (default: sections.software.githubUser)")
     ap.add_argument("--allow-unclassified", action="store_true",
                     help="write the cache even if non-fork repos are missing from curation")
+    ap.add_argument("--propose-unclassified", action="store_true",
+                    help="print proposed curation JSON for unclassified repos and continue")
     args = ap.parse_args()
 
     content_path = get_data_path("content.json")
@@ -169,14 +186,25 @@ def main():
     print(f"  {len(gh)} public repos")
 
     # reconcile: every non-fork repo must be curated
-    unclassified = [r["name"] for r in gh if not r.get("fork") and r["name"] not in curation]
-    if unclassified:
+    unclassified_repos = [r for r in gh if not r.get("fork") and r["name"] not in curation]
+    if unclassified_repos:
         print("\nUNCLASSIFIED non-fork repos (add to sections.software.curation with a group):")
-        for n in sorted(unclassified):
-            print(f"  - {n}")
-        if not args.allow_unclassified:
+        proposals = {}
+        for r in sorted(unclassified_repos, key=lambda x: x["name"]):
+            name = r["name"]
+            desc = (r.get("description") or "").strip()
+            grp = _infer_group(r)
+            print(f"  - {name} ({r.get('language') or 'unknown'}, ★{r.get('stargazers_count', 0)}): "
+                  f"suggested group='{grp}' — {desc or 'no GitHub description'}")
+            proposals[name] = {
+                "group": grp,
+                "blurb": desc or f"Repository {name}."
+            }
+        print("\nProposed content.json -> sections.software.curation entries:")
+        print(json.dumps(proposals, indent=2))
+        if not (args.allow_unclassified or args.propose_unclassified):
             sys.exit("\nRefusing to write cache. Classify the repos above (or rerun with "
-                     "--allow-unclassified to drop them into 'scratch').")
+                     "--allow-unclassified / --propose-unclassified).")
     owned_curation = {n: c for n, c in curation.items() if not c.get("external")}
     missing = [n for n in owned_curation if n not in {r["name"] for r in gh}]
     if missing:
@@ -190,6 +218,8 @@ def main():
         dl = fetch_downloads(pkg) if pkg else None
         repos[name] = {
             "url": r["html_url"],
+            "homepage": (r.get("homepage") or "").strip() or None,
+            "hasPages": bool(r.get("has_pages")),
             "stars": r.get("stargazers_count", 0),
             "forks": r.get("forks_count", 0),
             "language": r.get("language"),
@@ -214,6 +244,8 @@ def main():
             dl = fetch_downloads(pkg) if pkg else None
             repos[name] = {
                 "url": r["html_url"],
+                "homepage": (r.get("homepage") or "").strip() or None,
+                "hasPages": bool(r.get("has_pages")),
                 "stars": r.get("stargazers_count", 0),
                 "forks": r.get("forks_count", 0),
                 "language": r.get("language"),
@@ -241,7 +273,7 @@ def main():
         # `lastUpdated` is the date the cache CONTENTS last changed; `lastFetched`
         # is the date of the last full GitHub/PyPI pull. A fetch bumps both. Hand
         # edits to repos{} must bump `lastUpdated` and add a `manualEdits` entry —
-        # `reposChecksum` is what detects it when they don't (audit C16).
+        # `reposChecksum` is what detects it when they don't.
         "lastUpdated": today,
         "lastFetched": today,
         "githubUser": user,

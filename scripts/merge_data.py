@@ -65,7 +65,7 @@ class DataMerger:
         # Check for duplicates before returning: first by normalised title, then
         # by identifier. The identifier pass is the one that catches Google
         # Scholar listing a preprint and its published version under different
-        # titles — the case that used to double-count a paper (audit D4).
+        # titles — the case that used to double-count a paper.
         deduplicated_publications = self._check_for_duplicates(merged_publications)
         deduplicated_publications = self._dedupe_by_identifier(
             deduplicated_publications

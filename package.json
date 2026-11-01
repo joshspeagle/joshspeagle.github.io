@@ -2,11 +2,14 @@
   "name": "joshspeagle-site",
   "version": "1.0.0",
   "private": true,
-  "description": "Build entry points for joshspeagle.com. `npm run build` is the single source of build order (tokens -> fonts -> HTML + sitemap); `npm run check` runs the correctness checks over the result (including that publications.bib matches the publication cache). CI runs both.",
+  "description": "Build and maintenance entry points for joshspeagle.com. `npm run build` compiles tokens, fonts, HTML, sitemap, and RSS feed; `npm run check` verifies HTML, links, tokens, and BibTeX consistency; `npm run propose` scans for candidate content updates.",
   "scripts": {
     "fonts": "python scripts/setup_fonts.py",
     "build": "python scripts/build_tokens.py && python scripts/setup_fonts.py && python scripts/build_html.py",
-    "check": "python scripts/check_build.py && python scripts/export_bib.py --check"
+    "check": "python scripts/check_build.py && python scripts/export_bib.py --check",
+    "propose": "python scripts/propose_updates.py",
+    "sync-cv": "python scripts/sync_cv.py",
+    "curate-ads": "python scripts/curate_ads_libraries.py"
   },
   "dependencies": {
     "@fontsource/inter": "5.2.8",

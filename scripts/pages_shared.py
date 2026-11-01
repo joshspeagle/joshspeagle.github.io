@@ -75,7 +75,7 @@ def warn(msg):
 
 
 # ---------------------------------------------------------------------------
-# Icon sprite (Design G)
+# Inline SVG icon sprite
 #
 # Emitted ONCE per document by build_html.render_shell(), immediately after
 # <body>, so every <use href="#..."> on the page (and every symbol board.js
@@ -260,7 +260,7 @@ def date_range(text):
     "2011 - 2015" -> "2011–2015", "Fall 2026-Present" -> "Fall 2026–Present",
     "Jan-Apr 2025" -> "Jan–Apr 2025".
 
-    Applied at render time (B14) so the ~50 date strings in content.json can stay
+    Applied at render time so the ~50 date strings in content.json can stay
     however they were typed and the year parsers keep seeing plain hyphens. A hyphen
     inside a word ("Co-Supervisor", "post-common-envelope") is left alone: both sides
     must look like the end of a date.
@@ -289,16 +289,16 @@ def term_month(term):
 # ---------------------------------------------------------------------------
 
 def listview_status():
-    """The sr-only live region listview.js updates with "<n> of <N> shown" (D8).
+    """The sr-only live region listview.js updates with "<n> of <N> shown".
     Emitted empty so a JS-less visit announces nothing rather than something false."""
     return '<p class="sr-only" data-lv-status role="status" aria-live="polite"></p>'
 
 
 def card_meta(*parts, lead_html=""):
-    """The mono metadata line every list card carries (design G §3).
+    """The mono metadata line every list card carries.
 
     One ' · '-separated line of mono caps at the top of a card — the fields that
-    place it (when · where · what kind), with the load-bearing one (the role, the
+    place it (when · where · what kind), with the primary field (the role, the
     type) in text-2 600. Pass a plain string for a quiet field or a (text, True)
     tuple for an emphasised one; `lead_html` is pre-built markup (a <time> element)
     that goes first. Every field must already be shown NOWHERE else on the card:

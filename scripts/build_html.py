@@ -80,7 +80,7 @@ PAGES = {
                      layout="header", scripts=["board.js", "listview.js"], sitemap="0.6",
                      sources=["software"]),
     "talks": dict(file="talks.html", nav="Talks", canonical="/talks.html",
-                  layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
+                  layout="header", scripts=["board.js", "listview.js", "pubchart.js", "talks-globe.js"], sitemap="0.6", sources=["content"]),
     "teaching": dict(file="teaching.html", nav="Teaching", canonical="/teaching.html",
                      layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "mentorship": dict(file="mentorship.html", nav="Mentorship", canonical="/mentorship.html",
@@ -90,7 +90,7 @@ PAGES = {
     "news": dict(file="news.html", nav="News", canonical="/news.html",
                  layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "awards": dict(file="awards.html", nav="Awards", canonical="/awards.html",
-                   layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
+                   layout="header", scripts=["board.js"], sitemap="0.6", sources=["content"]),
     "service": dict(file="service.html", nav="Service", canonical="/service.html",
                     layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "404": dict(file="404.html", nav=None, title=f"Page not found · {SITE_NAME}",
@@ -290,7 +290,8 @@ def render_nav(current, root):
     out = ['  <nav class="nav" aria-label="Primary">',
            f'    <a class="brand" href="{root}index.html">'
            f'<svg class="mark" aria-hidden="true" focusable="false"><use href="#mark-s"/></svg>'
-           f'{SITE_NAME}</a>',
+           f'<span class="brand-en">{SITE_NAME}</span>'
+           f'<span class="brand-zh" lang="zh-Hans">沈佳士</span></a>',
            '    <div class="nav-links" id="nav-links">']
     for entry in NAV:
         if entry.get("items"):
@@ -505,32 +506,26 @@ def render_footer(page, data, root):
             '  </footer>')
 
 
-# The three stages the hero canvas draws, labelled along its bottom edge.
-_HERO_LABELS = [("hl-obs", "Observations"), ("hl-net", "Network"), ("hl-post", "Posterior")]
-
-
 def render_hero(data):
     """Home hero: the animated network canvas + kicker/name/tagline/CTAs from
-    pages.home. One solid action (.btn); every further CTA is a text link (.link)."""
+    pages.home. Primary action (.btn) + angular secondary button (.btn-ghost)."""
     home = page_meta(data, "index")
     ctas = ""
     for i, cta in enumerate(home.get("cta", [])):
-        cls = "btn" if i == 0 and cta.get("type") == "primary" else "link"
+        cls = "btn" if i == 0 and cta.get("type") == "primary" else "btn-ghost"
         ctas += f'<a class="{cls}" href="{url_attr(cta.get("url", "#"))}">{esc(cta.get("text", ""))}</a>'
-    labels = "".join(f'<span class="{cls}">{esc(text)}</span>' for cls, text in _HERO_LABELS)
     return ('    <section class="hero">\n'
             '      <canvas id="hero-sky" aria-hidden="true"></canvas>\n'
             '      <div class="scrim" aria-hidden="true"></div>\n'
             '      <div class="container">\n'
             '        <div class="hero-inner">\n'
             f'          <p class="kicker">{esc_text(home.get("kicker", ""))}</p>\n'
-            f'          <h1>{esc_text(home.get("title", SITE_NAME))}'
-            f'<span class="zh">{esc_text(home.get("nameZh", ""))}</span></h1>\n'
+            f'          <h1 class="hero-title"><span class="hero-name">{esc_text(home.get("title", SITE_NAME))}</span>'
+            f'<span class="zh" lang="zh-Hans">{esc_text(home.get("nameZh", ""))}</span></h1>\n'
             f'          <p class="tagline">{home.get("tagline", "")}</p>\n'
             f'          <div class="cta">{ctas}</div>\n'
             '        </div>\n'
             '      </div>\n'
-            f'      <div class="hero-labels" aria-hidden="true">{labels}</div>\n'
             '    </section>')
 
 
@@ -552,7 +547,7 @@ def render_notfound(data):
     cta = (meta.get("cta") or {})
     return ('  <main id="main-content" class="notfound-main" tabindex="-1">\n'
             '    <div class="container" id="notfound-content">\n'
-            '<div class="notfound-card" data-chip>\n'
+            '<div class="notfound-card">\n'
             f'      <p class="kicker">{esc_text(meta.get("kicker", ""))}</p>\n'
             f'      <h1 class="notfound-title">{esc_text(meta.get("title", ""))}</h1>\n'
             f'      <p class="notfound-body">{esc_text(meta.get("body", ""))}</p>\n'
@@ -718,7 +713,7 @@ def write_feed(data):
 _HOME_ICONS = [("ic-sla", "sla"), ("ic-ii", "ii"), ("ic-ic", "ic"), ("ic-du", "du")]
 
 # The ART panel's two highlights, in content.json order (the emoji in the data are
-# ignored — Design G draws them from the sprite).
+# ignored — drawn from the inline SVG sprite).
 _ART_ICONS = ["ic-sla", "ic-team"]
 
 
@@ -727,14 +722,13 @@ def _use(icon_id, cls):
     return f'<svg class="{cls}" aria-hidden="true" focusable="false"><use href="#{icon_id}"/></svg>'
 
 
-
 def _webp(src):
     """Return the .webp sibling path for a raster image src."""
     return re.sub(r"\.(jpe?g|png)$", ".webp", src, flags=re.I)
 
 
 def _dog_photos(bio):
-    """Render the personal dog photos (used in the About section)."""
+    """Render the personal dog photos (used in the Biography section)."""
     photos = ""
     for ph in bio.get("dogPhotos", []):
         if not ph.get("src"):
@@ -748,7 +742,7 @@ def _dog_photos(bio):
         photos += (
             '<figure class="dog-photo"><picture>'
             f'<source srcset="{url_attr(_webp(ph["src"]))}" type="image/webp">'
-            f'<img src="{url_attr(ph["src"])}" alt="{esc(ph.get("alt", ""))}" loading="lazy" width="800" height="533">'
+            f'<img src="{url_attr(ph["src"])}" alt="{esc(ph.get("alt", ""))}" width="800" height="533">'
             '</picture>'
             f'<figcaption>{esc(ph.get("caption", ""))}{credit}</figcaption></figure>'
         )
@@ -762,36 +756,28 @@ def home_section(data, key):
 
 def sec_head(title):
     """A Home section head: a serif h2 followed by a copper rule that starts on a
-    hollow via and ends on a square pad (§5). Replaces the old mono eyebrows — only
-    the hero keeps a kicker."""
+    hollow via and ends on a square pad."""
     return (f'<div class="sec-head"><h2 class="section-title">{esc(title)}</h2>'
             '<div class="rule" aria-hidden="true"></div></div>')
 
 
 def generate_home_about(data):
     about = data["sections"]["about"]
-    bio = data["sections"].get("biography", {})
     pi = about.get("profileImage", {})
-    hb = about.get("highlightBox", {})
     ci = about.get("contactInfo", {})
 
     photo = ""
     if pi.get("src"):
         photo = (
-            '<figure class="profile-figure" data-chip>'
+            '<figure class="profile-figure">'
             '<picture>'
             f'<source srcset="{url_attr(_webp(pi["src"]))}" type="image/webp">'
             f'<img class="profile-image" src="{url_attr(pi["src"])}" alt="{esc(pi.get("alt", ""))}" '
             'width="384" height="513" loading="lazy">'
             '</picture></figure>'
         )
-    highlight = ""
-    if hb.get("content"):
-        highlight = (
-            '<aside class="callout" data-chip>'
-            f'<h3>{esc(hb.get("title", ""))}</h3>'
-            f'<p>{hb.get("content", "")}</p></aside>'
-        )
+    paragraphs = about.get("paragraphs") or ([about["content"]] if about.get("content") else [])
+    paras_html = "".join(f'<p class="about">{p}</p>' for p in paragraphs if p)
     contact = ""
     if ci.get("email"):
         contact = (
@@ -799,21 +785,16 @@ def generate_home_about(data):
             f'<dt>Email</dt><dd><a href="mailto:{url_attr(ci["email"])}">{esc(ci["email"])}</a></dd>'
             f'<dt>Office</dt><dd>{esc(ci.get("office", ""))}</dd></dl>'
         )
-    note = bio.get("personalNote", "")
-    personal = f'<p class="about-personal">{esc(note)}</p>' if note else ""
-    dogs = _dog_photos(bio)
     return (
         '<div class="container">\n'
-        + sec_head(about.get("title", "About")) + '\n'
+        + sec_head(about.get("title", "About Me")) + '\n'
         '<div class="intro-grid">\n'
         '<div class="intro-body">'
-        f'<p class="about">{about.get("content", "")}</p>'
-        f'{highlight}{contact}'
+        f'{paras_html}'
+        f'{contact}'
         '</div>\n'
         f'{photo}\n'
         '</div>\n'
-        f'{personal}\n'
-        f'{dogs}\n'
         "</div>"
     )
 
@@ -821,17 +802,6 @@ def generate_home_about(data):
 def _pub_metrics():
     """Pipeline-computed publication metrics (totalPapers/totalCitations/hIndex/i10Index)."""
     return load_data_file("publications").get("metrics", {}) or {}
-
-
-def _area_paper_counts():
-    """How many papers are FILED under each of the four areas (argmax of
-    categoryProbabilities — the same rule the Publications chips use, so the Home
-    counts and the Publications chips can never disagree)."""
-    counts = {"sla": 0, "ii": 0, "ic": 0, "du": 0}
-    for pub in load_data_file("publications").get("publications", []):
-        if pub.get("year"):
-            counts[_pub_cat_key(pub)] += 1
-    return counts
 
 
 def _mentee_count(data):
@@ -846,24 +816,20 @@ def _mentee_count(data):
 def generate_home_research(data):
     research = data["sections"]["research"]
     areas = research["areas"][:4]
-    counts = _area_paper_counts()
     cards = []
     for i, area in enumerate(areas):
         icon, cls = _HOME_ICONS[i] if i < len(_HOME_ICONS) else _HOME_ICONS[-1]
-        n = counts.get(cls, 0)
-        tally = f'<div class="meta-via">{n} paper{"s" if n != 1 else ""}</div>' if n else ""
         cards.append(
-            f'<article class="research-card {cls}" data-chip data-cat="{cls}">'
+            f'<article class="research-card {cls}" data-cat="{cls}">'
             f'{_use(icon, "icon")}'
             f'<h3>{esc(area.get("title", ""))}</h3>'
-            f'<p>{esc(area.get("description", ""))}</p>{tally}</article>'
+            f'<p>{esc(area.get("description", ""))}</p></article>'
         )
     head = home_section(data, "research")
     intro = esc(head.get("intro", ""))
-    additional = research.get("additionalContent", "")
     pubs = research.get("publications", {})
     publinks = "".join(
-        f'<a href="{url_attr(l.get("url", "#"))}" target="_blank" rel="noopener">{esc(l.get("name", ""))}</a>'
+        f'<a class="reslink" href="{url_attr(l.get("url", "#"))}" target="_blank" rel="noopener">{esc(l.get("name", ""))} ↗</a>'
         for l in pubs.get("links", [])
     )
     # Auto-computed metric pads (pipeline-maintained publication metrics + the
@@ -880,19 +846,18 @@ def generate_home_research(data):
     pubbox = ""
     if metrics_html or publinks:
         pubbox = (
-            '<article class="pub-metrics-chip" data-chip>'
+            '<article class="pub-metrics-chip">'
             f'<div class="pub-metrics">{metrics_html}</div>'
-            f'<div class="pub-links"><span>{esc(pubs.get("intro", ""))}</span>{publinks}'
-            '<a class="go" href="publications.html">Browse all publications, metrics &amp; figures →</a>'
+            f'<div class="pub-links"><span class="pub-links-label">{esc(pubs.get("intro", ""))}</span>'
+            f'<div class="pub-links-row">{publinks}</div>'
+            '<a class="btn-ghost go" href="publications.html">Browse all publications, metrics &amp; figures →</a>'
             '</div></article>'
         )
-    context = f'<p class="research-context">{esc(additional)}</p>' if additional else ""
     return (
         '<div class="container">\n'
         + sec_head(head.get("title", "")) + '\n'
         f'<p class="section-intro">{intro}</p>\n'
-        f'<div class="research-grid" data-bus>{"".join(cards)}</div>\n'
-        f'{context}\n'
+        f'<div class="research-grid">{"".join(cards)}</div>\n'
         f'{pubbox}\n'
         "</div>"
     )
@@ -913,8 +878,46 @@ def _inline_logo(logo):
     return svg
 
 
+_OPP_ACCENTS = ["sla", "ii", "du", "ic", "sla", "ii"]
+
+
+def _render_opp_links(card):
+    """Render fellowship/program/opportunity link chips inside an Opportunities card."""
+    items = []
+    intro = ""
+    for key in ("fellowships", "programs"):
+        block = card.get(key)
+        if isinstance(block, dict):
+            intro = block.get("intro", "")
+            items = block.get("links", []) or []
+            break
+    if not items and isinstance(card.get("opportunities"), list):
+        items = card["opportunities"]
+        intro = "Pathways & programs:"
+    if not items:
+        return ""
+    chips = []
+    for item in items:
+        name = item.get("name", "")
+        abbr = item.get("abbr", "")
+        note = item.get("note", "")
+        url = item.get("url", "")
+        label = f"{esc(name)} ({esc(abbr)})" if abbr else esc(name)
+        note_html = f' <span class="opp-note">· {esc(note)}</span>' if note else ""
+        if url:
+            chips.append(
+                f'<a class="reslink opp-chip" href="{url_attr(url)}" target="_blank" rel="noopener">'
+                f'{label}{note_html} <span aria-hidden="true">↗</span></a>'
+            )
+        else:
+            chips.append(f'<span class="badge opp-chip-plain"><span>{label}{note_html}</span></span>')
+    intro_html = f'<span class="opp-links-label">{esc(intro)}</span>' if intro else ""
+    return f'<div class="opp-links">{intro_html}<div class="opp-chips">{"".join(chips)}</div></div>'
+
+
 def generate_home_team(data):
     team = data["sections"]["team"]
+    collab = data["sections"]["collaboration"]
     logo = _inline_logo(team.get("logo"))
     logo_html = (f'<figure class="art-logo" aria-label="{esc(team.get("logo", {}).get("alt", ""))}">'
                  f'{logo}</figure>') if logo else ""
@@ -926,25 +929,57 @@ def generate_home_team(data):
                 f'<div><h3>{esc(h.get("title", ""))}</h3>'
                 f'<p>{esc(h.get("content", ""))}</p></div></div>')
     head = home_section(data, "team")
-    # The eyebrow link reuses the group's own CTA url — one source of truth for it.
     group_url = next((c.get("url") for c in team.get("cta", []) if c.get("url", "").startswith("http")), "")
     eyebrow_link = (
         f'<a class="art-ext" href="{url_attr(group_url)}" target="_blank" rel="noopener">'
         f'{esc(urlparse(group_url).netloc)} <span aria-hidden="true">↗</span></a>'
     ) if group_url else ""
-    # Design G retires the ✦ glyph; the eyebrow is a square pad like every other label.
     eyebrow_text = esc(head.get("eyebrow", "").replace("✦", "").strip())
     btns = []
     for i, c in enumerate(team.get("cta", [])):
         url = c.get("url", "#")
         ext = url.startswith("http")
         attrs = ' target="_blank" rel="noopener"' if ext else ""
-        arrow = ' <span aria-hidden="true">↗</span>' if ext else ""
-        cls = "btn" if i == 0 else "link"
+        cls = "btn" if i == 0 else "btn-ghost"
+        arrow = "" if cls == "btn" else (' <span aria-hidden="true">↗</span>' if ext else "")
         btns.append(f'<a class="{cls}" href="{url_attr(url)}"{attrs}>{esc(c.get("text", ""))}{arrow}</a>')
+
+    values_items = (collab.get("values") or {}).get("items", []) or []
+    val_accents = ["sla", "ic"]
+    values_html = ""
+    if values_items:
+        vcards = "".join(
+            f'<article class="value-card vc-{val_accents[i % len(val_accents)]}">'
+            f'<h4>{esc(v.get("title", ""))}</h4>'
+            f'<p>{v.get("content", "")}</p></article>'
+            for i, v in enumerate(values_items)
+        )
+        values_html = f'<div class="values-grid">{vcards}</div>\n'
+
+    opp_cards_data = (collab.get("opportunities") or {}).get("cards", []) or []
+    opp_cards = "".join(
+        f'<article class="opp-card opp-{_OPP_ACCENTS[i % len(_OPP_ACCENTS)]}">'
+        f'<div class="opp-card-head"><h4>{esc(c.get("title", ""))}</h4></div>'
+        f'<p class="opp-card-body">{c.get("content", "")}</p>'
+        f'{_render_opp_links(c)}'
+        '</article>'
+        for i, c in enumerate(opp_cards_data)
+    )
+
+    join_html = (
+        '<div class="join-panel" id="join">\n'
+        f'<div class="join-head"><h3>{esc(collab.get("title", "Working With Me"))}</h3>'
+        '<a class="btn-ghost" href="mentorship.html">Current group &amp; alumni directory →</a></div>\n'
+        f'<p class="section-intro">{esc(collab.get("intro", ""))}</p>\n'
+        f'{values_html}'
+        f'<div class="opp-grid" id="opportunities">{opp_cards}</div>\n'
+        '</div>'
+    )
+
     return (
         '<div class="container">\n'
-        '<article class="art-panel" data-chip>\n'
+        + sec_head("Research Group & Working With Me") + '\n'
+        '<article class="art-panel">\n'
         f'{logo_html}\n'
         '<div class="art-body">\n'
         f'<p class="art-eyebrow"><span class="badge">{eyebrow_text}</span>{eyebrow_link}</p>\n'
@@ -955,107 +990,113 @@ def generate_home_team(data):
         f'<div class="cta">{"".join(btns)}</div>\n'
         '</div>\n'
         '</article>\n'
-        "</div>"
-    )
-
-
-def _opp_link(l):
-    name = esc(l.get("name", ""))
-    out = f'<a href="{url_attr(l["url"])}" target="_blank" rel="noopener">{name}</a>' if l.get("url") else name
-    if l.get("abbr"):
-        out += f' ({esc(l["abbr"])})'
-    elif l.get("note"):
-        out += f' <span class="opp-note">({esc(l["note"])})</span>'
-    return out
-
-
-def _opp_links_html(card):
-    """Render whatever link groups a card has: fellowships, programs, or opportunities."""
-    out = ""
-    for key, default in (("fellowships", "Fellowships:"), ("programs", "Programs:")):
-        grp = card.get(key)
-        if grp and grp.get("links"):
-            links = ", ".join(_opp_link(l) for l in grp["links"])
-            out += f'<p class="opp-links"><strong>{esc(grp.get("intro", default))}</strong> {links}</p>'
-    opps = card.get("opportunities")
-    if isinstance(opps, list) and opps:
-        links = ", ".join(_opp_link(o) for o in opps)
-        out += f'<p class="opp-links"><strong>Programs:</strong> {links}</p>'
-    return out
-
-
-def generate_home_collab(data):
-    collab = data["sections"]["collaboration"]
-    vals = collab.get("values", {})
-    val_items = "".join(
-        f'<article class="card" data-chip><h3>{esc(v.get("title", ""))}</h3>'
-        f'<p>{esc(v.get("content", ""))}</p></article>'
-        for v in vals.get("items", [])
-    )
-    values_html = f'<div class="values-grid" data-bus>{val_items}</div>' if val_items else ""
-    opp = collab.get("opportunities", {})
-    # The opportunity cards are chips visually but carry no trace: the density rule
-    # keeps Home to the eight blocks the trunk actually feeds.
-    cards = "".join(
-        f'<article class="card opp-card"><h3>{esc(c.get("title", ""))}</h3>'
-        f'<p>{esc(c.get("content", ""))}</p>{_opp_links_html(c)}</article>'
-        for c in opp.get("cards", [])
-    )
-    opp_heading = f'<h3 class="opp-heading">{esc(opp.get("title", "Opportunities"))}</h3>' if cards else ""
-    return (
-        '<div class="container">\n'
-        + sec_head(collab.get("title", "")) + '\n'
-        f'<p class="section-intro">{esc(collab.get("intro", ""))}</p>\n'
-        f'{values_html}\n'
-        f'{opp_heading}\n'
-        f'<div class="grid-3 opp-grid">{cards}</div>\n'
+        f'{join_html}\n'
         "</div>"
     )
 
 
 def generate_biography(data):
-    """Career timeline for the dedicated Biography page (#biography-content).
-
-    The page shell supplies the title/tagline header band, so this emits only the
-    timeline. (Personal note + dog photos live in the Home 'About' section.)
-
-    The timeline is drawn as a board trace: entries run chronologically top->bottom,
-    each event is a hollow via on a copper trunk, the current role is an energy #star4
-    (plus the NOW pad), and an entry flagged `"concurrent": true` in content.json hangs
-    off the trunk as an indented branch (45 deg out, parallel, 45 deg back in) instead
-    of pretending to be the next step in the sequence. The trunk segment is drawn per
-    item (.tl-item::after) rather than once for the whole column, so the LAST entry can
-    fade its own tail out below the current role without any magic offsets.
-    """
+    """Render the dedicated Biography page (#biography-content):
+    1. Short Biography narrative + childhood photo (china_childhood.jpg)
+    2. Visual alternating left/right Career & Research Evolution Timeline
+    3. Outside of Work + dog photos (Kumo & Aki)."""
     bio = data["sections"]["biography"]
+
+    # 1. Short Biography narrative + childhood photo
+    narrative = bio.get("narrative", []) or []
+    nar_html = "".join(f'<p class="about">{p}</p>' for p in narrative if p)
+    cphoto = bio.get("childhoodPhoto") or {}
+    cphoto_html = ""
+    if cphoto.get("src"):
+        webp_src = _webp(cphoto["src"])
+        webp_tag = (
+            f'<source srcset="{url_attr(webp_src)}" type="image/webp">'
+            if (PROJECT_ROOT / webp_src).exists() else ""
+        )
+        cphoto_html = (
+            '<figure class="bio-childhood-photo"><picture>'
+            f'{webp_tag}'
+            f'<img src="{url_attr(cphoto["src"])}" alt="{esc(cphoto.get("alt", ""))}" '
+            'width="720" height="540">'
+            '</picture>'
+            f'<figcaption>{esc(cphoto.get("caption", ""))}</figcaption></figure>'
+        )
+    bio_intro_sec = ""
+    if nar_html or cphoto_html:
+        bio_intro_sec = (
+            sec_head("Short Biography") + '\n'
+            '<div class="bio-intro-grid">\n'
+            f'<div class="bio-narrative">{nar_html}</div>\n'
+            f'{cphoto_html}\n'
+            '</div>\n'
+        )
+
+    # 2. Alternating Left/Right Career & Research Evolution Timeline
     timeline = bio.get("timeline", []) or []
     star = '<svg class="tl-star" aria-hidden="true" focusable="false"><use href="#star4"/></svg>'
+    tl_accents = ["du", "ii", "sla", "ic", "du", "sla", "ii"]
     parts = []
     for i, t in enumerate(timeline):
-        cls = "tl-item"
+        side = "tl-left" if i % 2 == 0 else "tl-right"
+        acc = tl_accents[i % len(tl_accents)]
+        cls = f"tl-node {side} tl-acc-{acc}"
         if t.get("current"):
             cls += " current"
         if t.get("concurrent"):
             cls += " concurrent"
-        if i == len(timeline) - 1:
-            cls += " tl-tail"           # the trunk fades out under the last entry
         flags = ""
         if t.get("current"):
-            flags += '<span class="tl-now">Now</span>'
+            flags += '<span class="tl-now">Current</span>'
         if t.get("concurrent"):
-            flags += '<span class="tl-conc">Concurrent</span>'
-        branch = '<span class="tl-branch" aria-hidden="true"></span>' if t.get("concurrent") else ""
+            flags += '<span class="tl-conc">Concurrent Leave</span>'
+        focus_tags = t.get("focusTags", []) or []
+        tags_html = ""
+        if focus_tags:
+            tags_html = '<div class="tl-tags">' + "".join(
+                f'<span class="badge b-{acc}">{esc(tag)}</span>' for tag in focus_tags
+            ) + '</div>'
         parts.append(
-            f'<div class="{cls}">{branch}'
-            + (star if t.get("current") else "")
-            + f'<div class="tl-date">{esc(date_range(t.get("date", "")))}</div>'
-            f'<div class="tl-title">{esc(t.get("title", ""))}{flags}</div>'
-            f'<div class="tl-loc">{esc(t.get("location", ""))}</div>'
+            f'<article class="{cls}">'
+            '<div class="tl-axis-marker" aria-hidden="true">'
+            + (star if t.get("current") else '<span class="tl-diamond"></span>')
+            + '</div>'
+            '<div class="tl-card">'
+            '<div class="tl-card-head">'
+            f'<span class="tl-date">{esc(date_range(t.get("date", "")))}</span>'
+            f'<span class="tl-loc">{esc(t.get("location", ""))}</span>'
+            '</div>'
+            f'<h3 class="tl-title"><span>{esc(t.get("title", ""))}</span>{flags}</h3>'
             f'<div class="tl-content">{t.get("content", "")}</div>'
-            "</div>"
+            f'{tags_html}'
+            '</div>'
+            '</article>'
         )
     items = "".join(parts)
-    return (f'<div class="container">\n<div class="timeline" data-chip>{items}</div>\n</div>')
+
+    # 3. Outside of Work
+    note = bio.get("personalNote", "")
+    personal = f'<p class="about-personal">{esc(note)}</p>' if note else ""
+    dogs = _dog_photos(bio)
+    outside = ""
+    if personal or dogs:
+        outside = (
+            '\n<div class="bio-personal-sec">\n'
+            + sec_head("Outside of Work") + '\n'
+            + personal + '\n'
+            + dogs + '\n'
+            + '</div>'
+        )
+    return (
+        '<div class="container">\n'
+        + bio_intro_sec
+        + sec_head("Career & Research Evolution Timeline") + '\n'
+        '<p class="section-intro">My academic path across the United States, China, Japan, and Canada, '
+        'and how my research evolved from observational galaxy evolution to statistical inference, '
+        'Galactic mapping, and scientific AI.</p>\n'
+        f'<div class="bio-timeline-alt">{items}</div>'
+        f'{outside}\n'
+        '</div>'
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -1106,14 +1147,14 @@ def _pub_cat_key(pub):
     """The single area a paper is FILED under: argmax(categoryProbabilities), which
     the pipeline also stores as researchArea. Card accent, data-cat filter key and
     chip count all read this one value, so the stripe you see is the chip you clicked
-    and the chips partition the corpus (D5)."""
+    and the chips partition the corpus."""
     cat, prob = max(_cat_probs(pub), key=lambda cp: cp[1])
     if prob > 0:
         return _PUB_CAT_MAP[cat][0]
     return _PUB_CAT_MAP.get(pub.get("researchArea", ""), ("du", ""))[0]
 
 
-# Group bylines that must render verbatim rather than as "F. Last" (D15).
+# Group bylines that must render verbatim rather than as "F. Last".
 _COLLAB_RE = re.compile(r"\b(collaboration|consortium|team|survey)\b", re.I)
 
 
@@ -1171,24 +1212,31 @@ def _truncate(s, n=320):
     return esc(s[:n].rsplit(" ", 1)[0]) + "…"
 
 
+_ROLE_LABELS = {
+    "primary": "Primary author",
+    "postdoc": "Postdoc-led",
+    "student": "Student-led",
+    "significant": "Contributor",
+}
+
+
 def _generate_paper_card(pub, board=False):
     """Build a .paper card. board=True adds the abstract for the Featured spotlight."""
     title = clean_text(pub.get("title", ""))
     year = pub.get("year", "")
-    journal = _venue(pub)
     authors = pub.get("authors", []) or []
     cites_int = int(pub.get("citations", 0) or 0)
     cites_comma = f"{cites_int:,}"
 
     catkey = _pub_cat_key(pub)
 
-    role = pub.get("authorshipCategory")
+    role = pub.get("authorshipCategory") or "other"
     is_student = role == "student"
     is_postdoc = role == "postdoc"
     is_featured = bool(pub.get("featured"))
 
     # Class list and authorship accent
-    cls = f"paper {catkey}"
+    cls = f"paper {catkey} role-{role}"
     if board:
         cls += " feat-card"
     if is_student:
@@ -1196,10 +1244,10 @@ def _generate_paper_card(pub, board=False):
     elif is_postdoc:
         cls += " postdoc"
 
-    # The role rides the card's metadata line (and the chip's top edge), so it is not
-    # also a tag in the same hue as the category badges beside it (audit A5).
-    role_label = "Student-led" if is_student else ("Postdoc-led" if is_postdoc else "")
+    role_label = _ROLE_LABELS.get(role, "")
     tags = '<span class="tag feat">★ Featured</span>' if is_featured else ""
+    if role_label:
+        tags += f'<span class="badge b-role-{role}">{esc(role_label)}</span>'
 
     # Badges for every area >= 0.20; the filter key/accent is the argmax area only.
     badges = "".join(f'<span class="badge b-{k}">{_PUB_CAT_LABEL[k]}</span>'
@@ -1213,14 +1261,14 @@ def _generate_paper_card(pub, board=False):
     doi_url = f"https://doi.org/{doi}" if doi else ""
     links = ""
     if ads:
-        links += f'<a class="reslink" href="{url_attr(ads)}" target="_blank" rel="noopener">ADS</a>'
+        links += f'<a class="reslink" href="{url_attr(ads)}" target="_blank" rel="noopener">ADS ↗</a>'
     if arxiv_url:
-        links += f'<a class="reslink" href="{url_attr(arxiv_url)}" target="_blank" rel="noopener">arXiv</a>'
+        links += f'<a class="reslink" href="{url_attr(arxiv_url)}" target="_blank" rel="noopener">arXiv ↗</a>'
     if doi_url:
-        links += f'<a class="reslink" href="{url_attr(doi_url)}" target="_blank" rel="noopener">DOI</a>'
+        links += f'<a class="reslink" href="{url_attr(doi_url)}" target="_blank" rel="noopener">DOI ↗</a>'
 
-    # Title links to the best available target (arXiv -> ADS -> DOI)
-    title_href = arxiv_url or ads or doi_url
+    # Title links to the best available target (ADS -> DOI -> arXiv)
+    title_href = ads or doi_url or arxiv_url
     title_inner = esc(title)
     title_html = (
         f'<a href="{url_attr(title_href)}" target="_blank" rel="noopener">{title_inner}</a>'
@@ -1229,33 +1277,37 @@ def _generate_paper_card(pub, board=False):
 
     authors_html = _format_authors_html(authors)
     cite_str = f"{cites_comma} citation{'s' if cites_int != 1 else ''}" if cites_int else ""
-    # byline = who wrote it and how often it has been cited; the year, the venue and my
-    # role are the card's metadata line above the title.
     meta = " · ".join(part for part in [authors_html, cite_str] if part)
 
     abstract_html = ""
-    if board and pub.get("abstract"):
-        abstract_html = f'<p class="paper-abstract">{_truncate(pub["abstract"], 340)}</p>'
+    raw_abs = clean_text(pub.get("abstract", ""))
+    if board and raw_abs:
+        abstract_html = f'<p class="paper-abstract">{_truncate(raw_abs, 340)}</p>'
+    elif raw_abs:
+        abstract_html = (
+            '<details class="paper-abs-toggle">'
+            '<summary class="paper-abs-btn">Abstract</summary>'
+            f'<p class="paper-abstract">{esc(raw_abs)}</p>'
+            '</details>'
+        )
 
-    # Featured (board) cards are pinned decoration, not list items — leaving off
-    # data-lv-item keeps listview.js from counting or filtering them twice.
     lv = "" if board else " data-lv-item"
     return (
         f'<article class="{cls}"{lv} data-cat="{catkey}" data-year="{year}" '
         f'data-num="{cites_int}" data-title="{attr_esc(title)}" '
         f'data-search="{attr_esc(title + " " + " ".join(authors))}">'
-        f'{card_meta(str(year), _venue_short(pub), (role_label, True))}'
+        f'{card_meta(str(year), _venue_short(pub))}'
         f'<h3 class="paper-title">{title_html}</h3>'
         f'<div class="paper-meta">{meta}</div>'
-        f'<div class="paper-badges">{tags}{badges}'
-        f'<span class="paper-links">{links}</span></div>'
+        f'<div class="paper-badges"><div class="paper-tag-group">{tags}{badges}</div>'
+        f'<div class="paper-links">{links}</div></div>'
         f'{abstract_html}'
         f'</article>'
     )
 
 
 # Bibcode journal code -> venue label, so a paper with no `journal` still shows a
-# venue when its bibcode says which one (D14). Codes are bibcode[4:9].
+# venue when its bibcode says which one. Codes are bibcode[4:9].
 _BIBCODE_JOURNALS = {
     "ApJ": "The Astrophysical Journal",
     "ApJS": "The Astrophysical Journal Supplement Series",
@@ -1305,20 +1357,6 @@ def _venue(pub):
 
 # ---------------------------------------------------------------------------
 # Publication figures
-#
-# Every figure is HTML first: the axis ticks, the legend keys and the direct
-# labels are real HTML text laid out in a CSS grid AROUND the plot box, so they
-# never scale with the drawing. (When the whole chart was one viewBox-scaled SVG,
-# the 11px axis type rendered at 6.6px on a 1440 desktop and 3.9px on a phone —
-# audit A4.) Only geometry lives inside .pf-plot: bars, dots, gridlines and hit
-# targets as positioned HTML, and line/area paths in a stretched
-# <svg preserveAspectRatio="none"> whose strokes are non-scaling.
-#
-# The per-year hit targets are tab stops carrying an aria-label (and a data-tip
-# for the visual tooltip in pubchart.js). They deliberately do NOT carry
-# role="img": that role marks an atomic, non-interactive graphic, which
-# contradicts a tab stop (D21). The chart root stays role="group" + aria-label,
-# the correct container role for a graphic that holds focusable children.
 # ---------------------------------------------------------------------------
 
 def _n(v):
@@ -1344,19 +1382,13 @@ def _pf_yticks(ticks, yp, fmt="{:,}"):
 
 
 def _pf_xticks(items):
-    """items: [(x%, label)]. Every label is centred on its own tick — the end ones
-    overflow into the axis gutter / the card's padding rather than being clamped to
-    the plot edge, which would shift them into their neighbour."""
+    """items: [(x%, label)]."""
     return "".join(f'<span class="pf-xt" style="left:{_n(x)}%">{label}</span>'
                    for x, label in items)
 
 
 def _pf_chart(plot, yticks="", xticks="", legend="", aria="", cls="", ycol=5, rcol=0):
-    """The chart frame: a grid of [y-axis | plot | legend] over [_ | x-axis].
-
-    ycol/rcol are widths in mono characters, so the axis gutter follows the tick
-    text at whatever size the breakpoint renders it.
-    """
+    """The chart frame: a grid of [y-axis | plot | legend] over [_ | x-axis]."""
     style = f"--pf-yc:{ycol}"
     if rcol:
         style += f";--pf-rc:{rcol}"
@@ -1389,7 +1421,7 @@ def _spread(tops, gap):
 
 _ROLE_META = [
     ("primary", "Primary author"), ("postdoc", "Postdoc-led"),
-    ("student", "Student-led"), ("significant", "Contributor"), ("other", "Other"),
+    ("student", "Student-led"), ("significant", "Contributor"), ("other", "Other collab."),
 ]
 
 
@@ -1404,13 +1436,7 @@ def _nice_ticks(maxv, target=4):
 
 
 def _roles_svg(pubs):
-    """Publications per year, stacked by my authorship role.
-
-    The five roles are not research areas, so they take a neutral lightness ramp
-    (--role-*) plus a per-role hatch: the stack still separates in greyscale and
-    the legend swatches carry the same fill+hatch, so nothing is keyed by colour
-    alone (audit A2/A3). Each year is one focusable hit target.
-    """
+    """Publications per year, stacked by authorship role using the vibrant role palette."""
     from collections import defaultdict, Counter
     by_year = defaultdict(Counter)
     for p in pubs:
@@ -1421,8 +1447,6 @@ def _roles_svg(pubs):
         return ""
     years = list(range(min(by_year), max(by_year) + 1))
     maxstack = max((sum(by_year[y].values()) for y in years), default=1)
-    # Headroom is a fixed 12%, and gridlines above the data are dropped, so a bar
-    # chart never sits in the bottom two thirds of its own plot.
     ticks = _nice_ticks(maxstack, 5)
     scale = maxstack * 1.12
     ticks = [t for t in ticks if t <= scale]
@@ -1434,8 +1458,8 @@ def _roles_svg(pubs):
     for i, y in enumerate(years):
         col = by_year[y]
         total = sum(col.values())
-        left = i * slot + slot * 0.18
-        width = slot * 0.64
+        left = i * slot + slot * 0.14
+        width = slot * 0.72
         if total:
             segs = "".join(
                 f'<i class="pf-seg seg-{key}" style="height:{_n(col[key] / total * 100)}%"></i>'
@@ -1456,9 +1480,7 @@ def _roles_svg(pubs):
 
 
 def _citations_svg(metrics):
-    """Citations received per year — one cat-ic series on a linear scale, with the
-    latest complete year lit as an energy star and labelled directly, so the peak
-    is read off the mark rather than off a legend."""
+    """Citations received per year — one cat-ic series on a linear scale."""
     cpy = {int(y): v for y, v in (metrics.get("citationsPerYear") or {}).items()}
     if not cpy:
         return ""
@@ -1497,7 +1519,7 @@ def _citations_svg(metrics):
                      aria="Citations received per year")
 
 
-# RIQ series: (key, right-edge label). The typical-range band bounds (audit A14).
+# RIQ series: (key, right-edge label). The typical-range band bounds.
 _RIQ_SERIES = [
     ("all", "All papers"), ("primary", "Primary"),
     ("significant", "Contributor"), ("student", "Student-led"), ("postdoc", "Postdoc-led"),
@@ -1506,9 +1528,7 @@ _RIQ_BAND = (60, 150)
 
 
 def _riq_svg(metrics):
-    """RIQ over time by authorship role. Five series in the neutral role ramp, each
-    with its own dash pattern and a direct label at the right edge carrying its last
-    plotted value — no swatch legend, and the typical-range band prints its bounds."""
+    """RIQ over time by authorship role using the vibrant role color palette."""
     riq = metrics.get("riqByCategory") or {}
     data = {}
     for key, _ in _RIQ_SERIES:
@@ -1534,6 +1554,7 @@ def _riq_svg(metrics):
             f'<span class="pf-mean" style="top:{_n(yp(100))}%"></span>',
             _pf_grid(ticks, yp)]
     paths = []
+    dots = []
     for key, _ in _RIQ_SERIES:
         pts = data[key]
         if len(pts) < 2:
@@ -1541,8 +1562,10 @@ def _riq_svg(metrics):
         d = " ".join(f"{'M' if i == 0 else 'L'}{_n(xp(yr))},{_n(yp(v))}"
                      for i, (yr, v) in enumerate(pts))
         paths.append(f'<path class="pf-ln ln-{key}" d="{d}" vector-effect="non-scaling-stroke"/>')
+        lx, ly = xp(pts[-1][0]), yp(pts[-1][1])
+        dots.append(f'<span class="pf-riq-dot ln-{key}" style="left:{_n(lx)}%;top:{_n(ly)}%"></span>')
     plot.append('<svg class="pf-geo" viewBox="0 0 100 100" preserveAspectRatio="none" '
-                f'aria-hidden="true">{"".join(paths)}</svg>')
+                f'aria-hidden="true">{"".join(paths)}</svg>{"".join(dots)}')
     step = 100 / (len(years) - 1) if len(years) > 1 else 100
     for yr in years:
         bits = [f"{label} {round(dict(data[key])[yr])}"
@@ -1557,28 +1580,27 @@ def _riq_svg(metrics):
     # direct labels at the right edge, nudged apart so no two overlap
     ends = [(key, label, data[key][-1][1]) for key, label in _RIQ_SERIES if data[key]]
     order = sorted(range(len(ends)), key=lambda i: yp(ends[i][2]))
-    spread = _spread([(i, yp(ends[i][2])) for i in order], 8.0)
+    spread = _spread([(i, yp(ends[i][2])) for i in order], 11.0)
     legend = "".join(
         f'<span class="pf-rl ln-{ends[i][0]}" style="--y:{_n(spread[i])}%">'
         f'<b>{round(ends[i][2]):,}</b> {ends[i][1]}</span>'
         for i in range(len(ends))
     )
     rcol = max(len(f"{round(v):,} {label}") for _, label, v in ends) + 2
-    return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt), legend=legend,
+    return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt),
+                     legend=legend,
                      cls=" has-r", ycol=3, rcol=rcol,
                      aria="Research Impact Quotient over time by authorship role")
 
 
 def _mix_svg(pubs):
-    """Research mix: one hard-segmented 100% bar, each share labelled INSIDE its own
-    segment (the old detached legend put "Interpretability 21%" inside the Discovery
-    segment — audit A12). Shares come from percent_shares(), so they total 100."""
+    """Research mix: one 100% stacked bar + full-name colored legend below so no label
+    is ever truncated inside a narrow segment."""
     from collections import defaultdict
-    # (full name, key, short label)
-    areas = [("Statistical Learning & AI", "sla", "Stat. learning"),
-             ("Interpretability & Insight", "ii", "Interpretability"),
-             ("Inference & Computation", "ic", "Inference"),
-             ("Discovery & Understanding", "du", "Discovery")]
+    areas = [("Statistical Learning & AI", "sla", "Stat. Learning & AI"),
+             ("Interpretability & Insight", "ii", "Interpretability & Insight"),
+             ("Inference & Computation", "ic", "Inference & Computation"),
+             ("Discovery & Understanding", "du", "Discovery & Understanding")]
     agg = defaultdict(float)
     for p in pubs:
         cp = p.get("categoryProbabilities") or {}
@@ -1597,15 +1619,17 @@ def _mix_svg(pubs):
     segs, keys = [], []
     for (key, name, short, _frac), pct in zip(fr, pcts):
         tip = f"{name}: {pct}% of classified output"
-        # Below ~10% a segment is too narrow to hold its own name; it keeps the
-        # percentage inside and leans on the key line for the area.
-        inner = (f'<b>{esc(short)}</b><i>{pct}%</i>' if pct >= 10 else f'<i>{pct}%</i>')
+        short_bar = "AI & ML" if key == "sla" else name.split("&")[0].strip()
+        inner = f'<b>{esc(short_bar)}</b><i>{pct}%</i>'
         segs.append(f'<span class="mix-seg mix-{key}" style="flex:{pct}" {_tip(tip)}>{inner}</span>')
-        keys.append(f'<span class="pf-key"><i class="pf-kw mix-{key}"></i>{esc(short)} {pct}%</span>')
-    total_txt = ", ".join(f"{short} {pct}%" for (_k, _n_, short, _f), pct in zip(fr, pcts))
+        keys.append(
+            f'<span class="pf-key pf-key-mix"><i class="pf-kw mix-{key}"></i>'
+            f'<strong>{esc(name)}</strong> <span class="pf-key-pct">{pct}%</span></span>'
+        )
+    total_txt = ", ".join(f"{name} {pct}%" for (_k, name, _s, _f), pct in zip(fr, pcts))
     return (f'<div class="pf-mix" role="group" aria-label="Research mix: {esc(total_txt)}">'
             f'{"".join(segs)}</div>'
-            f'<div class="pf-leg pf-leg-mix" aria-hidden="true">{"".join(keys)}</div>')
+            f'<div class="pf-leg pf-leg-mix">{"".join(keys)}</div>')
 
 
 # Authorship dashboard tiles: (role key in publications_data + content.json libraries, label)
@@ -1617,11 +1641,7 @@ _ADS_LIBRARY_TILES = [
 
 
 def generate_publications_redesign(data):
-    """Generate the inner HTML for #publications-content (redesign).
-
-    Reads publications_data.json directly and emits the dashboard, controls,
-    filter chips, and all paper cards pre-sorted newest-first then most-cited.
-    """
+    """Generate the inner HTML for #publications-content (redesign)."""
     try:
         pub_data = json.loads(PUBLICATIONS_JSON.read_text(encoding="utf-8"))
     except (OSError, ValueError) as err:
@@ -1632,9 +1652,6 @@ def generate_publications_redesign(data):
     total_papers = metrics.get("totalPapers", len(pubs))
     total_citations = metrics.get("totalCitations", 0)
 
-    # Per-category chip counts: one bucket per paper (its argmax area), so the four
-    # chips partition the corpus and each count is exactly the number of cards that
-    # chip reveals.
     cat_counts = {"sla": 0, "ii": 0, "ic": 0, "du": 0}
     papers_with_year = []
     for p in pubs:
@@ -1659,27 +1676,26 @@ def generate_publications_redesign(data):
     from collections import Counter
     role_counts = Counter(p.get("authorshipCategory") for p in pubs)
     libraries = (data.get("sections", {}).get("publications", {}) or {}).get("libraries", {}) or {}
-    role_buttons = [(label, total_papers if key == "total" else role_counts.get(key, 0),
+    role_buttons = [(key, label, total_papers if key == "total" else role_counts.get(key, 0),
                      libraries.get(key, ""))
                     for key, label in _ADS_LIBRARY_TILES if libraries.get(key)]
     if len(role_buttons) != len(_ADS_LIBRARY_TILES):
         warn("sections.publications.libraries is missing an ADS library id; "
              "the authorship dashboard is incomplete")
-    # The four role tiles are curated ADS libraries and do not cover every paper, so
-    # say so underneath rather than letting five tiles read as a partition (D7).
     covered = sum(role_counts.get(key, 0) for key, _ in _ADS_LIBRARY_TILES if key != "total")
     coverage_html = ""
     if 0 < covered < total_papers:
         coverage_html = (
-            f'<p class="pub-stats-note">{covered} of {total_papers} papers sit in one of '
-            'these curated ADS libraries; the rest are co-authored work, counted in the '
-            'total and shown as “Other” in the roles figure below.</p>')
-    dashboard = '<div class="pub-stats pub-authorship" data-chip>' + "".join(
-        f'<a class="pub-stat pub-statlink" href="{url_attr(_ADS_LIB + lib)}" target="_blank" rel="noopener" '
+            f'<p class="pub-stats-note">{covered} of {total_papers} papers belong to one of '
+            'these four primary authorship categories in my curated ADS libraries; the remaining '
+            f'{total_papers - covered} are broader collaboration papers included in the total '
+            'and grouped as “Other collab.” in the authorship breakdown below.</p>')
+    dashboard = '<div class="pub-stats pub-authorship">' + "".join(
+        f'<a class="pub-stat pub-statlink role-tile-{key}" href="{url_attr(_ADS_LIB + lib)}" target="_blank" rel="noopener" '
         f'aria-label="{label}: {cnt} papers (opens the ADS library)">'
         f'<span class="n">{cnt:,}</span><span class="l">{label}</span>'
         f'<span class="pub-stat-go" aria-hidden="true">ADS ↗</span></a>'
-        for label, cnt, lib in role_buttons
+        for key, label, cnt, lib in role_buttons
     ) + '</div>' + coverage_html
 
     # Aggregate author-profile links (ADS search · Google Scholar · ORCID) from content.json
@@ -1690,16 +1706,12 @@ def generate_publications_redesign(data):
         f'<a class="reslink" href="{url_attr(u)}" target="_blank" rel="noopener">{lbl} ↗</a>'
         for lbl, u in prof_defs if u
     )
-    # Every record as BibTeX. The file is generated from this same cache by
-    # scripts/export_bib.py and `npm run check` fails when it drifts (C12).
     prof_links += (f'<a class="reslink" href="{BIBTEX_PATH}" download>BibTeX ↓</a>')
     profiles = (
         '<div class="pub-profiles"><span class="pub-profiles-label">Full author profiles</span>'
         f'{prof_links}</div>'
     ) if prof_links else ""
     cpy = {int(y): v for y, v in metrics.get("citationsPerYear", {}).items()}
-    # The peak is a direct label on the mark now, and the scale is plain linear, so the
-    # head carries only the total, its provenance and the year the chart leaves out.
     peak_txt = f"{total_citations:,} total · ADS + Google Scholar"
     if cpy:
         peak_txt += f" · {max(cpy)} partial, omitted"
@@ -1707,7 +1719,7 @@ def generate_publications_redesign(data):
     def _fig(title, meta, svg, wide=False):
         cls = "pub-fig wide" if wide else "pub-fig"
         return (
-            f'<figure class="{cls}" data-chip>'
+            f'<figure class="{cls}">'
             f'<figcaption class="pub-fig-head"><span class="t">{title}</span>'
             f'<span class="m">{meta}</span></figcaption>'
             f'{svg}</figure>'
@@ -1720,13 +1732,14 @@ def generate_publications_redesign(data):
         + _fig("Publications by year &amp; role", "hover or tab through the bars", _roles_svg(papers_with_year))
         + _fig("Research impact by role", "RIQ vs. the typical astronomer range", _riq_svg(metrics))
         + '</div>'
-        '<p class="pub-fig-note"><strong>Why these figures?</strong> I find it easier to see what I work on '
-        'and how it has landed as a picture than as a list. <strong>Research mix</strong> weights each paper by '
-        'its classification across the four areas, and the <strong>role breakdowns</strong> separate work I led '
-        'from work led by my postdocs, my students, and larger collaborations. <strong>RIQ</strong> '
-        '(Research Impact Quotient) is roughly √(total citations) ÷ years active, so it compares across career '
-        'stages instead of just growing with time — the shaded band is the 60–150 typical range for established '
-        'astronomers (<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" '
+        '<p class="pub-fig-note"><strong>Reading these summaries:</strong> The <strong>research mix</strong> '
+        'bar weights each paper by its topic probabilities across our four core research areas. The '
+        '<strong>authorship breakdowns</strong> separate papers I led directly from those led by postdoctoral '
+        'fellows and students in our group, papers where I made a major methodological or analysis contribution, '
+        'and larger survey collaborations. <strong>RIQ</strong> (Research Impact Quotient), defined as '
+        '√(total citations) divided by career years active, normalizes citation growth by career length; '
+        'the shaded band shows the 60–150 range typical of established astronomers '
+        '(<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" '
         'rel="noopener">Pepe &amp; Kurtz 2012</a>).</p>'
     )
 
@@ -1736,7 +1749,7 @@ def generate_publications_redesign(data):
     if featured:
         fcards = "".join(_generate_paper_card(p, board=True) for p in featured)
         feat_html = (
-            '<section class="pub-featured" data-lv-pinned data-chip aria-labelledby="featured-head">'
+            '<section class="pub-featured" data-lv-pinned aria-labelledby="featured-head">'
             '<h2 id="featured-head" class="pub-featured-head">Featured work</h2>'
             f'<div class="featured-grid">{fcards}</div>'
             '</section>'
@@ -1765,7 +1778,7 @@ def generate_publications_redesign(data):
     )
 
     list_section = (
-        f'<div id="pub-list" class="pub-list" data-lv-list data-chip>{cards}</div>'
+        f'<div id="pub-list" class="pub-list" data-lv-list>{cards}</div>'
         '<p id="pub-empty" class="pub-empty" data-lv-empty hidden>'
         'No papers match your search/filters. '
         '<button type="button" class="linkbtn" id="pub-reset" data-lv-reset>Show all</button></p>'
@@ -1773,8 +1786,6 @@ def generate_publications_redesign(data):
         '<button type="button" id="pub-loadmore" class="btn-ghost" data-lv-more>Load more</button></div>'
     )
 
-    # #pub-root is the listview root: everything listview.js shows/hides lives inside
-    # it, including the pinned Featured board.
     return (
         '<div class="container">'
         + dashboard
@@ -1806,12 +1817,12 @@ _CONTENT_GENERATORS = {
     "news": gen_news,
 }
 
-# Home is four generated <section>s rather than one content container.
+# Home is three generated <section>s rather than one content container:
+# About Me (#about) -> Research & Impact (#research) -> Research Group & Working With Me (#team, containing #join).
 _HOME_SECTIONS = [
-    ("team", "section", generate_home_team),
     ("about", "section", generate_home_about),
     ("research", "section", generate_home_research),
-    ("join", "section", generate_home_collab),
+    ("team", "section", generate_home_team),
 ]
 
 

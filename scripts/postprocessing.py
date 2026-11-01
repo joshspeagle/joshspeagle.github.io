@@ -84,7 +84,7 @@ FEATURED_PAPERS = [
 # ---------------------------------------------------------------------------
 # Canonical order. `researchArea` is *derived*, never hand-set: it is always the
 # argmax of `categoryProbabilities`, so the accent stripe / filter bucket a paper
-# renders under can never contradict the badges it renders (see D5 in the audit).
+# renders under can never contradict the badges it renders.
 RESEARCH_AREAS = [
     "Statistical Learning & AI",
     "Interpretability & Insight",
@@ -259,7 +259,7 @@ def normalize_text(value: Optional[str]) -> Optional[str]:
 # ---------------------------------------------------------------------------
 # Characters 5-9 of an ADS bibcode are the journal code. Google Scholar records
 # arrive with an empty `venue`, so a Scholar-only paper used to render with no
-# venue at all even when its bibcode named the journal (audit D14).
+# venue at all even when its bibcode named the journal.
 BIBCODE_JOURNALS = {
     "A&A..": "Astronomy and Astrophysics",
     "A&ARv": "The Astronomy and Astrophysics Review",
@@ -376,7 +376,7 @@ def deduplicate_publications(
     Google Scholar frequently lists the preprint and the published version of one
     paper as two entries; before this step they both reached the site, so the
     paper was double-counted, rendered twice and could carry two different
-    `researchArea` values (audit D4).
+    `researchArea` values.
 
     The most complete record wins. Fields only the losers carried are merged in,
     and their `scholar_id`s are kept in `scholar_id_aliases` so the provenance of
@@ -503,7 +503,7 @@ class PostProcessor:
 
         ADS and arXiv hand back a leading "Abstract" label, `$...$` math,
         ``\textit{}`` wrappers and TeX quote pairs; the site writes abstracts
-        into the page as HTML, so they are normalised here once (audit E6).
+        into the page as HTML, so they are normalised here once.
         """
         pubs = self.data.get("publications", [])
         changed = {"title": 0, "abstract": 0}
@@ -523,7 +523,7 @@ class PostProcessor:
     # ------------------------------------------------------------------
 
     def backfill_journals(self):
-        """Give every paper a venue string (audit D14).
+        """Give every paper a venue string.
 
         Derived from the ADS bibcode's journal code where there is one; a paper
         with an arXiv id and no bibcode is a preprint and gets "arXiv e-prints",
@@ -553,7 +553,7 @@ class PostProcessor:
     # ------------------------------------------------------------------
 
     def deduplicate(self):
-        """Collapse records sharing a DOI, bibcode or arXiv id (audit D4).
+        """Collapse records sharing a DOI, bibcode or arXiv id.
 
         `merge_data.py` de-duplicates by normalised title, which misses the case
         where Google Scholar lists a preprint and its published version under
@@ -587,7 +587,7 @@ class PostProcessor:
           `categoryProbabilities` is accepted as an alias.
         - `researchArea` is ALWAYS recomputed as argmax(categoryProbabilities),
           for every paper, so a card's accent stripe and filter bucket can never
-          contradict the badges it renders (audit D5). It is a derived field: do
+          contradict the badges it renders. It is a derived field: do
           not hand-edit it, edit the probabilities.
         - Strip `_scoring_info` from all papers (keyword scoring artifact).
         """
@@ -820,7 +820,7 @@ class PostProcessor:
         A curated library can hold the arXiv bibcode of a paper the site stores
         under its published bibcode (or the reverse), so the arXiv id is tried as
         a second key. This is why the naive bibcode-equality match used to leave
-        71 papers uncategorised (audit C9/D7).
+        71 papers uncategorised.
         """
         bibcode = (bibcode or "").strip()
         if not bibcode:
@@ -895,7 +895,7 @@ class PostProcessor:
         reasons: a library can hold both the preprint and the published bibcode
         of one paper, and it can hold records the site does not list at all. Both
         are counted here and written into `metrics` so the numbers on the page
-        can be explained rather than guessed at (audit C9).
+        can be explained rather than guessed at.
         """
         metrics = self.data.setdefault("metrics", {})
         index = self._publication_index()

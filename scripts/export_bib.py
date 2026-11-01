@@ -5,7 +5,7 @@ Usage:
     cd scripts && python export_bib.py [--check]
 
 `publications.bib` used to be a hand-kept ADS export that drifted out of sync
-with the site's own publication list (audit C12). It is now derived: run this
+with the site's own publication list. It is now derived: run this
 after `postprocessing.py` and commit the result alongside `publications_data.json`.
 
     --check   exit non-zero if the committed .bib differs from what this would

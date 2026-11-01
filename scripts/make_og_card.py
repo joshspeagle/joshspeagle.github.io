@@ -1,6 +1,6 @@
 """Generate the 1200x630 OpenGraph/Twitter social card (assets/images/og-card.png).
 
-Design G — "chips on the board": the navy substrate with its copper solder-pad grid,
+The navy substrate with its copper solder-pad grid,
 a few copper traces routed in from the left gutter (vias, a pin, the ground symbol),
 the brand mark in amber, and the name/tagline lockup. Deterministic: no randomness,
 no clock, so re-running it is byte-identical.
