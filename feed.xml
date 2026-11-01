@@ -8,12 +8,28 @@
     <atom:link href="https://joshspeagle.com/feed.xml" rel="self" type="application/rss+xml"/>
     <lastBuildDate>01 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
+      <title>Tabular foundation models outperform bespoke photometric redshift estimators</title>
+      <link>https://ui.adsabs.harvard.edu/abs/2026arXiv261039332D</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2026-10-01:news/tabular-foundation-models-outperform-bespoke-photometric-red</guid>
+      <pubDate>01 Oct 2026 00:00:00 +0000</pubDate>
+      <category>Paper</category>
+      <description>Co-authored with postdoctoral fellow Biprateep Dey and accepted for a Spotlight Talk at the NeurIPS 2026 Machine Learning and the Physical Sciences (ML4PS) workshop, our new study shows that pretrained tabular foundation models match or outperform tuned bespoke photo-z estimators with 40x fewer training galaxies and mitigate spectroscopic selection bias via in-context calibration using our open-source lazy-tfm package.</description>
+    </item>
+    <item>
       <title>Five new postdoctoral fellows and PhD students join our group at U of T</title>
       <link>mentorship.html#current-group</link>
       <guid isPermaLink="false">tag:joshspeagle.com,2026-09-01:news/five-new-postdoctoral-fellows-and-phd-students-join-our-grou</guid>
       <pubDate>01 Sep 2026 00:00:00 +0000</pubDate>
       <category>Group</category>
       <description>Postdoctoral fellows Christian Kragh Jespersen (Schmidt AI in Science &amp; CITA National Fellow), Maryum Sayeed (Arts &amp; Science Fellow), and Chloe Cheng (Research Excellence Fellow), along with doctoral students Ian Zhang and Isabelle Huang, join our research group at the University of Toronto.</description>
+    </item>
+    <item>
+      <title>Model predictive scoring shows specific BAO observations drive the evolving dark energy tension</title>
+      <link>https://ui.adsabs.harvard.edu/abs/2026arXiv260904334K</link>
+      <guid isPermaLink="false">tag:joshspeagle.com,2026-09-01:news/model-predictive-scoring-shows-specific-bao-observations-dri</guid>
+      <pubDate>01 Sep 2026 00:00:00 +0000</pubDate>
+      <category>Paper</category>
+      <description>Led by postdoctoral fellow Tanveer Karim (with Renée Hložek), our new study introduces leave-one-out Bayesian model predictive scoring to isolate which individual observations drive the preference for evolving dark energy, showing that specific DESI BAO redshift bins rather than Type Ia supernovae drive the tension with ΛCDM.</description>
     </item>
     <item>
       <title>Mairead Heiger completes her PhD, joins UVA as a joint GECO/CosmicAI postdoctoral fellow</title>
@@ -33,11 +49,11 @@
     </item>
     <item>
       <title>Constraining supernova yields and delay times from dwarf spheroidal galaxies</title>
-      <link>https://ui.adsabs.harvard.edu/abs/2026arXiv260222333H</link>
+      <link>https://ui.adsabs.harvard.edu/abs/2026ApJ..1007..139H</link>
       <guid isPermaLink="false">tag:joshspeagle.com,2026-02-01:news/constraining-supernova-yields-and-delay-times-from-dwarf-sph</guid>
       <pubDate>01 Feb 2026 00:00:00 +0000</pubDate>
       <category>Paper</category>
-      <description>Led by PhD student Mairead Heiger (with Ting Li and collaborators), our new study uses Bayesian chemical evolution modeling of Milky Way dwarf spheroidal galaxies to constrain Type Ia and core-collapse supernova nucleosynthetic yields and delay-time distributions.</description>
+      <description>Led by PhD student Mairead Heiger (with Ting Li and collaborators; ApJ, 1007, 139), our new study uses Bayesian chemical evolution modeling of Milky Way dwarf spheroidal galaxies to constrain Type Ia and core-collapse supernova nucleosynthetic yields and delay-time distributions.</description>
     </item>
     <item>
       <title>A deep 3-D dust map of the southern Galactic plane from DECaPS2</title>

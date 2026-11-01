@@ -3549,6 +3549,16 @@
     "news": {
       "items": [
         {
+          "date": "Oct 2026",
+          "year": 2026,
+          "type": "paper",
+          "title": "Tabular foundation models outperform bespoke photometric redshift estimators",
+          "blurb": "Co-authored with postdoctoral fellow <a href=\"https://biprateep.de/\">Biprateep Dey</a> and accepted for a Spotlight Talk at the NeurIPS 2026 <a href=\"https://ml4physicalsciences.github.io/\">Machine Learning and the Physical Sciences (ML4PS)</a> workshop, our new study shows that pretrained tabular foundation models match or outperform tuned bespoke photo-<em>z</em> estimators with 40x fewer training galaxies and mitigate spectroscopic selection bias via in-context calibration using our open-source <a href=\"https://github.com/biprateep/lazy-tfm\"><code>lazy-tfm</code></a> package.",
+          "outlet": "arXiv / NeurIPS ML4PS Spotlight",
+          "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv261039332D",
+          "linkLabel": "ADS / Preprint"
+        },
+        {
           "date": "Sep 2026",
           "year": 2026,
           "type": "group",
@@ -3557,6 +3567,16 @@
           "outlet": "Astrostatistics Research Team",
           "link": "mentorship.html#current-group",
           "linkLabel": "Current Group"
+        },
+        {
+          "date": "Sep 2026",
+          "year": 2026,
+          "type": "paper",
+          "title": "Model predictive scoring shows specific BAO observations drive the evolving dark energy tension",
+          "blurb": "Led by postdoctoral fellow <a href=\"https://tanveerkarim.com/\">Tanveer Karim</a> (with <a href=\"https://www.dunlap.utoronto.ca/directory/prof-renee-hlozek/\">Renée Hložek</a>), our new study introduces leave-one-out Bayesian model predictive scoring to isolate which individual observations drive the preference for evolving dark energy, showing that specific DESI BAO redshift bins rather than Type Ia supernovae drive the tension with ΛCDM.",
+          "outlet": "arXiv e-prints",
+          "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv260904334K",
+          "linkLabel": "ADS / Preprint"
         },
         {
           "date": "Aug 2026",
@@ -3582,10 +3602,10 @@
           "year": 2026,
           "type": "paper",
           "title": "Constraining supernova yields and delay times from dwarf spheroidal galaxies",
-          "blurb": "Led by PhD student Mairead Heiger (with <a href=\"https://sites.physics.utoronto.ca/tingli\">Ting Li</a> and collaborators), our new study uses Bayesian chemical evolution modeling of Milky Way dwarf spheroidal galaxies to constrain Type Ia and core-collapse supernova nucleosynthetic yields and delay-time distributions.",
-          "outlet": "arXiv / ApJ",
-          "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv260222333H",
-          "linkLabel": "ADS / Preprint"
+          "blurb": "Led by PhD student Mairead Heiger (with <a href=\"https://sites.physics.utoronto.ca/tingli\">Ting Li</a> and collaborators; <em>ApJ</em>, 1007, 139), our new study uses Bayesian chemical evolution modeling of Milky Way dwarf spheroidal galaxies to constrain Type Ia and core-collapse supernova nucleosynthetic yields and delay-time distributions.",
+          "outlet": "The Astrophysical Journal",
+          "link": "https://ui.adsabs.harvard.edu/abs/2026ApJ..1007..139H",
+          "linkLabel": "ADS / Paper"
         },
         {
           "date": "Oct 2025",
