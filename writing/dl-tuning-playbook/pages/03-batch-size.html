@@ -32,63 +32,27 @@
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
     <p class="lede">
-      The batch size is one of the first settings you fix on a new project, and it is tempting to treat it like the learning rate, trying a few values and keeping whichever validates best. The Playbook argues against this. Once the other hyperparameters are retuned and the run is long enough, the batch size changes how quickly you reach a result, not how good that result can be. The useful questions are which batch sizes your hardware can run, how much faster each one trains, and what each one costs.
+      The batch size is one of the first settings we fix on a new project, and it is tempting to treat it like the learning rate: try a few values and keep whichever validates best. The Playbook argues against this for a simple reason: once the other hyperparameters are retuned and the run is long enough, the batch size changes how quickly we reach a result rather than how good that result can be, so the questions worth asking are about hardware, speed and cost. In this post I want to build that argument up piece by piece. We'll start with the evidence that batch size does not limit final performance, then split training time into the time each step takes and the number of steps needed, see how the two combine, and look at what budgets and costs do to a comparison. We'll finish with why every change of batch size forces a round of retuning.
     </p>
 
-    <nav class="post-roadmap" aria-label="In this post">
-      <div class="post-roadmap-head">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-        <span>In this post</span>
-      </div>
-      <div class="post-roadmap-grid">
-        <a class="roadmap-item" href="#controls">
-          <span class="roadmap-item-title">What batch size controls</span>
-          <span class="roadmap-item-desc">Retuned at each batch size, runs reach the same validation error. Batch size sets speed and cost.</span>
-        </a>
-        <a class="roadmap-item" href="#feasible">
-          <span class="roadmap-item-title">Time per step on real hardware</span>
-          <span class="roadmap-item-desc">Step latency stays flat until the accelerator saturates, then grows with batch size. Memory sets the ceiling.</span>
-        </a>
-        <a class="roadmap-item" href="#scaling">
-          <span class="roadmap-item-title">Steps needed fall, then level off</span>
-          <span class="roadmap-item-desc">Doubling the batch size halves the steps needed up to a point, then helps less and less.</span>
-        </a>
-        <a class="roadmap-item" href="#training-time">
-          <span class="roadmap-item-title">Wall-clock time is the product</span>
-          <span class="roadmap-item-desc">Training time is step latency times step count, so the fastest batch size sits near saturation or the end of perfect scaling.</span>
-        </a>
-        <a class="roadmap-item" href="#budgets">
-          <span class="roadmap-item-title">Epoch budgets, step budgets and cost</span>
-          <span class="roadmap-item-desc">Compare batch sizes under a step budget. On fixed hardware, cost is proportional to time.</span>
-        </a>
-        <a class="roadmap-item" href="#retuning">
-          <span class="roadmap-item-title">Changing the batch size means retuning</span>
-          <span class="roadmap-item-desc">A new batch size needs a new learning rate and regularization. Batch norm statistics need their own size.</span>
-        </a>
-        <a class="roadmap-item" href="#protocol">
-          <span class="roadmap-item-title">In practice</span>
-          <span class="roadmap-item-desc">Measure throughput by doubling, default to the largest batch size that raises it, and retune after every change.</span>
-        </a>
-      </div>
-    </nav>
 
     <article class="post-body">
 
       <!-- ============ 1. What batch size controls ============ -->
       <section class="prose" id="controls">
-        <h2>What batch size controls</h2>
+        <h2>What does the batch size actually control?</h2>
         <p>
-          The Playbook's summary of the topic is two sentences long. The batch size "governs the training speed and shouldn't be used to directly tune the validation set performance", and "often, the ideal batch size will be the largest batch size supported by the available hardware" <cite data-ref="playbook"></cite>. The argument behind the first sentence has a condition attached. If the learning rate, the regularization hyperparameters and the number of training steps are retuned for each batch size, the Playbook expects <dfn data-concept="batch-for-speed">the same final performance from any batch size</dfn>.
+          The Playbook's position fits in two sentences. The batch size "governs the training speed and shouldn't be used to directly tune the validation set performance", and "often, the ideal batch size will be the largest batch size supported by the available hardware" <cite data-ref="playbook"></cite>. The first claim carries a condition that is easy to skip past. Only if the learning rate, the regularization hyperparameters and the number of training steps are retuned for each batch size do Godbole et al. expect <dfn data-concept="batch-for-speed">the same final performance from any batch size</dfn>.
         </p>
         <p>
-          The evidence comes mostly from Shallue et al. <cite data-ref="shallue2018"></cite>, who retuned every run at every batch size on workloads spanning several model families, optimizers and datasets. Their abstract states: "We find no evidence that larger batch sizes degrade out-of-sample performance." The Playbook's FAQ words its conclusion with the same care, saying there is "no convincing evidence that the batch size affects the maximum achievable validation performance". Both are reports of an effect that was not found on the workloads tested. Neither is a proof that no such effect exists.
+          Most of the evidence comes from Shallue et al. <cite data-ref="shallue2018"></cite>, who retuned every run at every batch size across workloads spanning several model families, optimizers and datasets. Their abstract is carefully worded: "We find no evidence that larger batch sizes degrade out-of-sample performance." The Playbook's FAQ is equally careful, reporting "no convincing evidence that the batch size affects the maximum achievable validation performance". We should read both as the absence of an effect on the workloads tested, which is weaker than a proof that no such effect exists.
         </p>
         <p>
-          Many people have seen validation error get worse after raising the batch size, and the Playbook agrees that "changing the batch size <em>without changing any other details of the training pipeline</em> will often affect the validation set performance". The number of epochs and the learning rate usually stay fixed by accident:
+          This can sound at odds with experience, since many of us have watched validation error get worse after raising the batch size. The Playbook agrees that "changing the batch size <em>without changing any other details of the training pipeline</em> will often affect the validation set performance", and the culprit is usually two settings that stay fixed by accident:
         </p>
         <ul>
-          <li><strong>The number of epochs.</strong> A script that trains for a fixed number of epochs (passes over the training set) processes a fixed number of examples $E$, so the number of steps $S = E/B$ falls as the batch size $B$ grows. Doubling the batch size halves the number of weight updates. Hoffer et al. <cite data-ref="hoffer2017"></cite> found that the large-batch gap in their experiments "stems from the relatively small number of updates rather than the batch size", and closed it by training for proportionally more updates with an adjusted learning rate.</li>
-          <li><strong>The learning rate and regularization.</strong> A learning rate tuned at $B = 64$ is usually a poor choice at $B = 2{,}048$, because averaging more examples produces a less noisy gradient and supports larger steps (see <a href="#scaling">steps needed</a>). The Playbook names the optimizer hyperparameters (learning rate, momentum) and the regularization hyperparameters as the ones that interact most strongly with the batch size.</li>
+          <li><strong>The number of epochs.</strong> A script that trains for a fixed number of epochs (passes over the training set) processes a fixed number of examples $E$, so the number of steps $S = E/B$ falls as the batch size $B$ grows, and each doubling of the batch halves the number of weight updates. Hoffer et al. <cite data-ref="hoffer2017"></cite> found that the large-batch gap in their experiments "stems from the relatively small number of updates rather than the batch size", and they closed it by training for proportionally more updates with an adjusted learning rate.</li>
+          <li><strong>The learning rate and regularization.</strong> A learning rate tuned at $B = 64$ is usually a poor choice at $B = 2{,}048$, because averaging more examples gives a less noisy gradient that can support larger steps (we'll see why when we get to <a href="#scaling">steps needed</a>). The Playbook singles out the optimizer hyperparameters (learning rate, momentum) and the regularization hyperparameters as the ones that interact most strongly with the batch size.</li>
         </ul>
       </section>
 
@@ -131,19 +95,19 @@
           </div>
         </div>
         <p class="fig-caption">
-          A schematic of the pattern Shallue et al. <cite data-ref="shallue2018"></cite> report, with illustrative points in place of measurements. Panel (a) confounds the batch size with the number of updates and with a mistuned learning rate. Panel (b) removes both confounds.
+          A schematic of the pattern Shallue et al. <cite data-ref="shallue2018"></cite> report, with illustrative points in place of measurements. In panel (a) the batch size is confounded with the number of updates and with a mistuned learning rate, while panel (b) removes both confounds and the apparent effect of batch size disappears.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          If the batch size mainly sets speed, the reasons to care about it are practical ones. In the Playbook's account, faster training lets you tune hyperparameters more thoroughly in a fixed amount of time, and it shortens the development cycle so that new ideas get tested more often. <dfn data-concept="training-time">Training time</dfn> is the product of step latency (seconds per step) and step count:
+          If the batch size mainly sets speed, then the reasons to care about it are practical ones. As the Playbook puts it, faster training lets us tune hyperparameters more thoroughly within a fixed amount of time, and it shortens the development cycle so that new ideas get tested more often. To reason about speed, I find it helpful to write <dfn data-concept="training-time">training time</dfn> as the product of step latency (seconds per step) and step count:
         </p>
         <div class="math-block">
           $$T(B) \;=\; \htmlClass{math-col-third}{t_{\text{step}}(B)} \times \htmlClass{math-col-fourth}{S(B)}.$$
         </div>
         <p>
-          Each factor depends on the batch size for a different reason. Step latency depends on the hardware. Step count depends on the statistics of the gradient.
+          The decomposition is useful because each factor depends on the batch size for a different reason: step latency is a property of the hardware, while step count is a property of the gradient's statistics. We'll take them one at a time.
         </p>
       </section>
 
@@ -151,11 +115,11 @@
       <section class="prose" id="feasible">
         <h2>Time per step on real hardware</h2>
         <p>
-          The first practical question on a new workload is which batch sizes fit on the accelerator (a GPU or TPU) and how long a step takes at each. Memory and parallelism decide the answer.
+          Before we can say anything about speed on a new workload, we need to know which batch sizes fit on the accelerator (a GPU or TPU) at all, and how long a step takes at each. Two properties of the hardware decide this, memory and parallelism.
         </p>
         <ul>
-          <li><strong>Memory sets an upper limit.</strong> During training the accelerator holds the weights, their gradients and the optimizer state (Adam keeps two extra values per weight), and none of these depend on the batch size. It also holds the activations of every layer for every example in the batch, because the backward pass needs them to compute the gradient. Activation memory therefore grows in proportion to $B$, and above some batch size the run fails with an out-of-memory error. The Playbook calls accelerator memory "usually" the limiting factor, and warns that the limit "can be difficult to calculate ... without running, or at least compiling, the full training program".</li>
-          <li><strong>Parallel hardware saturates.</strong> The accelerator processes the examples of a batch in parallel. At small batch sizes some of its arithmetic units sit idle, so a batch twice as large takes about the same time per step. Once the units are busy, a batch twice as large takes about twice as long. <dfn data-concept="throughput">Training throughput</dfn> (examples processed per second, $B / t_{\text{step}}$) therefore doubles with each doubling at first and then reaches a throughput plateau. The Playbook states the first half directly: "When the accelerators aren't yet saturated, if the batch size doubles, the training throughput should also double (or at least nearly double)."</li>
+          <li><strong>Memory sets an upper limit.</strong> During training the accelerator holds the weights, their gradients and the optimizer state (Adam keeps two extra values per weight), none of which depend on the batch size. It also holds the activations of every layer for every example in the batch, because the backward pass needs them to compute the gradient. Activation memory therefore grows in proportion to $B$, and above some batch size the run fails with an out-of-memory error. The Playbook calls accelerator memory "usually" the limiting factor, and warns that the limit "can be difficult to calculate ... without running, or at least compiling, the full training program".</li>
+          <li><strong>Parallel hardware saturates.</strong> The accelerator processes the examples of a batch in parallel, so at small batch sizes some of its arithmetic units sit idle and a batch twice as large takes about the same time per step. Once the units are busy, a batch twice as large takes about twice as long. <dfn data-concept="throughput">Training throughput</dfn> (examples processed per second, $B / t_{\text{step}}$) therefore doubles with each doubling at first and then levels off at a throughput plateau. The Playbook states the first half of this directly: "When the accelerators aren't yet saturated, if the batch size doubles, the training throughput should also double (or at least nearly double)."</li>
         </ul>
       </section>
 
@@ -173,17 +137,17 @@
         <div class="p03-canvas"></div>
         <p class="p03-readout" aria-live="polite"></p>
         <p class="fig-caption">
-          The constants are arbitrary: 4 GB of weights, gradients and optimizer state, 2.5 MB of activations per example, 16 GB of device memory, and a time per step of 0.1 s that starts to rise near batch size 512, where the accelerator saturates. With these numbers 4,096 is the largest power of two that fits. Real values depend on the model, the numerical precision and the hardware. The flat-then-rising shape is the one the Playbook describes.
+          The constants are arbitrary: 4 GB of weights, gradients and optimizer state, 2.5 MB of activations per example, 16 GB of device memory, and a time per step of 0.1 s that starts to rise near batch size 512, where the accelerator saturates. With these numbers 4,096 is the largest power of two that fits. Real values depend on the model, the numerical precision and the hardware, but the flat-then-rising shape is the one the Playbook describes.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          Because the memory limit is hard to predict, the Playbook recommends measuring it with <dfn data-concept="doubling-procedure">a doubling procedure</dfn>. Run training for a small number of steps at increasing powers of two until one run exceeds memory, and record the throughput of each run. Two outcomes call for action:
+          Since the memory limit is hard to predict, the Playbook's suggestion is to measure it empirically with <dfn data-concept="doubling-procedure">a doubling procedure</dfn>: train for a small number of steps at increasing powers of two until one run exceeds memory, recording the throughput of each run along the way. Two outcomes call for action:
         </p>
         <ul>
-          <li><strong>Throughput does not double below saturation.</strong> The pipeline then has <dfn data-concept="bottleneck">a bottleneck</dfn> "such as I/O or synchronization between compute nodes", which the Playbook says "may be worth diagnosing and correcting before proceeding".</li>
-          <li><strong>Throughput stops rising.</strong> The Playbook advises considering only batch sizes up to that point, "even if a larger batch size is supported by the hardware", because "all benefits of using a larger batch size assume the training throughput increases".</li>
+          <li><strong>Throughput does not double below saturation.</strong> This points to <dfn data-concept="bottleneck">a bottleneck</dfn> in the pipeline, "such as I/O or synchronization between compute nodes", which the authors say "may be worth diagnosing and correcting before proceeding".</li>
+          <li><strong>Throughput stops rising.</strong> Here the advice is to consider only batch sizes up to that point, "even if a larger batch size is supported by the hardware", because "all benefits of using a larger batch size assume the training throughput increases".</li>
         </ul>
       </section>
 
@@ -215,7 +179,7 @@
         </div>
 
         <p class="fig-caption">
-          Throughput against batch size on log axes, one short benchmark run per point. The dotted line is perfect doubling, and the cross at <span data-num="fig-doubling:default:failed-batch">8,192</span> is the out-of-memory failure. The rule keeps the largest batch size reached by doublings that each raised throughput by at least <span data-num="fig-doubling:model:threshold">10%</span>.
+          Throughput against batch size on log axes, with one short benchmark run per point. The dotted line is perfect doubling, and the cross at <span data-num="fig-doubling:default:failed-batch">8,192</span> marks the out-of-memory failure. The selection rule keeps the largest batch size reached by doublings that each raised throughput by at least <span data-num="fig-doubling:model:threshold">10%</span>.
         </p>
         <details class="fig-model"><summary>Model and assumptions</summary>
           <p>Noise-free step latency is $t_{\text{step}}(B) = t_0\,\big(1 + (B / B_{\text{sat}})^k\big)^{1/k}$ with $t_0 =$ <span data-num="fig-doubling:model:t0">0.1</span> s, saturation batch size $B_{\text{sat}} =$ <span data-num="fig-doubling:model:saturation-batch">512</span> and sharpness exponent $k =$ <span data-num="fig-doubling:model:sharpness">4</span>, so the peak throughput is $B_{\text{sat}}/t_0 =$ <span data-num="fig-doubling:model:peak-throughput">5,120</span> examples per second. The input-limited preset caps throughput at <span data-num="fig-doubling:model:input-limit">2,000</span> examples per second. Batch sizes above <span data-num="fig-doubling:model:memory-limit">4,096</span> fail for memory. Each run's throughput carries log-normal noise with standard deviation <span data-num="fig-doubling:model:noise-sd">2%</span> (seed <span data-num="fig-doubling:seed:chosen">120</span>). The 10% gain threshold is a site convention for separating a real gain from measurement noise.</p>
@@ -224,10 +188,10 @@
 
       <section class="prose">
         <p>
-          With the saturating accelerator, every doubling up to $B =$ <span data-num="fig-doubling:default:mark">1,024</span> raised throughput by at least <span data-num="fig-doubling:default:gain-to-mark">14%</span>, and the next doubling added <span data-num="fig-doubling:default:gain-next">1%</span>. With the <button type="button" class="preset-link" data-figure="fig-doubling" data-preset="input-limited">input pipeline limited</button> preset, throughput stops near <span data-num="fig-doubling:input-limited:plateau">2,000</span> examples per second from $B =$ <span data-num="fig-doubling:input-limited:mark">256</span>, well below the accelerator's peak. That early plateau is the expected pattern for a data loader that cannot keep the accelerator busy.
+          On the saturating accelerator, every doubling up to $B =$ <span data-num="fig-doubling:default:mark">1,024</span> raised throughput by at least <span data-num="fig-doubling:default:gain-to-mark">14%</span>, while the next doubling added only <span data-num="fig-doubling:default:gain-next">1%</span>, so the procedure stops there. The <button type="button" class="preset-link" data-figure="fig-doubling" data-preset="input-limited">input pipeline limited</button> preset tells a different story: throughput stalls near <span data-num="fig-doubling:input-limited:plateau">2,000</span> examples per second from $B =$ <span data-num="fig-doubling:input-limited:mark">256</span> onward, well below the accelerator's peak. An early plateau like this is what we would expect from a data loader that cannot keep the accelerator busy.
         </p>
         <p>
-          <dfn data-concept="gradient-accumulation">Gradient accumulation</dfn> offers a way past the memory limit. It sums the gradients of several micro-batches and updates the weights once. The Playbook advises against it in applied work, because it "simulates a larger batch size than the hardware can support and therefore does not provide any throughput benefits". The micro-batches run one after another, so the time per step grows in proportion to the accumulated batch size. The Playbook also notes that the measurements "may need to be repeated every time the model or optimizer is changed", since a different architecture can change what fits in memory.
+          What about batch sizes beyond the memory limit? <dfn data-concept="gradient-accumulation">Gradient accumulation</dfn> appears to offer a way past it, by summing the gradients of several micro-batches before updating the weights once. The Playbook advises against it in applied work, because it "simulates a larger batch size than the hardware can support and therefore does not provide any throughput benefits". The micro-batches run one after another, so the time per step grows in proportion to the accumulated batch size. Finally, the authors point out that these measurements "may need to be repeated every time the model or optimizer is changed", since a different architecture can change what fits in memory.
         </p>
       </section>
 
@@ -235,10 +199,10 @@
       <section class="prose" id="scaling">
         <h2>Steps needed fall, then level off</h2>
         <p>
-          The second factor is the number of steps needed to reach a fixed validation goal, with the hyperparameters retuned at each batch size. Shallue et al. <cite data-ref="shallue2018"></cite> measured this "steps to result" on every workload in their study and found the same shape each time. There is "an initial period of perfect scaling ... where the steps needed to achieve the error goal halves for each doubling of the batch size", then "a region of diminishing returns", and finally "a region of maximal data parallelism where additional parallelism provides no benefit whatsoever". They "never saw the number of steps to reach a goal validation error increase when the batch size was increased". The Playbook repeats this as a rule (more steps are "never" needed), but it remains an empirical regularity. The Playbook calls the halving regime <dfn data-concept="perfect-scaling">perfect scaling</dfn>.
+          The second factor is the number of steps needed to reach a fixed validation goal, again with the hyperparameters retuned at each batch size. Shallue et al. <cite data-ref="shallue2018"></cite> measured this "steps to result" on every workload in their study and found the same three-part shape each time: "an initial period of perfect scaling ... where the steps needed to achieve the error goal halves for each doubling of the batch size", then "a region of diminishing returns", and finally "a region of maximal data parallelism where additional parallelism provides no benefit whatsoever". They "never saw the number of steps to reach a goal validation error increase when the batch size was increased". The Playbook adopts the halving regime under the name <dfn data-concept="perfect-scaling">perfect scaling</dfn> and states the last observation as a rule (more steps are "never" needed), although we should remember that it is an empirical regularity rather than a theorem.
         </p>
         <p>
-          Gradient noise explains the shape. Each step uses an estimate of the full-data gradient computed from $B$ examples. The error of that estimate has a variance proportional to $1/B$, because averaging $B$ independent per-example gradients divides their variance by $B$. While noise dominates, the optimizer must take small steps, and a step at double the batch size is nearly as good as two steps at the smaller batch size. Once the estimate is accurate, adding examples improves it little, and the curvature of the loss limits the step size instead. McCandlish et al. <cite data-ref="mccandlish2018"></cite> made this argument quantitative.
+          Why should the curve have this shape? The answer lies in gradient noise. Each step uses an estimate of the full-data gradient computed from $B$ examples, and the error of that estimate has a variance proportional to $1/B$, because averaging $B$ independent per-example gradients divides their variance by $B$. While noise dominates, the optimizer is forced to take small steps, so one step at double the batch size is nearly as good as two steps at the smaller one. Once the estimate is accurate, though, adding more examples barely improves it, and the curvature of the loss becomes what limits the step size. McCandlish et al. <cite data-ref="mccandlish2018"></cite> turned this intuition into a quantitative model, which is what we'll use for the rest of the post.
         </p>
       </section>
 
@@ -256,13 +220,13 @@
         <div class="p03-canvas"></div>
         <p class="p03-readout" aria-live="polite"></p>
         <p class="fig-caption">
-          The arrows in (a) are 24 mini-batch gradient estimates in a two-dimensional toy with noise scale 128. Dashed arrows are longer than the panel and are cut at its edge. The bars in (b) use McCandlish et al.'s expression for the best possible step (their Eq. 2.7). Progress per step is $1/(1 + B_{\text{noise}}/B)$ of a step on the exact gradient, and progress per example is $1/(1 + B/B_{\text{noise}})$ of what a very small batch achieves. The bars cross at 50% when the batch size equals the noise scale.
+          The arrows in (a) are 24 mini-batch gradient estimates in a two-dimensional toy with noise scale 128; dashed arrows are longer than the panel and are cut at its edge. The bars in (b) use McCandlish et al.'s expression for the best possible step (their Eq. 2.7): progress per step is $1/(1 + B_{\text{noise}}/B)$ of a step on the exact gradient, while progress per example is $1/(1 + B/B_{\text{noise}})$ of what a very small batch achieves. The two bars cross at 50% when the batch size equals the noise scale.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          Turning progress per step into a step count gives McCandlish et al.'s model of the steps $S$ and training examples $E$ needed to reach a goal at batch size $B$ (their Eq. 2.11, solved at fixed $B$):
+          If we turn progress per step into a step count, we arrive at McCandlish et al.'s model of the steps $S$ and training examples $E$ needed to reach a goal at batch size $B$ (their Eq. 2.11, solved at fixed $B$):
         </p>
         <div class="math-block">
           $$\begin{aligned}
@@ -271,13 +235,13 @@
           \end{aligned}$$
         </div>
         <p>
-          Here $S_{\min}$ is the number of steps a very large batch needs, $E_{\min}$ is the number of examples a very small batch needs, and $B_{\text{crit}} = E_{\min}/S_{\min}$ is the <dfn data-concept="critical-batch-size">critical batch size</dfn>. McCandlish et al. fit $B_{\text{crit}}$ to measured runs, and their noise argument predicts it to be close to the gradient noise scale averaged over training. At $B = B_{\text{crit}}$ a run takes twice the minimum number of steps and twice the minimum number of examples, which they call "a natural compromise between time and compute".
+          Here $S_{\min}$ is the number of steps a very large batch needs, $E_{\min}$ is the number of examples a very small batch needs, and their ratio $B_{\text{crit}} = E_{\min}/S_{\min}$ is the <dfn data-concept="critical-batch-size">critical batch size</dfn>. The two equations make the trade-off explicit: raising $B$ always lowers the step count, but it always raises the number of examples processed. McCandlish et al. fit $B_{\text{crit}}$ to measured runs, and their noise argument predicts it to be close to the gradient noise scale averaged over training. At $B = B_{\text{crit}}$ a run takes twice the minimum number of steps and twice the minimum number of examples, a point they describe as "a natural compromise between time and compute".
         </p>
 
         <details class="math-aside">
           <summary>Where the noise scale comes from</summary>
           <p>
-            Let $G$ be the full-data gradient, $H$ the Hessian (the matrix of second derivatives of the loss), and $\Sigma$ the covariance of a single example's gradient. A step of size $\eta$ along a mini-batch estimate changes the loss, to second order and on average, by
+            The derivation is short enough to sketch. Let $G$ be the full-data gradient, $H$ the Hessian (the matrix of second derivatives of the loss), and $\Sigma$ the covariance of a single example's gradient. A step of size $\eta$ along a mini-batch estimate changes the loss, to second order and on average, by
           </p>
           $$\Delta L(\eta) \approx -\eta\,|G|^2 + \tfrac{1}{2}\,\eta^2\left(G^{\top} H G + \frac{\operatorname{tr}(H\Sigma)}{B}\right).$$
           <p>
@@ -286,20 +250,20 @@
           $$\eta^{\star}(B) = \frac{\eta_{\max}}{1 + B_{\text{noise}}/B},$$
           $$\Delta L^{\star}(B) = \frac{\Delta L_{\max}}{1 + B_{\text{noise}}/B},$$
           <p>
-            where $\eta_{\max} = |G|^2 / G^{\top} H G$ is the best step on the exact gradient and $B_{\text{noise}} = \operatorname{tr}(H\Sigma)/G^{\top} H G$ is the noise scale (their Eq. 2.8). If the Hessian is close to a multiple of the identity, this reduces to $B_{\text{simple}} = \operatorname{tr}(\Sigma)/|G|^2$ (their Eq. 2.9), which can be estimated during training. The argument is local to one step and assumes a tuned learning rate. The authors note that it "says nothing about generalization".
+            where $\eta_{\max} = |G|^2 / G^{\top} H G$ is the best step on the exact gradient and $B_{\text{noise}} = \operatorname{tr}(H\Sigma)/G^{\top} H G$ is the noise scale (their Eq. 2.8). If the Hessian is close to a multiple of the identity, this reduces to $B_{\text{simple}} = \operatorname{tr}(\Sigma)/|G|^2$ (their Eq. 2.9), which can be estimated during training. We should keep the limits of the argument in mind: it is local to one step, it assumes a tuned learning rate, and, as the authors note themselves, it "says nothing about generalization".
           </p>
         </details>
 
         <p>
-          Different papers attach the phrase "critical batch size" to different points on this curve (<a href="#fig-regimes" class="figref"></a>). The tolerances below are my algebra on McCandlish et al.'s curve:
+          One source of confusion when reading this literature is that different papers attach the phrase "critical batch size" to different points on the same curve, as <a href="#fig-regimes" class="figref"></a> shows. The tolerances below are my own algebra on McCandlish et al.'s curve rather than anything the papers compute:
         </p>
         <ul>
-          <li><strong>The Playbook</strong> uses it for the end of perfect scaling: "Perfect scaling holds for all batch sizes up to a critical batch size, beyond which one achieves diminishing returns." On a smooth curve that end needs a tolerance. Zhang et al. (2024) <cite data-ref="zhang2024"></cite> define the critical batch size as the point where the steps needed exceed perfect scaling by 20%. On McCandlish et al.'s curve that point is $B_{\text{crit}}/5$, because the ratio of $S(B)$ to the perfect-scaling line $S_{\min} B_{\text{crit}}/B$ is $1 + B/B_{\text{crit}}$.</li>
-          <li><strong>McCandlish et al.</strong> place $B_{\text{crit}}$ in the middle of the bend. A doubling there saves 25% of the steps.</li>
-          <li><strong>Shallue et al.</strong> call the point where steps stop falling the "maximum useful batch size". If "stop" means within 10% of the floor $S_{\min}$, it lies at $10\,B_{\text{crit}}$.</li>
+          <li><strong>The Playbook</strong> uses the phrase for the end of perfect scaling: "Perfect scaling holds for all batch sizes up to a critical batch size, beyond which one achieves diminishing returns." On a smooth curve, though, that end can only be located with a tolerance. Zhang et al. (2024) <cite data-ref="zhang2024"></cite> choose one, defining the critical batch size as the point where the steps needed exceed perfect scaling by 20%. On McCandlish et al.'s curve that point is $B_{\text{crit}}/5$, because the ratio of $S(B)$ to the perfect-scaling line $S_{\min} B_{\text{crit}}/B$ is $1 + B/B_{\text{crit}}$.</li>
+          <li><strong>McCandlish et al.</strong> place $B_{\text{crit}}$ in the middle of the bend, where a doubling saves 25% of the steps.</li>
+          <li><strong>Shallue et al.</strong> call the point where steps stop falling the "maximum useful batch size". If we take "stop" to mean within 10% of the floor $S_{\min}$, it lies at $10\,B_{\text{crit}}$.</li>
         </ul>
         <p>
-          The rest of this post uses $B_{\text{crit}}$ (and $B_{\text{noise}}$ for the single-step gradient noise scale) in McCandlish et al.'s sense, because it comes with an equation, $B_{\text{sat}}$ for the hardware saturation batch size, and "end of perfect scaling" for the Playbook's point.
+          To keep things unambiguous, I'll use $B_{\text{crit}}$ in McCandlish et al.'s sense for the rest of this post, because it comes with an equation, along with $B_{\text{noise}}$ for the single-step gradient noise scale, $B_{\text{sat}}$ for the hardware saturation batch size, and "end of perfect scaling" for the Playbook's point.
         </p>
       </section>
 
@@ -316,21 +280,21 @@
           <li><strong>$10\,B_{\text{crit}}$:</strong> steps within 10% of the floor, where further doublings change little.</li>
         </ul>
         <p class="fig-caption">
-          The purple curve is $S(B) = S_{\min}(1 + B_{\text{crit}}/B)$ on log axes. The dashed lines are perfect scaling (steps halve with each doubling) and the floor $S_{\min}$. The regime names are Shallue et al.'s. The boundaries at $B_{\text{crit}}/5$ and $10\,B_{\text{crit}}$ follow from the 20% and 10% tolerances in the text, so they move with the tolerance.
+          The purple curve is $S(B) = S_{\min}(1 + B_{\text{crit}}/B)$ on log axes, and the dashed lines are perfect scaling (steps halve with each doubling) and the floor $S_{\min}$. The regime names are Shallue et al.'s, while the boundaries at $B_{\text{crit}}/5$ and $10\,B_{\text{crit}}$ follow from the 20% and 10% tolerances in the text and would move if the tolerances changed.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          The critical batch size depends on the workload and on the goal. The Playbook says the time-minimizing batch size "depends on the dataset, model, and optimizer", and calls it "an open problem how to calculate it other than finding it experimentally for every new problem". McCandlish et al. found that the critical batch size "typically increases by an order of magnitude or more over the course of training", so a harder goal has a larger one, and their values ranged from about 20 for a small autoencoder to over 10 million for a Dota 2 agent. Zhang et al. (2019) <cite data-ref="zhang2019"></cite> found that momentum and preconditioned optimizers such as Adam raise it. For language-model pre-training, Zhang et al. (2024) found it grows mainly with the amount of training data (roughly as $D^{0.47}$) and only weakly with model size at fixed data.
+          Whichever definition we use, the critical batch size is not a universal constant: it depends on both the workload and the goal. The Playbook says the time-minimizing batch size "depends on the dataset, model, and optimizer", and calls it "an open problem how to calculate it other than finding it experimentally for every new problem". The literature bears this out. McCandlish et al. found that the critical batch size "typically increases by an order of magnitude or more over the course of training", which means a harder goal has a larger one, and across tasks their values ranged from about 20 for a small autoencoder to over 10 million for a Dota 2 agent. Zhang et al. (2019) <cite data-ref="zhang2019"></cite> found that momentum and preconditioned optimizers such as Adam raise it, while for language-model pre-training Zhang et al. (2024) found that it grows mainly with the amount of training data (roughly as $D^{0.47}$) and only weakly with model size at fixed data.
         </p>
       </section>
 
       <!-- ============ 4. Wall-clock time ============ -->
       <section class="prose" id="training-time">
-        <h2>Wall-clock time is the product</h2>
+        <h2>Wall-clock time is the product of the two</h2>
         <p>
-          With step latency and step count known, the training time $T(B) = t_{\text{step}}(B) \times S(B)$ follows. On log axes a product becomes a sum, so the curve of $\log T$ is the vertical sum of the curves of $\log t_{\text{step}}$ and $\log S$. Below saturation the time per step is flat, and training time falls as fast as the step count. Above saturation the time per step doubles with each doubling of $B$, while the step count at best halves, so training time can at best stay level. The fastest batch size therefore sits near the saturation batch size or the end of perfect scaling, whichever is smaller.
+          We now have both factors, so we can put them back together as $T(B) = t_{\text{step}}(B) \times S(B)$. The cleanest way to see what happens is on log axes, where a product becomes a sum and the curve of $\log T$ is simply the vertical sum of the curves of $\log t_{\text{step}}$ and $\log S$. Below saturation the time per step is flat, so training time falls exactly as fast as the step count. Above saturation the time per step doubles with each doubling of $B$, while the step count at best halves, which means training time can at best stay level. The fastest batch size therefore sits near the saturation batch size or the end of perfect scaling, whichever comes first.
         </p>
       </section>
 
@@ -362,7 +326,7 @@
         </div>
 
         <p class="fig-caption">
-          Each curve is relative to its value at batch size <span data-num="fig-training-time:model:reference-batch">8</span>, on log axes: <span class="tok-third">time per step</span> (gold), <span class="tok-fourth">steps to the result</span> (purple) and their product, <span class="tok-model">training time</span> (blue). At the default, perfect scaling ends at <span data-num="fig-training-time:default:critical">4,096</span> ($B_{\text{crit}} =$ <span data-num="fig-training-time:default:b-crit">20,480</span>). Training time is shortest at $B =$ <span data-num="fig-training-time:default:minimum">1,071</span>, stays within <span data-num="fig-training-time:model:window">5%</span> of that from <span data-num="fig-training-time:default:window-low">650</span> to <span data-num="fig-training-time:default:window-high">2,427</span>, and sits 3% above the minimum at the loaded default of $B = 2{,}048$.
+          Each curve is shown relative to its value at batch size <span data-num="fig-training-time:model:reference-batch">8</span>, on log axes: <span class="tok-third">time per step</span> (gold), <span class="tok-fourth">steps to the result</span> (purple) and their product, <span class="tok-model">training time</span> (blue). At the default, perfect scaling ends at <span data-num="fig-training-time:default:critical">4,096</span> ($B_{\text{crit}} =$ <span data-num="fig-training-time:default:b-crit">20,480</span>). Training time is shortest at $B =$ <span data-num="fig-training-time:default:minimum">1,071</span>, stays within <span data-num="fig-training-time:model:window">5%</span> of that from <span data-num="fig-training-time:default:window-low">650</span> to <span data-num="fig-training-time:default:window-high">2,427</span>, and sits 3% above the minimum at the loaded default of $B = 2{,}048$.
         </p>
         <details class="fig-model"><summary>Model and assumptions</summary>
           <p>Time per step is the doubling figure's toy accelerator with saturation batch size <span data-num="fig-training-time:model:knee">512</span> and sharpness <span data-num="fig-training-time:model:sharpness">4</span>, with no input limit and no noise. Steps follow McCandlish et al.'s $S(B) = S_{\min}(1 + B_{\text{crit}}/B)$. The handle sets the end of perfect scaling, which the toy places at $B_{\text{crit}}/5$, where steps exceed perfect scaling by <span data-num="fig-training-time:model:perfect-tolerance">0.2</span> (Zhang et al.'s 20% tolerance).</p>
@@ -370,13 +334,13 @@
       </figure>
 
       <section class="prose">
-        <p>The presets show the two orders in which perfect scaling and saturation can end:</p>
+        <p>What matters most is the order in which these two limits arrive, and the presets show both possibilities:</p>
         <ul>
-          <li><strong>Perfect scaling ends well past saturation</strong> (<button type="button" class="preset-link" data-figure="fig-training-time" data-preset="inside">steps halve well past saturation</button>, ending at <span data-num="fig-training-time:inside:critical">16,384</span>). Step latency and step count cancel over a wide range, and every batch size from <span data-num="fig-training-time:inside:window-low">704</span> to <span data-num="fig-training-time:inside:window-high">5,953</span> (a range of <span data-num="fig-training-time:inside:window-ratio">8.5×</span>) finishes within 5% of the fastest time. Any batch size that saturates the accelerator is close to optimal.</li>
-          <li><strong>Perfect scaling ends before saturation</strong> (<button type="button" class="preset-link" data-figure="fig-training-time" data-preset="beyond">steps stop halving before saturation</button>, ending at <span data-num="fig-training-time:beyond:critical">64</span>, so $B_{\text{crit}} =$ <span data-num="fig-training-time:beyond:b-crit">320</span>). The step count flattens while the time per step is still constant, and batches above saturation slow training down. The minimum is at $B =$ <span data-num="fig-training-time:beyond:minimum">466</span>, and $B = 4{,}096$ takes <span data-num="fig-training-time:beyond:excess">349%</span> longer.</li>
+          <li><strong>Perfect scaling ends well past saturation</strong> (<button type="button" class="preset-link" data-figure="fig-training-time" data-preset="inside">steps halve well past saturation</button>, ending at <span data-num="fig-training-time:inside:critical">16,384</span>). Here step latency and step count cancel over a wide range, and every batch size from <span data-num="fig-training-time:inside:window-low">704</span> to <span data-num="fig-training-time:inside:window-high">5,953</span> (a range of <span data-num="fig-training-time:inside:window-ratio">8.5×</span>) finishes within 5% of the fastest time, so any batch size that saturates the accelerator is close to optimal.</li>
+          <li><strong>Perfect scaling ends before saturation</strong> (<button type="button" class="preset-link" data-figure="fig-training-time" data-preset="beyond">steps stop halving before saturation</button>, ending at <span data-num="fig-training-time:beyond:critical">64</span>, so $B_{\text{crit}} =$ <span data-num="fig-training-time:beyond:b-crit">320</span>). Now the step count flattens while the time per step is still constant, and batches above saturation actively slow training down. The minimum is at $B =$ <span data-num="fig-training-time:beyond:minimum">466</span>, and $B = 4{,}096$ takes <span data-num="fig-training-time:beyond:excess">349%</span> longer.</li>
         </ul>
         <p>
-          The Playbook's rule of thumb rests on the first case. It treats the time per step as roughly constant across feasible batch sizes, which holds "when there is no overhead from parallel computations and all training bottlenecks have been diagnosed and corrected". It then observes that "often, the largest batch size supported by the available hardware will be smaller than the critical batch size", so that "a good rule of thumb (without running any experiments) is to use the largest batch size possible". The second case is the exception, and it occurs in practice. McCandlish et al. measured critical batch sizes in the hundreds for small image tasks. The Playbook's closing point covers both cases: "There is no point in using a larger batch size if it ends up increasing the training time."
+          The Playbook's rule of thumb implicitly assumes we are in the first case. It treats the time per step as roughly constant across feasible batch sizes, which holds "when there is no overhead from parallel computations and all training bottlenecks have been diagnosed and corrected", and then observes that "often, the largest batch size supported by the available hardware will be smaller than the critical batch size". From these two premises it concludes that "a good rule of thumb (without running any experiments) is to use the largest batch size possible". The second case is the exception, but it is not hypothetical, since McCandlish et al. measured critical batch sizes in the hundreds for small image tasks. Fortunately the Playbook's closing point covers both: "There is no point in using a larger batch size if it ends up increasing the training time."
         </p>
       </section>
 
@@ -384,7 +348,7 @@
       <section class="prose" id="budgets">
         <h2>Epoch budgets, step budgets and cost</h2>
         <p>
-          A comparison of batch sizes needs a training length for each run, and the length can be fixed in examples (<dfn data-concept="epoch-step-budgets">an epoch budget</dfn>) or in steps (a step budget). The choice decides which batch size looks best. Under McCandlish et al.'s model the examples needed, $E(B)$, grow with the batch size while the steps needed, $S(B)$, shrink. A fixed epoch budget therefore favors small batches, which use examples efficiently, and a fixed step budget favors large batches, which use steps efficiently. The Playbook's warning follows: "Comparing batch sizes with an epoch budget only probes the perfect scaling regime, even when larger batch sizes might still provide a meaningful speedup by reducing the number of training steps required."
+          So far we have assumed that each run trains for as long as it needs. A real comparison of batch sizes has to fix a training length for each run, and we can fix it either in examples (<dfn data-concept="epoch-step-budgets">an epoch budget</dfn>) or in steps (a step budget). This choice, which can look like bookkeeping, quietly decides which batch size looks best. Under McCandlish et al.'s model the examples needed, $E(B)$, grow with the batch size while the steps needed, $S(B)$, shrink. A fixed epoch budget therefore favors small batches, which use examples efficiently, whereas a fixed step budget favors large batches, which use steps efficiently. This is the reasoning behind the Playbook's warning that "Comparing batch sizes with an epoch budget only probes the perfect scaling regime, even when larger batch sizes might still provide a meaningful speedup by reducing the number of training steps required."
         </p>
       </section>
 
@@ -416,7 +380,7 @@
         </div>
 
         <p class="fig-caption">
-          Both panels use $B_{\text{crit}} =$ <span data-num="fig-budgets:model:critical">320</span> and a budget of <span data-num="fig-budgets:model:epoch-multiple">2</span> times the minimum (dashed). Under the epoch budget in (a), batch sizes up to <span data-num="fig-budgets:default:epoch-largest">256</span> reach the goal. Under the step budget in (b), batch sizes from <span data-num="fig-budgets:default:step-smallest">512</span> do. At the selected batch size, <span data-num="fig-budgets:default:batch">256</span>, a run needs <span data-num="fig-budgets:default:examples">1.8</span>× the minimum examples and <span data-num="fig-budgets:default:steps">2.25</span>× the minimum steps.
+          Both panels use $B_{\text{crit}} =$ <span data-num="fig-budgets:model:critical">320</span> and a budget of <span data-num="fig-budgets:model:epoch-multiple">2</span> times the minimum (dashed). Under the epoch budget in (a), batch sizes up to <span data-num="fig-budgets:default:epoch-largest">256</span> reach the goal, while under the step budget in (b) only batch sizes from <span data-num="fig-budgets:default:step-smallest">512</span> upward do. At the selected batch size, <span data-num="fig-budgets:default:batch">256</span>, a run needs <span data-num="fig-budgets:default:examples">1.8</span>× the minimum examples and <span data-num="fig-budgets:default:steps">2.25</span>× the minimum steps.
         </p>
         <details class="fig-model"><summary>Model and assumptions</summary>
           <p>The curves are $E(B)/E_{\min} = 1 + B/B_{\text{crit}}$ and $S(B)/S_{\min} = 1 + B_{\text{crit}}/B$, with an epoch budget of $m = 2$ times $E_{\min}$ and a step budget of $n =$ <span data-num="fig-budgets:model:step-budget">2</span> times $S_{\min}$. A batch size reaches the goal under the epoch budget when $B \le (m - 1)\,B_{\text{crit}}$, and under the step budget when $B \ge B_{\text{crit}}/(n - 1)$. Because 320 lies between 256 and 512, no power of two passes both.</p>
@@ -425,18 +389,18 @@
 
       <section class="prose">
         <p>
-          The distinction matters when reading published comparisons. Goyal et al. <cite data-ref="goyal2017"></cite> trained ImageNet ResNets for a fixed 90 epochs at every batch size and found error "stable across a broad range of minibatch sizes, from 64 to 8k, after which it begins to increase". Shallue et al. point out that under an epoch budget a larger batch can match a smaller one only while scaling is perfect. The 8k limit may therefore mark the end of perfect scaling for that workload (my reading).
+          The distinction also changes how we should read published comparisons. Goyal et al. <cite data-ref="goyal2017"></cite> trained ImageNet ResNets for a fixed 90 epochs at every batch size and found error "stable across a broad range of minibatch sizes, from 64 to 8k, after which it begins to increase". Shallue et al. point out that under an epoch budget a larger batch can match a smaller one only while scaling is perfect. My reading, then, is that the 8k limit may mark the end of perfect scaling for that workload rather than a point where large batches start to generalize worse.
         </p>
 
         <h3 id="resources">Resource consumption</h3>
         <p>
-          The Playbook separates the costs of a larger batch into upfront costs, "e.g. purchasing new hardware or rewriting the training pipeline to implement multi-GPU / multi-TPU training", and usage costs, such as cloud bills, team compute budgets and electricity. For usage it writes the same kind of product as for time:
+          Time is not the only thing a batch size spends, so the Playbook also considers cost. It separates the costs of a larger batch into upfront costs, "e.g. purchasing new hardware or rewriting the training pipeline to implement multi-GPU / multi-TPU training", and usage costs such as cloud bills, team compute budgets and electricity. Usage decomposes into the same kind of product we wrote for time:
         </p>
         <div class="math-block">
           $$\text{consumption} = (\text{per step}) \times (\text{steps}).$$
         </div>
         <p>
-          A larger batch reduces the number of steps, so the outcome depends on what happens to the consumption per step. The Playbook gives an example of each of the three outcomes.
+          A larger batch always reduces the number of steps, so the outcome hinges on what happens to the consumption per step, and the Playbook gives an example of each of the three possibilities.
         </p>
       </section>
 
@@ -488,16 +452,16 @@
           </div>
         </div>
         <p class="fig-caption">
-          Each rectangle's width is the number of steps and its height the consumption per step, so its area is the total. The dashed outline is the run before doubling, and the filled rectangle the run after. The factors 0.55, 1.0 and 1.8 are illustrative. The three scenarios are the Playbook's examples.
+          Each rectangle's width is the number of steps and its height the consumption per step, so its area is the total. The dashed outline is the run before doubling and the filled rectangle is the run after. The three scenarios are the Playbook's examples, while the factors 0.55, 1.0 and 1.8 are illustrative.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          I draw one consequence from this. On a fixed set of accelerators, usage is measured in device-hours, which are proportional to wall-clock time. On that hardware the batch size that minimizes training time also minimizes cost, and <a href="#fig-training-time" class="figref"></a> answers both questions. The two goals separate only when a larger batch requires more devices or different ones.
+          The Playbook doesn't spell this out, but I think one consequence simplifies matters considerably. On a fixed set of accelerators, usage is measured in device-hours, which are proportional to wall-clock time, so on that hardware the batch size that minimizes training time also minimizes cost and <a href="#fig-training-time" class="figref"></a> answers both questions at once. The two goals only come apart when a larger batch requires more devices or different ones.
         </p>
         <p>
-          For upfront costs, the Playbook suggests it "might be better to defer increasing the batch size until the project has matured", since multi-host pipelines can introduce bugs. It also notes the opposite pressure: "a large speedup in training time might be very beneficial early in the process when a lot of tuning experiments are needed".
+          Upfront costs pull in two directions. On one hand, the Playbook suggests it "might be better to defer increasing the batch size until the project has matured", since multi-host pipelines can introduce bugs. On the other, "a large speedup in training time might be very beneficial early in the process when a lot of tuning experiments are needed".
         </p>
       </section>
 
@@ -505,18 +469,18 @@
       <section class="prose" id="retuning">
         <h2>Changing the batch size means retuning</h2>
         <p>
-          The Playbook is direct about what a change costs: "The optimal values of most hyperparameters are sensitive to the batch size. Therefore, changing the batch size typically requires starting the tuning process all over again." Its advice is to keep this in mind when choosing the batch size at the start of a project, because <dfn data-concept="retuning">retuning</dfn> everything later "might be difficult, time consuming, and expensive".
+          Everything so far has assumed that each batch size gets its own tuned hyperparameters, and that assumption has a price. The Playbook is blunt about it: "The optimal values of most hyperparameters are sensitive to the batch size. Therefore, changing the batch size typically requires starting the tuning process all over again." This is why the authors recommend thinking carefully about the batch size at the start of a project, because <dfn data-concept="retuning">retuning</dfn> everything later "might be difficult, time consuming, and expensive".
         </p>
         <p>
-          The learning rate shows why. In McCandlish et al.'s model the best SGD learning rate is $\eta^{\star}(B) = \eta_{\max}/(1 + B_{\text{noise}}/B)$ (their Eq. 2.6). Well below the noise scale it grows in proportion to $B$, and well above it the rate levels off at $\eta_{\max}$ (<a href="#fig-retune" class="figref"></a>). Empirical results on how to scale the learning rate differ by optimizer:
+          The learning rate is the clearest illustration. In McCandlish et al.'s model the best SGD learning rate is $\eta^{\star}(B) = \eta_{\max}/(1 + B_{\text{noise}}/B)$ (their Eq. 2.6), which grows in proportion to $B$ well below the noise scale and levels off at $\eta_{\max}$ well above it, as we can see in <a href="#fig-retune" class="figref"></a>. Empirically, though, the right way to scale the learning rate depends on the optimizer:
         </p>
         <ul>
-          <li><strong>Linear scaling for momentum SGD.</strong> Goyal et al.'s rule is "When the minibatch size is multiplied by k, multiply the learning rate by k." They report that it fails early in training, which they handle with warmup, and beyond a batch size of about 8k on ImageNet. Zhang et al. (2019) found the optimal learning rate of SGD "scales linearly with batch size before it hits the critical batch size".</li>
+          <li><strong>Linear scaling for momentum SGD.</strong> Goyal et al.'s rule is "When the minibatch size is multiplied by k, multiply the learning rate by k." They report that it breaks down early in training, which they handle with warmup, and beyond a batch size of about 8k on ImageNet. Zhang et al. (2019) found the optimal learning rate of SGD "scales linearly with batch size before it hits the critical batch size".</li>
           <li><strong>Between square root and linear for Adam.</strong> McCandlish et al. found that "for Adam and RMSProp the optimal learning rate initially obeys a power law $\varepsilon(B) \propto B^{\alpha}$ with $\alpha$ between 0.5 and 1.0 depending on the task, then becomes roughly constant" (their $\varepsilon$ is the learning rate and their $\alpha$ an exponent).</li>
           <li><strong>No reliable rule.</strong> Shallue et al. found that the optimal values "did not always follow either a linear or square root scaling heuristic".</li>
         </ul>
         <p>
-          A scaling rule therefore gives a good place to center the new search, which still has to be run.
+          Given this disagreement, I think the safest way to use a scaling rule is as a good place to center the new search, which we still have to run.
         </p>
       </section>
 
@@ -528,21 +492,21 @@
         </figcaption>
         <div class="p03-canvas"></div>
         <p class="fig-caption">
-          The blue curve is McCandlish et al.'s best SGD learning rate, $\eta_{\max}/(1 + B_{\text{noise}}/B)$, on log axes in units of the noise scale and of $\eta_{\max}$. The dashed and dotted lines are the linear and square-root rules, drawn through the curve's small-batch end. Both rules overshoot once the batch size passes the noise scale.
+          The blue curve is McCandlish et al.'s best SGD learning rate, $\eta_{\max}/(1 + B_{\text{noise}}/B)$, on log axes in units of the noise scale and of $\eta_{\max}$. The dashed and dotted lines are the linear and square-root rules, drawn through the curve's small-batch end. Both rules overshoot once the batch size passes the noise scale, which is one reason a rule alone cannot replace retuning.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          Regularization moves too. The Playbook's FAQ argues that smaller batches add sampling noise that "can have a regularizing effect", so larger batches "may require stronger regularization and/or additional regularization techniques". The papers above are more cautious on this point. Hoffer et al. attribute the large-batch gap to the number of updates. Shallue et al. note that small-batch noise may regularize, and that "other regularization techniques, such as label smoothing, can replace this effect".
+          The optimal regularization moves too. The Playbook's FAQ argues that smaller batches add sampling noise that "can have a regularizing effect", so larger batches "may require stronger regularization and/or additional regularization techniques". The papers we've been following are more cautious on this point: Hoffer et al. attribute the large-batch gap to the number of updates rather than to lost noise, and Shallue et al., while granting that small-batch noise may regularize, note that "other regularization techniques, such as label smoothing, can replace this effect".
         </p>
 
         <h3 id="batchnorm">Batch norm couples the batch size to the model</h3>
         <p>
-          Batch normalization <cite data-ref="ioffe2015"></cite> normalizes each layer's activations with a mean and variance computed over the examples in the batch, so in a model that uses it the batch size changes the computation itself. According to Goyal et al., changing the number of examples $n$ used for these statistics "changes the underlying loss function L that is optimized", because the statistics "computed by BN with different n exhibit different levels of random variation". They fixed $n = 32$ examples per worker.
+          There is one case where the batch size does more than change the optimization, because it changes the model itself. Batch normalization <cite data-ref="ioffe2015"></cite> normalizes each layer's activations with a mean and variance computed over the examples in the batch, so in a model that uses it the batch size enters the forward computation. Goyal et al. make the consequence explicit: changing the number of examples $n$ used for these statistics "changes the underlying loss function L that is optimized", because the statistics "computed by BN with different n exhibit different levels of random variation". Their solution was to fix $n = 32$ examples per worker.
         </p>
         <p>
-          The Playbook's advice is that batch norm "should use a different batch size than the gradient computation to compute statistics". <a data-concept="ghost-batch-norm" data-forward href="09-pipeline-practice.html#batchnorm">Ghost batch norm</a>, introduced by Hoffer et al., does this by normalizing small virtual batches inside a large one (they used ghost batches of 128). The Playbook adds anecdotal reports that statistics over about 64 examples work better in practice, and notes that separating the two sizes "is particularly useful for batch size comparisons". It also notes that batch norm "can often be replaced with LayerNorm", which does not depend on the batch. <a href="09-pipeline-practice.html#batchnorm">Part 9</a> covers the implementation details for multiple devices.
+          The Playbook generalizes this into the advice that batch norm "should use a different batch size than the gradient computation to compute statistics". <a data-concept="ghost-batch-norm" data-forward href="09-pipeline-practice.html#batchnorm">Ghost batch norm</a>, introduced by Hoffer et al., does exactly this by normalizing small virtual batches inside a large one (they used ghost batches of 128). The Playbook adds anecdotal reports that statistics over about 64 examples work better in practice, and points out that separating the two sizes "is particularly useful for batch size comparisons", since the loss being compared then stays fixed. Alternatively, batch norm "can often be replaced with LayerNorm", which does not depend on the batch at all. We'll return to the implementation details for multiple devices in <a href="09-pipeline-practice.html#batchnorm">Part 9</a>.
         </p>
       </section>
 
@@ -574,7 +538,7 @@
           </svg>
         </div>
         <p class="fig-caption">
-          The statistics size (here 4) stays fixed while the batch size changes, so the loss being optimized stays the same across a batch-size comparison. Real ghost batches are larger: 128 in Hoffer et al., 32 per worker in Goyal et al.
+          Because the statistics size (here 4) stays fixed while the batch size changes, the loss being optimized stays the same across a batch-size comparison. Real ghost batches are larger: 128 in Hoffer et al. and 32 per worker in Goyal et al.
         </p>
       </figure>
 
@@ -582,14 +546,14 @@
       <section class="prose p03-practice" id="protocol">
         <h2>In practice</h2>
         <p>
-          The Playbook's advice on batch size condenses into a short procedure. Steps 1 to 4 come from its section on <a href="https://github.com/google-research/tuning_playbook#determining-the-feasible-batch-sizes-and-estimating-training-throughput" target="_blank" rel="noopener">feasible batch sizes and throughput ↗</a> and on <a href="https://github.com/google-research/tuning_playbook#choosing-the-batch-size-to-minimize-training-time" target="_blank" rel="noopener">minimizing training time ↗</a>. Steps 5 and 6 come from its sections on <a href="https://github.com/google-research/tuning_playbook#changing-the-batch-size-requires-re-tuning-most-hyperparameters" target="_blank" rel="noopener">retuning ↗</a> and <a href="https://github.com/google-research/tuning_playbook#choosing-the-batch-size-to-minimize-resource-consumption" target="_blank" rel="noopener">resource consumption ↗</a>.
+          Putting the pieces together, the Playbook's advice on batch size condenses into a short procedure you can follow on a new workload. Steps 1 to 4 come from its sections on <a href="https://github.com/google-research/tuning_playbook#determining-the-feasible-batch-sizes-and-estimating-training-throughput" target="_blank" rel="noopener">feasible batch sizes and throughput ↗</a> and on <a href="https://github.com/google-research/tuning_playbook#choosing-the-batch-size-to-minimize-training-time" target="_blank" rel="noopener">minimizing training time ↗</a>. Steps 5 and 6 come from its sections on <a href="https://github.com/google-research/tuning_playbook#changing-the-batch-size-requires-re-tuning-most-hyperparameters" target="_blank" rel="noopener">retuning ↗</a> and <a href="https://github.com/google-research/tuning_playbook#choosing-the-batch-size-to-minimize-resource-consumption" target="_blank" rel="noopener">resource consumption ↗</a>.
         </p>
         <ol class="p03-steps">
           <li>
             <span class="p03-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18h16"/><path d="M6 15l4-4 3 3 5-6"/></svg></span>
             <div class="p03-step-body">
               <h3>Measure throughput by doubling</h3>
-              <p>Run a few steps at batch sizes 8, 16, 32, and so on until a run fails for memory. Record examples per second for each.</p>
+              <p>Run a few steps at batch sizes 8, 16, 32, and so on until a run fails for memory, recording examples per second for each.</p>
             </div>
           </li>
           <li>
@@ -603,28 +567,28 @@
             <span class="p03-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8z"/></svg></span>
             <div class="p03-step-body">
               <h3>Keep the batch sizes that raise throughput</h3>
-              <p>Drop batch sizes past the throughput plateau, even if they fit. Avoid gradient accumulation, which adds no throughput.</p>
+              <p>Drop batch sizes past the throughput plateau, even if they fit, and avoid gradient accumulation, which adds no throughput.</p>
             </div>
           </li>
           <li>
             <span class="p03-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M6 11l6-6 6 6"/></svg></span>
             <div class="p03-step-body">
               <h3>Default to the largest of them</h3>
-              <p>Without experiments, use the largest batch size that still raises throughput. To check it, compare candidates by steps to a fixed goal under a step budget, retuned at each batch size.</p>
+              <p>Without further experiments, use the largest batch size that still raises throughput. If you want to check it, compare candidates by steps to a fixed goal under a step budget, retuning at each batch size.</p>
             </div>
           </li>
           <li>
             <span class="p03-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg></span>
             <div class="p03-step-body">
               <h3>Retune whenever the batch size changes</h3>
-              <p>Retune the learning rate, momentum and regularization. Use a scaling rule only to center the search. With batch norm, keep the statistics size fixed.</p>
+              <p>Retune the learning rate, momentum and regularization, using a scaling rule only to center the search. With batch norm, keep the statistics size fixed.</p>
             </div>
           </li>
           <li>
             <span class="p03-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v8M9.5 10.5c0-1 1-1.5 2.5-1.5s2.5.6 2.5 1.6c0 2.4-5 1.2-5 3.6 0 1 1 1.8 2.5 1.8s2.5-.6 2.5-1.5"/></svg></span>
             <div class="p03-step-body">
               <h3>Weigh cost only when hardware changes</h3>
-              <p>On fixed hardware the fastest batch size is also the cheapest. When a larger batch needs more or better devices, compare consumption per step against the steps saved.</p>
+              <p>On fixed hardware the fastest batch size is also the cheapest. Only when a larger batch needs more or better devices do you need to weigh consumption per step against the steps saved.</p>
             </div>
           </li>
         </ol>
@@ -634,7 +598,7 @@
       <section class="prose" id="where">
         <h2>Where this fits</h2>
         <p>
-          Batch size is one of the decisions made once at the start of a project, together with the architecture, the optimizer and the initial configuration. Click any node of the map to see how it connects to the rest of the tuning process.
+          The batch size belongs with the architecture, the optimizer and the initial configuration as one of the decisions we make once at the start of a project, which is exactly why getting it right matters given the cost of retuning later. Click any node of the map to see how it connects to the rest of the tuning process.
         </p>
       </section>
 
