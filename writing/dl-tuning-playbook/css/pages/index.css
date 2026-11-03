@@ -1,0 +1,86 @@
+/* Landing page (index.html): intro, the source key, the series overview and the map section.
+   Linked after css/site.css and css/components/playbook-map.css. */
+
+.index-header h1 { font-size: clamp(2rem, 4.2vw, 2.7rem); line-height: 1.12; margin-bottom: 0.5rem; }
+
+/* ---------- intro and actions ---------- */
+.index-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 1.3rem auto 0.4rem; }
+.index-btn {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px;
+  border-radius: 6px; border: 1px solid var(--border-2); background: var(--surface);
+  font-size: 0.95rem; font-weight: 600; color: var(--ink); text-decoration: none;
+}
+.index-btn:hover { border-color: var(--model); color: var(--ink); }
+.index-btn.is-primary { background: var(--model); border-color: var(--model); color: #fff; }
+.index-btn.is-primary:hover { background: var(--model-label); color: #fff; }
+:root[data-theme="dark"] .index-btn.is-primary,
+:root[data-theme="dark"] .index-btn.is-primary:hover { color: #06101f; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .index-btn.is-primary,
+  :root:not([data-theme="light"]) .index-btn.is-primary:hover { color: #06101f; }
+}
+.index-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* ---------- where each kind of material comes from ---------- */
+.index-sources {
+  margin: 1.6rem auto 1.8rem; padding: 16px 18px 6px;
+  border: 1px solid var(--border-2); border-radius: 8px; background: var(--surface);
+}
+.index-sources-title { font-size: 0.9rem; font-weight: 650; color: var(--ink-2); margin: 0 0 10px; }
+.source-key { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 22px; }
+.source-key-item { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: start; margin: 0 0 12px; }
+.source-key-icon {
+  width: 40px; height: 40px; padding: 8px; border-radius: 10px;
+  fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.source-key-item.is-playbook .source-key-icon { color: var(--data-label); background: var(--data-tint); }
+.source-key-item.is-literature .source-key-icon { color: var(--fourth-label); background: var(--fourth-tint); }
+.source-key-item.is-toy .source-key-icon { color: var(--model-label); background: var(--model-tint); }
+.source-key-item.is-mine .source-key-icon { color: var(--third-label); background: var(--third-tint); }
+main.page .source-key h3 { font-family: var(--font); font-size: 0.98rem; font-weight: 650; margin: 2px 0 2px; line-height: 1.3; }
+main.page .source-key p { font-size: 0.9rem; line-height: 1.5; color: var(--ink-2); margin: 0; }
+@media (max-width: 639px) { .source-key { grid-template-columns: 1fr; } }
+
+.index-aside-mark { font-family: var(--font-serif); font-style: italic; font-weight: 600; color: var(--model-label); }
+
+/* ---------- the series ---------- */
+.series-acts { display: grid; gap: 26px; margin: 1.6rem 0 1rem; }
+.series-act-head { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 2px 12px; margin: 0 0 12px; }
+.series-act-num {
+  font-size: 0.8rem; font-weight: 700; color: var(--model-label); letter-spacing: 0.02em;
+  padding: 2px 8px; border: 1px solid color-mix(in srgb, var(--model) 40%, var(--border-2)); border-radius: 999px;
+}
+main.page .series-act-head h3 { font-family: var(--font); font-size: 1.15rem; font-weight: 650; margin: 0; line-height: 1.3; }
+main.page .series-act-head p { grid-column: 2; margin: 0; font-size: 0.93rem; color: var(--ink-2); line-height: 1.5; }
+.series-posts { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.series-posts > li { margin: 0; display: flex; }
+.series-post {
+  flex: 1; display: grid; grid-template-columns: 44px 1fr; grid-template-rows: auto auto 1fr; gap: 2px 14px;
+  padding: 16px 16px 16px; border: 1px solid var(--border-2); border-radius: 8px; background: var(--surface);
+  color: var(--ink); text-decoration: none;
+}
+.series-post:hover { border-color: var(--model); background: color-mix(in srgb, var(--model-tint) 35%, var(--surface)); color: var(--ink); }
+.series-post:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.series-icon {
+  grid-row: 1 / span 3; width: 44px; height: 44px; padding: 8px; border-radius: 10px;
+  background: var(--surface-2); color: var(--model-label);
+  fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
+}
+.series-post-num { font-size: 0.8rem; font-weight: 650; color: var(--ink-3); }
+.series-post-title { font-family: var(--font-serif); font-size: 1.12rem; font-weight: 600; line-height: 1.28; margin: 1px 0 4px; }
+.series-post-desc { font-size: 0.9rem; line-height: 1.5; color: var(--ink-2); }
+@media (max-width: 900px) {
+  .series-posts { grid-template-columns: 1fr; gap: 10px; }
+}
+@media (max-width: 639px) {
+  .series-act-head { grid-template-columns: 1fr; }
+  main.page .series-act-head p { grid-column: 1; }
+  .series-act-num { justify-self: start; }
+  .series-post { padding: 14px; grid-template-columns: 38px 1fr; gap: 2px 12px; }
+  .series-icon { width: 38px; height: 38px; padding: 7px; }
+  .series-post-title { font-size: 1.05rem; }
+}
+
+/* ---------- also on this site ---------- */
+.index-more { padding-left: 1.1rem; }
+.index-more li { margin: 0 0 0.4rem; }

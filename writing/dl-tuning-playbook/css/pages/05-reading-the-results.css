@@ -1,0 +1,148 @@
+/* Page styles for 05-reading-the-results.html (post05, 2026-11 review).
+   Semantic tokens only, so light and dark themes both work. */
+
+/* ---------- the opening questions ---------- */
+ul.p05-questions { padding-left: 1.2em; }
+ul.p05-questions li { margin-bottom: 0.45em; }
+
+/* ---------- Figure: three plots ---------- */
+.p05-plots {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 6px 0 12px;
+}
+.p05-plot-card {
+  background: var(--surface); border: 1px solid var(--grid); border-radius: 6px; padding: 12px 14px 12px;
+}
+.p05-plot-card svg.p05-mini { display: block; width: 100%; height: auto; max-height: 120px; margin-bottom: 6px; }
+.p05-plot-card h3 { font-family: var(--font-serif); font-size: 1.02rem; line-height: 1.3; margin: 0 0 4px; }
+.p05-plot-card p { font-size: 0.9rem; line-height: 1.5; color: var(--ink-2); margin: 0 0 6px; }
+.p05-plot-card p.p05-answers { color: var(--ink); font-weight: 600; margin: 0; }
+.p05-mini .mini-axis { fill: none; stroke: var(--ink-3); stroke-width: 1.4; }
+.p05-mini .mini-dots circle { fill: var(--ink-3); opacity: 0.7; }
+.p05-mini .mini-best circle { fill: var(--model); }
+.p05-mini .mini-x path { stroke: var(--accent); stroke-width: 1.8; fill: none; }
+.p05-mini .mini-train { fill: none; stroke: var(--third); stroke-width: 2.2; stroke-dasharray: 5 4; }
+.p05-mini .mini-val { fill: none; stroke: var(--model); stroke-width: 2.4; }
+.p05-mini .mini-line { fill: none; stroke: var(--model); stroke-width: 2.2; }
+@media (max-width: 760px) {
+  .p05-plots { grid-template-columns: 1fr; }
+  .p05-plot-card { display: grid; grid-template-columns: 120px 1fr; gap: 0 12px; align-items: start; }
+  .p05-plot-card svg.p05-mini { grid-row: 1 / span 3; margin: 2px 0 0; }
+}
+
+/* ---------- Figure: training-curve symptoms ---------- */
+.sym-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; font-size: 0.86rem; color: var(--ink-2); margin: 0 0 8px; }
+.sym-key { display: inline-block; width: 26px; height: 0; margin-right: 6px; vertical-align: middle; }
+.sym-key-val { border-top: 3px solid var(--model); }
+.sym-key-train { border-top: 3px dashed var(--third); }
+.sym-key-hl { height: 12px; width: 18px; border-radius: 2px; background: color-mix(in srgb, var(--accent) 22%, transparent); border: 1.5px solid var(--accent); }
+.sym-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px 12px; }
+.sym-card {
+  background: var(--surface); border: 1px solid var(--grid); border-radius: 6px; padding: 8px 12px 10px;
+  display: flex; flex-direction: column;
+}
+.sym-plot svg { display: block; width: 100%; height: auto; max-height: 92px; }
+.sym-title { font-family: var(--font-serif); font-size: 0.98rem; line-height: 1.25; margin: 4px 0 3px; }
+.sym-card dl { margin: 0; font-size: 0.84rem; line-height: 1.4; }
+.sym-card dt { font-weight: 700; color: var(--ink-2); font-size: 0.78rem; margin-top: 3px; }
+.sym-card dd { margin: 0; color: var(--ink); }
+.sym-svg .sym-axis { fill: none; stroke: var(--ink-3); stroke-width: 1.3; }
+.sym-svg .sym-val { fill: none; stroke: var(--model); stroke-width: 2.4; stroke-linejoin: round; }
+.sym-svg .sym-train { fill: none; stroke: var(--third); stroke-width: 2.2; stroke-dasharray: 6 4; }
+.sym-svg .sym-band { fill: color-mix(in srgb, var(--accent) 14%, transparent); }
+.sym-svg .sym-mark { fill: none; stroke: var(--accent); stroke-width: 2.2; }
+.sym-svg .sym-guide { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 3; }
+.sym-svg .sym-arrow { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
+.sym-svg .sym-tangent { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 3; }
+.sym-svg .sym-hl { fill: none; stroke: var(--accent); stroke-width: 6; stroke-opacity: 0.35; stroke-linecap: round; }
+@media (max-width: 900px) { .sym-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  .sym-grid { grid-template-columns: 1fr; gap: 10px; }
+  .sym-card { display: grid; grid-template-columns: 128px 1fr; gap: 0 12px; padding: 10px 12px; }
+  .sym-plot { grid-row: 1 / span 2; padding-top: 4px; }
+  .sym-title { margin-top: 2px; font-size: 1rem; }
+  .sym-card dt { margin-top: 2px; }
+}
+
+/* ---------- Figure: from 100 runs to an isolation plot ---------- */
+.iso-steps { display: grid; grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr); gap: 8px; align-items: center; margin-bottom: 8px; }
+.iso-step-head { font-size: 0.92rem; font-weight: 600; color: var(--ink); margin: 0 0 4px; }
+.iso-step-letter { color: var(--ink-2); margin-right: 4px; }
+.iso-panel svg { display: block; width: 100%; height: auto; }
+.iso-arrow { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 0.8rem; line-height: 1.3; color: var(--ink-2); }
+.iso-arrow svg path { fill: none; stroke: var(--model); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.iso-svg .iso-grid { stroke: var(--grid); stroke-width: 1; }
+.iso-svg .iso-axis { stroke: var(--ink-3); stroke-width: 1.2; }
+.iso-svg .iso-tick { fill: var(--ink-2); font-family: var(--font); font-size: 13px; }
+.iso-svg .iso-axlabel { fill: var(--ink-2); font-family: var(--font); font-size: 13.5px; }
+.iso-svg .iso-run { fill: var(--ink-3); opacity: 0.55; }
+.iso-svg .iso-cross { stroke: var(--ink-3); stroke-width: 1.6; fill: none; }
+.iso-svg .iso-best { fill: var(--model); stroke: var(--surface); stroke-width: 1.5; }
+.iso-svg .iso-winner { stroke: var(--accent); stroke-width: 2.5; }
+.iso-svg .iso-line { fill: none; stroke: var(--model); stroke-width: 2.4; }
+.iso-svg .iso-leader { fill: none; stroke: var(--ink-2); stroke-width: 1.2; }
+.iso-svg .iso-note { fill: var(--ink); font-family: var(--font); font-size: 13.5px; }
+.iso-svg .iso-note-x { fill: var(--ink-2); }
+@media (max-width: 760px) {
+  .iso-steps { grid-template-columns: 1fr; }
+  .iso-arrow { flex-direction: row; justify-content: center; }
+  .iso-arrow svg { transform: rotate(90deg); }
+}
+
+/* legend chips for the stepping stone */
+.iso-key { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.iso-key-best { background: var(--model); }
+.iso-key-run { background: var(--ink-3); opacity: 0.6; }
+.iso-key-x { color: var(--ink-3); font-weight: 700; margin-right: 6px; }
+
+/* ---------- Playbook figure pane with two images side by side ---------- */
+.fig-pb-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; }
+.fig-pb-pair img { max-width: 100%; width: 100%; height: auto; background: #fff; border-radius: 4px; border: 1px solid var(--grid); }
+@media (max-width: 560px) { .fig-pb-pair { grid-template-columns: 1fr; } }
+
+/* ---------- Density calculator ---------- */
+.p05-calc .scrub-calc-prose { margin: 0; }
+
+/* ---------- In practice ---------- */
+ol.p05-steps { list-style: none; padding: 0; margin: 1rem auto 1.4rem; counter-reset: p05step; }
+li.p05-step {
+  counter-increment: p05step; display: grid; grid-template-columns: 52px 1fr; gap: 0 14px;
+  position: relative; padding: 0 0 18px;
+}
+li.p05-step::before {
+  content: ""; position: absolute; left: 25px; top: 52px; bottom: 0; width: 2px; background: var(--grid);
+}
+li.p05-step:last-child::before { display: none; }
+.p05-step-icon {
+  width: 52px; height: 52px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  background: var(--model-tint, color-mix(in srgb, var(--model) 12%, transparent)); border: 1.5px solid color-mix(in srgb, var(--model) 55%, var(--grid));
+  position: relative;
+}
+.p05-step-icon::after {
+  content: counter(p05step); position: absolute; right: -4px; top: -4px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--model); color: #fff; font: 700 0.72rem/20px var(--font); text-align: center;
+}
+.p05-step-icon svg { width: 30px; height: 30px; }
+.p05-step-icon svg circle { fill: var(--ink-3); }
+.p05-step-icon svg .ic-hl { fill: var(--accent); }
+.p05-step-icon svg .ic-axis { fill: none; stroke: var(--ink-2); stroke-width: 1.8; }
+.p05-step-icon svg .ic-x { fill: none; stroke: var(--accent); stroke-width: 2; }
+.p05-step-icon svg .ic-val { fill: none; stroke: var(--model); stroke-width: 2.2; }
+.p05-step-icon svg .ic-train { fill: none; stroke: var(--third); stroke-width: 2; stroke-dasharray: 3 2.5; }
+.p05-step-body h3 { font-family: var(--font-serif); font-size: 1.08rem; margin: 0.7rem 0 0.25rem; }
+.p05-step-body p { margin: 0 0 0.25rem; font-size: 0.97rem; line-height: 1.55; }
+.p05-practice-quote { border-left: 3px solid var(--grid); padding-left: 14px; color: var(--ink-2); }
+@media (max-width: 560px) {
+  li.p05-step { grid-template-columns: 44px 1fr; gap: 0 12px; }
+  .p05-step-icon { width: 44px; height: 44px; }
+  li.p05-step::before { left: 21px; top: 44px; }
+  .p05-step-icon svg { width: 26px; height: 26px; }
+  .p05-step-body h3 { margin-top: 0.45rem; }
+}
+
+.p05-then { color: var(--model); font-weight: 700; margin: 0 4px; }
+
+/* ---------- "In this post" box: each item a block, title over takeaway ---------- */
+nav.post-roadmap a.roadmap-item { display: block; text-decoration: none; color: inherit; }
+nav.post-roadmap .roadmap-item-title { display: block; color: var(--ink); font-size: 0.98rem; }
+nav.post-roadmap .roadmap-item-desc { display: block; color: var(--ink-2); font-size: 0.9rem; line-height: 1.45; margin-top: 2px; }
+nav.post-roadmap a.roadmap-item:hover .roadmap-item-title { color: var(--model-label, var(--model)); text-decoration: underline; }

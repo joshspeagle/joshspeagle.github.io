@@ -1,0 +1,96 @@
+/* 06-adopting-a-change.css: page styles for post 6 (schematics, the "In this post" box, the
+   practice steps). Class names carry the p06- prefix except the shared roadmap markup. */
+
+/* ---------- "In this post" ---------- */
+
+/* ---------- shared schematic pieces ---------- */
+.p06-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.p06-svg text { font-family: var(--font); font-size: 12px; fill: var(--ink-2); }
+.p06-svg .t-ink { fill: var(--ink); font-weight: 600; }
+.p06-svg .axis { stroke: var(--border-2); stroke-width: 1.2; fill: none; }
+.p06-svg .fan { stroke: var(--border-2); stroke-width: 1.2; fill: none; }
+.p06-svg .box { fill: var(--surface); stroke: var(--border-2); stroke-width: 1.2; }
+.p06-svg .basin { fill: var(--model-tint); stroke: color-mix(in srgb, var(--model) 40%, transparent); stroke-width: 1; }
+.p06-svg .pt { fill: var(--ink-3); }
+.p06-svg .run { fill: var(--model); }
+.p06-svg .best { fill: var(--energy); }
+.p06-svg .best-ring { fill: none; stroke: var(--energy); stroke-width: 2; }
+.p06-svg .true { stroke: var(--ink); stroke-width: 2; fill: none; }
+.p06-svg .true-line { stroke: var(--ink-3); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+.p06-svg .bias { stroke: var(--energy); stroke-width: 1.6; fill: none; }
+.p06-svg .cell-train { fill: color-mix(in srgb, var(--model) 22%, var(--surface)); stroke: var(--surface); stroke-width: 1.5; }
+.p06-svg .cell-val { fill: var(--third); stroke: var(--surface); stroke-width: 1.5; }
+.p06-svg .mean { stroke: var(--model); stroke-width: 3; }
+.p06-svg .t-energy { fill: var(--energy-text); font-weight: 600; }
+
+/* ---------- Figure 1: sources of variance ---------- */
+.p06-sources { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 6px 0 4px; }
+.p06-source {
+  border: 1px solid var(--border-2); border-radius: 6px; background: var(--surface-2);
+  padding: 12px 14px 12px; display: flex; flex-direction: column; gap: 8px;
+}
+.p06-source-name { font-family: var(--font-serif); font-weight: 650; font-size: 1.02rem; line-height: 1.25; color: var(--ink); margin: 0; }
+.p06-source-aka { font-size: 0.82rem; color: var(--ink-2); margin: -4px 0 0; }
+.p06-source .p06-svg { max-width: 300px; margin: 0 auto; }
+.p06-source dl { margin: 0; font-size: 0.86rem; line-height: 1.45; }
+.p06-source dt { font-weight: 650; color: var(--ink); margin-top: 4px; }
+.p06-source dd { margin: 0; color: var(--ink-2); }
+.p06-source-tag {
+  margin-top: auto; font-size: 0.8rem; font-weight: 600; line-height: 1.35; padding: 5px 8px; border-radius: 4px;
+  border-left: 3px solid var(--border-2); background: var(--surface); color: var(--ink-2);
+}
+.p06-source-tag.is-rerun { border-left-color: var(--model); color: var(--model-label); }
+.p06-source-tag.is-study { border-left-color: var(--fourth); color: var(--fourth-label); }
+@media (max-width: 900px) { .p06-sources { grid-template-columns: 1fr; } .p06-source .p06-svg { max-width: 280px; } }
+
+/* ---------- Figure 2: selection bias ---------- */
+.p06-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.p06-pair-head { font-size: 0.88rem; font-weight: 650; color: var(--ink); margin: 0 0 4px; }
+.p06-pair .p06-svg { max-width: 380px; }
+.p06-key { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--ink-2); margin: 8px 0 2px; }
+.p06-key span { display: inline-flex; align-items: center; gap: 6px; }
+.p06-key i { display: inline-block; flex: none; }
+.p06-key .k-true { width: 14px; height: 0; border-top: 2px solid var(--ink); }
+.p06-key .k-run { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
+.p06-key .k-best { width: 8px; height: 8px; border-radius: 50%; background: var(--energy); box-shadow: 0 0 0 2px var(--surface), 0 0 0 3.5px var(--energy); }
+.p06-key .k-rerun { width: 8px; height: 8px; border-radius: 50%; background: var(--model); }
+@media (max-width: 639px) { .p06-pair { grid-template-columns: 1fr; } }
+
+/* ---------- Figure 5: exploration versus the final study ---------- */
+.p06-phases { display: grid; grid-template-columns: minmax(90px, 0.6fr) 1fr 1fr; border: 1px solid var(--border-2); border-radius: 6px; overflow: hidden; }
+.p06-phases > div { padding: 9px 12px; font-size: 0.9rem; line-height: 1.45; border-top: 1px solid var(--grid); color: var(--ink); }
+.p06-phases > .p06-ph-head { border-top: 0; font-weight: 650; font-size: 0.92rem; }
+.p06-phases > .p06-ph-head.is-explore { background: color-mix(in srgb, var(--fourth) 10%, var(--surface)); color: var(--fourth-label); }
+.p06-phases > .p06-ph-head.is-final { background: color-mix(in srgb, var(--model) 10%, var(--surface)); color: var(--model-label); }
+.p06-phases > .p06-ph-row { font-weight: 600; color: var(--ink-2); font-size: 0.84rem; background: var(--surface-2); }
+.p06-phases > .p06-ph-final { background: color-mix(in srgb, var(--model) 4%, var(--surface)); }
+.p06-then { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; }
+.p06-then > div { border: 1px solid var(--border-2); border-left: 3px solid var(--model); border-radius: 5px; padding: 9px 12px; font-size: 0.9rem; line-height: 1.45; background: var(--surface); }
+.p06-then strong { display: block; margin-bottom: 2px; }
+@media (max-width: 639px) {
+  .p06-phases { grid-template-columns: 1fr 1fr; }
+  .p06-phases > .p06-ph-row { grid-column: 1 / -1; padding-bottom: 3px; }
+  .p06-phases > .p06-ph-corner { display: none; }
+  .p06-then { grid-template-columns: 1fr; }
+}
+
+/* ---------- In practice ---------- */
+ol.p06-steps { list-style: none; padding: 0; margin: 1rem auto 1.4rem; counter-reset: p06; display: grid; gap: 10px; }
+ol.p06-steps > li {
+  counter-increment: p06; display: grid; grid-template-columns: 40px 1fr; gap: 4px 12px; align-items: start;
+  border: 1px solid var(--border-2); border-radius: 6px; padding: 11px 14px; background: var(--surface);
+}
+ol.p06-steps > li::before {
+  content: counter(p06); grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--model-tint); color: var(--model-label); font-weight: 700; font-size: 1rem;
+  border: 1.5px solid color-mix(in srgb, var(--model) 50%, transparent);
+}
+ol.p06-steps > li.is-later::before { background: color-mix(in srgb, var(--fourth) 14%, var(--surface)); color: var(--fourth-label); border-color: color-mix(in srgb, var(--fourth) 50%, transparent); }
+ol.p06-steps .p06-step-head { font-weight: 650; color: var(--ink); line-height: 1.35; }
+ol.p06-steps .p06-step-body { font-size: 0.93rem; line-height: 1.5; color: var(--ink-2); margin: 0; }
+ol.p06-steps .p06-step-src { font-size: 0.8rem; font-weight: 600; color: var(--ink-3); }
+
+/* Figure 3's scenarios run from the guided tour and the links in the text; their buttons would
+   crowd the controls, so they are not shown */
+#fig-gain-noise .fig-controls-more button.preset { display: none; }

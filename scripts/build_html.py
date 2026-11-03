@@ -40,6 +40,7 @@ from pages_awards import generate_content as gen_awards        # noqa: E402
 from pages_service import generate_content as gen_service      # noqa: E402
 from pages_software import generate_content as gen_software    # noqa: E402
 from pages_news import generate_content as gen_news            # noqa: E402
+from pages_writing import generate_content as gen_writing      # noqa: E402
 
 SITE_URL = "https://joshspeagle.com"
 SITE_NAME = "Joshua S. Speagle"
@@ -93,6 +94,9 @@ PAGES = {
                    layout="header", scripts=["board.js"], sitemap="0.6", sources=["content"]),
     "service": dict(file="service.html", nav="Service", canonical="/service.html",
                     layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
+    "writing": dict(file="writing.html", nav=None, canonical="/writing.html",
+                    layout="header", scripts=["board.js", "listview.js"], sitemap=None,
+                    noindex=True, sources=["content"]),
     "404": dict(file="404.html", nav=None, title=f"Page not found · {SITE_NAME}",
                 canonical=None, layout="notfound", scripts=["board.js"], sitemap=None,
                 sources=["content"], root="/", noindex=True, container="notfound-content",
@@ -1854,6 +1858,7 @@ _CONTENT_GENERATORS = {
     "mentorship": gen_mentorship,
     "software": gen_software,
     "news": gen_news,
+    "writing": gen_writing,
 }
 
 # Home is three generated <section>s rather than one content container:

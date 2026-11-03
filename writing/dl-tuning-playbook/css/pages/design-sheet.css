@@ -1,0 +1,95 @@
+/* Design sheet (design-sheet.html): specimen frames, swatches, the type table and code blocks.
+   The .practice-steps rules at the end are a proposal for site.css (see notes/review-2026-11/changes/index.md). */
+
+/* ---------- code blocks ---------- */
+pre.ds-code {
+  font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0;
+  font-family: var(--mono); font-size: 0.8rem; line-height: 1.55; color: var(--ink);
+  background: var(--surface-2); border: 1px solid var(--grid); border-radius: 6px;
+  padding: 12px 14px; margin: 0.8rem auto 1.4rem; overflow-x: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+main.page pre.ds-code code, pre.ds-code code { background: none; padding: 0; border: 0; font-size: inherit; box-shadow: none; }
+
+/* ---------- post skeleton wireframe ---------- */
+.ds-skeleton {
+  display: grid; gap: 6px; margin: 1.2rem auto 1.6rem; padding: 14px;
+  border: 1px solid var(--border-2); border-radius: 8px; background: var(--surface);
+}
+.ds-sk-row { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: center; padding: 9px 12px; border-radius: 6px; background: var(--surface-2); }
+.ds-sk-row b { display: block; font-size: 0.95rem; font-weight: 650; color: var(--ink); }
+.ds-sk-row span:not(.ds-sk-n) { display: block; font-size: 0.86rem; line-height: 1.45; color: var(--ink-2); }
+.ds-sk-n {
+  display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--ink-2); color: var(--surface); font-size: 0.8rem; font-weight: 700;
+}
+.ds-sk-row.is-note { padding-top: 6px; padding-bottom: 6px; }
+.ds-sk-row.is-roadmap { border-left: 3px solid var(--reader); }
+.ds-sk-row.is-body { min-height: 92px; background: repeating-linear-gradient(180deg, var(--surface-2) 0 14px, color-mix(in srgb, var(--grid) 60%, var(--surface-2)) 14px 15px); }
+.ds-sk-row.is-practice { border-left: 3px solid var(--energy); }
+.ds-sk-row.is-map { border-left: 3px solid var(--model); }
+
+.ds-live { margin-top: 0.6rem; }
+
+/* ---------- colour swatches ---------- */
+.ds-swatches { list-style: none; padding: 0; margin: 1.2rem auto; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 22px; }
+.ds-swatches li { display: grid; grid-template-columns: 54px 1fr; gap: 12px; align-items: start; margin: 0; }
+.ds-sw {
+  width: 54px; height: 54px; border-radius: 8px; background: var(--t); border: 1px solid var(--grid);
+  position: relative; overflow: hidden;
+}
+.ds-sw::before { content: ""; position: absolute; left: 8px; right: 8px; top: 26px; height: 3px; background: var(--c); border-radius: 2px; }
+.ds-sw::after { content: ""; position: absolute; left: 21px; top: 9px; width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+.ds-swatches code { font-size: 0.8rem; }
+.ds-swatches b { display: block; font-size: 0.95rem; font-weight: 650; margin: 2px 0 1px; }
+.ds-swatches span:not(.ds-sw) { display: block; font-size: 0.87rem; line-height: 1.45; color: var(--ink-2); }
+@media (max-width: 639px) { .ds-swatches { grid-template-columns: 1fr; } }
+.ds-ink-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 0.6rem auto 1.2rem; }
+.ds-ink-row span { padding: 6px 12px; border: 1px solid var(--grid); border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: var(--surface); }
+
+/* ---------- type table ---------- */
+.ds-table-wrap { overflow-x: auto; margin: 1rem auto 1.2rem; }
+table.ds-type { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+table.ds-type th, table.ds-type td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--grid); vertical-align: baseline; }
+table.ds-type th { font-weight: 650; color: var(--ink-2); }
+.ds-t-h1 { font-family: var(--font-serif); font-size: 1.6rem; font-weight: 700; }
+.ds-t-h2 { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; }
+.ds-t-h3 { font-size: 1.1rem; font-weight: 650; }
+.ds-t-fig { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; }
+.ds-t-task { font-size: 0.95rem; }
+.ds-t-cap { font-size: 0.85rem; color: var(--ink-2); }
+.ds-t-lab { font-size: 14px; }
+.ds-t-tick { font-size: 13px; color: var(--ink-2); }
+@media (max-width: 639px) {
+  table.ds-type th:nth-child(4), table.ds-type td:nth-child(4) { display: none; }
+}
+
+/* ---------- figure anatomy ---------- */
+.ds-anatomy { padding-left: 1.4rem; }
+.ds-anatomy > li { margin-bottom: 0.5rem; }
+.ds-anatomy ul { margin-top: 0.3rem; }
+
+/* ---------- callouts side by side ---------- */
+.ds-callouts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 1rem auto; }
+.ds-callouts .callout { margin: 0; }
+@media (max-width: 639px) { .ds-callouts { grid-template-columns: 1fr; } }
+
+/* ---------- proposed shared component: the In practice steps ---------- */
+ol.practice-steps { list-style: none; counter-reset: ps; padding: 0; margin: 1rem auto 1.4rem; display: grid; gap: 10px; }
+ol.practice-steps > li {
+  counter-increment: ps; position: relative; margin: 0;
+  display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start;
+  padding: 14px 16px 14px 16px; border: 1px solid var(--border-2); border-radius: 8px; background: var(--surface);
+}
+.practice-steps-icon {
+  width: 44px; height: 44px; padding: 9px; border-radius: 10px; position: relative;
+  background: color-mix(in srgb, var(--energy) 14%, var(--surface)); color: var(--energy-text);
+}
+.practice-steps-icon svg { width: 100%; height: 100%; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.practice-steps-icon::after {
+  content: counter(ps); position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 0.72rem; font-weight: 700;
+  background: var(--energy); color: #1a1205;
+}
+main.page ol.practice-steps h4 { font-family: var(--font); font-size: 1rem; font-weight: 650; margin: 2px 0 3px; }
+main.page ol.practice-steps p { margin: 0; font-size: 0.93rem; line-height: 1.55; color: var(--ink-2); }
+table.ds-type td:nth-child(2), table.ds-type td:nth-child(3) { white-space: nowrap; }

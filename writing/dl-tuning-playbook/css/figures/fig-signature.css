@@ -1,0 +1,24 @@
+/* fig-signature, F9.1: the signature (implementation-plan.md WO-F9.1).
+   From 640 px, (a) the sweep and (b) the selected rate's loss sit side by side at equal widths. In
+   the phone layout (a) stacks above (b), two rows of frames, each at most 180 px tall with its
+   header (design-system.md §3.5 items 3 and 4). The rate's handle stands above (a)'s reading
+   element, so a press on the handle's target moves the rate and a press elsewhere reads a trial
+   (design-system.md §6.2). */
+#fig-signature .fig-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px 18px;
+  align-items: start;
+}
+#fig-signature .panel > .handle { z-index: 3; }
+@media (max-width: 639px) {
+  #fig-signature .fig-panels {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+}
+/* Print (design-system.md §6.7): html.tp-print is laid out as a 680-px viewport, the paper's
+   column. Side by side, each panel was 236 px wide on paper and (b) dropped its labels "every 100
+   steps", "every step" and "spike", which the caption does not name; the panels therefore stack at
+   the column's width, as F6.4's and F8.3's do. */
+#fig-signature:is(html.tp-print *) .fig-panels { grid-template-columns: minmax(0, 1fr); gap: 8px; }

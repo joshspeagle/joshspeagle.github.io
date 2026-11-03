@@ -1,0 +1,37 @@
+/* fig-study, F1.2: the study and its axis plot.
+   2026-11 review (post01): from 900 px the three views share one row, (a) the search space, (b) the
+   axis plot and (c) the chosen trial's curve, so the figure fits one screen. Between 640 and 900 px
+   (a) and (b) share the first row and (c) the second. In the phone layout (a) and (c) share the
+   first row and (b) takes the second at full width, because (b)'s header holds the segment control
+   for the hyperparameter on the axis. The DOM order stays (a), (b), (c). */
+#fig-study .fig-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1.18fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "a b c";
+  gap: 14px 18px;
+  align-items: start;
+}
+@media (max-width: 899.98px) {
+  #fig-study .fig-panels { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "a b" "c ."; }
+}
+#fig-study .panel[data-panel="a"] { grid-area: a; }
+#fig-study .panel[data-panel="b"] { grid-area: b; }
+#fig-study .panel[data-panel="c"] { grid-area: c; }
+/* the control in (b)'s header sets its label inline, on the row of its buttons */
+#fig-study .panel-head > .ctl { flex: 1 1 0; flex-direction: row; align-items: center; gap: 8px; max-width: none; min-width: 0; }
+#fig-study .panel-head > .ctl > .lbl { flex: 0 1 auto; min-width: 0; }
+#fig-study .panel-head > .ctl > .seg { flex: 0 0 auto; }
+@media (max-width: 639px) {
+  #fig-study .fig-panels {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-areas: "a c" "b b";
+    gap: 10px 8px;
+  }
+  #fig-study .panel-head > .ctl { flex-wrap: nowrap; }
+  #fig-study .panel-head .seg button { padding-left: 8px; padding-right: 8px; }
+  #fig-study .panel[data-panel="b"] .panel-head .panel-note { order: 1; }
+  #fig-study .panel[data-panel="b"] .panel-head > .ctl { order: 2; flex: 1 1 100%; }
+}
+@media (max-width: 389.98px) {
+  #fig-study .panel-head > .ctl { flex-wrap: wrap; row-gap: 4px; }
+}

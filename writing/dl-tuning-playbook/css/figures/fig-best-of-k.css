@@ -1,0 +1,17 @@
+/* fig-best-of-k.css: the layout of F5.2, the best of K trials (implementation-plan.md WO-F5.2).
+   From 640 px, panels (a) and (b) sit side by side at equal widths. In the phone layout (a) is the
+   first row and (b) the second (site.css stacks the panels), and the docked toggles set their
+   label inline, on the row of their four buttons, so that the dock holds the toggles and the run
+   strip in two rows. At every width the toggles' label stands on the row of its buttons. */
+#fig-best-of-k .fig-panels { flex-wrap: nowrap; }
+#fig-best-of-k .panel { flex: 1 1 0; }
+#fig-best-of-k .fig-controls > .ctl { max-width: none; flex: 0 1 auto; flex-direction: row; align-items: center; gap: 10px; }
+
+@media (max-width: 639px) {
+  #fig-best-of-k .fig-panels { flex-wrap: wrap; }
+  #fig-best-of-k .panel { flex: 1 1 auto; }
+  #fig-best-of-k .fig-controls > .ctl { flex: 1 1 100%; flex-direction: row; align-items: center; gap: 8px; }
+  #fig-best-of-k .fig-controls > .ctl > .lbl { flex: 0 1 auto; min-width: 0; line-height: 1.15; }
+  #fig-best-of-k .fig-controls .toggles { flex: 1 0 auto; flex-wrap: nowrap; gap: 4px; }
+  #fig-best-of-k .fig-controls .toggles > .btn { flex: 1 1 0; min-width: 44px; padding-left: 4px; padding-right: 4px; }
+}

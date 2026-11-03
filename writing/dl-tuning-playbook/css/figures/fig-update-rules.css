@@ -1,0 +1,96 @@
+/* fig-update-rules.css: the layout of F2.1, the update rules (implementation-plan.md WO-F2.1),
+   revised 2026-11 for post02. At 900 px and wider (a), (b) and (c) share one row and div.fig-side
+   (the focus rule's update, the loss scale and its sliders) sits under them. From 640 to 899 px (a)
+   takes the first row and (b) and (c) the second. In the phone layout the panels stack. The DOM
+   order stays (a), (b), (c), div.fig-side. The rule toggles and the presets were removed. */
+#fig-update-rules .fig-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "a a" "b c" "side side";
+  gap: 14px 20px;
+  align-items: start;
+}
+#fig-update-rules .panel[data-panel="a"] { grid-area: a; }
+#fig-update-rules .panel[data-panel="b"] { grid-area: b; }
+#fig-update-rules .panel[data-panel="c"] { grid-area: c; }
+/* 2026-11 revision (post02): at 900 px and wider the three panels share one row, (a) the paths,
+   (b) steps against learning rate and (c) loss against step, with div.fig-side (the focus rule's
+   update, the loss scale and its sliders) as one row under them. This keeps the whole figure
+   within one 900-px screen at 1440 x 900. */
+@media (min-width: 900px) {
+  #fig-update-rules:not(html.tp-print *) .fig-panels {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "a b c" "side side side";
+  }
+}
+
+/* Print (design-system.md §6.7): html.tp-print is laid out as a 680-px viewport, the paper's
+   column, so the rule for 900 px and wider excludes it and the 640-to-899-px grid applies. */
+
+/* div.fig-side: the focus rule's update in the first column and its sliders in the second, each
+   slider with its label inline; with no slider (SGD) the update takes both columns */
+#fig-update-rules .fig-side {
+  grid-area: side; min-width: 0;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 14px; align-content: start;
+  padding-top: 10px; border-top: 1px solid var(--grid);
+}
+#fig-update-rules .fig-side:not(:has(> .ctl:not([hidden]))) { grid-template-columns: minmax(0, 1fr); }
+#fig-update-rules .fig-eq { grid-column: 1; grid-row: 1 / span 4; min-width: 0; overflow-x: auto; }
+#fig-update-rules .fig-eq-head { margin: 0; font-size: 0.8rem; line-height: 1.35; color: var(--ink-2); }
+#fig-update-rules .fig-eq-tex { font-size: 0.78rem; }
+#fig-update-rules .fig-eq-tex .katex-display { margin: 0.15em 0 0.25em; text-align: left; }
+#fig-update-rules .fig-eq-tex .katex-display > .katex { text-align: left; }
+#fig-update-rules .fig-side .ctl {
+  grid-column: 2; min-width: 0; max-width: none;
+  flex-direction: row; align-items: center; gap: 8px;
+}
+#fig-update-rules .fig-side .ctl > label { flex: 0 0 auto; white-space: nowrap; }
+#fig-update-rules .fig-side .ctl > .range { flex: 1 1 auto; min-width: 70px; }
+/* The loss scale's segment control (label and three 44-px buttons, about 216 px) is wider than the
+   second column at 1024 to 1440 px (198 to 207 px), where its "100" segment was cut at the column's
+   edge; it wraps its label above the segments when the row does not fit. */
+#fig-update-rules .fig-side .ctl:has(> .seg) { flex-wrap: wrap; row-gap: 2px; }
+#fig-update-rules .fig-side .ctl:has(> .seg) > .seg { flex: 0 0 auto; }
+
+/* the toggles, the preset and Reset keep to one row at 918 px, with room for the wider bold text
+   of pressed buttons (three toggles and the preset) */
+#fig-update-rules .fig-controls-more { gap: 8px 10px; }
+#fig-update-rules .toggles { gap: 4px; }
+#fig-update-rules .toggles .btn, #fig-update-rules .fig-controls-more button.preset,
+#fig-update-rules .fig-controls-more button.reset { padding-left: 8px; padding-right: 8px; }
+
+/* The dock holds the learning-rate slider and the run strip. From 640 px they share one row, and
+   the slider sets its label inline, so the dock is one 44-px row. The toggles set their label
+   inline as well. */
+@media (min-width: 640px) {
+  #fig-update-rules .fig-dock { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+  #fig-update-rules .fig-dock .fig-controls { flex: 1 1 300px; min-width: 0; }
+  #fig-update-rules .fig-dock .run-strip { flex: 1 1 440px; }
+  #fig-update-rules .fig-dock .ctl { flex-direction: row; align-items: center; gap: 8px; max-width: none; }
+  #fig-update-rules .fig-dock .ctl > label { flex: 0 0 auto; white-space: nowrap; }
+  #fig-update-rules .fig-dock .ctl > .range { flex: 1 1 auto; min-width: 120px; }
+  #fig-update-rules .fig-controls-more .ctl:has(> .toggles) { flex-direction: row; align-items: center; gap: 10px; flex: 0 1 auto; }
+}
+
+@media (max-width: 639px) {
+  #fig-update-rules .fig-panels {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "a" "b" "c" "side";
+    gap: 10px 8px;
+  }
+  /* Each slider of div.fig-side sets its label above its track, so that the track takes the
+     column's width: inline, the label and a 70-px track overran 320 px by 23 px. */
+  #fig-update-rules .fig-side .ctl { flex-direction: column; align-items: stretch; gap: 0; }
+  #fig-update-rules .fig-side .ctl > .range { flex: 0 0 auto; min-width: 0; }
+}
+
+/* Print (design-system.md §6.7): the loss scale prints as its label and chosen value, as a control
+   in a panel's header does (site.css), so that no segment is cut at the column's edge. */
+#fig-update-rules:is(html.tp-print *) .fig-side .ctl:has(> .seg) { flex-wrap: nowrap; align-items: baseline; gap: 0.4em; }
+#fig-update-rules:is(html.tp-print *) .fig-side .ctl:has(> .seg) > .lbl::after { content: ":"; }
+#fig-update-rules:is(html.tp-print *) .fig-side .seg { outline: 0; border-radius: 0; }
+#fig-update-rules:is(html.tp-print *) .fig-side .seg button[aria-pressed="false"] { display: none; }
+#fig-update-rules:is(html.tp-print *) .fig-side .seg button {
+  min-height: 0; min-width: 0; padding: 0; border: 0; background: none; box-shadow: none;
+  font-size: 0.82rem; line-height: 1.35; color: var(--ink);
+}

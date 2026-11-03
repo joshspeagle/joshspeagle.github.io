@@ -1,0 +1,18 @@
+/* fig-checkpoint.css: the layout of F1.1, the checkpoint run (implementation-plan.md WO-F1.1).
+   From 640 px, panel (b), the buffer, is a column 140 px wide beside panel (a). In the phone layout
+   panel (a) is the first row and (b) a row of three slots under it (site.css stacks the panels). */
+#fig-checkpoint .fig-panels { flex-wrap: nowrap; }
+#fig-checkpoint .panel[data-panel="a"] { flex: 1 1 auto; }
+#fig-checkpoint .panel[data-panel="b"] { flex: 0 0 140px; }
+
+/* panel (b) has no axes: its frame holds the three slots */
+#fig-checkpoint .panel[data-panel="b"] .axis { display: none; }
+#fig-checkpoint .slot { fill: var(--surface); }
+#fig-checkpoint .slot-step { fill: var(--ink); font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
+#fig-checkpoint .slot-value { fill: var(--ink-2); font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
+#fig-checkpoint .slot-empty { fill: var(--ink-3); font-size: var(--fs-label); }
+
+@media (max-width: 639px) {
+  #fig-checkpoint .fig-panels { flex-wrap: wrap; }
+  #fig-checkpoint .panel[data-panel="a"], #fig-checkpoint .panel[data-panel="b"] { flex: 1 1 auto; }
+}

@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Notes on the Deep Learning Tuning Playbook · Josh Speagle</title>
+  <meta name="description" content="A series of nine blog posts by Josh Speagle working through Google Research's Deep Learning Tuning Playbook, with sketches, toy models and links back to the Playbook.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232855a6'/%3E%3Cpath d='M7 22 C12 22, 13 10, 18 10 C22 10, 22 17, 26 14' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='10' r='2.6' fill='%23d4850e'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="js/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/components/playbook-map.css">
+  <link rel="stylesheet" href="css/pages/index.css">
+</head>
+<body data-page="index.html" data-root="">
+  <header class="site-header"></header>
+
+  <main class="page">
+    <header class="post-header index-header">
+      <div class="post-kicker">A series in nine parts</div>
+      <h1>Notes on the Deep Learning Tuning Playbook</h1>
+      <div class="post-meta">
+        <span>Josh Speagle</span>
+        <span class="sep"></span>
+        <span><a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">The Playbook on GitHub ↗</a></span>
+      </div>
+    </header>
+
+    <article class="post-body">
+      <section class="prose index-intro" id="intro">
+        <p class="lede">
+          Google Research's <em>Deep Learning Tuning Playbook</em> is a written account, by people who have trained neural networks for many years, of how they get good results in practice. Much of its advice fits in a sentence, such as re-tuning the learning rate when the batch size changes or scoring a run by its best checkpoint. The reasons behind each sentence take longer to explain.
+        </p>
+        <p>
+          I wrote these posts to understand the Playbook myself. For each part I worked through the argument, sketched the mechanism, and built small simulations where a picture helped me see why the advice holds. I am sharing them in the hope that they help other people who are learning to tune models systematically.
+        </p>
+        <div class="index-actions">
+          <a class="index-btn is-primary" href="pages/01-the-tuning-loop.html">Start with Part 1 <span aria-hidden="true">→</span></a>
+          <a class="index-btn" href="#series">See all nine parts</a>
+          <a class="index-btn" href="#process">See the tuning process as a flowchart</a>
+        </div>
+      </section>
+
+      <section class="prose" id="about">
+        <h2>The Playbook and these notes</h2>
+        <p>
+          The <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener"><em>Deep Learning Tuning Playbook</em></a> was written by Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, and Zachary Nado of Google Research (Brain Team) and Harvard University. It was released on GitHub in 2023 under a CC BY 4.0 license. It is written for engineers and researchers who want to get the best performance out of deep learning models, and it concentrates on the process of hyperparameter tuning for supervised problems. The authors present it as their opinions at the time of writing, and as a living document that will change as their beliefs change.
+        </p>
+        <p>
+          Each post covers one or more sections of the Playbook. The order differs from the Playbook's, because ideas that several sections rely on (how a single training run is scored, for example) come first. Every post links to the sections it covers, so you can read the two side by side. The Playbook remains the reference, and these notes add explanation around it.
+        </p>
+
+        <div class="index-sources" role="group" aria-labelledby="sources-title">
+          <div class="index-sources-title" id="sources-title">Where each kind of material comes from</div>
+          <ul class="source-key">
+            <li class="source-key-item is-playbook">
+              <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>
+              <div>
+                <h3>The Playbook's advice</h3>
+                <p>The posts attribute it in plain words ("The Playbook recommends...") and link to the section on GitHub. Figures reproduced from the Playbook open from a figure's toolbar, under "The Playbook's figure".</p>
+              </div>
+            </li>
+            <li class="source-key-item is-literature">
+              <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>
+              <div>
+                <h3>Mechanisms from the literature</h3>
+                <p>Explanations taken from published papers are cited where they appear and listed in each post's references.</p>
+              </div>
+            </li>
+            <li class="source-key-item is-toy">
+              <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+              <div>
+                <h3>Toy models</h3>
+                <p>I built small simulations to show one mechanism at a time. Their numbers follow from the assumptions listed under "How this toy works" in each figure, and do not come from real training runs.</p>
+              </div>
+            </li>
+            <li class="source-key-item is-mine">
+              <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg>
+              <div>
+                <h3>My own views</h3>
+                <p>Opinions of mine are written in the first person, which keeps them separate from what the Playbook says.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <h3 id="who">Who the posts are for</h3>
+        <p>
+          The posts assume you have trained a few networks in PyTorch or JAX and know what a learning rate, a validation set and an optimizer are, but have not yet tuned a model systematically. The mathematics stays at the level of undergraduate calculus, linear algebra and introductory statistics. Each section keeps one or two equations in the main text. Derivations and more technical framing sit in collapsible boxes marked <span class="index-aside-mark">ƒ(x)</span>, which you can skip without losing the argument.
+        </p>
+        <p>
+          Shaded terms show a short definition when you hover over or tap them. Many figures are interactive. Their toolbars can open a guided tour of what to look for, the Playbook's own figure where one exists, and the assumptions behind the toy model.
+        </p>
+      </section>
+
+      <section class="prose" id="series">
+        <h2>The series</h2>
+        <p>
+          The nine parts are grouped in three acts. They read best in order, and each one links back to the earlier ideas it uses.
+        </p>
+
+        <div class="series-acts l-wide">
+          <section class="series-act" id="act-1" aria-labelledby="act-1-title">
+            <div class="series-act-head">
+              <span class="series-act-num">Act I</span>
+              <h3 id="act-1-title">Experimental method and setup</h3>
+              <p>How to run experiments you can trust, and the decisions made once at the start of a project.</p>
+            </div>
+            <ol class="series-posts">
+              <li><a class="series-post" href="pages/01-the-tuning-loop.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5a11 11 0 1 1-10.4 7.4"/><path d="M5 6v6.6h6.6"/><circle cx="16" cy="16" r="2.5"/></svg>
+                <span class="series-post-num">Part 1</span>
+                <span class="series-post-title">Tuning a network one question at a time</span>
+                <span class="series-post-desc">The incremental tuning loop, scoring a run by its best checkpoint, and the roles that make comparisons fair.</span>
+              </a></li>
+              <li><a class="series-post" href="pages/02-starting-a-project.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 26V10l10-5 10 5v16"/><path d="M12 26v-8h8v8"/><path d="M3 26h26"/></svg>
+                <span class="series-post-num">Part 2</span>
+                <span class="series-post-title">Starting a new project</span>
+                <span class="series-post-desc">Why to begin with a proven architecture, a popular optimizer and a deliberately simple first configuration.</span>
+              </a></li>
+              <li><a class="series-post" href="pages/03-batch-size.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="5" y="6" width="9" height="9" rx="1.5"/><rect x="18" y="6" width="9" height="9" rx="1.5"/><rect x="5" y="19" width="9" height="9" rx="1.5"/><rect x="18" y="19" width="9" height="9" rx="1.5"/></svg>
+                <span class="series-post-num">Part 3</span>
+                <span class="series-post-title">Choosing the batch size</span>
+                <span class="series-post-desc">The batch size sets training speed and cost, and the hardware and gradient noise set which sizes are worth using.</span>
+              </a></li>
+            </ol>
+          </section>
+
+          <section class="series-act" id="act-2" aria-labelledby="act-2-title">
+            <div class="series-act-head">
+              <span class="series-act-num">Act II</span>
+              <h3 id="act-2-title">Running, reading and deciding</h3>
+              <p>One round of experiments: placing the trials, checking what came back, and deciding what to keep.</p>
+            </div>
+            <ol class="series-posts" start="4">
+              <li><a class="series-post" href="pages/04-searching-the-space.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="2"/><circle cx="10" cy="21" r="1.6"/><circle cx="21" cy="9" r="1.6"/><circle cx="15" cy="14" r="1.6"/><circle cx="23" cy="22" r="1.6"/><circle cx="8" cy="10" r="1.6"/></svg>
+                <span class="series-post-num">Part 4</span>
+                <span class="series-post-title">Where to put your trials, and how many to run</span>
+                <span class="series-post-desc">Grid, random and quasi-random search, when Bayesian optimization fits, and how many trials a study needs.</span>
+              </a></li>
+              <li><a class="series-post" href="pages/05-reading-the-results.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 4v24h24"/><path d="M8 9c3 9 6 13 10 13s6-2 8-4"/></svg>
+                <span class="series-post-num">Part 5</span>
+                <span class="series-post-title">Reading the results of a tuning study</span>
+                <span class="series-post-desc">Checking search-space boundaries and training curves before trusting the best trial, then comparing with isolation plots.</span>
+              </a></li>
+              <li><a class="series-post" href="pages/06-adopting-a-change.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4v24"/><path d="M6 10h20"/><path d="M6 10l-3 8h6z"/><path d="M26 10l-3 8h6z"/><path d="M11 28h10"/></svg>
+                <span class="series-post-num">Part 6</span>
+                <span class="series-post-title">Deciding whether to adopt a change</span>
+                <span class="series-post-desc">Seed-to-seed variation, re-running the best trial, and weighing a gain against the complexity it adds.</span>
+              </a></li>
+            </ol>
+          </section>
+
+          <section class="series-act" id="act-3" aria-labelledby="act-3-title">
+            <div class="series-act-head">
+              <span class="series-act-num">Act III</span>
+              <h3 id="act-3-title">Dynamics, stability and engineering</h3>
+              <p>How long to train, how to keep training stable, and the pipeline every round depends on.</p>
+            </div>
+            <ol class="series-posts" start="7">
+              <li><a class="series-post" href="pages/07-training-horizon.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="17" r="11"/><path d="M16 10v7l5 3"/><path d="M13 3h6"/></svg>
+                <span class="series-post-num">Part 7</span>
+                <span class="series-post-title">How long to train</span>
+                <span class="series-post-desc">Setting the number of training steps, with and without a compute limit, and adjusting the learning-rate schedule to match.</span>
+              </a></li>
+              <li><a class="series-post" href="pages/08-training-instabilities.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 22h5l3-14 4 20 3-12 2 6h9"/></svg>
+                <span class="series-post-num">Part 8</span>
+                <span class="series-post-title">Finding and fixing training instabilities</span>
+                <span class="series-post-desc">Recognizing an unstable run, and how learning-rate warmup and gradient clipping let a larger learning rate train.</span>
+              </a></li>
+              <li><a class="series-post" href="pages/09-pipeline-practice.html">
+                <svg class="series-icon" viewBox="0 0 32 32" aria-hidden="true"><path d="M3 11h8v10H3zM21 11h8v10h-8z"/><path d="M11 16h10"/><path d="M17 13l3 3-3 3"/></svg>
+                <span class="series-post-num">Part 9</span>
+                <span class="series-post-title">Input pipelines, evaluation, checkpoints and multi-host training</span>
+                <span class="series-post-desc">Input bottlenecks, periodic evaluation, checkpoints, experiment tracking, batch normalization and multi-host setups.</span>
+              </a></li>
+            </ol>
+          </section>
+        </div>
+      </section>
+
+      <section class="prose" id="process">
+        <h2>The tuning process on one page</h2>
+        <p>
+          The Playbook describes tuning as a loop of rounds, each with one goal, preceded by a few decisions made once at the start. The flowchart lays out that process and marks which part of the series covers each step. The same chart closes every post, with the steps of that post marked.
+        </p>
+        <div class="playbook-map" data-default-node="s_arch"></div>
+      </section>
+
+      <section class="prose" id="more">
+        <h2>Also on this site</h2>
+        <ul class="index-more">
+          <li><a href="pages/reference.html"><strong>Reference</strong></a>: a glossary of the terms used in the series, a table matching Playbook sections to posts, and the full bibliography.</li>
+          <li><a href="design-sheet.html"><strong>Design sheet</strong></a>: the components, colors and type the posts are built from.</li>
+        </ul>
+      </section>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue and Nado, used under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
+  </footer>
+
+  <script src="js/vendor/katex/katex.min.js"></script>
+  <script src="js/vendor/katex/auto-render.min.js"></script>
+  <script src="js/refs.js"></script>
+  <script src="js/concepts.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/components/playbook-map.js"></script>
+</body>
+</html>

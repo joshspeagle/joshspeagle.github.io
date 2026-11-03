@@ -1,0 +1,12 @@
+/* fig-range, F6.1: the range window (implementation-plan.md WO-F6.1).
+   One panel in the text column at every width, so site.css's layout of the panels applies. The two
+   handles of the reader window sit on the x axis at the window's edges, and each stands above the
+   axis route, so a press on a dot moves that bound (design-system.md §6.2). */
+#fig-range .panel > .handle { z-index: 3; }
+
+/* Below 640 px the readout writes three lines at the default (390 x 660), where site.css reserves
+   two, so it reserves three (with site.css's 0.05 px for the line boxes' rounding) before the first
+   draw, and a draw near the screen moves nothing below */
+@media (max-width: 639px) {
+  #fig-range p.fig-readout { min-height: calc(4.5em + 0.05px); }
+}

@@ -1,0 +1,12 @@
+/* fig-clocks.css: the layout of fig-clocks, one run evaluated on a timer and on a step schedule.
+   Panels (a), (b) and (c) stack at every width, each across the figure's width. (b) and (c) share
+   the step axis from step 4,000, so the bars in (c) sit under the evaluations they count. The
+   plot heights (f11-1-clocks.js, PLOT_H) keep the figure within about 760 px at 1440 x 900. */
+#fig-clocks .fig-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: 4px;
+  align-items: start;
+}
+/* the evaluation path joins markers in run order: a thin line under the markers */
+#fig-clocks [data-key="path"] { stroke-opacity: 0.55; }

@@ -1,0 +1,10 @@
+/* fig-reruns.css: the layout of F7.1, reruns against repeated studies (implementation-plan.md
+   WO-F7.1). One panel spans the text column at every width. The dock holds "Rerun" and "Repeat the
+   study" on one row and the run strip on a second; in the phone layout the two buttons share their
+   row at equal widths, so that the stuck dock stays two rows tall. */
+#fig-reruns .panel { flex: 1 1 auto; }
+#fig-reruns .fig-controls { flex-wrap: nowrap; }
+
+@media (max-width: 639px) {
+  #fig-reruns .fig-controls > .btn { flex: 1 1 0; min-width: 0; padding-left: 6px; padding-right: 6px; }
+}

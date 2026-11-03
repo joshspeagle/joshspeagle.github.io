@@ -1,0 +1,41 @@
+/* fig-baseline.css: the layout of F6.4, the fair and the unfair baseline (implementation-plan.md
+   WO-F6.4). From 900 px, panels (a) and (b) sit side by side at equal widths, so that the shared
+   axes take one pixel range in both. Below 900 px they stack, (a) above (b): side by side, each
+   frame is then under 335 px wide, and the steep curves leave their direct labels no admissible
+   position (DS §5.2). Each panel's header and SVG take the two rows of the panels'
+   grid through subgrid, so that a header the bracket's name lengthens moves both frames alike and
+   the y axes stay level. Stacked, each case takes one row (design-system.md §3.5 item 6). */
+#fig-baseline .fig-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: 0 18px;
+  align-items: start;
+}
+#fig-baseline .fig-panels > .panel {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 0;
+  align-content: start;
+}
+#fig-baseline .fig-panels > .panel > .panel-head { align-self: end; }
+@media (max-width: 899px) {
+  #fig-baseline .fig-panels { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: 8px; }
+  #fig-baseline .fig-panels > .panel { display: block; grid-row: auto; }
+}
+
+/* The headers' height before the first draw. The draw puts the annotations' names in the headers
+   (exception 2), and a figure drawn near the screen then moved the page below it. Each header
+   reserves the lines its names take: a line of the header is 1.4em, and the names' span starts
+   a second line 4 px below the first. From 900 px (b)'s header takes two lines, and the subgrid
+   gives (a)'s the same row; below 640 px (a)'s takes two and (b)'s three. From 640 to 899 px
+   every name fits on its header's first line. */
+@media (max-width: 639px) {
+  #fig-baseline .fig-panels > .panel[data-panel="a"] > .panel-head { min-height: calc(2.8em + 4px); }
+  #fig-baseline .fig-panels > .panel[data-panel="b"] > .panel-head { min-height: calc(4.2em + 4px); }
+}
+/* Print (design-system.md §6.7): html.tp-print is laid out as a 680-px viewport, the paper's
+   column, so the panels stack as below 900 px and the rule for 900 px and wider excludes it. */
+#fig-baseline:is(html.tp-print *) .fig-panels { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; gap: 8px; }
+#fig-baseline:is(html.tp-print *) .fig-panels > .panel { display: block; grid-row: auto; }

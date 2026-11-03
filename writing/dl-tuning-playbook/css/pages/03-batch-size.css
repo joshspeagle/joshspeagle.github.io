@@ -1,0 +1,135 @@
+/* 03-batch-size.css: page-specific styles for post 3 (batch size).
+   Covers the standalone figures drawn by js/figures/p03-figures.js, the card schematics written in
+   the page's HTML (fixed vs retuned, resource consumption, ghost batch norm) and the "In practice"
+   procedure. Colors are the site's semantic variables, so light and dark themes both work. */
+
+/* ---------- SVG text and marks of the p03 figures ---------- */
+.p03-svg { display: block; overflow: visible; }
+.p03-svg .p03-t { font-family: var(--font); font-size: 13px; fill: var(--ink); }
+.p03-svg .p03-tick { font-size: 12.5px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+.p03-svg .p03-axlabel { font-size: 13px; fill: var(--ink-2); }
+.p03-svg .p03-ptitle { font-size: 13.5px; font-weight: 650; fill: var(--ink); }
+.p03-svg .p03-label { font-size: 13px; font-weight: 600; }
+.p03-svg .p03-small { font-size: 12.5px; }
+.p03-svg .p03-ink2 { fill: var(--ink-2); }
+.p03-svg .p03-ink-t { fill: var(--ink); font-weight: 600; }
+.p03-svg .p03-model-t { fill: var(--model-label); font-weight: 600; }
+.p03-svg .p03-third-t { fill: var(--third-label); font-weight: 600; }
+.p03-svg .p03-fourth-t { fill: var(--fourth-label); font-weight: 600; }
+.p03-svg .p03-data-t, .p03-svg .p03-limit-t { fill: var(--data-label); font-weight: 600; }
+@media (max-width: 639px) {
+  .p03-svg .p03-t, .p03-svg .p03-small, .p03-svg .p03-tick, .p03-svg .p03-axlabel { font-size: 12px; }
+  .p03-svg .p03-ptitle { font-size: 13px; }
+}
+
+.p03-svg .p03-plot { fill: var(--surface); stroke: var(--grid); }
+.p03-svg .p03-grid { stroke: var(--grid); stroke-width: 1; }
+.p03-svg .p03-axis { stroke: var(--ink-3); stroke-width: 1; }
+.p03-svg .p03-guide { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 4 3; }
+.p03-svg .p03-limit { stroke: var(--data); stroke-width: 2; stroke-dasharray: 5 3; }
+.p03-svg .p03-reader { stroke: var(--reader); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.p03-svg .p03-curve { fill: none; stroke-width: 2.6; stroke-linejoin: round; stroke-linecap: round; }
+.p03-svg .p03-third { stroke: var(--third); }
+.p03-svg .p03-fourth { stroke: var(--fourth); }
+.p03-svg .p03-model { stroke: var(--model); }
+.p03-svg .p03-ref { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.p03-svg .p03-dotted { stroke-dasharray: 1.5 4; stroke-width: 2; }
+.p03-svg .p03-dashed { stroke-dasharray: 5 4; opacity: 0.55; }
+.p03-svg .p03-dot { fill: var(--reader); stroke: var(--surface); stroke-width: 2; }
+.p03-svg .p03-dot-oom { fill: var(--data); stroke: var(--surface); stroke-width: 2; }
+.p03-svg .p03-named { fill: var(--surface); stroke: var(--fourth); stroke-width: 2.5; }
+.p03-svg .p03-oom-zone { fill: var(--data-tint, color-mix(in srgb, var(--data) 10%, transparent)); }
+.p03-svg .p03-mem-fixed { fill: var(--third-soft); stroke: var(--third); stroke-width: 1.4; }
+.p03-svg .p03-mem-act { fill: var(--model-soft); stroke: var(--model); stroke-width: 1.4; }
+.p03-svg .p03-mem-oom { fill: var(--data-soft); stroke: var(--data); stroke-width: 1.6; stroke-dasharray: 4 2; }
+.p03-svg .p03-est { stroke: var(--model); stroke-width: 1.3; opacity: 0.75; }
+.p03-svg .p03-true { stroke: var(--ink); stroke-width: 3; }
+.p03-svg .p03-origin { fill: var(--ink); }
+.p03-svg .p03-ah-model { fill: var(--model); }
+.p03-svg .p03-ah-ink { fill: var(--ink); }
+.p03-svg .p03-bar-bg { fill: var(--surface-2); stroke: var(--grid); }
+.p03-svg .p03-bar-step { fill: var(--fourth); }
+.p03-svg .p03-bar-ex { fill: var(--third); }
+.p03-svg .p03-band-a { fill: color-mix(in srgb, var(--model) 7%, transparent); }
+.p03-svg .p03-band-b { fill: color-mix(in srgb, var(--third) 9%, transparent); }
+.p03-svg .p03-band-c { fill: color-mix(in srgb, var(--data) 6%, transparent); }
+
+/* ---------- controls and readout of the p03 figures ---------- */
+.p03-controls { margin: 4px 0 12px; }
+.p03-ctl label { display: flex; align-items: baseline; gap: 8px; font-weight: 650; font-size: 0.92rem; color: var(--ink); }
+.p03-ctl output {
+  font-family: var(--mono); font-weight: 700; color: var(--reader);
+  background: var(--reader-wash); border-radius: 4px; padding: 1px 8px; min-width: 4.5ch; text-align: center;
+}
+.p03-range { display: flex; align-items: center; gap: 10px; margin-top: 6px; max-width: 520px; }
+.p03-range input[type=range] { flex: 1 1 auto; accent-color: var(--reader); min-height: 32px; cursor: pointer; }
+.p03-step {
+  flex: 0 0 auto; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--border-2);
+  background: var(--surface); color: var(--ink); font: 700 1.1rem/1 var(--font); cursor: pointer;
+}
+.p03-step:hover { border-color: var(--reader); color: var(--reader); }
+.p03-step:focus-visible, .p03-range input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+@media (max-width: 639px) { .p03-step { width: 44px; height: 44px; } }
+.p03-readout {
+  border-left: 3px solid var(--reader); padding: 2px 0 2px 12px; margin: 10px 0 8px;
+  font-size: 0.95rem; color: var(--ink);
+}
+
+/* ---------- card schematics (HTML + small SVGs) ---------- */
+.p03-cards { display: grid; grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr)); gap: 14px; margin: 6px 0 10px; }
+.p03-cards.three { --cols: 3; }
+@media (max-width: 760px) { .p03-cards.three { --cols: 1; } }
+@media (max-width: 639px) { .p03-cards { --cols: 1; } }
+.p03-card {
+  border: 1px solid var(--grid); border-radius: 6px; background: var(--surface);
+  padding: 12px 14px 10px; display: flex; flex-direction: column; gap: 6px;
+}
+.p03-card h4 { margin: 0; font-family: var(--font); font-size: 0.98rem; font-weight: 700; line-height: 1.3; }
+.p03-card p { margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--ink-2); }
+.p03-card svg { width: 100%; height: auto; display: block; }
+.p03-card svg text { font-family: var(--font); font-size: 13px; fill: var(--ink-2); }
+.p03-card svg .lab { fill: var(--ink); font-weight: 600; }
+.p03-card svg .lab-model { fill: var(--model-label); font-weight: 650; }
+.p03-card svg .lab-data { fill: var(--data-label); font-weight: 650; }
+.p03-card svg .lab-third { fill: var(--third-label); font-weight: 650; }
+.p03-card.tone-data { border-top: 3px solid var(--data); }
+.p03-card.tone-model { border-top: 3px solid var(--model); }
+.p03-card.tone-third { border-top: 3px solid var(--third); }
+.p03-card .p03-verdict { margin-top: auto; font-weight: 650; font-size: 0.9rem; color: var(--ink); }
+.p03-card .p03-verdict.down { color: var(--model-label); }
+.p03-card .p03-verdict.up { color: var(--data-label); }
+
+/* ---------- "In practice": a numbered procedure ---------- */
+section.p03-practice { margin-top: 3rem; }
+ol.p03-steps { list-style: none; padding: 0; margin: 1rem auto 0; counter-reset: p03; position: relative; }
+ol.p03-steps::before {
+  content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; width: 2px;
+  background: linear-gradient(var(--reader), color-mix(in srgb, var(--reader) 25%, transparent));
+}
+ol.p03-steps > li {
+  position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px;
+  padding: 0 0 18px; counter-increment: p03;
+}
+.p03-icon {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 2px solid var(--reader);
+  display: flex; align-items: center; justify-content: center; color: var(--reader); position: relative; z-index: 1;
+}
+.p03-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.p03-icon::after {
+  content: counter(p03); position: absolute; right: -6px; top: -6px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--reader); color: var(--surface); font: 700 0.72rem/20px var(--font); text-align: center;
+}
+.p03-step-body h3 { margin: 0.35rem 0 0.25rem; font-size: 1.05rem; font-family: var(--font); font-weight: 700; }
+.p03-step-body p { margin: 0; font-size: 0.97rem; line-height: 1.55; }
+.p03-step-body .p03-src { display: inline-block; margin-top: 4px; font-size: 0.85rem; color: var(--ink-2); }
+
+/* the regimes figure's legend of named points */
+ul.p03-legend { list-style: none; margin: 8px 0 10px; padding: 0; display: grid; gap: 4px; font-size: 0.92rem; }
+ul.p03-legend li { padding-left: 18px; position: relative; }
+ul.p03-legend li::before {
+  content: ""; position: absolute; left: 2px; top: 0.45em; width: 9px; height: 9px; border-radius: 50%;
+  border: 2.5px solid var(--fourth); background: var(--surface);
+}
+.p03-svg .p03-halo { paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+
+.p03-est.is-cut { stroke-dasharray: 5 3; }

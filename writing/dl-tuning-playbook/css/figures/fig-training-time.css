@@ -1,0 +1,7 @@
+/* fig-training-time, F3.2: training time as a product (implementation-plan.md WO-F3.2).
+   One panel in the text column at every width, so site.css's layout of the panels applies. The two
+   handles share the panel: the reader's batch size has a press band along its line (the onLine
+   option of C.handle), and the critical batch size's handle sits on the step curve, where the band
+   can cross it at the batch size's value. Each handle stands above every band, so a press on the
+   critical batch size's dot moves that handle (design-system.md §6.2). */
+#fig-training-time .panel > .handle { z-index: 3; }
