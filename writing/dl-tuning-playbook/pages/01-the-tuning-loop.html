@@ -301,7 +301,7 @@
       <section class="prose" id="rules">
         <h3>Which role does a hyperparameter take?</h3>
         <p>
-          An important subtlety is that a role is not a property of the hyperparameter itself, since it changes with the goal of the round. The activation function, for instance, could be scientific in a round that compares ReLU and tanh, nuisance in a round that tunes it separately for each depth, and fixed in a round that tests something else on a ReLU network. Even so, some kinds of hyperparameters tend to fall into the same roles, and the Playbook offers rules of thumb for them:
+          The Playbook stresses a subtlety here: a role is not a property of the hyperparameter itself, because it changes with the goal of the round. The activation function, for instance, could be scientific in a round that compares ReLU and tanh, nuisance in a round that tunes it separately for each depth, and fixed in a round that tests something else on a ReLU network. Even so, some kinds of hyperparameters tend to fall into the same roles, and the Playbook offers rules of thumb for them:
         </p>
         <ul>
           <li><strong>Optimizer hyperparameters</strong>, such as the learning rate, momentum and Adam's $\beta$ parameters, are usually nuisance hyperparameters because they tend to interact most strongly with other changes. They are rarely scientific, since the best learning rate for today's pipeline may no longer be best after the next change to it. Fixing some of them is still acceptable when resources are short or when there is strong evidence that they don't interact with the question at hand.</li>
