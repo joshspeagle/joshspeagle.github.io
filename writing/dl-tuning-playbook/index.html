@@ -29,10 +29,10 @@
     <article class="post-body">
       <section class="prose index-intro" id="intro">
         <p class="lede">
-          Google Research's <em>Deep Learning Tuning Playbook</em> is a written account, by people who have trained neural networks for many years, of how they get good results in practice. Much of its advice fits in a sentence, such as re-tuning the learning rate when the batch size changes or scoring a run by its best checkpoint. The reasons behind each sentence take longer to explain.
+          Google Research's <em>Deep Learning Tuning Playbook</em> is a rare thing in machine learning: a written account, by people who have trained neural networks for many years, of how they actually get good results in practice. Much of its advice fits in a sentence, such as re-tuning the learning rate whenever the batch size changes, or scoring a training run by its best checkpoint rather than its last. Why each of those sentences is true usually takes considerably longer to explain, and that explanation is what this series is about.
         </p>
         <p>
-          I wrote these posts to understand the Playbook myself. For each part I worked through the argument, sketched the mechanism, and built small simulations where a picture helped me see why the advice holds. I am sharing them in the hope that they help other people who are learning to tune models systematically.
+          I wrote these posts to understand the Playbook myself. Coming to it as a statistician, I kept finding that the advice made the most sense once I could see the mechanism underneath it, so for each part we work through the argument, write down a simple model of what is going on, and build a small simulation wherever a picture helps us see why the advice holds. I'm sharing them in the hope that they are useful to others who are learning to tune models systematically, and to anyone curious about where these rules of thumb come from.
         </p>
         <div class="index-actions">
           <a class="index-btn is-primary" href="pages/01-the-tuning-loop.html">Start with Part 1 <span aria-hidden="true">→</span></a>
@@ -47,7 +47,7 @@
           The <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener"><em>Deep Learning Tuning Playbook</em></a> was written by Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, and Zachary Nado of Google Research (Brain Team) and Harvard University. It was released on GitHub in 2023 under a CC BY 4.0 license. It is written for engineers and researchers who want to get the best performance out of deep learning models, and it concentrates on the process of hyperparameter tuning for supervised problems. The authors present it as their opinions at the time of writing, and as a living document that will change as their beliefs change.
         </p>
         <p>
-          Each post covers one or more sections of the Playbook. The order differs from the Playbook's, because ideas that several sections rely on (how a single training run is scored, for example) come first. Every post links to the sections it covers, so you can read the two side by side. The Playbook remains the reference, and these notes add explanation around it.
+          Each post covers one or more sections of the Playbook, though not in the Playbook's order. A few ideas, such as how a single training run should be scored, come up in almost every section, so I introduce them first and build on them later. Every post links to the sections it covers so that the two can be read side by side. The Playbook remains the primary reference, and these notes try to add the reasoning around it.
         </p>
 
         <div class="index-sources" role="group" aria-labelledby="sources-title">
@@ -57,28 +57,28 @@
               <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>
               <div>
                 <h3>The Playbook's advice</h3>
-                <p>The posts attribute it in plain words ("The Playbook recommends...") and link to the section on GitHub. Figures reproduced from the Playbook open from a figure's toolbar, under "The Playbook's figure".</p>
+                <p>Recommendations are attributed to the Playbook in the text and linked to the relevant section on GitHub. Where the Playbook has its own figure, you can open it from the toolbar of the corresponding interactive figure.</p>
               </div>
             </li>
             <li class="source-key-item is-literature">
               <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>
               <div>
                 <h3>Mechanisms from the literature</h3>
-                <p>Explanations taken from published papers are cited where they appear and listed in each post's references.</p>
+                <p>When an explanation comes from a published paper rather than the Playbook, it is cited where it appears and listed in the post's references.</p>
               </div>
             </li>
             <li class="source-key-item is-toy">
               <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
               <div>
                 <h3>Toy models</h3>
-                <p>I built small simulations to show one mechanism at a time. Their numbers follow from the assumptions listed under "How this toy works" in each figure, and do not come from real training runs.</p>
+                <p>The simulations are deliberately small, so that each one isolates a single mechanism. Their numbers follow from the assumptions listed under "How this toy works" in each figure, not from real training runs.</p>
               </div>
             </li>
             <li class="source-key-item is-mine">
               <svg class="source-key-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c.8-3.6 3.6-5.5 7-5.5s6.2 1.9 7 5.5"/></svg>
               <div>
                 <h3>My own views</h3>
-                <p>Opinions of mine are written in the first person, which keeps them separate from what the Playbook says.</p>
+                <p>Where I add my own judgment or go beyond what the Playbook says, I say so in the first person.</p>
               </div>
             </li>
           </ul>
@@ -86,17 +86,17 @@
 
         <h3 id="who">Who the posts are for</h3>
         <p>
-          The posts assume you have trained a few networks in PyTorch or JAX and know what a learning rate, a validation set and an optimizer are, but have not yet tuned a model systematically. The mathematics stays at the level of undergraduate calculus, linear algebra and introductory statistics. Each section keeps one or two equations in the main text. Derivations and more technical framing sit in collapsible boxes marked <span class="index-aside-mark">ƒ(x)</span>, which you can skip without losing the argument.
+          I have in mind a reader who has trained a few networks in PyTorch or JAX and knows what a learning rate, a validation set and an optimizer are, but who has not yet tuned a model systematically. The mathematics stays at the level of undergraduate calculus, linear algebra and introductory statistics, and each section keeps only one or two equations in the main text. Derivations and more technical asides live in collapsible boxes marked <span class="index-aside-mark">ƒ(x)</span>, which can be skipped without losing the thread.
         </p>
         <p>
-          Shaded terms show a short definition when you hover over or tap them. Many figures are interactive. Their toolbars can open a guided tour of what to look for, the Playbook's own figure where one exists, and the assumptions behind the toy model.
+          Shaded terms show a short definition when you hover over or tap them. Most figures are interactive, and their toolbars offer a guided tour of what to look for, the Playbook's own version of the figure where one exists, and the assumptions behind the toy model.
         </p>
       </section>
 
       <section class="prose" id="series">
         <h2>The series</h2>
         <p>
-          The nine parts are grouped in three acts. They read best in order, and each one links back to the earlier ideas it uses.
+          The nine parts fall into three acts. The first sets up how we run experiments we can trust, the second follows a single round of tuning from design to decision, and the third turns to training dynamics and the engineering that every round depends on. They read best in order, and each part links back to the earlier ideas it relies on.
         </p>
 
         <div class="series-acts l-wide">
@@ -189,16 +189,15 @@
       <section class="prose" id="process">
         <h2>The tuning process on one page</h2>
         <p>
-          The Playbook describes tuning as a loop of rounds, each with one goal, preceded by a few decisions made once at the start. The flowchart lays out that process and marks which part of the series covers each step. The same chart closes every post, with the steps of that post marked.
+          Taken as a whole, the Playbook describes tuning as a loop of rounds, each with a single goal, preceded by a handful of decisions that we make once at the start of a project. The flowchart below lays out that process and marks which part of the series covers each step. The same chart closes every post, with that post's steps highlighted, so that it is always clear where we are in the larger picture.
         </p>
         <div class="playbook-map" data-default-node="s_arch"></div>
       </section>
 
       <section class="prose" id="more">
-        <h2>Also on this site</h2>
+        <h2>Reference material</h2>
         <ul class="index-more">
-          <li><a href="pages/reference.html"><strong>Reference</strong></a>: a glossary of the terms used in the series, a table matching Playbook sections to posts, and the full bibliography.</li>
-          <li><a href="design-sheet.html"><strong>Design sheet</strong></a>: the components, colors and type the posts are built from.</li>
+          <li><a href="pages/reference.html"><strong>Reference</strong></a>: the Playbook's rules in one place, a glossary of the terms used in the series, a table matching Playbook sections to posts, and the full bibliography.</li>
         </ul>
       </section>
     </article>

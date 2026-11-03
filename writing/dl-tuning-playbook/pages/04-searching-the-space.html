@@ -31,62 +31,18 @@
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
     <p class="lede">
-      Once you know which hyperparameters a study will tune and over what ranges, you still have to decide where in those ranges each trial goes, and how many trials to run. The familiar answer, a regular grid, spends a small budget badly. The Playbook recommends quasi-random search while you are still learning about a problem, and it says plainly that nobody can tell you in general how many trials are enough. I wanted to see for myself why both statements hold.
+      Suppose we have already decided which hyperparameters a study will tune and over what ranges. We still have to decide where in those ranges each trial goes, and how many trials to run. The familiar answer to the first question, a regular grid, turns out to spend a small budget badly, and the Playbook recommends quasi-random search instead for as long as we are still learning about a problem. On the second question the authors say plainly that nobody can say in general how many trials are enough. I wanted to understand for myself why both of these claims hold. We'll start by looking at what a grid actually tests when only one hyperparameter matters, then at how quasi-random sequences spread trials more evenly than independent random draws, and at why the Playbook holds off on Bayesian optimization until exploration is over. Finally, we'll use the Playbook's ImageNet example and a toy rebuild of it to see how much the best trial of a small study owes to luck.
     </p>
-
-    <nav class="post-roadmap" aria-label="In this post">
-      <div class="post-roadmap-head">
-        <span class="post-roadmap-kicker">In this post</span>
-      </div>
-      <div class="post-roadmap-grid">
-        <a class="roadmap-item post-roadmap-item" href="#quasi-random">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">Why a grid wastes trials</strong>
-            <span class="roadmap-item-desc">When one hyperparameter matters most, a grid of $K$ trials in $d$ dimensions tests about $K^{1/d}$ values of it.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#coverage">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">Even coverage and quasi-random search</strong>
-            <span class="roadmap-item-desc">Random trials leave uneven gaps by chance. A quasi-random sequence fills each axis close to evenly.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#why-not-bo">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">Why not Bayesian optimization?</strong>
-            <span class="roadmap-item-desc">While exploring, the Playbook values results that are easy to interpret and many trials in parallel. Bayesian optimization comes after.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#trials">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">How many trials?</strong>
-            <span class="roadmap-item-desc">The best trial of a small study depends heavily on sampling variability. In the Playbook's ImageNet example, 20 trials still leave more spread than retraining does.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#in-practice">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">In practice</strong>
-            <span class="roadmap-item-desc">Choosing the search method, and checking whether the budget was large enough.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#where-this-fits">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">Where this fits</strong>
-            <span class="roadmap-item-desc">Search design is part of planning each study in the Playbook's loop.</span>
-          </div>
-        </a>
-      </div>
-    </nav>
 
     <article class="post-body">
 
       <section class="prose" id="quasi-random">
-        <h2>Why a grid wastes trials</h2>
+        <h2>What a grid actually tests</h2>
         <p data-src="697-707">
-          A <a data-concept="study" href="01-the-tuning-loop.html#studies">study</a> runs a set of trials over a <a data-concept="search-space" href="01-the-tuning-loop.html#studies">search space</a>, so it needs a rule for placing its $K$ trials. If you are tuning the learning rate and the weight decay, the most familiar rule is a <dfn data-concept="grid-search">grid</dfn>. You pick a few values of each and try every combination. A grid feels thorough because it covers every combination evenly.
+          Every <a data-concept="study" href="01-the-tuning-loop.html#studies">study</a> runs a set of trials over a <a data-concept="search-space" href="01-the-tuning-loop.html#studies">search space</a>, so before launching one we need a rule for where its $K$ trials go. If we are tuning the learning rate and the weight decay, the most familiar rule is a <dfn data-concept="grid-search">grid</dfn>: we pick a few values of each and try every combination. A grid feels thorough, because it covers the space evenly and leaves no combination out.
         </p>
         <p>
-          In practice, hyperparameters rarely matter equally. Bergstra and Bengio <cite data-ref="bergstra2012"></cite> found that on most of the datasets they studied, only a few hyperparameters had much effect on performance, and different ones mattered on different datasets. Suppose validation error depends mostly on the learning rate. <a href="#fig-projection-collapse" class="figref"></a> places nine trials both ways and projects them onto the learning rate.
+          The trouble is that hyperparameters rarely matter equally. Bergstra and Bengio <cite data-ref="bergstra2012"></cite> found that on most of the datasets they studied only a few hyperparameters had much effect on performance, and which ones mattered changed from dataset to dataset. So let's suppose validation error depends mostly on the learning rate, and ask what each search has learned about that one axis. <a href="#fig-projection-collapse" class="figref"></a> places nine trials with a grid and with random search, then projects both sets onto the learning rate.
         </p>
       </section>
 
@@ -98,21 +54,21 @@
         </figcaption>
         <div class="p04-proj"></div>
         <p class="fig-caption">
-          Nine trials over two hyperparameters, where validation error depends mostly on the learning rate (the curve on top) and very little on weight decay. Dashed lines carry each tested learning rate up to the curve. The grid spends its nine trials on three learning rates. Random search tests nine, and one of them falls in the valley. I placed the valley between two grid columns to make the point. By luck, a grid column can also fall in the valley. After Figure 1 of Bergstra and Bengio <cite data-ref="bergstra2012"></cite>.
+          Nine trials over two hyperparameters, where validation error depends mostly on the learning rate (the curve on top) and very little on weight decay. Dashed lines carry each tested learning rate up to the curve. The grid spends its nine trials on only three learning rates, while random search tests nine, one of which lands in the valley. I placed the valley between two grid columns to make the point; with a little luck a grid column could fall in it too. After Figure 1 of Bergstra and Bengio <cite data-ref="bergstra2012"></cite>.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          The three trials in each grid column differ only in weight decay, which barely changes the result. The grid has paid for nine trials and learned about three learning rates. <dfn data-concept="random-search">Random search</dfn>, which draws each coordinate of each trial independently and uniformly, tests nine different learning rates for the same cost.
+          The three trials in each grid column differ only in weight decay, which barely changes the result, so the grid has paid for nine trials and learned about three learning rates. <dfn data-concept="random-search">Random search</dfn>, which draws each coordinate of each trial independently and uniformly, tests nine different learning rates for the same cost, because no two trials share a value on any axis.
         </p>
         <p>
-          The waste grows with the number of hyperparameters. A grid with $k$ values per hyperparameter in $d$ dimensions has $k^d$ points, so a budget of $K$ trials allows only $k = \lfloor K^{1/d} \rfloor$ values of each. Sixteen trials over four hyperparameters test two learning rates. The Playbook accepts grid search in one or two dimensions and advises against it in higher dimensions, citing the same paper (<a href="https://github.com/google-research/tuning_playbook#where-can-i-find-an-implementation-of-quasi-random-search" target="_blank" rel="noopener">the Playbook's section on implementations ↗</a>).
+          This waste gets worse as we add hyperparameters. A grid with $k$ values per hyperparameter in $d$ dimensions has $k^d$ points, so a budget of $K$ trials buys only $k = \lfloor K^{1/d} \rfloor$ values of each, and sixteen trials over four hyperparameters test just two learning rates. This is why the Playbook accepts grid search in one or two dimensions but advises against it in higher dimensions, citing the same paper (<a href="https://github.com/google-research/tuning_playbook#where-can-i-find-an-implementation-of-quasi-random-search" target="_blank" rel="noopener">the Playbook's section on implementations ↗</a>).
         </p>
 
-        <h2 id="coverage">Even coverage and quasi-random search</h2>
+        <h2 id="coverage">Spreading trials evenly with quasi-random search</h2>
         <p>
-          Random search fixes the repeated values, but it has a weakness of its own. Independent random draws clump. By chance some trials fall close together, and a wide stretch of the axis goes untested. A simple measure of this is the <em>largest gap</em>, the widest stretch of an axis that contains no trial. I find it the most useful single number for coverage, because the best setting could sit anywhere inside that stretch.
+          Random search fixes the problem of repeated values, but it brings a weakness of its own: independent draws clump. By chance some trials land close together while a wide stretch of the axis goes untested. A simple way to measure this is the <em>largest gap</em>, the widest stretch of an axis that contains no trial. I find it the most useful single number for coverage, because the best setting could be hiding anywhere inside that stretch and we would never know.
         </p>
       </section>
 
@@ -124,22 +80,22 @@
         </figcaption>
         <div class="p04-gaps"></div>
         <p class="fig-caption">
-          Each tick is one trial's learning rate, and the shaded band marks the widest stretch with no trial. Sixteen evenly spaced points leave gaps of $1/17 \approx 0.059$. The uniform random draw leaves a gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span>, and the quasi-random draw <span data-num="fig-coverage:default:quasi-gap-16">0.094</span>. The two draws are the first 16 trials of <a href="#fig-coverage" class="figref"></a> at its default seed.
+          Each tick is one trial's learning rate, and the shaded band marks the widest stretch with no trial. Sixteen evenly spaced points would leave gaps of $1/17 \approx 0.059$. The uniform random draw leaves a gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span>, and the quasi-random draw <span data-num="fig-coverage:default:quasi-gap-16">0.094</span>. The two draws are the first 16 trials of <a href="#fig-coverage" class="figref"></a> at its default seed.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          The random draw in <a href="#fig-gaps" class="figref"></a> leaves a gap about three times the even spacing, and that draw is typical. Its gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span> sits at the median of <span data-num="fig-coverage:seed:n">1,000</span> random draws of 16 trials (<span data-num="fig-coverage:seed:median">0.19</span>).
+          The random draw in <a href="#fig-gaps" class="figref"></a> leaves a gap about three times the even spacing, and this is not an unlucky draw. Its gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span> sits at the median of <span data-num="fig-coverage:seed:n">1,000</span> random draws of 16 trials (<span data-num="fig-coverage:seed:median">0.19</span>).
         </p>
         <p data-src="1674-1677">
-          <dfn data-concept="quasi-random">Quasi-random search</dfn> places trials along a low-discrepancy sequence, a deterministic sequence built so that every prefix of it is spread out evenly. The Playbook describes it as <em>"jittered, shuffled grid search"</em>, since it <em>"uniformly, but randomly, explores a given search space and spreads out the search points more than random search"</em> (<a href="https://github.com/google-research/tuning_playbook#why-use-quasi-random-search-instead-of-more-sophisticated-black-box-optimization-algorithms-during-the-exploration-phase-of-tuning" target="_blank" rel="noopener">the Playbook's section on quasi-random search ↗</a>).
+          What we want is random search's freedom from repeated values without its clumping, and that is what <dfn data-concept="quasi-random">quasi-random search</dfn> provides. It places trials along a low-discrepancy sequence, a deterministic sequence built so that every prefix of it is spread out evenly. The Playbook describes the result as <em>"jittered, shuffled grid search"</em>, since it <em>"uniformly, but randomly, explores a given search space and spreads out the search points more than random search"</em> (<a href="https://github.com/google-research/tuning_playbook#why-use-quasi-random-search-instead-of-more-sophisticated-black-box-optimization-algorithms-during-the-exploration-phase-of-tuning" target="_blank" rel="noopener">the Playbook's section on quasi-random search ↗</a>).
         </p>
         <p data-src="1757-1763">
-          The implementations the Playbook links generate a Halton sequence. For one hyperparameter, the Halton sequence counts in base 2 and reads the digits of the count backwards after the binary point. The first trials therefore fall at $1/2$, then $1/4$ and $3/4$, then the eighths, each one splitting the largest remaining gap. Each further hyperparameter uses a different prime base (3, 5, 7 and so on). The Playbook says the implementations are intended to scramble the digits and shift the whole set at random, as recommended by Bousquet et al. <cite data-ref="bousquet2017"></cite>, so that two studies with different seeds get different points.
+          The implementations the Playbook links to generate a Halton sequence, which is simple enough to describe in a few lines. For one hyperparameter, it counts in base 2 and reads the digits of the count backwards after the binary point. The first trials therefore fall at $1/2$, then at $1/4$ and $3/4$, then on the eighths, with each new point splitting the largest remaining gap. Every further hyperparameter uses a different prime base (3, 5, 7 and so on). According to the Playbook, the implementations are meant to scramble the digits and shift the whole set at random, as Bousquet et al. <cite data-ref="bousquet2017"></cite> recommend, so that two studies with different seeds get different points.
         </p>
         <p>
-          <a href="#fig-coverage" class="figref"></a> places trials by all three methods as the budget grows, in a search space of two to four hyperparameters. Panel (d) tracks each method's largest gap along the learning rate.
+          To compare the three methods side by side, <a href="#fig-coverage" class="figref"></a> places trials with each of them as the budget grows, in a search space of two to four hyperparameters, and panel (d) tracks each method's largest gap along the learning rate.
         </p>
       </section>
 
@@ -183,38 +139,38 @@
 
       <section class="prose">
         <p>
-          In four dimensions the grid's largest gap in <a href="#fig-coverage" class="figref"></a> surprised me. It stays at 0.5 from 16 trials to 80, because the next full grid needs 81 trials. The quasi-random gap also surprised me. It falls in steps, roughly halving each time the number of trials passes a power of two, while the random gap shrinks slowly and unevenly.
+          Two things in <a href="#fig-coverage" class="figref"></a> surprised me. In four dimensions the grid's largest gap stays at 0.5 all the way from 16 trials to 80, because the next full grid needs 81 trials and every trial in between is wasted. The quasi-random gap, meanwhile, falls in steps, roughly halving each time the number of trials passes a power of two, while the random gap shrinks slowly and unevenly.
         </p>
         <p>
-          The advantage of quasi-random over random search is real but modest, and it narrows as the number of hyperparameters grows. In Bergstra and Bengio's simulations, low-discrepancy sequences held some advantage over random points in low dimensions (about one to five), and with many hyperparameters relative to the budget they did not expect a low-discrepancy set to behave very differently from a random one <cite data-ref="bergstra2012"></cite>. The Playbook's advice matches this. If no quasi-random implementation is at hand, uniform random search is an acceptable substitute, though it is <em>"likely to be slightly less efficient"</em>.
+          We shouldn't oversell this, though. The advantage of quasi-random over random search is real but modest, and it narrows as the number of hyperparameters grows. In Bergstra and Bengio's simulations, low-discrepancy sequences held some advantage over random points in low dimensions (about one to five), while with many hyperparameters relative to the budget they did not expect a low-discrepancy set to behave very differently from a random one <cite data-ref="bergstra2012"></cite>. The Playbook's advice is consistent with this: if no quasi-random implementation is at hand, uniform random search is an acceptable substitute, though it is <em>"likely to be slightly less efficient"</em>.
         </p>
 
         <details class="math-aside">
           <summary>The expected largest gap of random search</summary>
-          <p>Drop $K$ independent uniform points on $[0, 1]$. They cut the interval into $K + 1$ gaps (the spacings), counting the two end pieces. A classical result for the largest spacing $\Delta_{\max}$ is</p>
+          <p>Drop $K$ independent uniform points on $[0, 1]$. They cut the interval into $K + 1$ gaps (the spacings), counting the two end pieces, and a classical result for the largest spacing $\Delta_{\max}$ is</p>
           $$\mathbb{E}[\Delta_{\max}] = \frac{H_{K+1}}{K+1},$$
-          <p>where $H_n = 1 + \tfrac12 + \dots + \tfrac1n$ is the $n$-th harmonic number. One way to see it is that the spacings have the same joint distribution as $n = K + 1$ independent exponential variables divided by their sum, the largest of $n$ unit exponentials has mean $H_n$, and the normalized vector is independent of the sum, whose mean is $n$.</p>
-          <p>Evenly spaced points give $1/(K+1)$, so random search's largest gap is on average $H_{K+1}$ times the even spacing. Since $H_n \approx \ln n + \gamma_{\text{EM}}$, with $\gamma_{\text{EM}} \approx 0.577$ the Euler–Mascheroni constant,</p>
+          <p>where $H_n = 1 + \tfrac12 + \dots + \tfrac1n$ is the $n$-th harmonic number. One way to see this is to note that the spacings have the same joint distribution as $n = K + 1$ independent unit exponential variables divided by their sum. The largest of $n$ unit exponentials has mean $H_n$, and because the normalized vector is independent of the sum (whose mean is $n$), the expectation factorizes.</p>
+          <p>Evenly spaced points give $1/(K+1)$, so on average random search's largest gap is $H_{K+1}$ times the even spacing. Since $H_n \approx \ln n + \gamma_{\text{EM}}$, with $\gamma_{\text{EM}} \approx 0.577$ the Euler–Mascheroni constant,</p>
           $$\mathbb{E}[\Delta_{\max}] \approx \frac{\ln(K+1) + 0.577}{K+1}.$$
-          <p>At $K = 16$ the ratio is $H_{17} \approx 3.4$ and the expected gap is about 0.20, close to the median of <span data-num="fig-coverage:seed:median">0.19</span> over the simulated draws (the distribution has a long upper tail, so its mean sits above its median). The ratio grows like $\ln K$, so random search falls further behind even spacing as the budget grows, but slowly.</p>
+          <p>At $K = 16$ the ratio is $H_{17} \approx 3.4$ and the expected gap is about 0.20, close to the median of <span data-num="fig-coverage:seed:median">0.19</span> over the simulated draws (the distribution has a long upper tail, so its mean sits above its median). Because the ratio grows like $\ln K$, random search falls further behind even spacing as the budget grows, though only slowly.</p>
         </details>
 
         <details class="math-aside">
           <summary>How the Halton sequence spreads its points</summary>
           <p>Write the trial index $i$ in base $b$ as $i = \sum_j a_j b^j$. The radical inverse reflects the digits about the point,</p>
           $$\phi_b(i) = \sum_j a_j\, b^{-j-1},$$
-          <p>and the $i$-th Halton point is $(\phi_2(i), \phi_3(i), \phi_5(i), \dots)$, one prime base per hyperparameter. In base 2, the indices $0, \dots, 2^m - 1$ map onto every multiple of $2^{-m}$, so after each power of two the learning rates are evenly spaced. Between powers of two the new points fill the old gaps in turn, which gives the steps in panel (d) of <a href="#fig-coverage" class="figref"></a>.</p>
-          <p>Bousquet et al. <cite data-ref="bousquet2017"></cite> scramble the digits with a fixed permutation and add a random shift, which makes the points random while keeping them spread out. Their first choice is a scrambled, shifted Hammersley set, and in their analysis the scrambled, shifted Halton sequence has the same desirable properties. Hammersley needs the number of trials fixed in advance, while Halton can be extended one trial at a time, which suits the implementations the Playbook links. Bousquet et al. also show that the projected spread of a grid onto the important hyperparameters shrinks like $K^{-1/d}$, while for random and Halton points it depends only on the number of important hyperparameters, a formal version of <a href="#fig-projection-collapse" class="figref"></a>. They recommend giving the smallest bases to the most important hyperparameters, because a coordinate with a large base $b$ fills its axis evenly only once the number of trials exceeds $b$.</p>
+          <p>and the $i$-th Halton point is $(\phi_2(i), \phi_3(i), \phi_5(i), \dots)$, one prime base per hyperparameter. In base 2, the indices $0, \dots, 2^m - 1$ map onto every multiple of $2^{-m}$, so after each power of two the learning rates are exactly evenly spaced. Between powers of two the new points fill the old gaps one at a time, which is what produces the steps in panel (d) of <a href="#fig-coverage" class="figref"></a>.</p>
+          <p>Bousquet et al. <cite data-ref="bousquet2017"></cite> scramble the digits with a fixed permutation and add a random shift, which makes the points random while keeping them spread out. Their first choice is a scrambled, shifted Hammersley set, but in their analysis the scrambled, shifted Halton sequence has the same desirable properties. The practical difference is that Hammersley needs the number of trials fixed in advance, while Halton can be extended one trial at a time, which suits the implementations the Playbook links to. Bousquet et al. also show that the projected spread of a grid onto the important hyperparameters shrinks like $K^{-1/d}$, while for random and Halton points it depends only on the number of important hyperparameters, a formal version of <a href="#fig-projection-collapse" class="figref"></a>. They recommend giving the smallest bases to the most important hyperparameters, because a coordinate with a large base $b$ fills its axis evenly only once the number of trials exceeds $b$.</p>
         </details>
       </section>
 
       <section class="prose" id="why-not-bo">
         <h2>Why not Bayesian optimization?</h2>
         <p data-src="1678-1680">
-          Quasi-random search decides every trial's hyperparameters before any trial has finished. An <dfn data-concept="adaptive-search">adaptive search</dfn> method uses finished trials to steer later ones toward promising regions. Bayesian optimization, for example, fits a statistical model to the results so far and uses it to choose the next trials <cite data-ref="snoek2012"></cite>, and evolutionary algorithms breed new trials from good old ones. Adaptive search sounds strictly better, so I was surprised that the Playbook prefers quasi-random search for most of the tuning process.
+          Everything so far has been non-adaptive: quasi-random search fixes every trial's hyperparameters before any trial has finished. An <dfn data-concept="adaptive-search">adaptive search</dfn> method instead uses finished trials to steer later ones toward promising regions. Bayesian optimization, for example, fits a statistical model to the results so far and uses it to choose the next trials <cite data-ref="snoek2012"></cite>, while evolutionary algorithms breed new trials from good old ones. Since adaptive search seems to use strictly more information, I was surprised that the Playbook prefers quasi-random search for most of the tuning process.
         </p>
         <p data-src="1667-1673">
-          The Playbook's answer depends on what a study is for. It separates <a data-concept="exploration-exploitation" href="01-the-tuning-loop.html#exploration">exploration</a>, where the goal is insight into the tuning problem, from exploitation, where the goal is one best configuration. For exploration it lists these advantages of quasi-random search over adaptive tools (<a href="https://github.com/google-research/tuning_playbook#why-use-quasi-random-search-instead-of-more-sophisticated-black-box-optimization-algorithms-during-the-exploration-phase-of-tuning" target="_blank" rel="noopener">the Playbook's section on quasi-random search ↗</a>).
+          The resolution depends on what a study is for. The Playbook separates <a data-concept="exploration-exploitation" href="01-the-tuning-loop.html#exploration">exploration</a>, where the goal is insight into the tuning problem, from exploitation, where the goal is a single best configuration. When we are exploring, the authors list the following advantages of quasi-random search over adaptive tools (<a href="https://github.com/google-research/tuning_playbook#why-use-quasi-random-search-instead-of-more-sophisticated-black-box-optimization-algorithms-during-the-exploration-phase-of-tuning" target="_blank" rel="noopener">the Playbook's section on quasi-random search ↗</a>).
         </p>
       </section>
 
@@ -222,22 +178,22 @@
         <li>
           <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 20V4M7 4 4 7M7 4l3 3M17 4v16M17 20l-3-3M17 20l3-3"/></svg></span>
           <div><h3>Change the objective afterward</h3>
-          <p>No trial's placement depended on earlier results, so you can rank the same trials by another criterion without rerunning anything. The Playbook's examples are final validation error, training error or another evaluation metric, in place of the usual best validation error at any point in training.</p></div>
+          <p>Because no trial's placement depended on earlier results, we can rank the same trials by a different criterion without rerunning anything. The Playbook's examples are final validation error, training error or another evaluation metric, in place of the usual best validation error at any point in training.</p></div>
         </li>
         <li>
           <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></svg></span>
           <div><h3>Reproducible studies</h3>
-          <p>A study from six months ago can be reproduced even if the search code changes, as long as it keeps the same uniformity properties. Bayesian optimization software may change in important ways between versions, and an old version cannot always be restored, for example when the tool runs as a service.</p></div>
+          <p>A study from six months ago can be reproduced even if the search code has changed, as long as the new code keeps the same uniformity properties. Bayesian optimization software, by contrast, may change in important ways between versions, and an old version cannot always be restored, for example when the tool runs as a service.</p></div>
         </li>
         <li>
           <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v16h16"/><circle cx="9" cy="14" r="1.3"/><circle cx="13" cy="9" r="1.3"/><circle cx="17" cy="12" r="1.3"/><circle cx="11" cy="16" r="1.3"/></svg></span>
           <div><h3>Results that are easy to read</h3>
-          <p>Uniform coverage makes the results easier to reason about. A best trial at the edge of the search space is a good (but not foolproof) signal to move that boundary (<a data-concept="boundary-check" href="05-reading-the-results.html#boundaries">Part 5</a>). An adaptive method may neglect the middle of the space after a few unlucky early trials, even if equally good points sit there, because that kind of non-uniformity is how it speeds up the search.</p></div>
+          <p>Uniform coverage makes the results easier to reason about. A best trial at the edge of the search space, for instance, is a good (but not foolproof) signal to move that boundary (<a data-concept="boundary-check" href="05-reading-the-results.html#boundaries">Part 5</a>). An adaptive method may neglect the middle of the space after a few unlucky early trials even if equally good points sit there, because that kind of non-uniformity is exactly how it speeds up the search.</p></div>
         </li>
         <li>
           <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h14"/></svg></span>
           <div><h3>Parallel or sequential, same statistics</h3>
-          <p>Running trials in parallel or one after another does not change a quasi-random study statistically. For an adaptive method it does.</p></div>
+          <p>Running trials in parallel or one after another makes no statistical difference to a quasi-random study, whereas for an adaptive method it changes what the search can learn.</p></div>
         </li>
         <li>
           <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 22 20H2zM12 10v4M12 17h.01"/></svg></span>
@@ -247,16 +203,16 @@
         <li>
           <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v6H4zM4 14h16v6H4zM8 7h.01M8 17h.01"/></svg></span>
           <div><h3>Simple, and strong at high parallelism</h3>
-          <p>Anecdotally, the authors find it very hard for an adaptive algorithm to beat quasi-random search given twice its budget, especially when many trials run in parallel. Without expertise in these methods, they add, you may not get the benefits the methods can in principle provide.</p></div>
+          <p>Anecdotally, the authors find it very hard for an adaptive algorithm to beat quasi-random search given twice its budget, especially when many trials run in parallel. They add that without expertise in these methods we may not get the benefits they can in principle provide.</p></div>
         </li>
       </ol>
 
       <section class="prose">
         <p data-src="743-748">
-          The preference is stronger still when one study samples the <a data-concept="scientific-hp" href="01-the-tuning-loop.html#roles">scientific hyperparameters</a> together with the nuisance ones, because quasi-random search samples the scientific hyperparameters uniformly.
+          The case for quasi-random search is stronger still when one study samples the <a data-concept="scientific-hp" href="01-the-tuning-loop.html#roles">scientific hyperparameters</a> together with the nuisance ones, because it samples the scientific hyperparameters uniformly, and so every value we want to compare gets a fair share of the trials.
         </p>
         <p data-src="1718-1737">
-          The last reason depends on how many trials run at once. An adaptive method can only learn between waves, where a wave is a batch of trials launched together. <a href="#fig-waves" class="figref"></a> runs the same 16 trials in two ways.
+          The last reason on the list is worth unpacking, because it depends on how many trials run at once. An adaptive method can only learn between waves, where a wave is a batch of trials launched together, so <a href="#fig-waves" class="figref"></a> runs the same 16 trials in two ways to show what that costs.
         </p>
       </section>
 
@@ -298,34 +254,34 @@
           <span><i class="p04-sq is-informed"></i> can be chosen using finished trials</span>
         </div>
         <p class="fig-caption">
-          With 16 machines all 16 trials start together, so an adaptive method chooses every trial without seeing a result and has no advantage over a non-adaptive one. With 4 machines the same budget runs in four waves, and an adaptive method can use the results of each wave to choose the next. The Playbook's footnote on this point says that beating random search with twice the budget <em>"gets much harder in the high-parallelism regime since Bayesian optimization has no opportunity to observe the results of previous trials."</em>
+          With 16 machines all 16 trials start together, so an adaptive method chooses every trial without seeing a single result and has no advantage over a non-adaptive one. With 4 machines the same budget runs in four waves, and an adaptive method can use the results of each wave to choose the next. The Playbook's footnote on this point says that beating random search with twice the budget <em>"gets much harder in the high-parallelism regime since Bayesian optimization has no opportunity to observe the results of previous trials."</em>
         </p>
       </figure>
 
       <section class="prose">
         <p data-src="1111-1145 1734-1737">
-          The Playbook recommends Bayesian optimization after exploration and when parallelism is low.
+          None of this means adaptive search has no place. The Playbook recommends Bayesian optimization in two situations: once exploration is over, and whenever parallelism is low.
         </p>
         <ul>
-          <li data-src="1111-1145"><strong>After exploration.</strong> Once exploration has settled which hyperparameters matter and over what ranges, the priority shifts from understanding the problem to producing one configuration to use. Many of the advantages above then no longer apply, and the Playbook recommends Bayesian optimization tools to find the best configuration automatically, over a refined search space with as large a budget as possible (<a href="https://github.com/google-research/tuning_playbook#after-exploration-concludes" target="_blank" rel="noopener">the Playbook's section on what to do after exploration ↗</a>). It points to <a href="https://github.com/google/vizier" target="_blank" rel="noopener">Open-Source Vizier</a>. If the search space contains many divergent points, it recommends a tool that handles them properly, such as the method of Gelbart et al. <cite data-ref="gelbart2014"></cite>. <a href="06-adopting-a-change.html#after">Part 6</a> covers this <a data-concept="final-study" href="06-adopting-a-change.html#after">final study</a>.</li>
-          <li data-src="1734-1737"><strong>Low parallelism.</strong> If you can run only a few trials at a time but can afford many in sequence, the Playbook says Bayesian optimization <em>"becomes much more attractive despite making our tuning results harder to interpret."</em></li>
+          <li data-src="1111-1145"><strong>After exploration.</strong> Once exploration has settled which hyperparameters matter and over what ranges, our priority shifts from understanding the problem to producing one configuration to use. Many of the advantages above then stop mattering, and the Playbook recommends Bayesian optimization tools to find the best configuration automatically, over a refined search space and with as large a budget as possible (<a href="https://github.com/google-research/tuning_playbook#after-exploration-concludes" target="_blank" rel="noopener">the Playbook's section on what to do after exploration ↗</a>). Its suggested tool is <a href="https://github.com/google/vizier" target="_blank" rel="noopener">Open-Source Vizier</a>, and if the search space contains many divergent points it recommends a tool that handles them properly, such as the method of Gelbart et al. <cite data-ref="gelbart2014"></cite>. <a href="06-adopting-a-change.html#after">Part 6</a> covers this <a data-concept="final-study" href="06-adopting-a-change.html#after">final study</a>.</li>
+          <li data-src="1734-1737"><strong>Low parallelism.</strong> If we can run only a few trials at a time but can afford many in sequence, then in the Playbook's words Bayesian optimization <em>"becomes much more attractive despite making our tuning results harder to interpret."</em></li>
         </ul>
         <p data-src="1739-1748">
-          The authors present these advantages as their experience, and they qualify the claim about twice the budget. Their footnote credits Ben Recht and Kevin Jamieson with <a href="http://www.argmin.net/2016/06/20/hypertuning/" target="_blank" rel="noopener">pointing out</a> how strong random search with twice the budget is as a baseline, and adds that <em>"it is certainly possible to find search spaces and problems where state-of-the-art Bayesian optimization techniques crush random search that has 2X the budget."</em>
+          We should be clear about the status of these arguments. The authors present them as their experience rather than as a theorem, and they qualify the claim about twice the budget. Their footnote credits Ben Recht and Kevin Jamieson with <a href="http://www.argmin.net/2016/06/20/hypertuning/" target="_blank" rel="noopener">pointing out</a> how strong random search with twice the budget is as a baseline, and adds that <em>"it is certainly possible to find search spaces and problems where state-of-the-art Bayesian optimization techniques crush random search that has 2X the budget."</em>
         </p>
       </section>
 
       <section class="prose" id="trials">
-        <h2>How many trials?</h2>
+        <h2>How many trials are enough?</h2>
         <p data-src="1773-1781">
-          Every study returns a <a data-concept="best-trial" href="01-the-tuning-loop.html#studies">best trial</a>, whether it ran 6 trials or 60. The practical question is how much that best trial depends on luck, meaning on which configurations the search happened to try. The Playbook's direct answer is that <em>"there is no way to answer this question in general"</em>, and it offers one example instead (<a href="https://github.com/google-research/tuning_playbook#how-many-trials-are-needed-to-get-good-results-with-quasi-random-search" target="_blank" rel="noopener">the Playbook's section on how many trials ↗</a>).
+          Having settled where trials go, we can turn to how many to run. Every study returns a <a data-concept="best-trial" href="01-the-tuning-loop.html#studies">best trial</a>, whether it ran 6 trials or 60, so the useful question is how much that best trial depends on luck, meaning on which configurations the search happened to try. The Playbook's direct answer is that <em>"there is no way to answer this question in general"</em>, and it offers one example instead (<a href="https://github.com/google-research/tuning_playbook#how-many-trials-are-needed-to-get-good-results-with-quasi-random-search" target="_blank" rel="noopener">the Playbook's section on how many trials ↗</a>).
         </p>
         <p>
-          A short calculation shows why a few trials leave so much to luck. Suppose the configurations good enough to win fill a fraction $p$ of the search space. Each random trial falls there with probability $p$. The chance $P_K$ that at least one of $K$ trials falls there is
+          Even without a general answer, a short calculation shows why a handful of trials leaves so much to chance. Suppose the configurations good enough to win fill a fraction $p$ of the search space, so that each random trial lands there with probability $p$. The chance $P_K$ that at least one of $K$ trials lands there is then
         </p>
         $$P_K = 1 - (1 - p)^{K}.$$
         <p>
-          With $p = 0.1$, six trials reach the good region 47% of the time, and 20 trials 88% of the time. A 95% chance takes about $3/p$ trials, 29 for the best tenth of the space and 59 for the best twentieth. The calculation assumes independent random trials.
+          With $p = 0.1$, six trials reach the good region only 47% of the time, and 20 trials 88% of the time. A 95% chance takes about $3/p$ trials, which works out to 29 for the best tenth of the space and 59 for the best twentieth. This assumes independent random trials, so it is a rough guide rather than an exact figure for quasi-random search, but the scaling is what matters: halving the size of the good region doubles the budget we need.
         </p>
 
         <div class="scrub-calculator" aria-label="Chance that a study reaches the good region">
@@ -340,16 +296,16 @@
 
         <details class="math-aside">
           <summary>Where $3/p$ comes from, and the distribution of the best of $K$</summary>
-          <p>Write $\delta$ for the accepted chance of missing the region. Setting $1 - (1-p)^K \ge 1 - \delta$ and taking logarithms gives</p>
+          <p>Write $\delta$ for the chance of missing the region that we are willing to accept. Setting $1 - (1-p)^K \ge 1 - \delta$ and taking logarithms gives</p>
           $$K \ge \frac{\ln \delta}{\ln(1 - p)}.$$
           <p>For $\delta = 0.05$, $-\ln \delta \approx 3.0$, and for small $p$, $-\ln(1-p) \approx p$, so $K \approx 3/p$.</p>
-          <p>The same argument gives the whole distribution of the best trial. If one trial's validation error $Y$ has cumulative distribution $F$, the best of $K$ independent trials, $Y_{(1)} = \min_i Y_i$, satisfies</p>
+          <p>The same argument gives us the whole distribution of the best trial, which is a standard order-statistics result. If one trial's validation error $Y$ has cumulative distribution $F$, the best of $K$ independent trials, $Y_{(1)} = \min_i Y_i$, satisfies</p>
           $$\Pr(Y_{(1)} \le y) = 1 - \bigl(1 - F(y)\bigr)^{K}.$$
-          <p>Each extra trial pushes this distribution toward the lower tail of $F$ and narrows it, which is the narrowing of the boxes in <a href="#fig-best-of-k" class="figref"></a>. When studies are simulated by resampling a finite set of $N$ finished trials, $F$ is the empirical distribution of those trials, so no simulated study can beat the best of the $N$. That floor matters once $K$ is a sizable fraction of $N$.</p>
+          <p>Each extra trial pushes this distribution toward the lower tail of $F$ and narrows it, which is exactly the narrowing of the boxes we will see in <a href="#fig-best-of-k" class="figref"></a>. When studies are simulated by resampling a finite set of $N$ finished trials, $F$ is the empirical distribution of those trials, so no simulated study can beat the best of the $N$, and that floor starts to matter once $K$ is a sizable fraction of $N$.</p>
         </details>
 
         <p data-src="1781-1785">
-          The Playbook's example uses real trials. The authors tuned a ResNet-50 on ImageNet with 100 trials and then simulated smaller budgets by bootstrapping, as <a href="#fig-bootstrap" class="figref"></a> sketches.
+          The Playbook's example puts real trials behind this intuition. The authors tuned a ResNet-50 on ImageNet with 100 trials and then simulated smaller budgets by bootstrapping, a procedure that <a href="#fig-bootstrap" class="figref"></a> sketches.
         </p>
       </section>
 
@@ -382,22 +338,22 @@
           </li>
         </ol>
         <p class="fig-caption">
-          The Playbook says only that the smaller budgets were simulated "via bootstrapping". I read that in its usual sense, drawing with replacement. No model is retrained in steps 2 to 4, so the spread in step 4 comes entirely from which trials each simulated study happened to include.
+          The Playbook says only that the smaller budgets were simulated "via bootstrapping", which I read in its usual sense of drawing with replacement. No model is retrained in steps 2 to 4, so the spread in step 4 comes entirely from which trials each simulated study happened to include.
         </p>
       </figure>
 
       <section class="prose">
         <p data-src="1781-1796">
-          The result is the Playbook's Figure 3, which you can open from the toolbar of <a href="#fig-best-of-k" class="figref"></a>. Its bars are easy to misread. Each box summarizes the best validation error across many simulated studies of one size. The box spans the middle half of those studies (the interquartile range, or IQR), and the line inside marks the median study. The bars therefore measure study-to-study variance, not the noise of retraining one model. The Playbook gives retraining noise separately, in its text, as about $\pm 0.1\%$ on a validation error rate of about 23%.
+          The result is the Playbook's Figure 3, which can be opened from the toolbar of <a href="#fig-best-of-k" class="figref"></a>. I found its bars easy to misread at first. Each box summarizes the best validation error across many simulated studies of one size: the box spans the middle half of those studies (the interquartile range, or IQR), and the line inside marks the median study. The bars therefore measure study-to-study variance rather than the noise of retraining one model, which the Playbook reports separately in its text as about $\pm 0.1\%$ on a validation error rate of about 23%.
         </p>
         <p data-src="1786-1796">
-          In the Playbook's figure the IQR is about 0.020 at 6 trials and about 0.004 at 20 (my readings of the plot). The authors point out how much larger the IQRs are at 6 trials than at 20, and they conclude that <em>"even with 20 trials, it is likely that the difference between especially lucky and unlucky studies will be larger than the typical variation between re-trains of this model on different random seeds, with fixed hyperparameters."</em>
+          Reading off the plot, I get an IQR of about 0.020 at 6 trials and about 0.004 at 20. The authors draw attention to how much larger the IQRs are at 6 trials than at 20, and they conclude that <em>"even with 20 trials, it is likely that the difference between especially lucky and unlucky studies will be larger than the typical variation between re-trains of this model on different random seeds, with fixed hyperparameters."</em>
         </p>
         <p data-src="1057-1093">
-          These two spreads have names in the Playbook's section on comparing results (<a href="https://github.com/google-research/tuning_playbook#determining-whether-to-adopt-a-training-pipeline-change-or-hyperparameter-configuration" target="_blank" rel="noopener">the Playbook's section on adopting a change ↗</a>). <dfn data-concept="trial-variance">Trial variance</dfn>, also called retrain variance, is the variation between training runs that use the same hyperparameters and different random seeds. <dfn data-concept="study-variance">Study variance</dfn> is the variation caused by the procedure that selects the hyperparameters, such as rerunning the same search with a different quasi-random seed. The Playbook notes that study variance depends on the number of trials and on the search space, and that the authors have seen it both larger and much smaller than trial variance. <a href="06-adopting-a-change.html">Part 6</a> returns to trial variance when deciding whether to adopt a change.
+          It helps to give these two spreads names, and the Playbook does so in its section on comparing results (<a href="https://github.com/google-research/tuning_playbook#determining-whether-to-adopt-a-training-pipeline-change-or-hyperparameter-configuration" target="_blank" rel="noopener">the Playbook's section on adopting a change ↗</a>). <dfn data-concept="trial-variance">Trial variance</dfn>, also called retrain variance, is the variation between training runs that use the same hyperparameters and different random seeds. <dfn data-concept="study-variance">Study variance</dfn> is the variation caused by the procedure that selects the hyperparameters, such as rerunning the same search with a different quasi-random seed. Study variance depends on the number of trials and on the search space, and the authors report having seen it both larger and much smaller than trial variance. We will come back to trial variance in <a href="06-adopting-a-change.html">Part 6</a>, when deciding whether to adopt a change.
         </p>
         <p>
-          <a href="#fig-best-of-k" class="figref"></a> rebuilds the Playbook's experiment with a toy. A pool of <span data-num="fig-best-of-k:model:pool-size">100</span> synthetic trials stands in for the 100 ImageNet trials, chosen so that its spreads at 6 and 20 trials resemble the Playbook's figure. The red bar beside each box is my addition. It marks the Playbook's $\pm 0.1\%$ retrain spread around the box's median, so you can compare study-to-study variance with retraining noise directly.
+          To get a feel for where these spreads come from, I rebuilt the Playbook's experiment with a toy in <a href="#fig-best-of-k" class="figref"></a>. A pool of <span data-num="fig-best-of-k:model:pool-size">100</span> synthetic trials stands in for the 100 ImageNet trials, and I chose it so that its spreads at 6 and 20 trials resemble the Playbook's figure. The red bar beside each box is my addition: it marks the Playbook's $\pm 0.1\%$ retrain spread around the box's median, so that we can compare study-to-study variance with retraining noise directly.
         </p>
       </section>
 
@@ -443,14 +399,14 @@
 
       <section class="prose">
         <p>
-          In the toy, as in the Playbook's figure, studies of 20 trials still vary about twice as much as retraining does. Two 20-trial studies in this setting can differ by 0.004 in their best validation error because of which trials each happened to include. That gives a sense of scale for comparing studies. <a href="06-adopting-a-change.html">Part 6</a> takes up how to account for both kinds of variance before adopting a change.
+          In the toy, as in the Playbook's figure, studies of 20 trials still vary about twice as much as retraining does. Two 20-trial studies in this setting can differ by 0.004 in their best validation error purely because of which trials each happened to include, which is worth keeping in mind whenever we compare the winners of two studies. <a href="06-adopting-a-change.html">Part 6</a> takes up how to account for both kinds of variance before adopting a change.
         </p>
       </section>
 
       <section class="prose p04-practice" id="in-practice">
         <h2>In practice</h2>
         <p>
-          Each step's tag gives its source. Checking the budget by resampling is my suggestion.
+          Putting this together, here is how I would choose a search method and check a budget. The tag on each step gives its source; the resampling check is my own suggestion rather than the Playbook's.
         </p>
       </section>
 
@@ -470,13 +426,13 @@
         <li>
           <span class="p04-step-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M5 4h14"/></svg></span>
           <h3>Give the learning rate the first coordinate</h3>
-          <p>Bousquet et al. recommend assigning the smallest Halton bases to the hyperparameters that matter most, since base 2 fills its axis evenly from the first few trials.</p>
+          <p>Bousquet et al. recommend assigning the smallest Halton bases to the hyperparameters that matter most, because base 2 fills its axis evenly from the first few trials.</p>
           <span class="p04-src">Bousquet et al. (2017)</span>
         </li>
         <li>
           <span class="p04-step-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg></span>
           <h3>Check the budget by resampling your own trials</h3>
-          <p>Bootstrap smaller studies from the trials you have, as the Playbook did for its Figure 3, and compare the spread of their best with the retrain spread of your best trial. If the study-to-study spread is larger than the differences you want to detect, your conclusions depend on sampling variability. This check can say little about budgets close to the number of trials you ran.</p>
+          <p>Bootstrap smaller studies from the trials you already have, as the Playbook did for its Figure 3, and compare the spread of their best with the retrain spread of your best trial. If the study-to-study spread is larger than the differences you want to detect, your conclusions depend on sampling variability. Keep in mind that this check says little about budgets close to the number of trials you actually ran.</p>
           <span class="p04-src is-ours">This post</span>
         </li>
         <li>
@@ -490,7 +446,7 @@
       <section class="prose" id="where-this-fits">
         <h2>Where this fits</h2>
         <p>
-          Choosing the search method and the budget is part of designing each study in the Playbook's loop. Once a study has run, its trials have to be read, which is the subject of <a href="05-reading-the-results.html">Part 5</a>.
+          Choosing the search method and the budget is part of designing each study in the Playbook's loop. Once a study has run, we still have to read its trials carefully, and that is the subject of <a href="05-reading-the-results.html">Part 5</a>.
         </p>
       </section>
 

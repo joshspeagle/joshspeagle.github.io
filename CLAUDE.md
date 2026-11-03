@@ -20,7 +20,7 @@ All twelve HTML pages at the repository root (`index.html`, `publications.html`,
     - `biography`: Chronological career `timeline`, `personalNote`, and `dogPhotos` (all rendered on `biography.html`).
     - `mentorship`: Introduction callout and `menteesByStage` (`postdoctoral`, `doctoral`, `mastersProjects`, `bachelors`, `secondary`, plus `completed` cohorts).
     - `publications`: Featured paper metadata, author profile links, and curated ADS library IDs (`libraries`).
-    - `talks`, `teaching`, `awards`, `service`, `news`, `writing`: Structured records rendered by their respective `scripts/pages_*.py` modules (`writing` stores multi-part interactive `series`, curriculum `acts`, and unified `entries`).
+    - `talks`, `teaching`, `awards`, `service`, `news`, `writing`: Structured records rendered by their respective `scripts/pages_*.py` modules (`writing` stores multi-part `series`, each with its `acts` and `parts` mirroring the series' own landing page, plus standalone `essays`).
     - `software`: GitHub username (`githubUser`), category `groups`, `featured` packages, interactive `showcase` (`allsky`), and the repository `curation` dictionary.
 - **`assets/data/publications_data.json`** — Automated publication cache maintained by `scripts/update_publications_unified.py` (metrics, yearly citation series, RIQ series, and 130+ paper records with `categoryProbabilities` and `researchArea`).
 - **`assets/data/software_data.json`** — Automated software cache maintained by `scripts/fetch_software.py` (GitHub stars, forks, push dates, archive flags, and monthly PyPI download counts).

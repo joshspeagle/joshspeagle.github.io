@@ -30,65 +30,22 @@
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
     <p class="lede" data-src="113-117 131-134 151-154 390-397">
-      Before the first tuning round there has to be a model that trains. Which architecture do you start from, which optimizer, and what goes in the first config file? The Playbook's answer is to reuse what already works and to keep the first configuration simple. When I first read that advice it sounded like common sense, and working through why it holds took me into the bitter lesson, pre-training, and the geometry of the update rules themselves.
+      Before we can run a single tuning round, we need a model that trains at all. Which architecture should we start from, which optimizer, and what belongs in the first config file? The Playbook's answer is to reuse what already works and to keep the first configuration simple. When I first read that advice it sounded like common sense, but working out why it holds took me into the bitter lesson, the evidence on pre-training, and the geometry of the update rules themselves. Below, we follow that path from the case for reproducing a known architecture, through how SGD, momentum and Adam behave in a narrow valley and why their learning rates do not transfer, to a simple first configuration and a provisional step budget.
     </p>
 
-    <nav class="post-roadmap" aria-label="In this post">
-      <div class="post-roadmap-head">
-        <span class="post-roadmap-kicker">In this post</span>
-      </div>
-      <div class="post-roadmap-grid">
-        <a class="roadmap-item post-roadmap-item" href="#assumptions">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">Decisions made once</strong>
-            <span class="roadmap-item-desc">Architecture, optimizer, batch size and the first configuration are set before the first tuning round and revisited rarely.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#architecture">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">Start from an architecture that already works</strong>
-            <span class="roadmap-item-desc">Reproducing the closest published model removes one unknown from every early failure.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#optimizer">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">Choosing an optimizer</strong>
-            <span class="roadmap-item-desc">Start with the most popular optimizer for the problem, and hold its secondary hyperparameters fixed until the trial budget allows tuning them.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#update-step">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">What an update rule does in a narrow valley</strong>
-            <span class="roadmap-item-desc">The steepest direction caps the learning rate. Momentum and Adam change how each step responds to the steep and flat directions, and each rule needs its own learning-rate sweep.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#initial">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">A simple first configuration and step budget</strong>
-            <span class="roadmap-item-desc">A small model, a constant learning rate, no extra regularizers, and one provisional step budget for every trial in a study.</span>
-          </div>
-        </a>
-        <a class="roadmap-item post-roadmap-item" href="#what-to-do">
-          <div class="post-roadmap-body">
-            <strong class="roadmap-item-title">In practice</strong>
-            <span class="roadmap-item-desc">Six steps from groundwork to a first configuration, each linked to the Playbook.</span>
-          </div>
-        </a>
-      </div>
-    </nav>
 
     <article class="post-body">
 
       <section class="prose" id="assumptions">
-        <h2>Decisions made once</h2>
+        <h2>Decisions we make once</h2>
         <p data-src="113-117">
-          The <a data-concept="incremental-strategy" href="01-the-tuning-loop.html#incremental">incremental tuning strategy</a> of <a href="01-the-tuning-loop.html">Part 1</a> improves a model one <a data-concept="round" href="01-the-tuning-loop.html#incremental">round</a> at a time, and each round needs a working configuration to start from. The Playbook's <a href="https://github.com/google-research/tuning_playbook#guide-for-starting-a-new-project" target="_blank" rel="noopener">guide for starting a new project</a> covers the choices that come before the first round. Its premise is that some choices are <dfn data-concept="once-decisions">decisions made once</dfn>:
+          The <a data-concept="incremental-strategy" href="01-the-tuning-loop.html#incremental">incremental tuning strategy</a> from <a href="01-the-tuning-loop.html">Part 1</a> improves a model one <a data-concept="round" href="01-the-tuning-loop.html#incremental">round</a> at a time, which quietly assumes that we already have a working configuration to improve. Where does that first configuration come from? The Playbook's <a href="https://github.com/google-research/tuning_playbook#guide-for-starting-a-new-project" target="_blank" rel="noopener">guide for starting a new project</a> addresses exactly this gap, and it rests on the idea that some choices are <dfn data-concept="once-decisions">decisions made once</dfn>:
         </p>
         <blockquote class="playbook" data-src="115-117">
           <p>Many of the decisions we make over the course of tuning can be made once at the beginning of a project and only occasionally revisited when circumstances change.</p>
         </blockquote>
         <p data-src="119-129 131 151 187 390">
-          The guide assumes that the groundwork is in place. The problem is formulated and the data cleaned well enough that time spent on the model is worth it. A pipeline exists that makes training and evaluation jobs easy to launch. The metrics are chosen and implemented, and they are as close as possible to what will be measured once the model is deployed. On top of that groundwork the guide makes four decisions in turn (<a href="#fig-day-one" class="figref"></a>): the model architecture, the optimizer, the batch size and the initial configuration.
+          The guide takes some groundwork for granted. The problem has been formulated and the data cleaned well enough that time spent on the model is worthwhile, a pipeline makes training and evaluation jobs easy to launch, and the metrics have been chosen and implemented to match, as closely as possible, what will be measured once the model is deployed. Given that foundation, the guide works through four decisions in order, as sketched in <a href="#fig-day-one" class="figref"></a>: the model architecture, the optimizer, the batch size and the initial configuration.
         </p>
       </section>
 
@@ -137,17 +94,17 @@
           </div>
         </div>
         <p class="fig-caption">
-          The Playbook's sequence for a new project. Each decision fixes one part of the setup and leaves the rest for tuning rounds. The batch size has its own post because the Playbook treats it as a choice about training speed, separate from validation performance.
+          The Playbook's sequence for a new project. Each decision fixes one part of the setup and leaves the rest open for tuning rounds. The batch size gets its own post because the Playbook treats it as a choice about training speed rather than validation performance.
         </p>
       </figure>
 
       <section class="prose" id="architecture">
         <h2>Start from an architecture that already works</h2>
         <p data-src="131-149">
-          The Playbook's summary of <a href="https://github.com/google-research/tuning_playbook#choosing-the-model-architecture" target="_blank" rel="noopener">choosing the model architecture</a> is one sentence: "When starting a new project, try to reuse a model that already works." It recommends getting a well-established, commonly used architecture working first, and notes that a custom model can always be built later. When possible, it suggests finding a paper that tackles something as close as possible to your problem and reproducing that model as the starting point. This is the advice to <dfn data-concept="reuse-architecture">reuse an established architecture</dfn>.
+          The Playbook's advice on <a href="https://github.com/google-research/tuning_playbook#choosing-the-model-architecture" target="_blank" rel="noopener">choosing the model architecture</a> fits in one sentence: "When starting a new project, try to reuse a model that already works." The authors suggest getting a well-established, commonly used architecture working first, since a custom model can always be built later, and where possible finding a paper that tackles something as close as possible to our problem and reproducing its model as the starting point. I will refer to this as the advice to <dfn data-concept="reuse-architecture">reuse an established architecture</dfn>.
         </p>
         <p data-src="138-146">
-          The Playbook also makes a point about what "architecture" means. An architecture has <dfn data-concept="model-hyperparameters">model hyperparameters</dfn> (the settings that fix a model's size and details, such as the number of layers, the layer width and the activation function), so choosing an architecture means choosing a family of models, one for each setting of those hyperparameters (<a href="#fig-arch-family" class="figref"></a>). The family is fixed on day one. Which member of the family to use is a question for the initial configuration and for later tuning rounds.
+          It helps to be precise about what we are choosing here. An architecture comes with <dfn data-concept="model-hyperparameters">model hyperparameters</dfn>, the settings that fix a model's size and details (the number of layers, the layer width, the activation function and so on). Choosing an architecture therefore means choosing a whole family of models, one for each setting of those hyperparameters, as <a href="#fig-arch-family" class="figref"></a> illustrates. We fix the family on day one, while the question of which member to use belongs to the initial configuration and to later tuning rounds.
         </p>
       </section>
 
@@ -164,29 +121,29 @@
           </svg>
         </div>
         <p class="fig-caption">
-          Choosing an architecture fixes the family (the whole grid). Each cell is one setting of two model hyperparameters, depth and width, drawn as stacks of blocks. The numbers are illustrative. The Playbook suggests starting from a small, fast member, and comparing larger members in later rounds, where the model hyperparameters become the question under study.
+          Choosing an architecture fixes the family (the whole grid). Each cell is one setting of two model hyperparameters, depth and width, drawn as stacks of blocks, with illustrative numbers. The Playbook suggests starting from a small, fast member and comparing larger members in later rounds, where the model hyperparameters become the question under study.
         </p>
       </figure>
 
       <section class="prose">
         <p>
-          The reason I find most persuasive for this advice is diagnostic. When a new model fails to learn on a new dataset, the cause could be a bug in the data pipeline (a normalization or label-alignment error), an optimizer setting that is wrong for this model, or a design flaw in the model itself. An architecture that is known to train well on a similar problem removes the third possibility, and the paper you reproduce gives you a reference score. If the reproduced model fails on your data, the pipeline is the first place to look.
+          Why reuse rather than design? The reason I find most persuasive is diagnostic. When a new model fails to learn on a new dataset, the cause could be a bug in the data pipeline (a normalization or label-alignment error), an optimizer setting that is wrong for this model, or a flaw in the model's design. An architecture that is known to train well on a similar problem rules out the third possibility, and the paper we reproduce also hands us a reference score. So if the reproduced model fails on our data, the pipeline becomes the obvious first suspect.
         </p>
         <p data-src="138-146">
-          A mature architecture also comes with an initialization, a normalization scheme and optimizer settings that have been used together many times. A layer you designed this week has none of that history. Custom models fit better later in a project, once a baseline exists.
+          There is a second, quieter benefit. A mature architecture arrives with an initialization, a normalization scheme and optimizer settings that have been used together many times, whereas a layer designed this week has none of that accumulated history. Custom models make more sense later in a project, once there is a baseline to measure them against.
         </p>
       </section>
 
       <section class="prose" id="bitter-lesson">
-        <h2>Reuse, adapt or build</h2>
+        <h2>Reuse, adapt or build?</h2>
         <p>
-          The Playbook's advice concerns engineering risk on a single project. Rich Sutton's essay <a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html" target="_blank" rel="noopener">"The Bitter Lesson"</a> <cite data-ref="sutton2019"></cite> makes a related argument about the field over decades. Sutton argues that "general methods that leverage computation are ultimately the most effective, and by a large margin," and that building knowledge of a domain into a system "always helps in the short term" but eventually plateaus. The vision transformer is one concrete case. Trained on mid-sized datasets such as ImageNet without strong regularization, transformers reached accuracies "a few percentage points below ResNets of comparable size" in the experiments of Dosovitskiy and colleagues <cite data-ref="dosovitskiy2021"></cite>. The authors suggest that this may be expected, because transformers lack some of the inductive biases (assumptions built into the architecture) of convolutional networks, such as translation equivariance and locality. Pre-trained on larger datasets, the transformers compared well with the best convolutional networks, and the authors conclude that "large scale training trumps inductive bias."
+          The Playbook frames reuse as a way to manage engineering risk on a single project, but there is a closely related argument about the whole field over decades. In his essay <a href="http://www.incompleteideas.net/IncIdeas/BitterLesson.html" target="_blank" rel="noopener">"The Bitter Lesson"</a> <cite data-ref="sutton2019"></cite>, Rich Sutton argues that "general methods that leverage computation are ultimately the most effective, and by a large margin," and that building knowledge of a domain into a system "always helps in the short term" but eventually plateaus. The vision transformer gives a concrete example. In the experiments of Dosovitskiy and colleagues <cite data-ref="dosovitskiy2021"></cite>, transformers trained on mid-sized datasets such as ImageNet without strong regularization reached accuracies "a few percentage points below ResNets of comparable size." The authors suggest this may be expected, because transformers lack some of the inductive biases (assumptions built into the architecture) of convolutional networks, such as translation equivariance and locality. Once pre-trained on larger datasets, however, the transformers compared well with the best convolutional networks, which led the authors to conclude that "large scale training trumps inductive bias."
         </p>
         <p>
-          Fine-tuning a pre-trained model extends reuse from the design to the learned weights. Bommasani and colleagues call models that are "trained on broad data at scale" and "adaptable to a wide range of downstream tasks" foundation models, and they note that "the defects of the foundation model are inherited by all the adapted models downstream" <cite data-ref="bommasani2021"></cite>. How much pre-training helps depends on the amount of data and on how close the new task is to the pre-training data.
+          Fine-tuning a pre-trained model takes reuse one step further, from the design to the learned weights themselves. Bommasani and colleagues call models that are "trained on broad data at scale" and "adaptable to a wide range of downstream tasks" foundation models, and they point out the flip side of that reuse: "the defects of the foundation model are inherited by all the adapted models downstream" <cite data-ref="bommasani2021"></cite>. How much pre-training actually helps depends on how much data we have and on how close the new task is to the pre-training data, as the studies collected below illustrate.
         </p>
         <details class="math-aside">
-          <summary>Evidence on pre-training</summary>
+          <summary>What the evidence says about pre-training</summary>
           <ul>
             <li><strong>With enough data, pre-training mainly speeds up convergence.</strong> On COCO object detection and instance segmentation, He, Girshick and Dollár <cite data-ref="he2019"></cite> found that models trained from random initialization performed about as well as ImageNet pre-trained ones when trained for more iterations, and that the result held with 10% of the training data.</li>
             <li><strong>Better source models usually transfer better.</strong> Across 16 networks and 12 image classification datasets, Kornblith, Shlens and Le <cite data-ref="kornblith2019"></cite> found that ImageNet accuracy was strongly correlated with accuracy after fine-tuning ($r = 0.96$). On two small fine-grained datasets, ImageNet pre-training gave minimal benefit.</li>
@@ -194,7 +151,7 @@
           </ul>
         </details>
         <p>
-          In my reading, reuse and bespoke design both have a place, at different stages of a project. Early on, the goal is to learn the problem: what the data look like, what a reasonable score is and which hyperparameters matter. That learning is easiest with a standard setup, where someone else has already found settings that train. Once a tuned baseline exists, a bespoke component becomes a testable idea. It either beats the tuned baseline by more than the run-to-run noise or it does not. I also find a bespoke design easier to defend when it encodes structure that is certain (a symmetry or conservation law of the data) than when it encodes a guess about which features matter. <a href="#fig-modes" class="figref"></a> lays out how I think about the modes across a project, including the intermediate ones that most real projects use.
+          Taken together, I read these results as saying that reuse and bespoke design both have a place, but at different stages of a project. Early on, our goal is to learn the problem: what the data look like, what a reasonable score is and which hyperparameters matter. That learning is easiest with a standard setup, where someone else has already found settings that train. Once we have a tuned baseline, a bespoke component turns into a testable idea, because it either beats that baseline by more than the run-to-run noise or it does not. I also find a bespoke design much easier to defend when it encodes structure we are certain of (a symmetry or conservation law of the data) than when it encodes a guess about which features matter. <a href="#fig-modes" class="figref"></a> lays out how I think about these modes across a project, including the intermediate ones that most real projects end up using.
         </p>
       </section>
 
@@ -232,33 +189,33 @@
           </div>
         </div>
         <p class="fig-caption">
-          Each row is a stage of a project, and its band covers the modes I would consider at that stage. The bands are my view, informed by the papers cited under the diagram. The Playbook's advice covers the first row. The middle columns are the intermediate modes most projects use, such as a pre-trained backbone with a new output head, or a standard network with a custom input encoding or loss.
+          Each row is a stage of a project, and its band covers the modes I would consider at that stage. The bands reflect my own view, informed by the papers cited under the diagram, while the Playbook's advice covers only the first row. The middle columns are the intermediate modes most projects use, such as a pre-trained backbone with a new output head, or a standard network with a custom input encoding or loss.
         </p>
       </figure>
 
       <section class="prose" id="optimizer">
         <h2>Choosing an optimizer</h2>
         <p data-src="151-185">
-          The Playbook's <dfn data-concept="optimizer-choice">choice of optimizer</dfn>, in its section on <a href="https://github.com/google-research/tuning_playbook#choosing-the-optimizer" target="_blank" rel="noopener">choosing the optimizer</a>, follows the same logic as its advice on architectures: "Start with the most popular optimizer for the type of problem at hand." The authors say that no optimizer is the best across all problems and architectures, and that even comparing optimizers is difficult <cite data-ref="choi2019"></cite>. They recommend well-established, popular optimizers, especially when starting a new project, and name the ones they like: SGD with momentum (they prefer the Nesterov variant) <cite data-ref="polyak1964"></cite><cite data-ref="nesterov1983"></cite><cite data-ref="sutskever2013"></cite>, and Adam and NAdam <cite data-ref="kingma2014"></cite>, which they describe as more general than SGD with momentum.
+          With the architecture settled, the next question is how to train it. The Playbook's section on <a href="https://github.com/google-research/tuning_playbook#choosing-the-optimizer" target="_blank" rel="noopener">choosing the optimizer</a> treats the <dfn data-concept="optimizer-choice">choice of optimizer</dfn> with the same conservatism it applies to architectures: "Start with the most popular optimizer for the type of problem at hand." The reasoning is that no optimizer is the best across all problems and architectures, and that even comparing optimizers fairly is difficult <cite data-ref="choi2019"></cite>, so a well-established, popular choice is the sensible default when a project is new. The authors also name their own preferences: SGD with momentum, ideally the Nesterov variant <cite data-ref="polyak1964"></cite><cite data-ref="nesterov1983"></cite><cite data-ref="sutskever2013"></cite>, and Adam and NAdam <cite data-ref="kingma2014"></cite>, which they describe as more general than SGD with momentum.
         </p>
         <p data-src="164-176 181-183">
-          The second half of the advice is to "be prepared to give attention to all hyperparameters of the chosen optimizer." Adam has four tunable <dfn data-concept="optimizer-hyperparameters">optimizer hyperparameters</dfn> (the learning rate $\eta$, the decay rates $\beta_1$ and $\beta_2$, and the stabilizer $\epsilon$), and the Playbook stresses that they can all matter. More hyperparameters mean more tuning effort, which matters most early in a project, when the optimizer's hyperparameters are <a data-concept="nuisance-hp" href="01-the-tuning-loop.html#roles">nuisance hyperparameters</a> to be tuned around some other question. The Playbook therefore suggests that it may be preferable to start with a simpler optimizer, such as SGD with fixed momentum or Adam with fixed $\epsilon$, $\beta_1$ and $\beta_2$, and switch to the more general one later.
+          The second half of the advice is less obvious: "be prepared to give attention to all hyperparameters of the chosen optimizer." Adam has four tunable <dfn data-concept="optimizer-hyperparameters">optimizer hyperparameters</dfn> (the learning rate $\eta$, the decay rates $\beta_1$ and $\beta_2$, and the stabilizer $\epsilon$), and any of them can matter. Every extra hyperparameter adds tuning effort, though, and that cost is felt most early in a project, when the optimizer's settings are <a data-concept="nuisance-hp" href="01-the-tuning-loop.html#roles">nuisance hyperparameters</a> that we have to tune around some other question. This is why the Playbook suggests it may be preferable to start with a simpler optimizer, such as SGD with fixed momentum or Adam with fixed $\epsilon$, $\beta_1$ and $\beta_2$, and to switch to the more general version later.
         </p>
         <p>
-          The Playbook's advice to "be prepared to give attention to all hyperparameters" was opaque to me until I watched the update rules move on a surface small enough to see whole.
+          The instruction to "be prepared to give attention to all hyperparameters" felt abstract to me until I watched the update rules move on a surface small enough to see whole, so that is where we turn next.
         </p>
       </section>
 
       <section class="prose" id="update-step">
         <h2>What an update rule does in a narrow valley</h2>
         <p>
-          Training losses tend to curve much more steeply in some directions of weight space than in others. The simplest surface with that property is a two-dimensional quadratic bowl stretched into a narrow valley:
+          Training losses tend to curve much more steeply in some directions of weight space than in others, and most of what distinguishes one update rule from another comes down to how it copes with that imbalance. To see this clearly, I want the simplest surface that has the property, which is a two-dimensional quadratic bowl stretched into a narrow valley:
         </p>
         <div class="math-block">
           $$\ell(\theta_1, \theta_2) = \tfrac{1}{2}\left(20\,\theta_1^2 + \theta_2^2\right).$$
         </div>
         <p>
-          Here $\theta_1$ runs across the valley and $\theta_2$ along its floor. The curvature (the second derivative) is $\mu_1 = 20$ across the valley and $\mu_2 = 1$ along it, and their ratio, the condition number $\kappa = \mu_{\max}/\mu_{\min}$, is 20. The largest curvature is called the <dfn data-concept="sharpness">sharpness</dfn> <cite data-ref="cohen2021"></cite>. On this surface plain gradient descent, $\theta_{t+1} = \theta_t - \eta\,\nabla\ell(\theta_t)$ with learning rate $\eta$, updates each coordinate separately:
+          Here $\theta_1$ runs across the valley and $\theta_2$ along its floor. The curvature (the second derivative) is $\mu_1 = 20$ across the valley and $\mu_2 = 1$ along it, so their ratio, the condition number $\kappa = \mu_{\max}/\mu_{\min}$, is 20. The largest curvature is known as the <dfn data-concept="sharpness">sharpness</dfn> <cite data-ref="cohen2021"></cite>. Because the bowl is aligned with the axes, plain gradient descent, $\theta_{t+1} = \theta_t - \eta\,\nabla\ell(\theta_t)$ with learning rate $\eta$, updates each coordinate independently of the other:
         </p>
         <div class="math-block">
           $$\begin{aligned}
@@ -267,7 +224,7 @@
           \end{aligned}$$
         </div>
         <p>
-          Each step multiplies a coordinate's distance from the minimum by a fixed factor. A coordinate moves toward the minimum when the size of its factor is below 1 and away from it when the size is above 1. For the steep coordinate, that requires $\eta &lt; 2/20 = 0.1$, which is two divided by the sharpness. Above this <dfn data-concept="divergence-bound">stability limit</dfn> the run diverges <cite data-ref="cohen2021"></cite>. In real networks, Gilmer and colleagues found that successful training happens in regions where the sharpness stays below $2/\eta$ <cite data-ref="gilmer2021"></cite>, so the same limit shows up outside the toy.
+          Each step simply multiplies a coordinate's distance from the minimum by a fixed factor. If the magnitude of that factor is below 1 the coordinate moves toward the minimum, and if it is above 1 the coordinate moves away. For the steep coordinate this requires $\eta &lt; 2/20 = 0.1$, or two divided by the sharpness, and above this <dfn data-concept="divergence-bound">stability limit</dfn> the run diverges <cite data-ref="cohen2021"></cite>. The same limit shows up outside the toy, since Gilmer and colleagues found that successful training of real networks happens in regions where the sharpness stays below $2/\eta$ <cite data-ref="gilmer2021"></cite>.
         </p>
       </section>
 
@@ -291,14 +248,14 @@
 
       <section class="prose">
         <p>
-          Dragging the learning rate in <a href="#fig-gd-step" class="figref"></a> shows the conflict between the two coordinates. Below $\eta = 0.05$ both coordinates shrink smoothly. Between 0.05 and 0.1 the steep coordinate overshoots and flips sign every step, which is the zig-zag across the valley, but it still shrinks. Past 0.1 it grows. The floor coordinate shrinks by a factor of $1 - \eta$ per step, which is at least 0.9 for every stable learning rate. The steepest direction sets how large the learning rate can be, and the flattest direction then sets how many steps the run needs. The larger the condition number, the worse that combination gets.
+          If we drag the learning rate in <a href="#fig-gd-step" class="figref"></a>, the conflict between the two coordinates becomes visible. Below $\eta = 0.05$ both coordinates shrink smoothly. Between 0.05 and 0.1 the steep coordinate overshoots and flips sign every step, which produces the familiar zig-zag across the valley, but it still shrinks, and past 0.1 it grows. Meanwhile the floor coordinate shrinks by a factor of $1 - \eta$ per step, which is at least 0.9 for every stable learning rate. In other words, the steepest direction caps how large the learning rate can be, and the flattest direction then dictates how many steps the run needs, so the larger the condition number, the worse this combination becomes.
         </p>
         <p>
-          Momentum and Adam change the update so that it responds differently to the two directions. <a href="#fig-three-rules" class="figref"></a> shows the first steps of each rule from the same start, with the update rules written as in the Playbook's <a href="https://github.com/google-research/tuning_playbook#what-are-the-update-rules-for-all-the-popular-optimization-algorithms" target="_blank" rel="noopener">appendix on update rules</a>.
+          The natural fix is an update that responds differently to the two directions, and that is what momentum and Adam provide. <a href="#fig-three-rules" class="figref"></a> shows the first steps of each rule from the same starting point, with the update rules written as in the Playbook's <a href="https://github.com/google-research/tuning_playbook#what-are-the-update-rules-for-all-the-popular-optimization-algorithms" target="_blank" rel="noopener">appendix on update rules</a>.
         </p>
         <ul>
-          <li><strong>Momentum</strong> <cite data-ref="polyak1964"></cite> keeps a velocity $u$, a running sum of past gradients with each older gradient weighted down by a further factor $\gamma$, and steps along it: $u_{t+1} = \gamma u_t + \nabla\ell(\theta_t)$ and $\theta_{t+1} = \theta_t - \eta\,u_{t+1}$ (Nesterov momentum <cite data-ref="nesterov1983"></cite><cite data-ref="sutskever2013"></cite> steps along $\gamma u_{t+1} + \nabla\ell(\theta_t)$ instead). When the path zig-zags across the valley, the gradient there changes sign from step to step, so successive terms in the sum partly cancel. Along the floor the gradient keeps its sign, so the terms add, up to $1/(1-\gamma)$ times a single gradient (10 times at $\gamma = 0.9$).</li>
-          <li><strong>Adam</strong> <cite data-ref="kingma2014"></cite> keeps a running average of the gradient, $m_{t+1} = \beta_1 m_t + (1-\beta_1)\nabla\ell(\theta_t)$, and of its coordinate-wise square, $v_{t+1} = \beta_2 v_t + (1-\beta_2)(\nabla\ell(\theta_t))^2$, and divides one by the square root of the other: $\theta_{t+1} = \theta_t - \eta\, b_{t+1}\, m_{t+1} / (\sqrt{v_{t+1}} + \epsilon)$, where $b_{t+1} = \sqrt{1 - \beta_2^{t+1}} / (1 - \beta_1^{t+1})$ corrects the averages for starting at zero. Dividing by the root-mean-square gradient makes each coordinate's step roughly $\eta$ in size, whether that coordinate is steep or flat. The Playbook's appendix, like the Adam paper, writes Adam's learning rate as $\alpha$. These notes use $\eta$ for the learning rate of every rule.</li>
+          <li><strong>Momentum</strong> <cite data-ref="polyak1964"></cite> keeps a velocity $u$, a running sum of past gradients with each older gradient weighted down by a further factor $\gamma$, and steps along it: $u_{t+1} = \gamma u_t + \nabla\ell(\theta_t)$ and $\theta_{t+1} = \theta_t - \eta\,u_{t+1}$ (Nesterov momentum <cite data-ref="nesterov1983"></cite><cite data-ref="sutskever2013"></cite> steps along $\gamma u_{t+1} + \nabla\ell(\theta_t)$ instead). When the path zig-zags across the valley, the gradient in that direction changes sign from step to step, so successive terms in the sum partly cancel. Along the floor the gradient keeps its sign, so the terms accumulate, up to $1/(1-\gamma)$ times a single gradient (10 times at $\gamma = 0.9$).</li>
+          <li><strong>Adam</strong> <cite data-ref="kingma2014"></cite> keeps a running average of the gradient, $m_{t+1} = \beta_1 m_t + (1-\beta_1)\nabla\ell(\theta_t)$, and of its coordinate-wise square, $v_{t+1} = \beta_2 v_t + (1-\beta_2)(\nabla\ell(\theta_t))^2$, and divides one by the square root of the other: $\theta_{t+1} = \theta_t - \eta\, b_{t+1}\, m_{t+1} / (\sqrt{v_{t+1}} + \epsilon)$, where $b_{t+1} = \sqrt{1 - \beta_2^{t+1}} / (1 - \beta_1^{t+1})$ corrects the averages for starting at zero. Dividing by the root-mean-square gradient makes each coordinate's step roughly $\eta$ in size, whether that coordinate is steep or flat. (The Playbook's appendix, like the Adam paper, writes Adam's learning rate as $\alpha$, but I use $\eta$ for the learning rate of every rule.)</li>
         </ul>
       </section>
 
@@ -332,14 +289,14 @@
 
       <section class="prose">
         <p>
-          The valley in these figures lines up with the coordinate axes, which is the most favorable case for Adam. Adam rescales each coordinate separately, so it can equalize a valley that runs along an axis. A valley that runs diagonally mixes the steep and flat directions within every coordinate, and per-coordinate rescaling can no longer separate them. In a real network the steep directions are mixtures of many weights, so the toy illustrates what each rule does to a step. Ranking optimizers takes real workloads and careful tuning of every rule.
+          We should be careful not to read too much into this picture. The valley lines up with the coordinate axes, which is the most favorable case for Adam: because Adam rescales each coordinate separately, it can equalize a valley that runs along an axis. A valley that runs diagonally mixes the steep and flat directions within every coordinate, and per-coordinate rescaling can no longer pull them apart. In a real network the steep directions are mixtures of many weights, so I think of the toy as an illustration of what each rule does to a single step, not as a ranking. Ranking optimizers takes real workloads and careful tuning of every rule.
         </p>
       </section>
 
       <section class="prose" id="families">
         <h2>Optimizer families nest inside each other</h2>
         <p>
-          The Playbook calls Adam and NAdam "more general than SGD with momentum." Choi and colleagues make that statement precise <cite data-ref="choi2019"></cite>. One optimizer includes another when some setting of its hyperparameters reproduces, at least approximately, the other's sequence of updates. Setting $\gamma = 0$ turns momentum into SGD. Letting $\epsilon$ grow very large turns Adam into momentum, because the denominator $\sqrt{v} + \epsilon$ is then close to the constant $\epsilon$ (<a href="#fig-optimizer-families" class="figref"></a>).
+          Earlier we saw the Playbook describe Adam and NAdam as "more general than SGD with momentum." What does "more general" mean for an optimizer? Choi and colleagues give the phrase a precise sense <cite data-ref="choi2019"></cite>: one optimizer includes another when some setting of its hyperparameters reproduces, at least approximately, the other's sequence of updates. Setting $\gamma = 0$ turns momentum into SGD, for instance, and letting $\epsilon$ grow very large turns Adam into momentum, because the denominator $\sqrt{v} + \epsilon$ is then close to the constant $\epsilon$. The result is the nested structure in <a href="#fig-optimizer-families" class="figref"></a>.
         </p>
       </section>
 
@@ -373,7 +330,7 @@
           </div>
         </div>
         <p class="fig-caption">
-          Each family contains the next one in as a special case of its hyperparameters. The reductions follow from the update rules in the Playbook's appendix. The ordering is from Choi et al. (2019), who state that as tuning approaches optimality, a more general optimizer can never underperform its special cases.
+          Each family contains the next one in as a special case of its hyperparameters. The reductions follow from the update rules in the Playbook's appendix, and the ordering comes from Choi et al. (2019), who state that as tuning approaches optimality, a more general optimizer can never underperform its special cases.
         </p>
       </figure>
 
@@ -399,20 +356,20 @@
           <p>Many libraries put $\epsilon$ next to the bias-corrected $\sqrt{\hat v_t}$ instead of the raw $\sqrt{v_t}$. In that form the step-dependent factor is $(1 - \beta_1)/(1 - \beta_1^{t})$ and the condition is $\sqrt{\hat v_t} \ll \epsilon$. The reduction also depends on the loss scale. $\sqrt{v}$ scales with the size of the gradients, so if the loss is multiplied by a constant $s$, the $\epsilon$ needed for the reduction grows by the same factor $s$.</p>
         </details>
         <p>
-          If Adam's four hyperparameters are all tuned well, it should do at least as well as momentum, because it can imitate momentum. If they are not, comparisons between the two say more about the tuning than about the optimizers. Choi et al. reproduced published optimizer rankings and then reversed or removed them by tuning more of the hyperparameters, and they conclude that the search space "may be the single most important factor explaining the rankings" in earlier comparisons <cite data-ref="choi2019"></cite>. In their experiments the best $\epsilon$ was often far from the default of $10^{-8}$. One ResNet-50 run on ImageNet reached 77.1% validation accuracy with NAdam and $\epsilon = 9475$.
+          The nesting has a direct consequence for how we compare optimizers. If Adam's four hyperparameters are all tuned well, it should do at least as well as momentum, because it can imitate momentum. If they are not, any comparison between the two tells us more about the tuning than about the optimizers. Choi et al. demonstrated this by reproducing published optimizer rankings and then reversing or removing them simply by tuning more of the hyperparameters, which led them to conclude that the search space "may be the single most important factor explaining the rankings" in earlier comparisons <cite data-ref="choi2019"></cite>. In their experiments the best $\epsilon$ was often far from the default of $10^{-8}$; one ResNet-50 run on ImageNet reached 77.1% validation accuracy with NAdam and $\epsilon = 9475$.
         </p>
         <p data-src="1645-1661">
-          Tuning everything costs trials. For Adam the Playbook gives a rule of thumb by budget in its FAQ on <a href="https://github.com/google-research/tuning_playbook#how-should-adams-hyperparameters-be-tuned" target="_blank" rel="noopener">tuning Adam's hyperparameters</a>, covered in <a data-concept="adam-rule" href="01-the-tuning-loop.html#budget">Part 1</a>: with fewer than 10 trials in a study tune only the learning rate, with 10 to 25 add $\beta_1$, with more than 25 add $\epsilon$, and with substantially more than 25 add $\beta_2$. That ordering is the Playbook authors' judgment. Choi et al. do not rank Adam's hyperparameters, and their own advice is to tune all of them once "tens or more runs" are affordable.
+          The catch is that tuning everything costs trials. For Adam, the Playbook's FAQ on <a href="https://github.com/google-research/tuning_playbook#how-should-adams-hyperparameters-be-tuned" target="_blank" rel="noopener">tuning Adam's hyperparameters</a> offers a rule of thumb by budget, which we met in <a data-concept="adam-rule" href="01-the-tuning-loop.html#budget">Part 1</a>: with fewer than 10 trials in a study tune only the learning rate, with 10 to 25 add $\beta_1$, with more than 25 add $\epsilon$, and with substantially more than 25 add $\beta_2$. That ordering is the Playbook authors' own judgment. Choi et al. do not rank Adam's hyperparameters, and their own advice is to tune all of them once "tens or more runs" are affordable.
         </p>
       </section>
 
       <section class="prose" id="learning-rates">
         <h2>Learning rates do not transfer between optimizers</h2>
         <p data-src="676-688">
-          The Playbook's discussion of <a href="https://github.com/google-research/tuning_playbook#identifying-scientific-nuisance-and-fixed-hyperparameters" target="_blank" rel="noopener">scientific, nuisance and fixed hyperparameters</a> uses the optimizer as its example of a <a data-concept="conditional-hp" href="01-the-tuning-loop.html#conditional">conditional hyperparameter</a>. The learning rate of Nesterov momentum and the learning rate of Adam share a name, but they are different hyperparameters, and "the range of values that work well in each of the optimizers is typically different by several orders of magnitude."
+          Even the one hyperparameter that every rule shares, the learning rate, turns out to be less shared than its name suggests. When the Playbook discusses <a href="https://github.com/google-research/tuning_playbook#identifying-scientific-nuisance-and-fixed-hyperparameters" target="_blank" rel="noopener">scientific, nuisance and fixed hyperparameters</a>, it uses the optimizer as its example of a <a data-concept="conditional-hp" href="01-the-tuning-loop.html#conditional">conditional hyperparameter</a>. The learning rate of Nesterov momentum and the learning rate of Adam have the same name but are really different hyperparameters, and in the authors' words "the range of values that work well in each of the optimizers is typically different by several orders of magnitude."
         </p>
         <p>
-          The toy shows one reason. Suppose the loss is multiplied by a constant $s$, as happens when a sum replaces a mean over a batch or a loss term gets a weight. Every gradient grows by $s$, the sharpness grows by $s$, and the stability limit of SGD and momentum falls to $2/(20\,s)$. Adam's update is unchanged, because $m$ and $\sqrt{v}$ both grow by $s$ and the factor cancels as long as $\epsilon$ stays negligible. <a href="#fig-update-rules" class="figref"></a> runs the three rules side by side, and its guided tour walks through the cases.
+          Our toy makes one reason for this concrete. Suppose we multiply the loss by a constant $s$, as happens when a sum replaces a mean over a batch or a loss term is given a weight. Every gradient grows by $s$, so the sharpness grows by $s$ and the stability limit of SGD and momentum falls to $2/(20\,s)$. Adam's update, on the other hand, is unchanged, because $m$ and $\sqrt{v}$ both grow by $s$ and the factor cancels as long as $\epsilon$ stays negligible. <a href="#fig-update-rules" class="figref"></a> runs the three rules side by side, and its guided tour walks through these cases one at a time.
         </p>
       </section>
 
@@ -456,25 +413,25 @@
 
       <section class="prose">
         <p data-src="678-686">
-          At loss scale 1, Adam's fastest rate in this toy is <span data-num="fig-update-rules:model:adam-over-sgd-fastest-c1">2.2</span> times SGD's. At loss scale 100 the ratio is <span data-num="fig-update-rules:model:adam-over-sgd-fastest">220</span>. In both cases SGD, tuned to its best rate, takes fewer steps than Adam (<span data-num="fig-update-rules:model:sgd-fastest-steps-c1">34</span> against <span data-num="fig-update-rules:model:adam-fastest-steps-c1">79</span>). Adam's advantage in this toy is a learning rate that stays good across a wide range and does not move when the loss is rescaled. The Playbook and the toy lead to the same practical rule. Give each optimizer its own learning-rate sweep, and sweep again after any change that rescales the loss.
+          The numbers tell a consistent story. At loss scale 1, Adam's fastest rate in this toy is <span data-num="fig-update-rules:model:adam-over-sgd-fastest-c1">2.2</span> times SGD's, while at loss scale 100 the ratio grows to <span data-num="fig-update-rules:model:adam-over-sgd-fastest">220</span>. In both cases SGD, tuned to its best rate, actually takes fewer steps than Adam (<span data-num="fig-update-rules:model:sgd-fastest-steps-c1">34</span> against <span data-num="fig-update-rules:model:adam-fastest-steps-c1">79</span>). So Adam's advantage here lies in robustness rather than speed: its learning rate stays good across a wide range and does not move when the loss is rescaled. The Playbook's advice and the toy therefore point to the same practical rule, which is to give each optimizer its own learning-rate sweep and to sweep again after any change that rescales the loss.
         </p>
       </section>
 
       <section class="prose" id="initial">
         <h2>A simple first configuration</h2>
         <p data-src="390-397">
-          With the architecture and optimizer chosen, the first runs still need concrete values. The Playbook's section on <a href="https://github.com/google-research/tuning_playbook#choosing-the-initial-configuration" target="_blank" rel="noopener">choosing the initial configuration</a> lists what must be specified: the model configuration (such as the number of layers), the optimizer hyperparameters (such as the learning rate) and the number of training steps. It expects this to take some manually configured runs and trial and error.
+          Having chosen an architecture and an optimizer, we still need concrete numbers before anything can run. The Playbook's section on <a href="https://github.com/google-research/tuning_playbook#choosing-the-initial-configuration" target="_blank" rel="noopener">choosing the initial configuration</a> lists what has to be specified: the model configuration (such as the number of layers), the optimizer hyperparameters (such as the learning rate) and the number of training steps. The authors are candid that getting there will take some manually configured runs and a fair amount of trial and error.
         </p>
         <p data-src="398-412">
-          The guiding principle is a <dfn data-concept="simple-config">simple initial configuration</dfn>, one that is simple, relatively fast and relatively low in resource use, and that obtains a "reasonable" result:
+          The guiding principle is a <dfn data-concept="simple-config">simple initial configuration</dfn>, one that is simple, relatively fast and relatively low in resource use, and that still obtains a "reasonable" result:
         </p>
         <ul data-src="400-412">
-          <li><strong>Simple</strong> means "avoiding bells and whistles wherever possible." Features can be added later. Adding them now risks time spent tuning features that do not help, or complications baked into every later round. The Playbook's example is to start with a constant learning rate before adding a decay schedule.</li>
-          <li><strong>Fast and low-resource</strong> makes every later tuning round cheaper. The Playbook's example is to start with a smaller model.</li>
+          <li><strong>Simple</strong> means "avoiding bells and whistles wherever possible." Features can always be added later, whereas adding them now risks spending time tuning features that do not help, or baking complications into every later round. The Playbook's example is to start with a constant learning rate before adding a decay schedule.</li>
+          <li><strong>Fast and low-resource</strong> matters because it makes every later tuning round cheaper, and here the Playbook's example is to start with a smaller model.</li>
           <li><strong>Reasonable</strong> depends on the problem, but at minimum the model should do much better than random chance on the validation set, even if it is not yet good enough to deploy.</li>
         </ul>
         <p>
-          <a href="#fig-initial-config" class="figref"></a> puts this next to the configuration I am most tempted to write on day one. Every feature left out of the simple version becomes a candidate for a later round, where it can be tested as the one change under study.
+          <a href="#fig-initial-config" class="figref"></a> sets this against the configuration I am most tempted to write on day one. The point of the comparison is that nothing on the left is lost: every feature left out of the simple version becomes a candidate for a later round, where it can be tested as the one change under study.
         </p>
       </section>
 
@@ -518,14 +475,14 @@
 
       <section class="prose">
         <p data-src="1817-1834">
-          One addition to the first run is cheap and useful later. The Playbook's section on instabilities recommends logging the L2 norm of the full loss gradient during training, because outlier values can cause spurious instability in the middle of training. Logging the <a data-concept="gradient-norm" data-forward href="08-training-instabilities.html#diagnosis">gradient norm</a> from the first run gives a reference for what normal looks like before anything goes wrong (<a href="08-training-instabilities.html">Part 8</a>).
+          There is one thing I would add to the first run, because it costs almost nothing now and pays off later. In its section on instabilities, the Playbook recommends logging the L2 norm of the full loss gradient during training, since outlier values can cause spurious instability in the middle of training. If we log the <a data-concept="gradient-norm" data-forward href="08-training-instabilities.html#diagnosis">gradient norm</a> from the very first run, we have a reference for what normal looks like before anything goes wrong (<a href="08-training-instabilities.html">Part 8</a>).
         </p>
       </section>
 
       <section class="prose" id="step-budget">
         <h2>A provisional number of training steps</h2>
         <p data-src="413-423">
-          The last part of the initial configuration is the <dfn data-concept="provisional-budget">initial number of training steps</dfn>. The Playbook describes it as a tension (<a href="#fig-step-budget" class="figref"></a>). Training for more steps can improve performance and makes hyperparameter tuning easier <cite data-ref="shallue2018"></cite>. Training for fewer steps makes each run faster and cheaper, which shortens the time between rounds and allows more experiments in parallel. And an unnecessarily large step budget chosen at the start can be hard to change later, for example once the learning-rate schedule has been tuned for it.
+          The last piece of the initial configuration is the <dfn data-concept="provisional-budget">initial number of training steps</dfn>, and unlike the other choices it has no obviously safe default. The Playbook describes it as a tension between two pulls, which <a href="#fig-step-budget" class="figref"></a> sketches. Training for more steps can improve performance and makes hyperparameter tuning easier <cite data-ref="shallue2018"></cite>, while training for fewer steps makes each run faster and cheaper, which shortens the time between rounds and lets more experiments run in parallel. The two pulls are not symmetric, either, because an unnecessarily large step budget chosen at the start can be hard to change later, for example once the learning-rate schedule has been tuned around it.
         </p>
       </section>
 
@@ -563,7 +520,7 @@
 
       <section class="prose">
         <p data-src="1190-1200">
-          Whatever value you choose, the Playbook is firm that <a data-concept="max-train-steps" data-forward href="07-training-horizon.html#not-bound">max_train_steps</a> should never be tuned inside a study. Pick a value, use it for every trial, and refine it afterwards from where the best checkpoints fall. <a href="07-training-horizon.html#sweep">Part 7</a> covers that refinement.
+          Whatever value we start with, the Playbook is firm that <a data-concept="max-train-steps" data-forward href="07-training-horizon.html#not-bound">max_train_steps</a> should never be tuned inside a study. Instead we pick a value, use it for every trial, and refine it afterwards based on where the best checkpoints fall, a process we will return to in <a href="07-training-horizon.html#sweep">Part 7</a>.
         </p>
       </section>
 
@@ -576,7 +533,7 @@
             <span class="p02-practice-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9l3 3-3 3"/><path d="M13 15h3"/></svg></span>
             <div>
               <h3>Check the groundwork</h3>
-              <p>Clean data, a pipeline that launches training and evaluation easily, and a metric that reflects deployment. <a href="https://github.com/google-research/tuning_playbook#guide-for-starting-a-new-project" target="_blank" rel="noopener">Playbook ↗</a></p>
+              <p>Make sure you have clean data, a pipeline that launches training and evaluation easily, and a metric that reflects deployment. <a href="https://github.com/google-research/tuning_playbook#guide-for-starting-a-new-project" target="_blank" rel="noopener">Playbook ↗</a></p>
             </div>
           </li>
           <li>
@@ -597,7 +554,7 @@
             <span class="p02-practice-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 4h11l-2 3.5 2 3.5H5"/></svg></span>
             <div>
               <h3>Strip the first configuration</h3>
-              <p>A smaller model, a constant learning rate and no extra regularizers. Sweep the learning rate until the result is much better than chance. <a href="https://github.com/google-research/tuning_playbook#choosing-the-initial-configuration" target="_blank" rel="noopener">Playbook ↗</a></p>
+              <p>Start with a smaller model, a constant learning rate and no extra regularizers, and sweep the learning rate until the result is much better than chance. <a href="https://github.com/google-research/tuning_playbook#choosing-the-initial-configuration" target="_blank" rel="noopener">Playbook ↗</a></p>
             </div>
           </li>
           <li>
@@ -620,7 +577,7 @@
       <section class="prose" id="protocol">
         <h2>Where this fits</h2>
         <p>
-          The day-one decisions sit at the start of the Playbook's workflow, before the batch size (<a href="03-batch-size.html">Part 3</a>) and the first study. In the Playbook map, the foundation phase is highlighted. Click any node to see where it leads.
+          The decisions in this post sit at the very start of the Playbook's workflow, ahead of the batch size, which is the subject of <a href="03-batch-size.html">Part 3</a>, and ahead of the first study. The map below highlights this foundation phase, and clicking any node shows where it leads.
         </p>
       </section>
 
