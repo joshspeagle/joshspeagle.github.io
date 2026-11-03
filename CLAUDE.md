@@ -6,7 +6,7 @@ This repository contains the source data, build pipeline, design system, and gen
 
 ## 1. Architecture & Single Source of Truth
 
-All eleven HTML pages at the repository root (`index.html`, `publications.html`, `software.html`, `talks.html`, `teaching.html`, `mentorship.html`, `biography.html`, `news.html`, `awards.html`, `service.html`, `404.html`), along with `sitemap.xml`, `feed.xml`, `assets/css/tokens.css`, `assets/css/fonts.css`, and `assets/data/publications.bib`, are **generated build outputs**. Never hand-edit the generated `.html` files or `assets/css/tokens.css`; edit the underlying JSON data, Python generators, or `assets/css/redesign.css` and run the build.
+All twelve HTML pages at the repository root (`index.html`, `publications.html`, `software.html`, `talks.html`, `teaching.html`, `mentorship.html`, `biography.html`, `news.html`, `awards.html`, `service.html`, `writing.html`, `404.html`), while self-contained multi-page interactive series live under `writing/<series-slug>/` (such as `writing/dl-tuning-playbook/`), along with `sitemap.xml`, `feed.xml`, `assets/css/tokens.css`, `assets/css/fonts.css`, and `assets/data/publications.bib`, are **generated build outputs**. Never hand-edit the generated `.html` files or `assets/css/tokens.css`; edit the underlying JSON data, Python generators, or `assets/css/redesign.css` and run the build.
 
 ### Data Files (`assets/data/`)
 - **`assets/data/content.json`** — Hand-curated site copy and structured records:
@@ -20,7 +20,7 @@ All eleven HTML pages at the repository root (`index.html`, `publications.html`,
     - `biography`: Chronological career `timeline`, `personalNote`, and `dogPhotos` (all rendered on `biography.html`).
     - `mentorship`: Introduction callout and `menteesByStage` (`postdoctoral`, `doctoral`, `mastersProjects`, `bachelors`, `secondary`, plus `completed` cohorts).
     - `publications`: Featured paper metadata, author profile links, and curated ADS library IDs (`libraries`).
-    - `talks`, `teaching`, `awards`, `service`, `news`: Structured records rendered by their respective `scripts/pages_*.py` modules.
+    - `talks`, `teaching`, `awards`, `service`, `news`, `writing`: Structured records rendered by their respective `scripts/pages_*.py` modules (`writing` stores multi-part interactive `series`, curriculum `acts`, and unified `entries`).
     - `software`: GitHub username (`githubUser`), category `groups`, `featured` packages, interactive `showcase` (`allsky`), and the repository `curation` dictionary.
 - **`assets/data/publications_data.json`** — Automated publication cache maintained by `scripts/update_publications_unified.py` (metrics, yearly citation series, RIQ series, and 130+ paper records with `categoryProbabilities` and `researchArea`).
 - **`assets/data/software_data.json`** — Automated software cache maintained by `scripts/fetch_software.py` (GitHub stars, forks, push dates, archive flags, and monthly PyPI download counts).
@@ -29,8 +29,8 @@ All eleven HTML pages at the repository root (`index.html`, `publications.html`,
 ### Build & Generator Scripts (`scripts/`)
 - `scripts/build_tokens.py` — Compiles `assets/data/tokens.json` into `assets/css/tokens.css`.
 - `scripts/setup_fonts.py` — Copies self-hosted WOFF2 font files from `node_modules/@fontsource/*` into `assets/fonts/` and writes `assets/css/fonts.css` (skips smoothly when `node_modules/` is absent and fonts are already committed).
-- `scripts/build_html.py` — Renders all 11 HTML pages, `sitemap.xml`, and `feed.xml`.
-- `scripts/pages_shared.py` and `scripts/pages_{mentorship,software,teaching,talks,service,awards,news}.py` — Per-page HTML generators imported by `build_html.py`.
+- `scripts/build_html.py` — Renders all 12 HTML pages, `sitemap.xml`, and `feed.xml`.
+- `scripts/pages_shared.py` and `scripts/pages_{mentorship,software,teaching,talks,service,awards,news,writing}.py` — Per-page HTML generators imported by `build_html.py`.
 - `scripts/check_build.py` — Verifies tag balance, unique element IDs, required section containers (`#about`, `#research`, `#team`, `#join` on `index.html`), listview `data-year` attributes, CSS token definitions, raw hex restrictions (`scripts/check_allow_hex.txt`), and internal link/anchor resolution across all built pages.
 - `scripts/export_bib.py` — Generates `assets/data/publications.bib` from `assets/data/publications_data.json` (and verifies synchronization with `--check`).
 - `scripts/curate_ads_libraries.py` — Audits `assets/data/publications_data.json` against `assets/data/ads_library_cache.json` and the mentee rosters in `assets/data/content.json`, auto-classifies unclassified papers into `primary`, `postdoc`, `student`, `significant`, and `all` ADS libraries, updates `ads_library_cache.json` (`--apply-cache`), and pushes new bibcodes directly to NASA ADS via the `biblib` REST API (`--push-ads`).

@@ -70,3 +70,5 @@ All colors are defined in `assets/data/tokens.json` with paired `dark` and `ligh
    - **Biography:** 2-column Short Biography + childhood photo (`china_childhood.jpg`) followed by an alternating left/right *Career & Research Evolution Timeline* with research focus tags.
    - **Awards:** Research Prizes & Academic Awards 2-column grid + Competitive Fellowships + Group & Mentee Fellowships showcase.
    - **News:** Featured Press & Research Highlights 3-card spotlight grid above the filterable chronological feed.
+8. **Writing (`writing.html` & `writing/dl-tuning-playbook/`):**
+   - **Featured Series Spotlight & 4-Act Curriculum Map:** Tier-1 `.art-panel.writing-spotlight` module with live `localStorage` reading-progress tracking (`tp-posts-opened`), dynamic next-part resume CTA, and a 4-column curriculum grid (`Act I`–`Act IV`) above a dual-row filterable feed (`Filter by format` and `Filter by curriculum act`).

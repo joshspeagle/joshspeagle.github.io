@@ -3790,6 +3790,405 @@
           "accent": "violet"
         }
       }
+    },
+    "writing": {
+      "stats": {
+        "seriesCount": 1,
+        "postsCount": 9,
+        "figuresCount": 20,
+        "rulesCount": 64
+      },
+      "series": [
+        {
+          "id": "dl-tuning-playbook",
+          "kicker": "Featured Interactive Series · 9 Parts + Reference Companion",
+          "title": "Notes on the Deep Learning Tuning Playbook",
+          "subtitle": "Working through Google Research's Deep Learning Tuning Playbook with first-principles mathematical models, 20 interactive simulations, and step-by-step diagnostics.",
+          "date": "Nov 2026",
+          "year": 2026,
+          "status": "Preview",
+          "storageKey": "tp-posts-opened",
+          "landingUrl": "writing/dl-tuning-playbook/index.html",
+          "startUrl": "writing/dl-tuning-playbook/pages/01-the-tuning-loop.html",
+          "referenceUrl": "writing/dl-tuning-playbook/pages/reference.html",
+          "designSheetUrl": "writing/dl-tuning-playbook/design-sheet.html",
+          "sourceRepoUrl": "https://github.com/google-research/tuning_playbook",
+          "sourceRepoLabel": "Google Research Playbook",
+          "summary": "Google Research's <em>Deep Learning Tuning Playbook</em> (Godbole, Dahl, Gilmer, Shallue, and Nado, 2023) distills years of practical experience training neural networks into concise operational rules, such as re-tuning the learning rate whenever the batch size changes or scoring a training run by its best validation checkpoint. I wrote this nine-part interactive series to work through the mathematical and statistical mechanisms behind those recommendations, pairing each part with explicit quadratic, noisy-SGD, and order-statistic toy models and browser simulations.",
+          "acts": [
+            {
+              "id": "act-1",
+              "num": "Act I",
+              "title": "The Loop & Starting Configuration",
+              "accent": "ic",
+              "description": "How a single training run is scored, how rounds of tuning studies fit together, and the four choices that fix a baseline before tuning begins.",
+              "parts": [
+                1,
+                2,
+                3
+              ]
+            },
+            {
+              "id": "act-2",
+              "num": "Act II",
+              "title": "Searching & Reading the Space",
+              "accent": "ii",
+              "description": "Classifying hyperparameters into target, nuisance, and fixed roles, sampling high-dimensional search spaces with quasi-random designs, and reading diagnostic plots.",
+              "parts": [
+                4,
+                5,
+                6
+              ]
+            },
+            {
+              "id": "act-3",
+              "num": "Act III",
+              "title": "Horizon, Scaling & Stability",
+              "accent": "sla",
+              "description": "When compute-bound vs. time-bound regimes change the optimal schedule horizon, and how warmup and gradient clipping stabilize large-step training.",
+              "parts": [
+                7,
+                8
+              ]
+            },
+            {
+              "id": "act-4",
+              "num": "Act IV",
+              "title": "Systems Pipeline & Reference",
+              "accent": "du",
+              "description": "Input pipeline throughput, evaluation cadence, checkpoint management, multi-host synchronization, plus the 64-rule cross-reference and glossary.",
+              "parts": [
+                9
+              ]
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "id": "tp-overview",
+          "order": 0,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "series",
+          "act": "all",
+          "accent": "sla",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Series Overview",
+          "title": "Notes on the Deep Learning Tuning Playbook (Series Landing Page & Flowchart)",
+          "url": "writing/dl-tuning-playbook/index.html",
+          "summary": "Overview of the nine-part interactive series, the provenance key separating Playbook recommendations from mathematical models and editorial commentary, the four-act curriculum map, and the 19-node interactive tuning process flowchart.",
+          "details": "Includes the interactive end-to-end tuning process flowchart (covering project setup, round planning, reading curves and search-space boundaries, and adoption decisions) and direct links to all nine parts, the 114-concept glossary, and the 44-entry bibliography.",
+          "figures": 1,
+          "tags": [
+            "Deep Learning",
+            "Hyperparameter Tuning",
+            "Interactive Series",
+            "Flowchart"
+          ]
+        },
+        {
+          "id": "tp-part-01",
+          "order": 1,
+          "partNum": 1,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-1",
+          "accent": "ic",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 1 of 9 · Act I",
+          "title": "The tuning loop: trials, studies, and retrospective checkpoint selection",
+          "shortTitle": "The tuning loop",
+          "url": "writing/dl-tuning-playbook/pages/01-the-tuning-loop.html",
+          "summary": "How a single training run is scored by its best validation checkpoint, why a coordinate slice through a joint hyperparameter optimum looks flat or biased when nuisance parameters are frozen, and how iterative studies refine a search space.",
+          "details": "Covers Retrospective Best-Checkpoint Selection (Figure 1.1), the 2-D quadratic coupling model between learning rate and weight decay (Figure 0.1 slice bias derivation), and multi-round study refinement (Figure 1.2).",
+          "figures": 3,
+          "playbookSections": [
+            "Overview of the tuning process",
+            "Scoring a single training run"
+          ],
+          "tags": [
+            "Checkpoints",
+            "Validation Noise",
+            "Search Rounds",
+            "Act I"
+          ]
+        },
+        {
+          "id": "tp-part-02",
+          "order": 2,
+          "partNum": 2,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-1",
+          "accent": "ic",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 2 of 9 · Act I",
+          "title": "Starting a project: architecture, optimizer, initialization, and first checks",
+          "shortTitle": "Starting a project",
+          "url": "writing/dl-tuning-playbook/pages/02-starting-a-project.html",
+          "summary": "Choosing a battle-tested baseline architecture and well-understood optimizer (SGD with momentum or AdamW), verifying initialization scale and loss-at-step-zero sanity checks, and confirming the pipeline can overfit a tiny subset.",
+          "details": "Unpacks update-rule dynamics across SGD, momentum, and diagonal preconditioning on ill-conditioned quadratic valleys (Figure 2.1) and the pre-flight verification sequence before launching sweeps.",
+          "figures": 1,
+          "playbookSections": [
+            "Choosing the model architecture",
+            "Choosing the optimizer",
+            "Starting with a simple configuration"
+          ],
+          "tags": [
+            "Optimizers",
+            "AdamW",
+            "SGD",
+            "Baselines",
+            "Act I"
+          ]
+        },
+        {
+          "id": "tp-part-03",
+          "order": 3,
+          "partNum": 3,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-1",
+          "accent": "ic",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 3 of 9 · Act I",
+          "title": "Choosing the batch size: step time, throughput, and the critical batch size",
+          "shortTitle": "Choosing the batch size",
+          "url": "writing/dl-tuning-playbook/pages/03-batch-size.html",
+          "summary": "Why wall-clock training time is the product of step latency and required step count, how hardware compute saturation and gradient noise scale determine the critical batch size, and why changing batch size requires re-tuning the learning rate and regularization.",
+          "details": "Derives the noisy-SGD steady-state covariance, the linear-to-diminishing-returns transition at the critical batch size B_crit (Figures 3.1–3.2), and how optimal learning rates shift under fixed-step vs. fixed-epoch budgets (Figure 3.3).",
+          "figures": 3,
+          "playbookSections": [
+            "Choosing the batch size"
+          ],
+          "tags": [
+            "Batch Size",
+            "Hardware Throughput",
+            "Gradient Noise Scale",
+            "Act I"
+          ]
+        },
+        {
+          "id": "tp-part-04",
+          "order": 4,
+          "partNum": 4,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-2",
+          "accent": "ii",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 4 of 9 · Act II",
+          "title": "Designing a study: target, nuisance, and fixed hyperparameters, and quasi-random search",
+          "shortTitle": "Designing a study",
+          "url": "writing/dl-tuning-playbook/pages/04-searching-the-space.html",
+          "summary": "How dividing hyperparameters into target, nuisance, and fixed roles makes comparisons against a baseline valid, and why Sobol quasi-random sequences cover low-dimensional subspaces far more evenly than regular grids or uniform random draws.",
+          "details": "Demonstrates grid projection collapse, largest empty-interval gaps in 1-D projections, and best-of-K order statistics across grid, uniform random, and Sobol quasi-random search designs (Figures 4.1–4.2 and 5.1–5.2).",
+          "figures": 4,
+          "playbookSections": [
+            "Scientific vs nuisance hyperparameters",
+            "Designing a tuning study"
+          ],
+          "tags": [
+            "Quasi-Random Search",
+            "Sobol Sequences",
+            "Nuisance Parameters",
+            "Act II"
+          ]
+        },
+        {
+          "id": "tp-part-05",
+          "order": 5,
+          "partNum": 5,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-2",
+          "accent": "ii",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 5 of 9 · Act II",
+          "title": "Reading the results of a study: boundary hits, training curves, and isolation checks",
+          "shortTitle": "Reading the results",
+          "url": "writing/dl-tuning-playbook/pages/05-reading-the-results.html",
+          "summary": "Inspecting marginal sensitivity plots to check whether the best trials piled up against a search-space boundary, diagnosing overfitting and instability in top training curves, and verifying that nuisance parameters did not confound the winner.",
+          "details": "Walks through four diagnostic steps after every sweep: search-range boundary checks (Figure 6.1), training/validation curve galleries (Figure 6.2), nuisance-isolation slices (Figure 6.3), and baseline regressions (Figure 6.4).",
+          "figures": 4,
+          "playbookSections": [
+            "Extracting insight from experimental results"
+          ],
+          "tags": [
+            "Diagnostics",
+            "Loss Curves",
+            "Search Space Boundaries",
+            "Act II"
+          ]
+        },
+        {
+          "id": "tp-part-06",
+          "order": 6,
+          "partNum": 6,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-2",
+          "accent": "ii",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 6 of 9 · Act II",
+          "title": "Deciding whether to adopt a change: seed variance, reruns, and complexity trade-offs",
+          "shortTitle": "Adopting a change",
+          "url": "writing/dl-tuning-playbook/pages/06-adopting-a-change.html",
+          "summary": "Separating real improvements from run-to-run seed variance and study-level selection bias, sizing matched multi-seed reruns, and weighing marginal validation gains against added code and maintenance complexity.",
+          "details": "Quantifies winner's curse inflation across K-trial sweeps (Figure 0.2) and shows how matched N-seed reruns shrink confidence intervals on the true treatment effect before a change is folded into the baseline (Figure 7.1).",
+          "figures": 2,
+          "playbookSections": [
+            "Accounting for variance across trainings",
+            "After exploration concludes"
+          ],
+          "tags": [
+            "Seed Variance",
+            "Statistical Significance",
+            "Selection Bias",
+            "Act II"
+          ]
+        },
+        {
+          "id": "tp-part-07",
+          "order": 7,
+          "partNum": 7,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-3",
+          "accent": "sla",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 7 of 9 · Act III",
+          "title": "Choosing how long to train: compute-bound vs. time-bound regimes and schedule horizons",
+          "shortTitle": "Training horizon",
+          "url": "writing/dl-tuning-playbook/pages/07-training-horizon.html",
+          "summary": "How learning-rate decay schedules tie the optimal trajectory to the chosen step horizon T, why short-horizon rankings reverse at longer horizons, and how to extend training cleanly under compute-bound vs. time-bound constraints.",
+          "details": "Compares cosine, linear, and step decay schedules across horizons (Figure 8.1), maps the compute-bound vs. time-bound frontier (Figure 8.2), and contrasts horizon rescaling against low-learning-rate continuation (Figure 8.3).",
+          "figures": 3,
+          "playbookSections": [
+            "Deciding how long to train",
+            "Guidance for short runs"
+          ],
+          "tags": [
+            "Learning Rate Schedules",
+            "Cosine Decay",
+            "Training Horizon",
+            "Act III"
+          ]
+        },
+        {
+          "id": "tp-part-08",
+          "order": 8,
+          "partNum": 8,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-3",
+          "accent": "sla",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 8 of 9 · Act III",
+          "title": "Finding and fixing training instabilities: loss spikes, warmup, and gradient clipping",
+          "shortTitle": "Training instabilities",
+          "url": "writing/dl-tuning-playbook/pages/08-training-instabilities.html",
+          "summary": "Recognizing early and mid-training curvature spikes when step size exceeds the local sharpness ceiling 2/λ_max, and using linear learning-rate warmup and global-norm gradient clipping to stabilize training at larger learning rates.",
+          "details": "Illustrates quadratic overshoot at the 2/λ_max stability threshold, loss and gradient-norm spike signatures (Figure 9.1), linear warmup trajectories through high early curvature (Figure 9.2), and gradient clipping thresholds (Figure 9.3).",
+          "figures": 3,
+          "playbookSections": [
+            "Debugging and mitigating training instabilities"
+          ],
+          "tags": [
+            "Training Instability",
+            "Warmup",
+            "Gradient Clipping",
+            "Sharpness",
+            "Act III"
+          ]
+        },
+        {
+          "id": "tp-part-09",
+          "order": 9,
+          "partNum": 9,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "part",
+          "act": "act-4",
+          "accent": "du",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Part 9 of 9 · Act IV",
+          "title": "Input pipelines, evaluation cadence, checkpoints, and multi-host training",
+          "shortTitle": "Pipelines & checkpoints",
+          "url": "writing/dl-tuning-playbook/pages/09-pipeline-practice.html",
+          "summary": "Eliminating host input stalls, decoupling validation cadence from step-count changes, saving retrospective best checkpoints, and synchronizing RNG streams, batch normalization statistics, and gradients across multi-host workers.",
+          "details": "Models accelerator vs. host input-pipeline timelines and evaluation overhead (Figure 11.1) and provides a complete operational checklist for multi-GPU/multi-TPU training parity.",
+          "figures": 1,
+          "playbookSections": [
+            "Implementing the training pipeline",
+            "Evaluating the model",
+            "Saving checkpoints"
+          ],
+          "tags": [
+            "Systems",
+            "Input Pipelines",
+            "Multi-Host Training",
+            "BatchNorm",
+            "Act IV"
+          ]
+        },
+        {
+          "id": "tp-reference",
+          "order": 10,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "reference",
+          "act": "act-4",
+          "accent": "du",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Reference Companion · Act IV",
+          "title": "Reference Companion: 64 Playbook rules, 114-concept glossary, and annotated bibliography",
+          "shortTitle": "Reference companion",
+          "url": "writing/dl-tuning-playbook/pages/reference.html",
+          "summary": "Complete cross-reference table mapping all 64 operational rules from the Google Research Playbook to the nine series parts and interactive figures, alongside the 114-concept glossary and 44-entry bibliography.",
+          "details": "Designed as a fast lookup desk reference during active model tuning: filter by Playbook section, jump directly to the simulation or mathematical derivation for any rule, or browse the complete mathematical notation and concept index.",
+          "figures": 0,
+          "tags": [
+            "Reference",
+            "Glossary",
+            "Bibliography",
+            "64 Rules",
+            "Act IV"
+          ]
+        },
+        {
+          "id": "tp-design-sheet",
+          "order": 11,
+          "year": 2026,
+          "date": "Nov 2026",
+          "kind": "reference",
+          "act": "act-4",
+          "accent": "du",
+          "seriesId": "dl-tuning-playbook",
+          "badge": "Design & Visual System",
+          "title": "Design Sheet: typography, color-coded math tokens, and interactive figure architecture",
+          "shortTitle": "Design sheet",
+          "url": "writing/dl-tuning-playbook/design-sheet.html",
+          "summary": "Living component specification for the series: semantic color roles (--model, --data, --third, --fourth, --reader), equation-to-figure token bindings, recessed instrument docks, and WCAG contrast verification across light and dark themes.",
+          "details": "Documents the visual and pedagogical architecture used across all 12 pages of the series, including live interactive specimens of callouts, stepping-stone cards, decision trees, and figure toolbars.",
+          "figures": 0,
+          "tags": [
+            "Design System",
+            "Visualization",
+            "Typography",
+            "Accessibility"
+          ]
+        }
+      ]
     }
   },
   "pages": {
@@ -3883,6 +4282,12 @@
         "text": "Return home",
         "url": "/index.html"
       }
+    },
+    "writing": {
+      "kicker": "Essays, Series & Technical Notes",
+      "title": "Writing",
+      "tagline": "Long-form interactive series, pedagogical walkthroughs, and technical notes on statistical inference, machine learning, and astrophysics.",
+      "description": "Interactive series, technical essays, and pedagogical notes on machine learning, Bayesian inference, and astrostatistics by Joshua S. Speagle."
     }
   }
 }

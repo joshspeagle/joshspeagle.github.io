@@ -1,3 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /writing.html
+Disallow: /writing/
 Sitemap: https://joshspeagle.com/sitemap.xml
