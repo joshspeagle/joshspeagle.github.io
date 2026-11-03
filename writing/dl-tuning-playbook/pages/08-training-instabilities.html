@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Finding and fixing training instabilities · Notes on the Deep Learning Tuning Playbook</title>
+  <meta name="description" content="Notes on the Deep Learning Tuning Playbook's section on optimization failures: why a learning rate can be too large, how to tell when an instability is limiting the learning rate, and how learning-rate warmup and gradient clipping widen the usable range.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232563eb'/%3E%3Cpath d='M7 22 C12 22 14 10 19 10 C22 10 23 15 25 15' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='10' r='2.6' fill='%23d97706'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="stylesheet" href="../css/figures/fig-signature.css">
+  <link rel="stylesheet" href="../css/figures/fig-warmup.css">
+  <link rel="stylesheet" href="../css/figures/fig-clipping.css">
+  <link rel="stylesheet" href="../css/pages/08-training-instabilities.css">
+</head>
+<body data-page="pages/08-training-instabilities.html" data-root="../">
+  <header class="site-header"></header>
+
+  <main id="main" class="page">
+    <header class="post-header">
+      <div class="post-kicker">Part 8 of 9 &middot; Dynamics, stability and engineering</div>
+      <h1>Finding and fixing training instabilities</h1>
+      <div class="post-meta">
+        <span>Josh Speagle</span>
+        <a href="https://github.com/google-research/tuning_playbook#how-can-optimization-failures-be-debugged-and-mitigated" target="_blank" rel="noopener">Notes on the Playbook's section on optimization failures ↗</a>
+      </div>
+    </header>
+
+    <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
+
+    <p class="lede">Push the learning rate high enough and any network's training loss will spike or turn into NaN. Usually that marks the top of the useful range and nothing more. Sometimes, though, the best learning rate in a sweep sits right at the edge of that failure, and the model would likely train faster and reach a better result with larger steps if it could survive them. The Playbook's section on optimization failures is about recognizing that case and widening the range of usable learning rates, mostly with learning-rate warmup and gradient clipping.</p>
+
+    <nav class="post-roadmap" aria-label="In this post">
+      <div class="post-roadmap-head">In this post</div>
+      <div class="post-roadmap-grid">
+        <a class="roadmap-item" href="#what">
+          <span class="roadmap-item-title">When an instability matters</span>
+          <span class="roadmap-item-desc">An instability matters when it caps the learning rate below the one the model would otherwise prefer.</span>
+        </a>
+        <a class="roadmap-item" href="#mechanism">
+          <span class="roadmap-item-title">Why a step can be too large</span>
+          <span class="roadmap-item-desc">Gradient descent overshoots once the learning rate exceeds the stability limit, 2 divided by the curvature.</span>
+        </a>
+        <a class="roadmap-item" href="#diagnosis">
+          <span class="roadmap-item-title">Identifying an unstable workload</span>
+          <span class="roadmap-item-desc">Look at the loss curves just above the best rate, and evaluate every step early on.</span>
+        </a>
+        <a class="roadmap-item" href="#fixes">
+          <span class="roadmap-item-title">What to try</span>
+          <span class="roadmap-item-desc">Warmup, clipping, another optimizer, standard architecture choices, and a lower rate last.</span>
+        </a>
+        <a class="roadmap-item" href="#warmup">
+          <span class="roadmap-item-title">Learning-rate warmup</span>
+          <span class="roadmap-item-desc">Find the shortest ramp that reaches ten times the unstable rate without diverging.</span>
+        </a>
+        <a class="roadmap-item" href="#clipping">
+          <span class="roadmap-item-title">Gradient clipping</span>
+          <span class="roadmap-item-desc">Clip at the 90th percentile of logged norms. Clipping most steps amounts to a learning-rate cut.</span>
+        </a>
+        <a class="roadmap-item" href="#protocol">
+          <span class="roadmap-item-title">In practice</span>
+          <span class="roadmap-item-desc">One path from a suspicious sweep to a fix.</span>
+        </a>
+        <a class="roadmap-item" href="#where">
+          <span class="roadmap-item-title">Where this fits</span>
+          <span class="roadmap-item-desc">The instability check belongs inside any round that tunes the learning rate.</span>
+        </a>
+      </div>
+    </nav>
+
+    <article class="post-body">
+
+      <!-- ============================== WHEN AN INSTABILITY MATTERS ============================== -->
+      <section class="prose" id="what">
+        <h2>When an instability matters</h2>
+
+        <p>Run a learning-rate sweep over a wide enough range and it will have a failing end. Above some rate, trials diverge to NaN or their loss climbs and stays high. That is no cause for concern. The Playbook is direct about it:</p>
+
+        <blockquote class="pb-quote">
+          <p>Any workload will become unstable if the learning rate is too large. Instability is only an issue when it forces us to use a learning rate that's too small.</p>
+          <cite><a href="https://github.com/google-research/tuning_playbook#identifying-unstable-workloads" target="_blank" rel="noopener">Deep Learning Tuning Playbook, "Identifying unstable workloads" ↗</a></cite>
+        </blockquote>
+
+        <p>A <span data-concept="instability">training instability</span> in this sense is a problem of the learning rate's range. Larger learning rates usually make faster progress per step, so a model that would prefer a larger rate but cannot survive one trains more slowly and often ends worse. Figure 1 sketches the difference. In a healthy sweep the loss falls as the rate grows, reaches a minimum, and rises again before training fails. In an unstable workload the failures begin before that minimum is reached, and the best rate you can measure is the largest one that still trains.</p>
+
+        <figure class="schematic l-text" id="fig-ceiling" role="group" aria-labelledby="fig-ceiling-title"
+                data-playbook-img="assets/playbook/stride_instability.png"
+                data-playbook-src="1811-1815"
+                data-playbook-caption="Playbook Figure 4. A WideResNet on CIFAR-10 with the stride of one residual block changed from 2x2 to 1x1 (orange) next to the standard model (blue). Top: test error against base learning rate, with crosses marking significant training instability and stars the best rates. Bottom: the training loss of both models at learning rates 0.001 and 0.1. The Playbook's caption reports that the change does not hurt at low learning rates, that high learning rates no longer train well, and that 1,000 steps of warmup resolved this instance and allowed stable training at a maximum learning rate of 0.1.">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-ceiling-title">An instability that caps the learning rate</span>
+            <span class="chip">Schematic</span>
+          </figcaption>
+          <div class="p08-sketch">
+            <svg viewBox="0 0 420 250" role="img" aria-labelledby="fig-ceiling-title fig-ceiling-desc">
+              <desc id="fig-ceiling-desc">Validation loss against learning rate on a log scale. The solid curve falls as the learning rate grows until trials start to diverge, shown as crosses along the top. A dashed continuation shows where the curve would have reached its minimum at a larger rate. A bracket on the axis marks the range of learning rates lost to the instability.</desc>
+              <line class="p08-axis" x1="50" y1="206" x2="404" y2="206"/>
+              <line class="p08-axis" x1="50" y1="20" x2="50" y2="206"/>
+              <text class="p08-axis-text" x="227" y="242" text-anchor="middle">learning rate (log scale)</text>
+              <text class="p08-axis-text" x="20" y="113" text-anchor="middle" transform="rotate(-90 20 113)">validation loss</text>
+              <polyline class="p08-ghost" points="202.8,164.1 211.0,167.2 219.2,169.9 227.4,172.3 235.7,174.3 243.9,176.1 252.1,177.5 260.3,178.6 268.5,179.4 276.8,179.9 285.0,180.0 293.2,179.8 301.4,179.2 309.6,178.2 317.8,176.8 326.1,175.0 334.3,172.9 342.5,170.4 350.7,167.5 358.9,164.1 367.1,160.5 375.4,156.4 383.6,151.9 391.8,147.1 400.0,141.9"/>
+              <polyline class="p08-model" points="60.0,60.0 66.0,66.3 71.9,72.4 77.8,78.3 83.8,84.1 89.8,89.7 95.7,95.1 101.7,100.4 107.6,105.5 113.5,110.4 119.5,115.2 125.5,119.8 131.4,124.2 137.4,128.5 143.3,132.6 149.2,136.5 155.2,140.2 161.1,143.8 167.1,147.2 173.0,150.5 179.0,153.5 184.9,156.4 190.9,159.2 196.8,161.7 202.8,164.1"/>
+              <g class="p08-cross">
+                <path d="M225,31l10,10M235,31l-10,10"/><path d="M252,31l10,10M262,31l-10,10"/><path d="M279,31l10,10M289,31l-10,10"/>
+                <path d="M306,31l10,10M316,31l-10,10"/><path d="M334,31l10,10M344,31l-10,10"/><path d="M361,31l10,10M371,31l-10,10"/>
+              </g>
+              <text class="p08-note" x="298" y="62" text-anchor="middle">trials that diverge</text>
+              <circle class="p08-ring" cx="202.8" cy="164.1" r="8"/>
+              <circle class="p08-ring-ghost" cx="285" cy="180" r="8"/>
+              <text class="p08-label" x="190" y="186" text-anchor="end">best rate</text>
+              <text class="p08-label" x="190" y="201" text-anchor="end">that trains</text>
+              <text class="p08-ghost-text" x="300" y="146" text-anchor="start">if training</text>
+              <text class="p08-ghost-text" x="300" y="161" text-anchor="start">stayed stable</text>
+              <path class="p08-bracket" d="M202.8,198v8M202.8,202H285M285,198v8"/>
+              <text class="p08-accent-text" x="244" y="224" text-anchor="middle">rates lost to the instability</text>
+            </svg>
+          </div>
+          <p class="fig-caption">A sketch of a learning-rate sweep for an unstable workload. Trials diverge before the loss reaches the minimum that the same model would reach at a larger rate if training stayed stable, so the best rate that trains sits at the edge of the failures. The Playbook's Figure 4, under "The Playbook's figure", shows a real case, in which one stride changed in a WideResNet. In that figure the best rate falls from about 0.2 to about 0.01 (my reading of the plot).</p>
+        </figure>
+
+        <p>The Playbook distinguishes early and mid-training <span data-concept="instability-types">instability</span>, and its list of fixes treats them differently:</p>
+        <ul>
+          <li><strong>Early instability</strong> happens at initialization or in the first part of training. The loss spikes in the first few steps, and the run either diverges or recovers and then trains slowly.</li>
+          <li><strong>Mid-training instability</strong> is a sudden instability in the middle of training. The Playbook links such spikes to outlier gradient norms.</li>
+        </ul>
+        <p>Work since the Playbook adds a third pattern in large Transformers, a slow divergence toward the end of training caused by growing output logits. In those experiments an auxiliary loss on the logits (z-loss) resolved it, and weight decay mitigated it for the larger models <cite data-ref="wortsman2023"></cite>. The Playbook's advice addresses the first two types.</p>
+      </section>
+
+      <!-- ============================== WHY A STEP CAN BE TOO LARGE ============================== -->
+      <section class="prose" id="mechanism">
+        <h2>Why a step can be too large</h2>
+
+        <p>A one-dimensional quadratic shows why a large learning rate fails. Take the loss $\ell(\theta) = \tfrac{1}{2} \mu \theta^2$, where $\theta$ is a single weight and $\mu$ is the curvature (how sharply the loss bends around its minimum). The gradient is $\mu\theta$, so one step of gradient descent with learning rate $\eta$ gives</p>
+
+        <p>$$\theta_{t+1} = \theta_t - \eta \mu \theta_t = (1 - \eta \mu)\,\theta_t .$$</p>
+
+        <p>Each step multiplies the distance to the minimum by the same factor $1 - \eta \mu$. When $\eta \mu &lt; 1$ the factor is positive, and the weight approaches the minimum from one side. When $1 &lt; \eta \mu &lt; 2$ the factor is negative but smaller than one in size, so the weight crosses to the other side of the minimum on every step and ends a little closer each time. When $\eta \mu &gt; 2$ the factor is larger than one in size, and every step overshoots farther than the last. The largest stable learning rate for this loss is therefore $2/\mu$. A larger curvature allows a smaller step.</p>
+
+        <figure class="fig l-wide" id="fig-overshoot" role="group" aria-labelledby="fig-overshoot-title">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-overshoot-title">Gradient descent on a quadratic overshoots past 2/μ</span>
+            <span class="chip toy">Interactive toy model</span>
+          </figcaption>
+          <p class="fig-task">Drag the learning rate past the 2/μ mark under the slider, then switch to the smaller curvature at the same rate.</p>
+          <div class="fig-tutorial" data-figure="fig-overshoot">
+            <div class="fig-tut-step-data" data-label="Smooth descent" data-params="{&quot;eta&quot;:0.2,&quot;bowl&quot;:&quot;narrow&quot;}">At $\eta = 0.2$ and $\mu = 4$, $\eta \mu = 0.8$. Each step keeps 20% of the distance to the minimum, so the weight reaches the minimum from one side in a few steps, and panel (b) shows $\theta$ approaching zero without changing sign.</div>
+            <div class="fig-tut-step-data" data-label="Zigzag that settles" data-params="{&quot;eta&quot;:0.4,&quot;bowl&quot;:&quot;narrow&quot;}">At $\eta = 0.4$, $\eta \mu = 1.6$ and the factor is $-0.6$. The weight crosses the minimum on every step, and panel (b) alternates in sign while the swings shrink. Training still converges, more slowly than at $\eta = 0.2$.</div>
+            <div class="fig-tut-step-data" data-label="Past the limit" data-params="{&quot;eta&quot;:0.55,&quot;bowl&quot;:&quot;narrow&quot;}">At $\eta = 0.55$, past $2/\mu = 0.5$, the factor is $-1.2$. Each swing is 20% larger than the last, and the weight leaves the frame within a few steps. On a real network the loss shoots up and turns into NaN.</div>
+            <div class="fig-tut-step-data" data-label="Same step, smaller curvature" data-params="{&quot;eta&quot;:0.55,&quot;bowl&quot;:&quot;wide&quot;}">The same $\eta = 0.55$ at $\mu = 2$ gives $\eta \mu = 1.1$, and the weight settles almost at once. The learning rate that failed is safe on a flatter loss, because the limit $2/\mu$ is now 1.0.</div>
+          </div>
+          <p class="fig-caption">Gradient descent from $\theta = -2$ on $\ell(\theta) = \tfrac{1}{2} \mu \theta^2$. Panel (a) shows the iterates on the loss, joined in order, and panel (b) shows the weight at each step. The figure loads at curvature $\mu = 4$, where the limit is $2/\mu = 0.5$, and $\eta = 0.2$. Nothing here is random or fitted. The weights follow $\theta_{t+1} = (1 - \eta \mu)\theta_t$ exactly.</p>
+          <details class="fig-model"><summary>How this toy works</summary>
+            <p>The loss is $\ell(\theta) = \tfrac{1}{2} \mu \theta^2$ with $\mu = 4$ or $\mu = 2$, and the update is plain gradient descent with no momentum and no noise, so $\theta_t = (1 - \eta \mu)^t \theta_0$ with $\theta_0 = -2$. The run is shown for 12 steps. Iterates with $|\theta| &gt; 3.2$ leave the frame, and panel (b) marks the first of them with a cross on the edge.</p>
+          </details>
+        </figure>
+
+        <p>A network's loss has millions of directions, and each has its own curvature. The curvatures are the eigenvalues of the loss's Hessian (the matrix of second derivatives), and the largest of them is called the <span data-concept="sharpness">sharpness</span>, $\mu_{\max}$. Near a minimum the loss is close to a quadratic, gradient descent acts on each eigen-direction separately, and the most curved direction fails first. On a quadratic, gradient descent therefore diverges once $\eta &gt; 2/\mu_{\max}$ <cite data-ref="cohen2021"></cite>. I will call $2/\mu_{\max}$ the <span data-concept="stability-limit">stability limit</span>.</p>
+
+        <details class="math-aside"><summary>Why the most curved direction sets the limit</summary>
+          <p>Near a minimum $\theta^\star$, write the loss as $\ell(\theta) \approx \ell(\theta^\star) + \tfrac{1}{2}(\theta - \theta^\star)^\top H (\theta - \theta^\star)$ with Hessian $H$. Expand the offset in the eigenvectors $v_i$ of $H$, with eigenvalues $\mu_i$: $\theta - \theta^\star = \sum_i a_i v_i$. One gradient step maps $a_i \mapsto (1 - \eta\mu_i)\, a_i$, which is the one-dimensional update applied to each direction on its own. Every coefficient shrinks only if $|1 - \eta\mu_i| &lt; 1$ for all $i$, which is $\eta &lt; 2/\mu_{\max}$.</p>
+          <p>Momentum changes the constant 2 by a factor of order one <cite data-ref="cohen2021"></cite>, and for Adam there is no clean analogue (Gilmer et al. fit an empirical limit of about $40/\eta$ in their appendix) <cite data-ref="gilmer2021"></cite>. Treat $2/\mu_{\max}$ as the scale of the limit.</p>
+        </details>
+
+        <p>The sharpness of a real network changes as it trains. Progressive sharpening (Cohen et al.) and the flatter-region result of Gilmer et al. explain most of the Playbook's advice. Under full-batch gradient descent, the sharpness tends to rise during training until it reaches about $2/\eta$, then hovers there while the loss keeps falling over the long run with brief rises along the way <cite data-ref="cohen2021"></cite>. Cohen et al. call this regime the edge of stability, and it means small upward blips in the loss near the limit are normal. Gilmer et al. studied the other direction. Models that start out sharp can diverge at small learning rates, and successful training happens once the parameters reach a region where the sharpness is below $2/\eta$ <cite data-ref="gilmer2021"></cite>. A learning rate that rises slowly pushes the parameters toward such flatter regions, and Gilmer et al. measured the sharpness tracking about $2/\eta$ through much of warmup. Gilmer et al. present this push as the mechanism behind warmup, and the <a href="#why-warmup">warmup section</a> returns to it with a toy model.</p>
+      </section>
+
+      <!-- ============================== IDENTIFYING AN UNSTABLE WORKLOAD ============================== -->
+      <section class="prose" id="diagnosis">
+        <h2>Identifying an unstable workload</h2>
+
+        <p>The practical question is whether the best learning rate in your latest sweep is the true optimum or the largest rate that survives an instability. The Playbook's answer starts from the sweep you already have. If the best trial sits right next to the infeasible ones (trials that produce NaNs or "uncharacteristically high values of the loss"), and the trials just above it show the loss going up during training, the workload is unstable, and fixing the instability will likely let you train better. Figure 3 lays out the Playbook's procedure with its supporting checks, evaluating every step early in training and logging the gradient norm.</p>
+
+        <figure class="schematic l-text" id="fig-identify" role="group" aria-labelledby="fig-identify-title"
+                data-playbook-img="assets/playbook/loss_model_with_instability.png"
+                data-playbook-src="1880-1901"
+                data-playbook-caption="Playbook Figure 7b. The training loss of a model trained at a learning rate where it is unstable. The loss falls steadily, then rises suddenly at about step 10,000, the step the Playbook's text gives. Read from the plot, it does not return to its earlier level. The Playbook suggests this check at 5 or 10 times the best learning rate: a sudden rise after a steady decline means the model likely suffers from optimization instability.">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-identify-title">The Playbook's check for an unstable workload</span>
+            <span class="chip">Playbook procedure</span>
+          </figcaption>
+          <ol class="p08-steps">
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="4" cy="17" r="1.6"/><circle cx="8" cy="13" r="1.6"/><circle cx="12" cy="10" r="1.6"/><circle cx="16" cy="11" r="1.6"/><path d="M18 4l4 4M22 4l-4 4"/></svg></span>
+              <div class="p08-step-body"><strong>Sweep the learning rate.</strong> Run a learning-rate sweep and find the best learning rate, $\text{lr}^*$.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20V4M3 20h18"/><path d="M5 7c3 6 6 8 8 8s3-4 4-7 2 6 4 6"/></svg></span>
+              <div class="p08-step-body"><strong>Plot the runs just above it.</strong> Plot the training loss curves for learning rates just above $\text{lr}^*$.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M14.5 14.5L21 21"/></svg></span>
+              <div class="p08-step-body"><strong>Look for loss going up.</strong> If those curves show the loss rising during periods of training, fixing the instability will likely result in better training. A training run at 5 or 10 times $\text{lr}^*$ that shows a sudden rise after a steady decline confirms it.</div>
+            </li>
+          </ol>
+          <div class="p08-side">
+            <div class="p08-side-card">
+              <span class="p08-step-icon p08-small" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12h3l2-6 3 12 3-9 2 5h7"/></svg></span>
+              <div><strong>Evaluate every step early on.</strong> Some models are unstable for a few steps and then recover, which ordinary evaluation schedules miss. Train about 500 steps at $2\times$ the current best rate and evaluate the loss at every step.</div>
+            </div>
+            <div class="p08-side-card">
+              <span class="p08-step-icon p08-small" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20v-6M9 20v-4M13 20V5M17 20v-3"/></svg></span>
+              <div><strong>Log the gradient norm.</strong> Record the L2 norm of the full loss gradient during training. Outlier values can cause spurious instability in the middle of training, and the log is what you will set a clipping threshold from.</div>
+            </div>
+          </div>
+          <p class="fig-caption">The Playbook's procedure for identifying stability problems, from its sections on identifying unstable workloads and on when to apply warmup, with the wording kept close to the original. The Playbook's Figure 7b shows the confirming check on a real model.</p>
+        </figure>
+
+        <p>Figure 4 runs the procedure on a toy. A 13-trial sweep at constant learning rates looks like the Playbook's Figure 7a. The best trial, at $\text{lr}^* =$ <span data-num="fig-signature:default:best-lr">0.0281</span>, is the last feasible rate before all <span data-num="fig-signature:default:diverged-count">5</span> larger rates on the grid diverge. Panel (b) shows the training loss at the selected rate twice, as an evaluation schedule every <span data-num="fig-signature:model:eval-every">100</span> steps would record it and as an every-step log records it. At $\text{lr}^*$ the loss spikes to <span data-num="fig-signature:default:peak">9.57</span> times its starting value at step <span data-num="fig-signature:default:peak-step">14</span> and recovers by step 100, so the evaluations every 100 steps never see the spike. The Playbook's every-step check exists to catch this kind of spike.</p>
+
+        <figure class="fig l-wide" id="fig-signature" role="group" aria-labelledby="fig-signature-title"
+                data-playbook-img="assets/playbook/axis_model_with_instability.png"
+                data-playbook-img2="assets/playbook/more_frequent_evals.png"
+                data-playbook-alt2="Playbook Figure 5: training loss of two models evaluated every 1,000 steps and every step for the first 100 steps."
+                data-playbook-src="1836-1901"
+                data-playbook-caption="Left, Playbook Figure 7a: a hyperparameter axis plot for a model with training instability. The best trial (star) is at the edge of the infeasible trials (crosses), which either produce NaNs or uncharacteristically high loss. Right, Playbook Figure 5: two models with different convolution strides. Evaluated every 1,000 steps (left half) both look normal. Evaluated every step for the first 100 steps (right half), the stride (1, 1) model's loss jumps to about 100 within the first few steps (read from the plot) and then recovers.">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-signature-title">The best rate sits at the edge of the diverging rates</span>
+            <span class="chip toy">Interactive toy model</span>
+          </figcaption>
+          <p class="fig-task">Drag the learning-rate handle along panel (a), or press a trial, and compare the two evaluation schedules in panel (b).</p>
+          <div class="fig-tutorial" data-figure="fig-signature">
+            <div class="fig-tut-step-data" data-label="The best trial" data-params="{&quot;rate&quot;:0.028117066259517452}">Panel (a) is the sweep. The ringed trial at 0.0281 has the lowest loss, and every grid rate above it is a cross on the top edge. Panel (b) shows that this run's loss spikes about tenfold around step 14, between the evaluation at step 0 and the one at step 100.</div>
+            <div class="fig-tut-step-data" data-label="Twice the best rate" data-preset="2x">The Playbook's every-step check runs at twice the best rate. Here that run, at 0.0562, diverges at step 5, long before any ordinary evaluation, so the cross in panel (b) sits at the top edge near the start.</div>
+            <div class="fig-tut-step-data" data-label="Ten times the best rate" data-preset="10x">At ten times the best rate the run diverges at step 3. The toy has early instability and no other kind, so the failures above the best rate all happen in the first few steps. In the Playbook's Figure 7b the rise comes at step 10,000 instead.</div>
+            <div class="fig-tut-step-data" data-label="A rate that is too small" data-params="{&quot;rate&quot;:0.0028117066259517455}">At a tenth of the best rate the loss falls smoothly with no spike, and the two evaluation schedules agree. The run is stable but slow, and its best loss is about ten times the best trial's.</div>
+          </div>
+          <p class="fig-caption">A sweep of <span data-num="fig-signature:model:grid-size">13</span> constant learning rates in a toy model, each trained for <span data-num="fig-signature:model:steps">20,000</span> steps. Panel (a) plots each trial's best training loss against its learning rate. The <span data-num="fig-signature:default:diverged-count">5</span> rates above the best one diverge, and the bracket on the axis marks the gap between the best feasible rate and the first diverging one, which brackets the <span data-concept="unstable-base-lr">unstable base learning rate</span> (about <span data-num="fig-signature:model:refined-unstable-lr">0.032</span>). Panel (b) plots the loss relative to its starting value at the selected rate, every step and every <span data-num="fig-signature:model:eval-every">100</span> steps. The curves come from a toy model (see "How this toy works") with no trained network behind them.</p>
+          <details class="fig-model"><summary>How this toy works</summary>
+            <p>The toy tracks the expected loss of stochastic gradient descent on a quadratic with seven fixed curvatures and one sharp direction. The sharp direction's curvature starts high and relaxes toward a target set by the learning rate, $\mu^\star(\eta) = \min(\mu_0, \max(\mu_\infty, 2k/\eta))$, so a run that survives its first steps at a high rate is pushed into a flatter region. This rule is mine, simplified from the picture in Gilmer et al. (2021) and Cohen et al. (2021). A run counts as diverged when its loss exceeds <span data-num="fig-signature:model:diverge-at">100</span> times its start. The plotted losses carry multiplicative log-normal noise ($\sigma =$ <span data-num="fig-signature:model:noise-sigma">0.05</span>, seed <span data-num="fig-signature:model:noise-seed">1</span>) so that the two evaluation schedules look like logged curves. The readout and the table use the loss beneath the noise.</p>
+          </details>
+        </figure>
+
+        <p>The Playbook names the rate at which the model first becomes unstable the <code>unstable_base_learning_rate</code>. It is the reference point for the warmup recipe below, so it should be located between the best feasible grid point and the first diverging one, as the bracket in Figure 4 does.</p>
+      </section>
+
+      <!-- ============================== WHAT TO TRY ============================== -->
+      <section class="prose" id="fixes">
+        <h2>What to try</h2>
+
+        <p>Once a sweep shows that an instability is limiting the learning rate, the first fix people try is to lower the learning rate until the spikes go away. The Playbook lists that option last, as "a last resort", because a lower rate slows the whole run to avoid a problem that may last a few hundred steps or a handful of outlier batches. Its <a href="https://github.com/google-research/tuning_playbook#potential-fixes-for-common-instability-patterns" target="_blank" rel="noopener">list of potential fixes</a> is in Figure 5.</p>
+
+        <figure class="schematic l-wide" id="fig-fixes" role="group" aria-labelledby="fig-fixes-title">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-fixes-title">The Playbook's potential fixes for instability</span>
+            <span class="chip">Playbook procedure</span>
+          </figcaption>
+          <div class="p08-fixes">
+            <div class="p08-fix">
+              <div class="p08-fix-head"><span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20L12 7h9"/><path d="M3 20h18" class="faint"/></svg></span><strong>Learning-rate warmup</strong></div>
+              <p>Ramp the learning rate up from zero at the start of training.</p>
+              <span class="p08-tag">Best for early instability</span>
+            </div>
+            <div class="p08-fix">
+              <div class="p08-fix-head"><span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 9h20"/><path d="M3 18l3-5 3 3 3-7 3 6 3-2 3 5" class="faint"/><path d="M12 9V4"/></svg></span><strong>Gradient clipping</strong></div>
+              <p>Rescale any gradient whose norm exceeds a threshold. It may fix some bad initializations that warmup cannot.</p>
+              <span class="p08-tag">Early and mid-training</span>
+            </div>
+            <div class="p08-fix">
+              <div class="p08-fix-head"><span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v4h-4"/></svg></span><strong>A new optimizer</strong></div>
+              <p>"Sometimes Adam can handle instabilities that Momentum can't." The Playbook calls this an active area of research.</p>
+              <span class="p08-tag">When the first two fall short</span>
+            </div>
+            <div class="p08-fix p08-fix-wide">
+              <div class="p08-fix-head"><span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="5" rx="1"/><rect x="4" y="10" width="16" height="5" rx="1"/><rect x="4" y="17" width="16" height="4" rx="1"/></svg></span><strong>Standard architecture and initialization</strong></div>
+              <p>Add residual connections and normalization if the model lacks them, and initialize residual branches to zero (for example ReZero <cite data-ref="bachlechner2020"></cite>). Put the normalization inside the residual branch:</p>
+              <div class="p08-norm">
+                <span class="p08-norm-ok"><span class="p08-mark" aria-hidden="true">✓</span><code>x + f(Norm(x))</code></span>
+                <span class="p08-norm-bad"><span class="p08-mark" aria-hidden="true">✗</span><code>Norm(x + f(x))</code><small>known to cause issues</small></span>
+              </div>
+            </div>
+            <div class="p08-fix p08-fix-last">
+              <div class="p08-fix-head"><span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v16M5 12l7 7 7-7"/></svg></span><strong>Lower the learning rate</strong></div>
+              <p>Accept the smaller rate the instability allows.</p>
+              <span class="p08-tag p08-tag-warn">A last resort</span>
+            </div>
+          </div>
+          <p class="fig-caption">The fixes from the Playbook's section on optimization failures, with its notes on when each helps. The Playbook does not rank the first four. It marks lowering the learning rate as the last resort.</p>
+        </figure>
+
+        <p>Related work adds detail to the architecture item. Goyal et al. initialized the last batch-normalization scale in each residual block to zero, so that each block starts as the identity, and found that it eased optimization early in training with large batches <cite data-ref="goyal2017"></cite>. For Transformers, Wortsman et al. normalized the queries and keys in attention (qk-layernorm). Without it, the learning rate at which their models diverged fell as the models grew, and with it the models trained to low loss at high learning rates <cite data-ref="wortsman2023"></cite>. Warmup and clipping remain the Playbook's main tools, and each comes with a recipe.</p>
+      </section>
+
+      <!-- ============================== WARMUP ============================== -->
+      <section class="prose" id="warmup">
+        <h2>Learning-rate warmup</h2>
+
+        <p><span data-concept="warmup">Learning-rate warmup</span> starts training at a small learning rate and ramps it up to the base rate over the first $W$ steps (<code>warmup_steps</code>). With a linear ramp from zero, the rate at step $t$ is</p>
+
+        <p>$$\eta_t = \eta_{\text{base}} \cdot \min\!\left(1,\ \frac{t}{W}\right).$$</p>
+
+        <p>The Playbook recommends warmup when a sweep looks like Figure 4: the best rate is at the edge of the infeasible ones, and the runs above it show the loss rising. Its recipe sets the target rate first and then searches for the shortest ramp that reaches it.</p>
+
+        <figure class="schematic l-text" id="fig-warmup-recipe" role="group" aria-labelledby="fig-warmup-recipe-title"
+                data-playbook-img="assets/playbook/beneficial_effect_warmup.png"
+                data-playbook-src="1903-1946"
+                data-playbook-caption="Playbook Figure 8. Validation loss against base learning rate for a 6-layer Transformer on WMT14 English-German, with layer normalization after (Post-LN) or inside (Pre-LN) the residual branch, each with and without warmup. Crosses mark poor optimization and stars the best rates. In this figure, adding warmup moves the largest learning rate that trains well upward for both models, and the Pre-LN model trains at higher rates than the Post-LN model.">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-warmup-recipe-title">The Playbook's recipe for tuning warmup</span>
+            <span class="chip">Playbook procedure</span>
+          </figcaption>
+          <ol class="p08-steps">
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h18" stroke-dasharray="2 2"/><path d="M12 4v16"/><circle cx="12" cy="12" r="3"/></svg></span>
+              <div class="p08-step-body"><strong>Start from the unstable rate.</strong> Use the learning rate at which the model becomes unstable, <code>unstable_base_learning_rate</code>, from the check in Figure 3.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 20V14M12 20V8M19 20V3"/></svg></span>
+              <div class="p08-step-body"><strong>Aim ten times higher.</strong> Set <code>base_learning_rate</code> at least one order of magnitude above it. The default is $10\times$, and the whole procedure can be repeated for something like $100\times$.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20L11 8h10"/></svg></span>
+              <div class="p08-step-body"><strong>Ramp, then hold.</strong> Ramp from 0 to <code>base_learning_rate</code> over <code>warmup_steps</code>, then train at that constant rate for <code>post_warmup_steps</code>. Setting <code>post_warmup_steps</code> to twice <code>warmup_steps</code> is usually fine.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="4" cy="12" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="14" cy="12" r="1.7"/><circle cx="20" cy="12" r="2.6"/></svg></span>
+              <div class="p08-step-body"><strong>Sweep the ramp's length.</strong> Try <code>warmup_steps</code> at a few orders of magnitude, such as 10, 10³, 10⁴ and 10⁵, keeping the largest feasible value at or below 10% of <code>max_train_steps</code>. Pick the shortest ramp that remains stable at <code>base_learning_rate</code>.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18h6l4-8h8"/><path d="M3 6h18" class="faint"/></svg></span>
+              <div class="p08-step-body"><strong>Prepend it and compare.</strong> Add the warmup in front of the existing schedule and compare against the baseline with optimal checkpoint selection. A 10,000-step run with 1,000 warmup steps becomes 11,000 steps.</div>
+            </li>
+          </ol>
+          <p class="p08-note-line">If stable training needs more than about 5% of <code>max_train_steps</code> for warmup, the Playbook suggests increasing <code>max_train_steps</code>. It gives no typical length: "Some models only need 100 steps, while others (particularly transformers) may need 40k+."</p>
+          <p class="fig-caption">The steps of the Playbook's section on how to apply learning-rate warmup, in order. The Playbook's Figure 8, under "The Playbook's figure", shows the result the recipe is after on a real Transformer.</p>
+        </figure>
+
+        <p>One part of this recipe has been qualified since. <cite data-ref="wortsman2023">Wortsman et al. (2023)</cite> found that warmups up to 25% of training still reduced the sensitivity of Transformers to the learning rate and lowered their loss, past the Playbook's 10% cap.</p>
+
+        <p>Figure 7 runs the sweep of step 4 in the same toy as Figure 4. The unstable base learning rate is $u =$ <span data-num="fig-warmup:model:unstable-lr">0.0316</span>, so the target is $10u \approx 0.316$, and with <code>max_train_steps</code> at <span data-num="fig-warmup:model:max-train-steps">100,000</span> the ramp may be at most <span data-num="fig-warmup:model:cap">10,000</span> steps long. Each candidate runs for its ramp plus twice its length at the base rate, as the recipe prescribes. Panel (a) shows the schedule against the toy's stability limit, $2/\mu_{\max}$, where $\mu_{\max}$ is the toy's sharpness (the curvature of its sharp direction) at each step. Panel (b) records each length you try.</p>
+
+        <figure class="fig l-wide" id="fig-warmup" role="group" aria-labelledby="fig-warmup-title"
+                data-playbook-img="assets/playbook/instability_during_warmup.png"
+                data-playbook-src="1871-1878"
+                data-playbook-caption="Playbook Figure 6. A Post-LN Transformer trained with warmups of 1, 1,000, 4,000, 10,000 and 40,000 steps, as listed in the plot's legend (note the logarithmic step axis). Left: training loss. Right: the learning-rate schedules, linear ramps that look curved on log axes. The shorter warmups make progress and then diverge partway through training. The Playbook reports that 40,000 steps of warmup were needed for successful training in this case.">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-warmup-title">The ramp has to rise slower than the stability limit</span>
+            <span class="chip toy">Interactive toy model</span>
+          </figcaption>
+          <p class="fig-task">Drag the handle at the end of the ramp in panel (a) to try another warmup length, and watch whether the learning rate stays under the dash-dot limit.</p>
+          <div class="fig-tutorial" data-figure="fig-warmup">
+            <div class="fig-tut-step-data" data-label="A 1,000-step ramp" data-params="{&quot;end&quot;:1000,&quot;base&quot;:&quot;10x&quot;,&quot;kind&quot;:&quot;ramp&quot;}">The solid line is the learning rate, rising linearly to $10u$ by step 1,000 and then held. The dash-dot line is the stability limit $2/\mu_{\max}$. The limit starts at 0.02 and rises as the climbing rate pushes the sharpness down, and the ramp stays just under it the whole way. The run reaches the base rate and keeps training.</div>
+            <div class="fig-tut-step-data" data-label="A 100-step ramp" data-params="{&quot;end&quot;:100,&quot;base&quot;:&quot;10x&quot;,&quot;kind&quot;:&quot;ramp&quot;}">A ramp ten times faster outruns the limit. The learning rate crosses it at step 6, before the sharpness has had time to fall, and the run diverges at step 14. Panel (b) now holds a cross at 100 steps.</div>
+            <div class="fig-tut-step-data" data-label="Hold, then jump" data-preset="hold">This schedule holds a constant low rate for 1,000 steps and then jumps to $10u$. The flat dash-dot line shows that the low rate never pushed the sharpness down, so the limit is still 0.02 when the jump comes, and the run diverges two steps later.</div>
+          </div>
+          <p class="fig-caption">Tuning <code>warmup_steps</code> in the toy model of Figure 4, with a target of ten times $u =$ <span data-num="fig-warmup:model:unstable-lr">0.0316</span>. Panel (a) plots the learning rate and the stability limit $2/\mu_{\max}$ against step on log axes. The figure loads with a <span data-num="fig-warmup:default:end">1,000</span>-step ramp, the shortest of the lengths tried that trains (<span data-num="fig-warmup:model:shortest-10x">1,000</span> steps). Its rate never crosses the limit, and the product $\eta \mu_{\max}$ peaks at <span data-num="fig-warmup:default:peak">1.98</span>, just under 2. A 100-step ramp crosses the limit at step <span data-num="fig-warmup:w100:first-above">6</span> and diverges at step <span data-num="fig-warmup:w100:divergence-step">14</span>, and a 300-step ramp diverges at step <span data-num="fig-warmup:w300:divergence-step">34</span>. Panel (b) marks each length tried: a filled circle for a run that reaches the base rate, a cross for one that diverges, with the 10% cap dashed.</p>
+          <details class="fig-model"><summary>How this toy works</summary>
+            <p>The toy is the one in Figure 4. The sharp direction starts with curvature $\mu_0 =$ <span data-num="fig-warmup:model:h0">100</span>, so the stability limit at step 0 is $2/\mu_0 = 0.02$, and relaxes toward the target $\mu^\star(\eta) = \min(\mu_0, \max(\mu_\infty, 2k/\eta))$ with $\mu_\infty =$ <span data-num="fig-warmup:model:h-inf">5</span> and $k =$ <span data-num="fig-warmup:model:c">0.8</span>. The rising learning rate is what lowers the target, which follows Gilmer et al.'s account of warmup. The rule and its constants are mine and are chosen for illustration. A run diverges when its loss passes <span data-num="fig-warmup:model:diverge-at">100</span> times its start. Each length $W$ runs for $3W$ steps (at least <span data-num="fig-warmup:model:run-floor">2,000</span>). The "hold, then jump" schedule holds $\eta =$ <span data-num="fig-warmup:model:hold-rate">0.0158</span> (half of $u$) for $W$ steps and then jumps to the base rate.</p>
+          </details>
+        </figure>
+
+        <h3 id="why-warmup">Why a ramp works and a step does not</h3>
+
+        <p>In the toy, the sharp direction's curvature at step 0 sets the limit at 0.02, sixteen times below the target rate of 0.316. Jumping straight to the target is far past the limit. The ramp works because the learning rate sets the size of each step and also pushes the parameters toward flatter regions, which raises the limit. A slow ramp gives the sharpness time to fall ahead of the rate. A fast one crosses the limit while the sharpness is still high, which is the failure at 100 and 300 steps in Figure 7.</p>
+
+        <p>The "hold, then jump" schedule separates those two effects. A constant rate pushes the sharpness down only until the limit sits just above that rate, which matches Gilmer et al.'s observation that the sharpness settles near $2/\eta$. Holding <span data-num="fig-warmup:model:hold-rate">0.0158</span> for 1,000 steps keeps training stable, but in the toy that rate is too low to start the push, and the limit stays at 0.02. The jump to 0.316 at step 1,000 is about sixteen times past the limit, and the run diverges at step <span data-num="fig-warmup:hold:divergence-step">1,002</span>. A longer or higher hold would raise the limit only to about the hold rate, still far below the target. Goyal et al. saw the same failure with real networks. A constant low-rate warmup followed by a jump made the training error spike, and on ResNet-50 with large batches it ended worse than no warmup (25.88% top-1 error against 24.84%), while a gradual ramp gave 23.74% <cite data-ref="goyal2017"></cite>. The Playbook's recipe uses a ramp, and these results are a reason to keep it that way.</p>
+
+        <p>The toy is a deliberate simplification. A real network's sharpness has no formula like the toy's target, and Gilmer et al. also report models that did not benefit from warmup at the learning rates they tried, and one Transformer without layer normalization that warmup alone could not make train <cite data-ref="gilmer2021"></cite>.</p>
+      </section>
+
+      <!-- ============================== CLIPPING ============================== -->
+      <section class="prose" id="clipping">
+        <h2>Gradient clipping</h2>
+
+        <p>Warmup helps with instability at the start of training. <span data-concept="clipping">Gradient clipping</span> also addresses mid-training instability, which the Playbook links to outlier gradient norms. It caps the size of each update. If the norm of the gradient $\lVert g \rVert$ exceeds a threshold $c$, the gradient is rescaled to have norm $c$:</p>
+
+        <p>$$g' = c \, \frac{g}{\lVert g \rVert} \qquad \text{when } \lVert g \rVert &gt; c .$$</p>
+
+        <p>The update keeps its direction, and its length shrinks to $c$. The Playbook's advice is to set $c$ from what the model's gradients look like, and it says the ideal threshold is "just above the 'typical' gradient norm".</p>
+
+        <figure class="schematic l-text" id="fig-clipping-recipe" role="group" aria-labelledby="fig-clipping-recipe-title">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-clipping-recipe-title">The Playbook's recipe for a clipping threshold</span>
+            <span class="chip">Playbook procedure</span>
+          </figcaption>
+          <ol class="p08-steps">
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 4v16h18"/><path d="M6 14l3-4 3 2 3-6 3 5"/></svg></span>
+              <div class="p08-step-body"><strong>Log the unclipped norm.</strong> Record the gradient norm before clipping, and by default make two plots: the norm against step, and a histogram of the norms over all steps.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20v-4M8 20v-9M11 20V5M14 20V9M17 20v-4"/><path d="M15.5 3v17" stroke-dasharray="2 2"/></svg></span>
+              <div class="p08-step-body"><strong>Start at the 90th percentile.</strong> Choose the threshold at the 90th percentile of the logged norms. The right value depends on the workload, and the threshold can be tuned if this starting point does not work.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 8h20"/><path d="M2 14h20" class="faint"/><path d="M12 3v14M8 13l4 4 4-4"/></svg></span>
+              <div class="p08-step-body"><strong>Clip harder if needed.</strong> If the instability remains, lower the threshold.</div>
+            </li>
+            <li>
+              <span class="p08-step-icon p08-warn" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3L2 20h20z"/><path d="M12 9v5M12 17v.5"/></svg></span>
+              <div class="p08-step-body"><strong>Stop at half the updates.</strong> If more than half of the updates are being clipped, the clipping is "extremely aggressive", which the Playbook calls "in essence a strange way of reducing the learning rate". At that point, reduce the learning rate instead.</div>
+            </li>
+          </ol>
+          <p class="p08-note-line">The Playbook also notes that a longer warmup sometimes corrects an instability that clipping does not, and it leaves open whether to clip during warmup and whether an adaptive threshold would work better.</p>
+          <p class="fig-caption">The steps of the Playbook's section on gradient clipping, in order. None of the papers cited here tests the 90th-percentile starting point or the 50% rule. Both are the Playbook authors' rules of thumb.</p>
+        </figure>
+
+        <p>Why does clipping most updates amount to a smaller learning rate? With plain SGD or momentum the update is proportional to the gradient, so clipping a step multiplies that step's learning rate by $c/\lVert g \rVert$. If nearly every step is clipped, the run trains at a learning rate scaled down by the average of that factor. Gilmer et al. give a concrete case. A model clipped at 1.0 while its gradient norms sat around 5.0 was, in their words, "artificially lowering the learning rate by a factor of 1/5", and they raised the threshold to 6.0 <cite data-ref="gilmer2021"></cite>.</p>
+
+        <p>Figure 9 shows the Playbook's two default plots for a synthetic log of <span data-num="fig-clipping:model:steps">5,000</span> unclipped gradient norms. The series has an early stretch of elevated norms and <span data-num="fig-clipping:default:spikes">25</span> isolated spikes. With the threshold at the 90th percentile, $c =$ <span data-num="fig-clipping:default:threshold">1.71</span>, clipping acts on <span data-num="fig-clipping:default:clipped">10%</span> of the steps, catching the spikes and most of the early stretch, and the average factor applied to the gradient (the mean multiplier) is <span data-num="fig-clipping:default:multiplier">0.97</span>. At the median norm, <span data-num="fig-clipping:half:threshold">1.04</span>, half the steps are clipped and the mean multiplier falls to <span data-num="fig-clipping:half:multiplier">0.88</span>. At <span data-num="fig-clipping:nearly-all:threshold">0.40</span>, <span data-num="fig-clipping:nearly-all:clipped">99%</span> of steps are clipped and the mean multiplier is <span data-num="fig-clipping:nearly-all:multiplier">0.40</span>, which is close to cutting the learning rate by more than half.</p>
+
+        <figure class="fig l-wide" id="fig-clipping" role="group" aria-labelledby="fig-clipping-title"
+                data-playbook-img="assets/playbook/gradient_clipping.png"
+                data-playbook-src="1948-1985"
+                data-playbook-caption="Playbook Figure 9. The gradient L2 norm of an unstable ResNet-200 (named in the plot's title) trained with gradient clipping, against step. Read from the plot, the norm starts near 10⁵ and falls to a typical value of about 3 within the first few thousand steps. A threshold just above the typical norm is labeled a better clip threshold, and one at 1 is labeled too aggressive. The figure's notes say that clipping stabilized early training here, and that clipping applied at every step effectively cuts the learning rate and can slow training.">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-clipping-title">Setting the clipping threshold from logged norms</span>
+            <span class="chip toy">Interactive toy model</span>
+          </figcaption>
+          <p class="fig-task">Drag the threshold handle on panel (a) up and down, and read how many steps it clips and what that does to the mean multiplier.</p>
+          <div class="fig-tutorial" data-figure="fig-clipping">
+            <div class="fig-tut-step-data" data-label="The 90th percentile" data-preset="p90">The threshold sits at the 90th percentile of the norms. In panel (a) the tinted band above it holds the early stretch and the isolated spikes, and few of the ordinary steps. One step in ten is clipped, and the mean multiplier in panel (b)'s header stays near 1.</div>
+            <div class="fig-tut-step-data" data-label="Half the steps clipped" data-preset="half">At the median norm the band takes in the upper half of the ordinary steps. Half of all updates are clipped, the Playbook's line for "extremely aggressive" clipping.</div>
+            <div class="fig-tut-step-data" data-label="Nearly every step clipped" data-preset="nearly-all">With the threshold below almost every norm, nearly every update is shrunk. The mean multiplier drops to about 0.4, so the run is training at well under half its nominal learning rate. This is the regime the Playbook calls extremely aggressive clipping.</div>
+          </div>
+          <p class="fig-caption">A synthetic series of <span data-num="fig-clipping:model:steps">5,000</span> logged gradient norms, the Playbook's two default plots of it, and a clipping threshold. Panel (a) plots each step's unclipped norm on a log scale, with the threshold as a horizontal line and the clipped region tinted. Panel (b) is the histogram of the same norms, with the threshold and the 90th percentile (<span data-num="fig-clipping:default:threshold">1.71</span>) marked. The figure loads with the threshold at the 90th percentile, where <span data-num="fig-clipping:default:clipped">10%</span> of steps are clipped and the mean multiplier is <span data-num="fig-clipping:default:multiplier">0.97</span>. No model is trained, so clipping here changes no later gradient.</p>
+          <details class="fig-model"><summary>How this toy works</summary>
+            <p>The logged norm at step $t$ is $\log\lVert g_t \rVert = a\, e^{-t/t_e} + s\, w_t + S_t$, where the first term is an early elevation by a factor of <span data-num="fig-clipping:model:early-factor">5</span> that decays over <span data-num="fig-clipping:model:early-steps">200</span> steps, $w_t$ is Student-t noise with <span data-num="fig-clipping:model:core-df">4</span> degrees of freedom scaled by <span data-num="fig-clipping:model:core-scale">0.25</span>, and $S_t$ is a spike of <span data-num="fig-clipping:model:spike-low">3</span> to <span data-num="fig-clipping:model:spike-high">20</span> times the ordinary norm with probability <span data-num="fig-clipping:model:spike-rate">0.5%</span> per step. For a threshold $c$, the fraction clipped is the share of norms above $c$, and the mean multiplier is the average of $\min(1, c/\lVert g_t \rVert)$ over all steps. "Draw again" draws a new series. The default seed (<span data-num="fig-clipping:seed:chosen">226</span>) was picked from <span data-num="fig-clipping:seed:n">1,000</span> draws as the one whose ratio of 90th percentile to median is the median ratio.</p>
+          </details>
+        </figure>
+
+        <p>Real gradient norms look different in detail. In the Playbook's Figure 9, whose plot title names an unstable ResNet-200, the early norms read from the plot start around $10^5$, and the figure's notes say clipping stabilized early training. The procedure reads the same either way. The threshold goes just above where the norm usually sits, so that it acts on the outliers, and the fraction of clipped steps tells you whether clipping has turned into a learning-rate cut.</p>
+      </section>
+
+      <!-- ============================== IN PRACTICE ============================== -->
+      <section class="prose" id="protocol">
+        <h2>In practice</h2>
+
+        <p>Put together, the Playbook's advice on instability is a short path from a suspicious sweep to a fix, condensed in Figure 10.</p>
+
+        <figure class="schematic l-wide" id="fig-practice" role="group" aria-labelledby="fig-practice-title">
+          <figcaption class="fig-head">
+            <span class="fig-num"></span>
+            <span class="fig-title" id="fig-practice-title">From a suspicious sweep to a fix</span>
+            <span class="chip">Checklist</span>
+          </figcaption>
+          <ol class="p08-flow">
+            <li class="p08-flow-step">
+              <span class="p08-flow-num">1</span>
+              <div class="p08-flow-body">
+                <strong>Check whether instability limits the learning rate.</strong>
+                <p>Is the best rate in your sweep the largest one that trains, with loss rising in the runs just above it? If not, the failing rates mark the top of the useful range, and there is nothing to fix. <a href="#diagnosis">Identifying an unstable workload</a></p>
+              </div>
+            </li>
+            <li class="p08-flow-step">
+              <span class="p08-flow-num">2</span>
+              <div class="p08-flow-body">
+                <strong>Find when it breaks.</strong>
+                <p>Run about 500 steps at twice the best rate, evaluating every step, and look at the logged gradient norm over a full run.</p>
+                <div class="p08-branch">
+                  <div class="p08-branch-card">
+                    <span class="p08-branch-when">Loss spikes in the first steps</span>
+                    <span class="p08-branch-do">Early instability: start with warmup. <a href="#warmup">Warmup recipe</a></span>
+                  </div>
+                  <div class="p08-branch-card">
+                    <span class="p08-branch-when">Spikes or outlier norms mid-run</span>
+                    <span class="p08-branch-do">Mid-training instability: start with clipping at the 90th percentile. <a href="#clipping">Clipping recipe</a></span>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="p08-flow-step">
+              <span class="p08-flow-num">3</span>
+              <div class="p08-flow-body">
+                <strong>Confirm the gain against the baseline.</strong>
+                <p>Prepend the warmup to the existing schedule, or add the clipping, rerun at the higher learning rate, and compare with the baseline using the best checkpoint of each run. Keep the change only if it wins.</p>
+              </div>
+            </li>
+            <li class="p08-flow-step">
+              <span class="p08-flow-num">4</span>
+              <div class="p08-flow-body">
+                <strong>If it is still unstable, widen the search.</strong>
+                <p>Try a longer warmup, clip harder while keeping the clipped share under half, switch from momentum to Adam, or bring the architecture in line with standard practice (residual connections, normalization inside the branch, zero-initialized branches).</p>
+              </div>
+            </li>
+            <li class="p08-flow-step p08-flow-last">
+              <span class="p08-flow-num">5</span>
+              <div class="p08-flow-body">
+                <strong>Lower the learning rate as the last resort.</strong>
+                <p>If none of these allow a larger rate, accept the smaller one.</p>
+              </div>
+            </li>
+          </ol>
+          <p class="fig-caption">A condensed path through the Playbook's advice on optimization failures. Steps 1, 2 and 5 follow the Playbook closely. Step 3 applies its general rule for adopting a change, and the order within step 4 is mine.</p>
+        </figure>
+      </section>
+
+      <section class="prose" id="where">
+        <h2>Where this fits</h2>
+        <p>Instabilities come up whenever a sweep's best learning rate sits at its edge, so this check belongs inside any round of tuning the learning rate. The map places it in the Playbook's overall loop.</p>
+      </section>
+
+      <div class="l-wide">
+        <div class="playbook-map" data-active-zone="dynamics" data-default-node="n_instab"></div>
+      </div>
+
+      <section class="refs" id="references">
+        <h2>References</h2>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023)</cite>.</p>
+        <ol id="reflist"></ol>
+      </section>
+
+      <nav class="pager" aria-label="Post navigation"></nav>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <p>By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado. Playbook figures are reproduced under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.</p>
+  </footer>
+
+  <script src="../js/vendor/d3.v7.min.js"></script>
+  <script src="../js/vendor/katex/katex.min.js"></script>
+  <script src="../js/vendor/katex/auto-render.min.js"></script>
+  <script src="../js/lib/format.js"></script>
+  <script src="../js/lib/prng.js"></script>
+  <script src="../js/lib/toyD.js"></script>
+  <script src="../js/lib/clipping.js"></script>
+  <script src="../js/lib/placer.js"></script>
+  <script src="../js/refs.js"></script>
+  <script src="../js/concepts.js"></script>
+  <script src="../js/site.js"></script>
+  <script src="../js/components/playbook-map.js"></script>
+  <script src="../js/chart.js"></script>
+  <script src="../js/runtime.js"></script>
+  <script src="../js/figures/p08-overshoot.js"></script>
+  <script src="../js/figures/f9-1-signature.js"></script>
+  <script src="../js/figures/f9-2-warmup.js"></script>
+  <script src="../js/figures/f9-3-clipping.js"></script>
+</body>
+</html>

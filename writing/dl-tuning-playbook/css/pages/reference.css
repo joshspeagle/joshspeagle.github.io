@@ -1,0 +1,170 @@
+/* Reference page (pages/reference.html). Dense and scannable: type hierarchy and hairlines,
+   no boxes. Tables stack into labelled cards on phones so the page never scrolls sideways. */
+
+.ref-page { --ref-bar-h: 0px; }
+.ref-page [hidden] { display: none !important; }
+/* anchors land below the sticky bar as well as the header (html's scroll-padding covers the header) */
+.ref-page :is(section, h3, li[id], .ref-term, .ref-eq, .ref-anchor) { scroll-margin-top: calc(var(--ref-bar-h) + 8px); }
+.ref-anchor { display: block; height: 0; }
+main.ref-page p.lede { margin-bottom: 1.2rem; }
+
+/* ---------- sticky bar: filter and section links ---------- */
+main.page > nav.ref-bar {
+  position: sticky; top: var(--header-h); z-index: 12; max-width: none;
+  margin: 0 0 0.6rem; padding: 8px 0 7px;
+  background: var(--bg); border-bottom: 1px solid var(--grid);
+  transition: top 0.22s ease;
+}
+html.header-tucked main.page > nav.ref-bar { top: 0; }
+.ref-bar-row {
+  max-width: var(--measure); margin: 0 auto;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px;
+}
+.ref-filter input {
+  font: inherit; font-size: 0.92rem; width: 14.5rem; max-width: 100%; min-height: 34px;
+  padding: 4px 10px; border: 1px solid var(--border-2); border-radius: 4px;
+  background: var(--surface); color: var(--ink);
+}
+.ref-filter input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.ref-jump { list-style: none; display: flex; flex-wrap: wrap; gap: 2px 12px; margin: 0; padding: 0; font-size: 0.84rem; }
+.ref-jump li { margin: 0; }
+.ref-jump a { color: var(--ink-2); text-decoration: none; }
+.ref-jump a:hover { color: var(--ink); text-decoration: underline; }
+.ref-jump-select { display: none; }
+.ref-filter-status { max-width: var(--measure); margin: 5px auto 0; font-size: 0.82rem; line-height: 1.45; color: var(--ink-2); }
+.ref-filter-status:empty { display: none; }
+.ref-filter-status a { margin-left: 0.35em; white-space: nowrap; }
+/* wide screens have the left "On this page" rail, so the bar keeps only the filter */
+@media (min-width: 1320px) { .ref-jump { display: none; } }
+
+/* ---------- section rhythm ---------- */
+main.ref-page section > h2 { margin-top: 2.6rem; }
+main.ref-page section.prose > p { font-size: 1rem; line-height: 1.6; }
+.ref-rules-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0.6rem 1.2rem;
+  margin-bottom: 0.4rem;
+}
+.ref-rules-head > p { flex: 1 1 24rem; margin: 0; font-size: 1rem; line-height: 1.6; }
+.ref-scope-toggle {
+  display: inline-flex; border: 1px solid var(--border-2); border-radius: 5px; overflow: hidden;
+  background: var(--surface); flex-shrink: 0;
+}
+.ref-scope-btn {
+  font: inherit; font-size: 0.8rem; font-weight: 600; padding: 4px 10px; border: 0;
+  background: transparent; color: var(--ink-2); cursor: pointer;
+}
+.ref-scope-btn + .ref-scope-btn { border-left: 1px solid var(--border-2); }
+.ref-scope-btn.is-active { background: var(--model-tint); color: var(--model-label); }
+.ref-scope-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.ref-group > h3, main.ref-page section > h3 { font-size: 1.06rem; margin: 1.7rem 0 0.45rem; }
+.ref-empty { font-size: 0.92rem; color: var(--ink-3); font-style: italic; }
+
+/* links to the Playbook and to the posts, under each item */
+.ref-src { display: block; margin-top: 0.15rem; font-size: 0.8rem; line-height: 1.5; color: var(--ink-3); }
+p > .ref-src { margin-top: 0.3rem; }
+.ref-src a { color: var(--ink-2); margin-right: 0.9em; white-space: nowrap; text-decoration-color: var(--grid); }
+.ref-src a:hover { color: var(--link); text-decoration-color: currentColor; }
+.ref-src a.ref-pb { color: var(--link); }
+
+/* labels the Playbook itself applies (open question, speculation) and site additions */
+.ref-tag {
+  font-size: 0.7rem; font-weight: 650; letter-spacing: 0.02em; white-space: nowrap;
+  color: var(--third-label); margin-left: 0.4em; vertical-align: 0.06em;
+}
+.ref-tag-site { color: var(--model-label); }
+
+/* ---------- rules ---------- */
+ol.ref-rules { margin: 0 0 0.6rem; padding-left: 2.3em; }
+ol.ref-rules > li { margin: 0 0 0.8rem; padding-left: 0.15em; font-size: 1rem; line-height: 1.55; }
+ol.ref-rules > li::marker { color: var(--ink-3); font-size: 0.82em; font-variant-numeric: tabular-nums; }
+.ref-rule, .ref-rule-more { margin: 0; }
+.ref-rule strong { color: var(--ink); }
+ol.ref-steps { margin: 0.25rem 0 0.15rem; padding-left: 1.3em; }
+ol.ref-steps > li { margin: 0 0 0.1em; }
+ol.ref-rules > li:target, .ref-term:target { background: var(--hi-tint); box-shadow: 0 0 0 6px var(--hi-tint); }
+
+/* ---------- glossary and discrepancies: term on the left, definition on the right ---------- */
+dl.ref-glossary, dl.ref-disc { margin: 0.5rem 0 1rem; }
+.ref-term {
+  display: grid; grid-template-columns: minmax(0, 10.5rem) minmax(0, 1fr); gap: 0 1.2rem;
+  padding: 0.5rem 0; border-top: 1px solid var(--grid);
+}
+.ref-term > .ref-anchor { grid-column: 1 / -1; }
+.ref-term dt { font-weight: 650; font-size: 0.97rem; line-height: 1.4; color: var(--ink); }
+.ref-term dt code { font-size: 0.86em; }
+.ref-term dd { margin: 0; font-size: 0.97rem; line-height: 1.55; }
+dl.ref-disc .ref-term { grid-template-columns: minmax(0, 12rem) minmax(0, 1fr); }
+
+/* ---------- tables ---------- */
+.ref-table-wrap { margin: 0.5rem 0 1.2rem; overflow-x: auto; }
+table.ref-table { width: 100%; font-size: 0.9rem; line-height: 1.45; }
+table.ref-table th, table.ref-table td { padding: 0.5em 0.9em 0.5em 0; }
+table.ref-table thead th { font-size: 0.78rem; font-weight: 650; color: var(--ink-3); border-bottom: 1px solid var(--border-2); }
+table.ref-table tbody th { font-weight: 600; color: var(--ink); }
+table.ref-table .ref-src a { white-space: normal; display: block; margin: 0 0 0.15em; }
+table.ref-table .ref-src { margin: 0; }
+.ref-retune tbody th { width: 30%; }
+.ref-symptoms tbody th { width: 38%; }
+:is(.ref-retune, .ref-symptoms) td:last-child { width: 25%; }
+.ref-notation tbody th { white-space: nowrap; width: 9.5rem; }
+.ref-notation td:last-child { color: var(--ink-2); }
+.ref-added tbody th { width: 22%; }
+.ref-added tbody th .ref-src { margin-top: 0.3rem; font-weight: 400; }
+.ref-map tbody th { font-weight: 400; width: 58%; }
+.ref-map tbody th a { display: inline-block; margin-bottom: 0.15em; }
+ul.ref-models { font-size: 1rem; line-height: 1.55; padding-left: 1.2em; }
+
+/* ---------- update rules: a grid of small blocks, wider than the text column ---------- */
+main.page .ref-eqs {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.2rem 2rem;
+  margin-top: 0.8rem; margin-bottom: 1.2rem;
+  width: min(var(--wide-w), var(--avail)); max-width: none;
+  margin-left: calc(50% - min(var(--wide-w), var(--avail)) / 2); margin-right: 0;
+}
+.ref-eq { min-width: 0; padding-top: 0.2rem; border-top: 1px solid var(--grid); }
+main.ref-page .ref-eq > h3 { font-size: 0.98rem; margin: 0.5rem 0 0; }
+.ref-eq > p { font-size: 0.88rem; line-height: 1.5; color: var(--ink-2); margin: 0.2rem 0 0; }
+.ref-eq .katex-display { margin: 0.25rem 0 0.4rem; }
+.ref-eq .katex-display > .katex { text-align: left; font-size: 1em; }
+@media (max-width: 1099px) { main.page .ref-eqs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ---------- phones ---------- */
+@media (max-width: 639px) {
+  main.page > nav.ref-bar { margin-left: -16px; margin-right: -16px; padding: 6px 16px; }
+  .ref-bar-row { flex-wrap: nowrap; gap: 8px; }
+  .ref-filter { flex: 1 1 auto; min-width: 0; }
+  .ref-filter input { width: 100%; font-size: 16px; min-height: 40px; }
+  .ref-jump { display: none; }
+  .ref-jump-select { display: block; flex: 0 0 auto; }
+  .ref-jump-select select {
+    font: inherit; font-size: 15px; min-height: 40px; max-width: 8.5rem; padding: 0 6px;
+    border: 1px solid var(--border-2); border-radius: 4px; background: var(--surface); color: var(--ink);
+  }
+  ol.ref-rules { padding-left: 1.9em; }
+  .ref-src a { white-space: normal; }
+  .ref-term, dl.ref-disc .ref-term { grid-template-columns: minmax(0, 1fr); }
+  .ref-term dd { margin-top: 0.1rem; }
+  main.page .ref-eqs { grid-template-columns: minmax(0, 1fr); width: auto; margin-left: 0; }
+
+  /* tables become one card per row, each cell labelled from its column head */
+  table.ref-table, table.ref-table tbody, table.ref-table tr, table.ref-table th, table.ref-table td { display: block; width: auto !important; }
+  table.ref-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.ref-table tr { padding: 0.55rem 0; border-top: 1px solid var(--grid); }
+  table.ref-table th, table.ref-table td { border: 0; padding: 0.1rem 0; }
+  table.ref-table td[data-label]::before {
+    content: attr(data-label); display: block; margin-top: 0.3rem;
+    font-size: 0.72rem; font-weight: 650; color: var(--ink-3);
+  }
+  .ref-notation tbody th { white-space: normal; }
+}
+@media (prefers-reduced-motion: reduce) { main.page > nav.ref-bar { transition: none; } }
+@media print { main.page > nav.ref-bar { display: none; } }
+.ref-page section[tabindex="-1"]:focus { outline: none; }
+
+/* site.css sets tabular figures on every table, which widens hyphens in prose cells */
+table.ref-table { font-variant-numeric: normal; }
+.ref-src a { display: inline-block; max-width: 100%; }
+@media (max-width: 639px) {
+  :is(.ref-retune, .ref-symptoms) td:last-child::before { content: none; }
+  :is(.ref-retune, .ref-symptoms) td:last-child { margin-top: 0.3rem; }
+}

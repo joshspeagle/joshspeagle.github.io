@@ -1,0 +1,172 @@
+/* 04-searching-the-space.css: page-specific styles for Part 4 (schematics, reason cards,
+   bootstrap procedure, In practice steps). Colours come from the site tokens, so both themes work. */
+
+/* ---------- shared method colours (match #fig-coverage: grid ochre, random indigo, quasi blue) */
+.p04-c-grid { color: var(--third); }
+.p04-c-random { color: var(--fourth); }
+.p04-c-quasi { color: var(--model); }
+.p04-c-even { color: var(--ink-3); }
+
+/* ---------- Figure: projection collapse ---------- */
+.p04-proj {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 340px)); justify-content: center;
+  gap: 18px 36px; margin: 6px 0 10px;
+}
+.p04-proj-panel { display: flex; flex-direction: column; align-items: stretch; }
+.p04-proj-name { font-weight: 700; font-size: 0.95rem; margin: 0 0 2px; }
+.p04-proj-panel svg { width: 100%; height: auto; display: block; overflow: visible; }
+.p04-proj-foot { font-size: 0.92rem; color: var(--ink-2); text-align: center; margin-top: 2px; }
+.p04-proj-foot strong { color: var(--ink); }
+.p04-curve { fill: none; stroke: var(--ink-2); stroke-width: 2; }
+.p04-frame { fill: var(--surface); stroke: var(--axis); stroke-width: 1; }
+.p04-drop { stroke: currentColor; stroke-width: 1.4; stroke-dasharray: 3 3; opacity: 0.6; }
+.p04-pt { fill: currentColor; }
+.p04-ring { fill: none; stroke: currentColor; stroke-width: 2.2; }
+.p04-t { font-family: var(--font); font-size: 14px; fill: var(--ink-2); }
+.p04-t-small { font-family: var(--font); font-size: 13px; fill: var(--ink-3); }
+.p04-t-label { font-family: var(--font); font-size: 14px; font-weight: 700; fill: currentColor; }
+
+/* ---------- Figure: largest gap ---------- */
+.p04-gaps { display: grid; gap: 10px; margin: 8px 0 6px; }
+.p04-gap-row { display: grid; grid-template-columns: 230px minmax(0, 1fr); align-items: center; gap: 4px 14px; }
+.p04-gap-label { display: flex; flex-direction: column; line-height: 1.3; }
+.p04-gap-name { font-weight: 700; font-size: 0.95rem; color: currentColor; }
+.p04-gap-val { font-size: 0.9rem; color: var(--ink-2); }
+.p04-gap-val strong { color: var(--ink); }
+.p04-gap-strip { width: 100%; height: 34px; display: block; }
+.p04-gap-hi { fill: currentColor; fill-opacity: 0.16; }
+.p04-gap-axis { stroke: var(--axis); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.p04-gap-tick { stroke: currentColor; stroke-width: 2.2; vector-effect: non-scaling-stroke; }
+.p04-gap-axislabels {
+  display: flex; justify-content: space-between; margin-left: 244px; font-size: 0.85rem; color: var(--ink-2);
+}
+.p04-gap-axisname { font-size: 0.85rem; }
+@media (max-width: 639px) {
+  .p04-proj { grid-template-columns: minmax(0, 360px); gap: 14px; }
+  .p04-gap-row { grid-template-columns: 1fr; }
+  .p04-gap-label { flex-direction: row; justify-content: space-between; align-items: baseline; }
+  .p04-gap-axislabels { margin-left: 0; }
+}
+
+/* ---------- Figure: waves of parallel trials ---------- */
+.p04-waves { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px; margin: 8px 0 10px; }
+.p04-wave-panel { border: 1px solid var(--grid); border-radius: 6px; padding: 12px 14px; background: var(--surface); }
+.p04-wave-head { font-weight: 700; font-size: 0.95rem; margin-bottom: 8px; }
+.p04-wave-head span { font-weight: 400; color: var(--ink-2); }
+.p04-wave-row { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 104px; }
+.p04-wave { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.p04-wave-sq { display: grid; gap: 4px; }
+.p04-wave-sq.c1 { grid-template-columns: repeat(1, 18px); }
+.p04-wave-sq.c4 { grid-template-columns: repeat(4, 18px); }
+.p04-sq { width: 18px; height: 18px; border-radius: 3px; border: 2px solid var(--ink-3); background: transparent; }
+.p04-sq.is-informed { border-color: var(--model); background: var(--model); }
+.p04-wave-name { font-size: 0.8rem; color: var(--ink-2); }
+.p04-wave-arrow { display: flex; flex-direction: column; align-items: center; color: var(--model); font-size: 0.75rem; padding-bottom: 18px; }
+.p04-wave-arrow svg { width: 26px; height: 14px; }
+.p04-wave-foot { font-size: 0.92rem; color: var(--ink-2); margin-top: 8px; text-align: center; }
+.p04-wave-foot strong { color: var(--ink); }
+.p04-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: center; font-size: 0.88rem; color: var(--ink-2); }
+.p04-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.p04-legend .p04-sq { width: 14px; height: 14px; }
+@media (max-width: 639px) {
+  .p04-waves { grid-template-columns: 1fr; }
+}
+
+/* ---------- The Playbook's reasons, as cards ---------- */
+ol.p04-reasons {
+  list-style: none; padding: 0; margin: 1.1rem auto 1.4rem; display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+}
+ol.p04-reasons > li {
+  display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 4px 12px; align-items: start;
+  border: 1px solid var(--grid); border-radius: 6px; padding: 12px 14px; background: var(--surface);
+  font-size: 0.95rem; line-height: 1.5; margin: 0;
+}
+ol.p04-reasons .p04-ico {
+  width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center;
+  background: color-mix(in srgb, var(--model) 12%, transparent); color: var(--model);
+}
+ol.p04-reasons .p04-ico svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+ol.p04-reasons h3 { font-family: var(--font); font-size: 0.98rem; font-weight: 700; margin: 6px 0 2px; line-height: 1.3; }
+ol.p04-reasons p { margin: 0; color: var(--ink-2); }
+@media (max-width: 760px) { ol.p04-reasons { grid-template-columns: 1fr; } }
+
+/* ---------- Figure: the bootstrap procedure ---------- */
+ol.p04-flow {
+  list-style: none; padding: 0; margin: 8px 0 10px; display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; counter-reset: p04flow;
+}
+ol.p04-flow > li {
+  counter-increment: p04flow; position: relative; margin: 0;
+  border: 1px solid var(--grid); border-radius: 6px; padding: 10px 12px 12px; background: var(--surface);
+  display: flex; flex-direction: column; gap: 6px;
+}
+ol.p04-flow > li::before {
+  content: counter(p04flow); position: absolute; top: 8px; left: 10px; width: 22px; height: 22px;
+  border-radius: 50%; background: var(--model); color: #fff; font: 700 0.78rem/22px var(--font); text-align: center;
+}
+ol.p04-flow > li:not(:last-child)::after {
+  content: ""; position: absolute; right: -9px; top: 50%; width: 8px; height: 8px;
+  border-top: 2px solid var(--ink-3); border-right: 2px solid var(--ink-3); transform: translateY(-50%) rotate(45deg);
+}
+ol.p04-flow svg { width: 150px; height: 96px; align-self: center; overflow: visible; }
+ol.p04-flow .p04-flow-title { font-weight: 700; font-size: 0.93rem; line-height: 1.3; padding-left: 28px; min-height: 2.6em; }
+ol.p04-flow .p04-flow-text { font-size: 0.88rem; color: var(--ink-2); line-height: 1.45; margin: 0; }
+.p04-g-dot { fill: var(--context, var(--ink-3)); }
+.p04-g-pick { fill: var(--model); }
+.p04-g-ring { fill: none; stroke: var(--model); stroke-width: 2; }
+.p04-g-box { fill: color-mix(in srgb, var(--model) 14%, transparent); stroke: var(--model); stroke-width: 1.6; }
+.p04-g-line { stroke: var(--model); stroke-width: 1.6; }
+.p04-g-ann { font-family: var(--font); font-size: 12px; fill: var(--ink-2); }
+.p04-g-axis { fill: none; stroke: var(--axis); stroke-width: 1; }
+@media (max-width: 900px) {
+  ol.p04-flow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  ol.p04-flow > li:nth-child(2)::after { display: none; }
+}
+@media (max-width: 639px) {
+  ol.p04-flow { grid-template-columns: 1fr; }
+  ol.p04-flow > li { display: grid; grid-template-columns: 140px minmax(0, 1fr); align-items: center; gap: 4px 12px; padding-left: 42px; }
+  ol.p04-flow > li::after { display: none !important; }
+  ol.p04-flow svg { width: 140px; height: 90px; grid-row: 1 / span 2; }
+  ol.p04-flow .p04-flow-title { min-height: 0; padding-left: 0; }
+}
+
+/* ---------- In practice ---------- */
+section.p04-practice { margin-top: 3rem; }
+ol.p04-steps { list-style: none; padding: 0; margin: 1rem auto 1.2rem; counter-reset: p04step; display: grid; gap: 12px; }
+ol.p04-steps > li {
+  counter-increment: p04step; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 2px 14px;
+  border: 1px solid var(--grid); border-radius: 8px; padding: 14px 16px; background: var(--surface); margin: 0;
+}
+ol.p04-steps .p04-step-ico {
+  grid-row: 1 / span 3; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--model); color: #fff; position: relative;
+}
+ol.p04-steps .p04-step-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+ol.p04-steps .p04-step-ico::after {
+  content: counter(p04step); position: absolute; right: -4px; bottom: -4px; width: 20px; height: 20px; border-radius: 50%;
+  background: var(--surface); color: var(--ink); border: 1.5px solid var(--model); font: 700 0.72rem/17px var(--font); text-align: center;
+}
+ol.p04-steps h3 { font-family: var(--font); font-size: 1.02rem; font-weight: 700; margin: 2px 0 0; line-height: 1.35; }
+ol.p04-steps p { margin: 4px 0 0; font-size: 0.97rem; line-height: 1.55; }
+.p04-src {
+  justify-self: start; font-size: 0.74rem; font-weight: 650; border-radius: 999px; padding: 1px 9px; margin-top: 6px;
+  border: 1px solid var(--grid); color: var(--ink-2); background: var(--surface-2);
+}
+.p04-src.is-ours { border-style: dashed; }
+ol.p04-steps .p04-src { grid-column: 2; }
+
+/* ---------- Compact docks for the two interactive figures (desktop) ----------
+   The shared dock stacks its controls and the run strip as two rows. On this page each figure
+   has one parameter, so from 640 px the dock is one wrapping row: Draw again, the parameter,
+   Reset, then the run strip. Phones keep the shared sticky layout. */
+@media (min-width: 640px) {
+  main.page :is(#fig-coverage, #fig-best-of-k) > .fig-dock {
+    flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 18px;
+    padding: 8px 12px;
+  }
+  main.page :is(#fig-coverage, #fig-best-of-k) > .fig-dock > .fig-controls { flex: 0 1 auto; flex-wrap: nowrap; }
+  main.page :is(#fig-coverage, #fig-best-of-k) > .fig-dock .ctl { flex-direction: row; align-items: center; min-width: 0; gap: 8px; }
+  main.page :is(#fig-coverage, #fig-best-of-k) > .fig-dock > .run-strip { flex: 1 1 420px; margin-bottom: 0; padding-top: 0; flex-wrap: nowrap; }
+  main.page :is(#fig-coverage, #fig-best-of-k) > .fig-dock .run-scrub { flex: 1 1 140px; min-width: 100px; }
+}

@@ -1,0 +1,28 @@
+/* fig-warmup.css: the layout of F9.2, warmup under the toy's limit (implementation-plan.md WO-F9.2).
+   Panel (a) is the first row and the strip (b) the second at every width, and (b) is at most
+   120 px tall with its header. The dock holds the presets "ramp" and "hold, then jump" and the
+   run strip: one row from 640 px, two rows in the phone layout. The base rate, "Clear the strip",
+   the presets "100 steps" and "300 steps" and Reset sit in div.fig-controls-more above the dock
+   (f9-2-warmup.js, placeLengthPresets). */
+#fig-warmup .fig-panels { flex-direction: column; flex-wrap: nowrap; gap: 6px; }
+#fig-warmup .panel { flex: 0 0 auto; width: 100%; }
+
+/* the row names of (b), left of the list in the decade it leaves empty: tick text in --ink-2 */
+#fig-warmup .row-name { font-size: var(--fs-tick); fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+
+/* the base rate's segment keeps its label on the row of its buttons */
+#fig-warmup .fig-controls-more .ctl:has(> .seg) { max-width: none; flex: 0 1 auto; flex-direction: row; align-items: center; gap: 10px; }
+
+@media (min-width: 640px) {
+  #fig-warmup .fig-dock { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+  #fig-warmup .fig-dock .fig-controls { flex: 0 0 auto; gap: 8px; }
+  #fig-warmup .fig-dock .run-strip { flex: 1 1 420px; }
+}
+
+@media (max-width: 639px) {
+  #fig-warmup .fig-panels { gap: 4px; }
+  #fig-warmup .fig-dock .fig-controls { flex-wrap: nowrap; gap: 8px; }
+  #fig-warmup .fig-dock .fig-controls > button.preset { flex: 1 1 0; min-width: 0; }
+  #fig-warmup .fig-controls-more .ctl:has(> .seg) { flex: 1 1 100%; }
+  #fig-warmup .fig-controls-more .seg button { white-space: normal; line-height: 1.15; }
+}

@@ -1,0 +1,143 @@
+/* Page 8, finding and fixing training instabilities: the page's schematics and procedure cards.
+   Colours come from site.css's role tokens so both themes work. */
+
+/* ---------- "In this post" (the shared skeleton's markup; the same rules as page 6's) ---------- */
+
+/* ---------- the sketch of a capped learning rate (fig-ceiling) ---------- */
+.p08-sketch { display: flex; justify-content: center; }
+.p08-sketch svg { width: 100%; max-width: 520px; height: auto; display: block; overflow: visible; }
+.p08-sketch text { font-family: var(--font); font-size: 13px; }
+.p08-axis { stroke: var(--axis, var(--ink-3)); stroke-width: 1.2; }
+.p08-axis-text { fill: var(--ink-2); font-size: 13.5px; }
+.p08-model { fill: none; stroke: var(--model); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.p08-ghost { fill: none; stroke: var(--model); stroke-width: 2.2; stroke-dasharray: 5 5; opacity: 0.6; }
+.p08-cross path { stroke: var(--model); stroke-width: 2.2; stroke-linecap: round; fill: none; }
+.p08-note { fill: var(--ink-2); }
+.p08-ring { fill: none; stroke: var(--model); stroke-width: 2; }
+.p08-ring-ghost { fill: none; stroke: var(--model); stroke-width: 1.6; stroke-dasharray: 3 3; opacity: 0.7; }
+.p08-label { fill: var(--model-label); font-weight: 600; }
+.p08-ghost-text { fill: var(--ink-2); font-style: italic; }
+.p08-bracket { stroke: var(--energy-text, var(--data)); stroke-width: 2; fill: none; }
+.p08-accent-text { fill: var(--energy-text, var(--data)); font-weight: 600; }
+
+/* ---------- numbered procedures (fig-identify, fig-warmup-recipe, fig-clipping-recipe) ---------- */
+.p08-steps { list-style: none; margin: 6px 0 12px; padding: 0; counter-reset: p08step; display: grid; gap: 0; }
+.p08-steps > li {
+  counter-increment: p08step; position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px; align-items: start; padding: 10px 0 12px;
+}
+.p08-steps > li + li { border-top: 1px solid var(--grid); }
+/* a rail joining the icons, so the steps read as one sequence */
+.p08-steps > li::before {
+  content: ""; position: absolute; left: 21px; top: 0; bottom: 0; width: 2px;
+  background: color-mix(in srgb, var(--model) 22%, transparent);
+}
+.p08-steps > li:first-child::before { top: 30px; }
+.p08-steps > li:last-child::before { bottom: calc(100% - 30px); }
+.p08-step-icon {
+  position: relative; z-index: 1; width: 44px; height: 44px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 2px solid var(--model); color: var(--model);
+}
+.p08-steps > li > .p08-step-icon::after {
+  content: counter(p08step); position: absolute; right: -6px; top: -6px; min-width: 19px; height: 19px;
+  border-radius: 10px; background: var(--model); color: #fff; font: 700 11.5px/19px var(--font); text-align: center;
+}
+.p08-step-icon svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.p08-step-icon svg circle { fill: currentColor; stroke: none; }
+.p08-step-icon svg .faint { opacity: 0.45; }
+.p08-step-icon.p08-small { width: 34px; height: 34px; flex: 0 0 34px; border-width: 1.5px; }
+.p08-step-icon.p08-small svg { width: 18px; height: 18px; }
+.p08-step-icon.p08-warn { border-color: var(--energy, var(--data)); color: var(--energy-text, var(--data)); }
+.p08-steps > li > .p08-step-icon.p08-warn::after { background: var(--energy, var(--data)); }
+.p08-step-icon svg circle[r="6"], .p08-step-icon svg circle[r="3"] { fill: none; stroke: currentColor; }
+.p08-step-body { font-size: 0.98rem; line-height: 1.55; padding-top: 2px; }
+.p08-step-body strong { color: var(--ink); }
+
+.p08-side { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 2px 0 12px; }
+.p08-side-card {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 6px;
+  background: var(--surface-2); border: 1px solid var(--grid); font-size: 0.93rem; line-height: 1.5;
+}
+.p08-note-line {
+  font-size: 0.93rem; line-height: 1.55; color: var(--ink-2); margin: 0 0 10px;
+  padding: 8px 12px; border-left: 3px solid var(--third, var(--grid)); background: color-mix(in srgb, var(--third-tint, var(--surface-2)) 60%, transparent);
+  border-radius: 0 6px 6px 0;
+}
+
+/* ---------- the list of fixes (fig-fixes) ---------- */
+.p08-fixes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 8px 0 12px; }
+.p08-fix {
+  display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 8px;
+  background: var(--surface-2); border: 1px solid var(--grid); border-top: 3px solid var(--model);
+}
+.p08-fix p { margin: 0; font-size: 0.93rem; line-height: 1.5; }
+.p08-fix-head { display: flex; align-items: center; gap: 10px; font-size: 1rem; line-height: 1.3; }
+.p08-fix-head .p08-step-icon { width: 36px; height: 36px; flex: 0 0 36px; border-width: 1.5px; }
+.p08-fix-head .p08-step-icon svg { width: 19px; height: 19px; }
+.p08-fix-head .p08-step-icon svg rect { fill: none; stroke: currentColor; }
+.p08-tag {
+  align-self: flex-start; margin-top: auto; font-size: 0.78rem; font-weight: 650; padding: 2px 9px; border-radius: 999px;
+  background: var(--model-tint); color: var(--model-label);
+}
+.p08-tag-warn { background: color-mix(in srgb, var(--energy, var(--data)) 14%, transparent); color: var(--energy-text, var(--data)); }
+.p08-fix-wide { grid-column: span 2; }
+.p08-fix-last { border-top-color: var(--energy, var(--data)); }
+.p08-fix-last .p08-step-icon { border-color: var(--energy, var(--data)); color: var(--energy-text, var(--data)); }
+.p08-norm { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+.p08-norm > span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 6px; background: var(--surface); border: 1px solid var(--grid); }
+.p08-norm code { font-size: 0.9rem; background: none; padding: 0; }
+.p08-norm small { color: var(--ink-2); font-size: 0.8rem; }
+.p08-mark { font-weight: 800; }
+.p08-norm-ok .p08-mark { color: var(--model); }
+.p08-norm-bad .p08-mark { color: var(--energy-text, var(--data)); }
+
+/* ---------- the closing path (fig-practice) ---------- */
+.p08-flow { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 0; }
+.p08-flow-step { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; position: relative; padding-bottom: 16px; }
+.p08-flow-step::before {
+  content: ""; position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px;
+  background: color-mix(in srgb, var(--model) 30%, transparent);
+}
+.p08-flow-step:last-child::before { display: none; }
+.p08-flow-num {
+  width: 40px; height: 40px; border-radius: 50%; background: var(--model); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font: 700 1.05rem/1 var(--font);
+}
+.p08-flow-last .p08-flow-num { background: var(--surface); color: var(--energy-text, var(--data)); border: 2px solid var(--energy, var(--data)); }
+.p08-flow-body { padding-top: 8px; }
+.p08-flow-body > strong { font-size: 1.02rem; color: var(--ink); }
+.p08-flow-body p { margin: 4px 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--ink-2); }
+.p08-flow-body p a { white-space: nowrap; }
+.p08-flow-body p a::before { content: "\2192\00a0"; }
+.p08-branch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.p08-branch-card {
+  display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 6px;
+  background: var(--surface-2); border: 1px solid var(--grid); border-left: 3px solid var(--model);
+}
+.p08-branch-when { font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; color: var(--model-label); }
+.p08-branch-do { font-size: 0.95rem; line-height: 1.5; }
+.p08-branch-do a { white-space: nowrap; }
+.p08-branch-do a::before { content: "\2192\00a0"; }
+
+/* ---------- the Playbook pane with two images (p08-page.js) ---------- */
+.fig-pb-pair { display: grid; grid-template-columns: 1fr 1.6fr; gap: 12px; align-items: start; width: 100%; }
+.fig-pb-pair img { max-width: 100%; }
+
+/* ---------- the overshoot toy ---------- */
+#fig-overshoot .fig-panels { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px 22px; align-items: start; }
+#fig-overshoot .fig-controls-more { gap: 10px 22px; }
+
+@media (max-width: 760px) {
+  .p08-fixes { grid-template-columns: 1fr 1fr; }
+  .p08-fix-wide { grid-column: span 2; }
+}
+@media (max-width: 639px) {
+  .p08-side, .p08-branch, .fig-pb-pair { grid-template-columns: 1fr; }
+  .p08-fixes { grid-template-columns: 1fr; }
+  .p08-fix-wide { grid-column: auto; }
+  .p08-steps > li { grid-template-columns: 40px minmax(0, 1fr); gap: 10px; }
+  .p08-step-icon { width: 40px; height: 40px; }
+  .p08-steps > li::before { left: 19px; }
+  #fig-overshoot .fig-panels { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+}

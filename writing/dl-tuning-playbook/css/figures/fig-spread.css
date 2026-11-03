@@ -1,0 +1,34 @@
+/* fig-spread, F4.2: spreading a fixed number of trials (implementation-plan.md WO-F4.2).
+   The two panels stack at every width, each at a fixed height, so that (a)'s narrow region has room
+   for its name and (b)'s rows have room for their trials beside the name of the truly best row in
+   the right margin. In the phone layout each row of frames is at most 180 px with its header, under
+   the dock that holds the two segment controls (design-system.md §3.5 item 8). The width has three
+   handles, one on (a)'s axis and one at each edge of (b)'s range, and each stands above the press
+   band along (a)'s reader line. */
+#fig-spread .fig-panels { flex-direction: column; gap: 12px; }
+#fig-spread .fig-panels > .panel { flex: 0 0 auto; width: 100%; }
+#fig-spread .panel > .handle { z-index: 3; }
+/* each segment control sets its label inline, on the row of its buttons, at every width, so that the
+   dock is one row at 640 px and wider and two rows in the phone layout */
+#fig-spread .fig-dock .ctl { flex-direction: row; flex-wrap: nowrap; align-items: center; gap: 8px; flex: 0 1 auto; max-width: none; }
+#fig-spread .fig-dock .ctl > .lbl { flex: 0 1 auto; min-width: 0; }
+#fig-spread .fig-dock .ctl > .seg { align-self: center; flex: 0 0 auto; }
+/* below 360 px the five scientific values leave the label 50 px, less than "Scientific", so the
+   segments go under the label (the accessibility pass, at 320 px) */
+@media (max-width: 359.98px) {
+  #fig-spread .fig-dock .ctl { flex-wrap: wrap; row-gap: 4px; }
+}
+
+/* From 640 px the readout reserves the one line it writes at the default, where site.css reserves
+   two: with two, the working area at 1440 x 790 took 748 px, over DS §3.5 item 1's 745 */
+@media (min-width: 640px) {
+  #fig-spread p.fig-readout { min-height: calc(1.5em + 0.05px); }
+}
+
+/* 2026-11 review (post01): panel (b) is one strip per option. Row names sit in the left margin and
+   each option's best score in the right margin; the truly best option's name and the picked row's
+   score are emphasized. */
+#fig-spread .sp-row-name { fill: var(--ink-2); font-size: var(--fs-label); font-weight: 600; }
+#fig-spread .sp-row-name.is-truth { fill: var(--fourth-label); }
+#fig-spread .sp-row-val { fill: var(--ink-2); font-size: var(--fs-label); font-variant-numeric: tabular-nums; }
+#fig-spread .sp-row-val.is-picked { fill: var(--ink); font-weight: 700; }

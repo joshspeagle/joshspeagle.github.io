@@ -1,0 +1,26 @@
+/* fig-isolation, F6.3: the isolation plot built from a cloud (implementation-plan.md WO-F6.3).
+   At 640 px and wider, (a) and (b) sit side by side, so that the weight-decay axes of both panels
+   stand in one row and the slice's band reads across them. In the phone layout (a) stacks above
+   (b) at full width, two rows of frames (design-system.md §3.5 item 3). Each panel's handle stands
+   above the panel's reading element, so a press on the handle's target moves the slice
+   (design-system.md §6.2). */
+#fig-isolation .fig-panels {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 14px 18px;
+  align-items: start;
+}
+#fig-isolation .panel > .handle { z-index: 3; }
+@media (max-width: 639px) {
+  #fig-isolation .fig-panels {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+}
+
+/* Below 640 px the readout writes three lines at the default (390 x 660), where site.css reserves
+   two, so it reserves three (with site.css's 0.05 px for the line boxes' rounding) before the first
+   draw, and a draw near the screen moves nothing below */
+@media (max-width: 639px) {
+  #fig-isolation p.fig-readout { min-height: calc(4.5em + 0.05px); }
+}

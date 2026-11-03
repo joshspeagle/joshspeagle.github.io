@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Where to put your trials, and how many to run · Notes on the Deep Learning Tuning Playbook</title>
+  <meta name="description" content="Notes on the Tuning Playbook's advice on search: why a grid wastes trials, what quasi-random search does better, why the Playbook prefers it to Bayesian optimization while exploring, and how much the best of a small study depends on sampling variability.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232855a6'/%3E%3Cpath d='M7 22 C12 22, 13 10, 18 10 C22 10, 22 17, 26 14' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='10' r='2.6' fill='%23d4850e'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="stylesheet" href="../css/figures/fig-coverage.css">
+  <link rel="stylesheet" href="../css/figures/fig-best-of-k.css">
+  <link rel="stylesheet" href="../css/pages/04-searching-the-space.css">
+</head>
+<body data-page="pages/04-searching-the-space.html" data-root="../">
+  <header class="site-header"></header>
+
+  <main class="page">
+    <header class="post-header">
+      <div class="post-kicker">Part 4 of 9 &middot; Running, reading and deciding</div>
+      <h1>Where to put your trials, and how many to run</h1>
+      <div class="post-meta">
+        <span>Josh Speagle</span>
+        <span class="sep"></span>
+        <span><a href="https://github.com/google-research/tuning_playbook#why-use-quasi-random-search-instead-of-more-sophisticated-black-box-optimization-algorithms-during-the-exploration-phase-of-tuning" target="_blank" rel="noopener">Notes on the Playbook's section on quasi-random search ↗</a></span>
+      </div>
+    </header>
+
+    <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
+
+    <p class="lede">
+      Once you know which hyperparameters a study will tune and over what ranges, you still have to decide where in those ranges each trial goes, and how many trials to run. The familiar answer, a regular grid, spends a small budget badly. The Playbook recommends quasi-random search while you are still learning about a problem, and it says plainly that nobody can tell you in general how many trials are enough. I wanted to see for myself why both statements hold.
+    </p>
+
+    <nav class="post-roadmap" aria-label="In this post">
+      <div class="post-roadmap-head">
+        <span class="post-roadmap-kicker">In this post</span>
+      </div>
+      <div class="post-roadmap-grid">
+        <a class="roadmap-item post-roadmap-item" href="#quasi-random">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Why a grid wastes trials</strong>
+            <span class="roadmap-item-desc">When one hyperparameter matters most, a grid of $K$ trials in $d$ dimensions tests about $K^{1/d}$ values of it.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#coverage">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Even coverage and quasi-random search</strong>
+            <span class="roadmap-item-desc">Random trials leave uneven gaps by chance. A quasi-random sequence fills each axis close to evenly.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#why-not-bo">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Why not Bayesian optimization?</strong>
+            <span class="roadmap-item-desc">While exploring, the Playbook values results that are easy to interpret and many trials in parallel. Bayesian optimization comes after.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#trials">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">How many trials?</strong>
+            <span class="roadmap-item-desc">The best trial of a small study depends heavily on sampling variability. In the Playbook's ImageNet example, 20 trials still leave more spread than retraining does.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#in-practice">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">In practice</strong>
+            <span class="roadmap-item-desc">Choosing the search method, and checking whether the budget was large enough.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#where-this-fits">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Where this fits</strong>
+            <span class="roadmap-item-desc">Search design is part of planning each study in the Playbook's loop.</span>
+          </div>
+        </a>
+      </div>
+    </nav>
+
+    <article class="post-body">
+
+      <section class="prose" id="quasi-random">
+        <h2>Why a grid wastes trials</h2>
+        <p data-src="697-707">
+          A <a data-concept="study" href="01-the-tuning-loop.html#studies">study</a> runs a set of trials over a <a data-concept="search-space" href="01-the-tuning-loop.html#studies">search space</a>, so it needs a rule for placing its $K$ trials. If you are tuning the learning rate and the weight decay, the most familiar rule is a <dfn data-concept="grid-search">grid</dfn>. You pick a few values of each and try every combination. A grid feels thorough because it covers every combination evenly.
+        </p>
+        <p>
+          In practice, hyperparameters rarely matter equally. Bergstra and Bengio <cite data-ref="bergstra2012"></cite> found that on most of the datasets they studied, only a few hyperparameters had much effect on performance, and different ones mattered on different datasets. Suppose validation error depends mostly on the learning rate. <a href="#fig-projection-collapse" class="figref"></a> places nine trials both ways and projects them onto the learning rate.
+        </p>
+      </section>
+
+      <figure class="schematic" id="fig-projection-collapse" role="group" aria-labelledby="fig-projection-collapse-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-projection-collapse-title">A grid tests few values of the hyperparameter that matters</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p04-proj"></div>
+        <p class="fig-caption">
+          Nine trials over two hyperparameters, where validation error depends mostly on the learning rate (the curve on top) and very little on weight decay. Dashed lines carry each tested learning rate up to the curve. The grid spends its nine trials on three learning rates. Random search tests nine, and one of them falls in the valley. I placed the valley between two grid columns to make the point. By luck, a grid column can also fall in the valley. After Figure 1 of Bergstra and Bengio <cite data-ref="bergstra2012"></cite>.
+        </p>
+      </figure>
+
+      <section class="prose">
+        <p>
+          The three trials in each grid column differ only in weight decay, which barely changes the result. The grid has paid for nine trials and learned about three learning rates. <dfn data-concept="random-search">Random search</dfn>, which draws each coordinate of each trial independently and uniformly, tests nine different learning rates for the same cost.
+        </p>
+        <p>
+          The waste grows with the number of hyperparameters. A grid with $k$ values per hyperparameter in $d$ dimensions has $k^d$ points, so a budget of $K$ trials allows only $k = \lfloor K^{1/d} \rfloor$ values of each. Sixteen trials over four hyperparameters test two learning rates. The Playbook accepts grid search in one or two dimensions and advises against it in higher dimensions, citing the same paper (<a href="https://github.com/google-research/tuning_playbook#where-can-i-find-an-implementation-of-quasi-random-search" target="_blank" rel="noopener">the Playbook's section on implementations ↗</a>).
+        </p>
+
+        <h2 id="coverage">Even coverage and quasi-random search</h2>
+        <p>
+          Random search fixes the repeated values, but it has a weakness of its own. Independent random draws clump. By chance some trials fall close together, and a wide stretch of the axis goes untested. A simple measure of this is the <em>largest gap</em>, the widest stretch of an axis that contains no trial. I find it the most useful single number for coverage, because the best setting could sit anywhere inside that stretch.
+        </p>
+      </section>
+
+      <figure class="schematic" id="fig-gaps" role="group" aria-labelledby="fig-gaps-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-gaps-title">Sixteen trials on one axis, and the largest gap each leaves</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p04-gaps"></div>
+        <p class="fig-caption">
+          Each tick is one trial's learning rate, and the shaded band marks the widest stretch with no trial. Sixteen evenly spaced points leave gaps of $1/17 \approx 0.059$. The uniform random draw leaves a gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span>, and the quasi-random draw <span data-num="fig-coverage:default:quasi-gap-16">0.094</span>. The two draws are the first 16 trials of <a href="#fig-coverage" class="figref"></a> at its default seed.
+        </p>
+      </figure>
+
+      <section class="prose">
+        <p>
+          The random draw in <a href="#fig-gaps" class="figref"></a> leaves a gap about three times the even spacing, and that draw is typical. Its gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span> sits at the median of <span data-num="fig-coverage:seed:n">1,000</span> random draws of 16 trials (<span data-num="fig-coverage:seed:median">0.19</span>).
+        </p>
+        <p data-src="1674-1677">
+          <dfn data-concept="quasi-random">Quasi-random search</dfn> places trials along a low-discrepancy sequence, a deterministic sequence built so that every prefix of it is spread out evenly. The Playbook describes it as <em>"jittered, shuffled grid search"</em>, since it <em>"uniformly, but randomly, explores a given search space and spreads out the search points more than random search"</em> (<a href="https://github.com/google-research/tuning_playbook#why-use-quasi-random-search-instead-of-more-sophisticated-black-box-optimization-algorithms-during-the-exploration-phase-of-tuning" target="_blank" rel="noopener">the Playbook's section on quasi-random search ↗</a>).
+        </p>
+        <p data-src="1757-1763">
+          The implementations the Playbook links generate a Halton sequence. For one hyperparameter, the Halton sequence counts in base 2 and reads the digits of the count backwards after the binary point. The first trials therefore fall at $1/2$, then $1/4$ and $3/4$, then the eighths, each one splitting the largest remaining gap. Each further hyperparameter uses a different prime base (3, 5, 7 and so on). The Playbook says the implementations are intended to scramble the digits and shift the whole set at random, as recommended by Bousquet et al. <cite data-ref="bousquet2017"></cite>, so that two studies with different seeds get different points.
+        </p>
+        <p>
+          <a href="#fig-coverage" class="figref"></a> places trials by all three methods as the budget grows, in a search space of two to four hyperparameters. Panel (d) tracks each method's largest gap along the learning rate.
+        </p>
+      </section>
+
+      <figure class="fig l-wide" id="fig-coverage" role="group" aria-labelledby="fig-coverage-title"
+              data-shows="search-space,trial,axis-plot,grid-search,random-search,quasi-random"
+              data-playbook-quote="Quasi-random search based on randomly shifted low-discrepancy sequences can be thought of as &quot;jittered, shuffled grid search&quot;, since it uniformly, but randomly, explores a given search space and spreads out the search points more than random search."
+              data-playbook-src="1674-1677"
+              data-playbook-caption="The Playbook has no figure for this point. Its description of quasi-random search:">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-coverage-title">How three search methods cover the learning rate as trials arrive</span>
+          <span class="chip toy">Interactive simulation</span>
+        </figcaption>
+
+        <div class="fig-tutorial" data-figure="fig-coverage">
+          <div class="fig-tut-step-data" data-label="16 trials, 4 hyperparameters" data-params='{"dims":4}' data-t="15">
+            With four hyperparameters, 16 trials make a grid of two values each ($2^4 = 16$). Panel (a) shows four points because each one stands for four trials that differ only in the two hidden hyperparameters, and the strip under it shows two learning rates.
+          </div>
+          <div class="fig-tut-step-data" data-label="30 trials" data-params='{"dims":4}' data-t="29">
+            At 30 trials the grid still uses 16, because the next full grid needs $3^4 = 81$ trials. The other 14 trials have nowhere to go. Random and quasi-random search use all 30.
+          </div>
+          <div class="fig-tut-step-data" data-label="2 hyperparameters" data-params='{"dims":2}' data-t="15">
+            With two hyperparameters, 16 trials make a full $4 \times 4$ grid with four learning rates and a largest gap of 0.25. The grid is much closer to the other methods here, which is why the Playbook accepts a grid in one or two dimensions.
+          </div>
+          <div class="fig-tut-step-data" data-label="100 trials" data-params='{"dims":4}' data-t="99">
+            At 100 trials in four dimensions the grid reaches $3^4 = 81$ points and three learning rates. In panel (d) the quasi-random gap has dropped in steps near 32 and 64 trials, while the random gap shrinks unevenly.
+          </div>
+        </div>
+
+        <p class="fig-task">Drag the trial slider or press Play, and switch between 2, 3 and 4 hyperparameters. Point at a trial to find it in the strips.</p>
+        <div class="fig-panels"></div>
+        <p class="fig-caption" data-src="1674-1677 1767-1769">
+          Panels (a) to (c) show weight decay against learning rate for grid search (ochre), uniform random search (indigo) and quasi-random search (blue), with each trial's learning rate repeated in the strip below and its weight decay in the strip at the right. At the default 16 trials over four hyperparameters, the grid tests <span data-num="fig-coverage:default:grid-distinct-16">2</span> learning rates with a largest gap of <span data-num="fig-coverage:default:grid-gap-16">0.5</span>, random search <span data-num="fig-coverage:default:random-distinct-16">16</span> with a gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span>, and quasi-random search <span data-num="fig-coverage:default:quasi-distinct-16">16</span> with a gap of <span data-num="fig-coverage:default:quasi-gap-16">0.094</span>. All coordinates are rescaled to the range 0 to 1, and no model is trained.
+        </p>
+        <details class="fig-model"><summary>How this toy works</summary>
+          <p>Each method places points in the unit cube $[0,1]^d$ for $d = 2$, 3 or 4. The first coordinate stands for the learning rate (on a log scale, rescaled to 0 to 1) and the second for weight decay. For $N$ trials the grid is the largest full grid that fits, $k^d$ points with $k = \lfloor N^{1/d} \rfloor$, at $(i + \tfrac12)/k$ on each axis. The grid's other $N - k^d$ trials go unused. With three hyperparameters, for example, 16 trials make a grid of <span data-num="fig-coverage:three:grid-placed-16">8</span> points and leave <span data-num="fig-coverage:three:grid-remainder-16">8</span> unused.</p>
+          <p>Random search draws every coordinate uniformly from the seed. Quasi-random search uses a scrambled, randomly shifted Halton sequence with bases 2, 3, 5 and 7, the learning rate on base 2 <cite data-ref="bousquet2017"></cite>. Adding a trial never moves the trials already placed, and "Draw again" redraws both the random and the quasi-random points. The default seed, <span data-num="fig-coverage:seed:chosen">1</span>, was chosen from <span data-num="fig-coverage:seed:n">1,000</span> seeds as the one whose 16-trial random gap is closest to the median, <span data-num="fig-coverage:seed:median">0.19</span>.</p>
+          <p>The largest gap includes the stretches from 0 to the smallest value and from the largest value to 1.</p>
+        </details>
+      </figure>
+
+      <section class="prose">
+        <p>
+          In four dimensions the grid's largest gap in <a href="#fig-coverage" class="figref"></a> surprised me. It stays at 0.5 from 16 trials to 80, because the next full grid needs 81 trials. The quasi-random gap also surprised me. It falls in steps, roughly halving each time the number of trials passes a power of two, while the random gap shrinks slowly and unevenly.
+        </p>
+        <p>
+          The advantage of quasi-random over random search is real but modest, and it narrows as the number of hyperparameters grows. In Bergstra and Bengio's simulations, low-discrepancy sequences held some advantage over random points in low dimensions (about one to five), and with many hyperparameters relative to the budget they did not expect a low-discrepancy set to behave very differently from a random one <cite data-ref="bergstra2012"></cite>. The Playbook's advice matches this. If no quasi-random implementation is at hand, uniform random search is an acceptable substitute, though it is <em>"likely to be slightly less efficient"</em>.
+        </p>
+
+        <details class="math-aside">
+          <summary>The expected largest gap of random search</summary>
+          <p>Drop $K$ independent uniform points on $[0, 1]$. They cut the interval into $K + 1$ gaps (the spacings), counting the two end pieces. A classical result for the largest spacing $\Delta_{\max}$ is</p>
+          $$\mathbb{E}[\Delta_{\max}] = \frac{H_{K+1}}{K+1},$$
+          <p>where $H_n = 1 + \tfrac12 + \dots + \tfrac1n$ is the $n$-th harmonic number. One way to see it is that the spacings have the same joint distribution as $n = K + 1$ independent exponential variables divided by their sum, the largest of $n$ unit exponentials has mean $H_n$, and the normalized vector is independent of the sum, whose mean is $n$.</p>
+          <p>Evenly spaced points give $1/(K+1)$, so random search's largest gap is on average $H_{K+1}$ times the even spacing. Since $H_n \approx \ln n + \gamma_{\text{EM}}$, with $\gamma_{\text{EM}} \approx 0.577$ the Euler–Mascheroni constant,</p>
+          $$\mathbb{E}[\Delta_{\max}] \approx \frac{\ln(K+1) + 0.577}{K+1}.$$
+          <p>At $K = 16$ the ratio is $H_{17} \approx 3.4$ and the expected gap is about 0.20, close to the median of <span data-num="fig-coverage:seed:median">0.19</span> over the simulated draws (the distribution has a long upper tail, so its mean sits above its median). The ratio grows like $\ln K$, so random search falls further behind even spacing as the budget grows, but slowly.</p>
+        </details>
+
+        <details class="math-aside">
+          <summary>How the Halton sequence spreads its points</summary>
+          <p>Write the trial index $i$ in base $b$ as $i = \sum_j a_j b^j$. The radical inverse reflects the digits about the point,</p>
+          $$\phi_b(i) = \sum_j a_j\, b^{-j-1},$$
+          <p>and the $i$-th Halton point is $(\phi_2(i), \phi_3(i), \phi_5(i), \dots)$, one prime base per hyperparameter. In base 2, the indices $0, \dots, 2^m - 1$ map onto every multiple of $2^{-m}$, so after each power of two the learning rates are evenly spaced. Between powers of two the new points fill the old gaps in turn, which gives the steps in panel (d) of <a href="#fig-coverage" class="figref"></a>.</p>
+          <p>Bousquet et al. <cite data-ref="bousquet2017"></cite> scramble the digits with a fixed permutation and add a random shift, which makes the points random while keeping them spread out. Their first choice is a scrambled, shifted Hammersley set, and in their analysis the scrambled, shifted Halton sequence has the same desirable properties. Hammersley needs the number of trials fixed in advance, while Halton can be extended one trial at a time, which suits the implementations the Playbook links. Bousquet et al. also show that the projected spread of a grid onto the important hyperparameters shrinks like $K^{-1/d}$, while for random and Halton points it depends only on the number of important hyperparameters, a formal version of <a href="#fig-projection-collapse" class="figref"></a>. They recommend giving the smallest bases to the most important hyperparameters, because a coordinate with a large base $b$ fills its axis evenly only once the number of trials exceeds $b$.</p>
+        </details>
+      </section>
+
+      <section class="prose" id="why-not-bo">
+        <h2>Why not Bayesian optimization?</h2>
+        <p data-src="1678-1680">
+          Quasi-random search decides every trial's hyperparameters before any trial has finished. An <dfn data-concept="adaptive-search">adaptive search</dfn> method uses finished trials to steer later ones toward promising regions. Bayesian optimization, for example, fits a statistical model to the results so far and uses it to choose the next trials <cite data-ref="snoek2012"></cite>, and evolutionary algorithms breed new trials from good old ones. Adaptive search sounds strictly better, so I was surprised that the Playbook prefers quasi-random search for most of the tuning process.
+        </p>
+        <p data-src="1667-1673">
+          The Playbook's answer depends on what a study is for. It separates <a data-concept="exploration-exploitation" href="01-the-tuning-loop.html#exploration">exploration</a>, where the goal is insight into the tuning problem, from exploitation, where the goal is one best configuration. For exploration it lists these advantages of quasi-random search over adaptive tools (<a href="https://github.com/google-research/tuning_playbook#why-use-quasi-random-search-instead-of-more-sophisticated-black-box-optimization-algorithms-during-the-exploration-phase-of-tuning" target="_blank" rel="noopener">the Playbook's section on quasi-random search ↗</a>).
+        </p>
+      </section>
+
+      <ol class="p04-reasons" id="reasons" data-src="1678-1733">
+        <li>
+          <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 20V4M7 4 4 7M7 4l3 3M17 4v16M17 20l-3-3M17 20l3-3"/></svg></span>
+          <div><h3>Change the objective afterward</h3>
+          <p>No trial's placement depended on earlier results, so you can rank the same trials by another criterion without rerunning anything. The Playbook's examples are final validation error, training error or another evaluation metric, in place of the usual best validation error at any point in training.</p></div>
+        </li>
+        <li>
+          <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 2"/></svg></span>
+          <div><h3>Reproducible studies</h3>
+          <p>A study from six months ago can be reproduced even if the search code changes, as long as it keeps the same uniformity properties. Bayesian optimization software may change in important ways between versions, and an old version cannot always be restored, for example when the tool runs as a service.</p></div>
+        </li>
+        <li>
+          <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4v16h16"/><circle cx="9" cy="14" r="1.3"/><circle cx="13" cy="9" r="1.3"/><circle cx="17" cy="12" r="1.3"/><circle cx="11" cy="16" r="1.3"/></svg></span>
+          <div><h3>Results that are easy to read</h3>
+          <p>Uniform coverage makes the results easier to reason about. A best trial at the edge of the search space is a good (but not foolproof) signal to move that boundary (<a data-concept="boundary-check" href="05-reading-the-results.html#boundaries">Part 5</a>). An adaptive method may neglect the middle of the space after a few unlucky early trials, even if equally good points sit there, because that kind of non-uniformity is how it speeds up the search.</p></div>
+        </li>
+        <li>
+          <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 6h14M5 12h14M5 18h14"/></svg></span>
+          <div><h3>Parallel or sequential, same statistics</h3>
+          <p>Running trials in parallel or one after another does not change a quasi-random study statistically. For an adaptive method it does.</p></div>
+        </li>
+        <li>
+          <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 22 20H2zM12 10v4M12 17h.01"/></svg></span>
+          <div><h3>Infeasible trials</h3>
+          <p>More sophisticated search algorithms may not handle <a data-concept="infeasible-trial" href="05-reading-the-results.html#checklist">infeasible trials</a> (runs that diverge or fail) correctly, especially if they were not designed for neural network tuning.</p></div>
+        </li>
+        <li>
+          <span class="p04-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v6H4zM4 14h16v6H4zM8 7h.01M8 17h.01"/></svg></span>
+          <div><h3>Simple, and strong at high parallelism</h3>
+          <p>Anecdotally, the authors find it very hard for an adaptive algorithm to beat quasi-random search given twice its budget, especially when many trials run in parallel. Without expertise in these methods, they add, you may not get the benefits the methods can in principle provide.</p></div>
+        </li>
+      </ol>
+
+      <section class="prose">
+        <p data-src="743-748">
+          The preference is stronger still when one study samples the <a data-concept="scientific-hp" href="01-the-tuning-loop.html#roles">scientific hyperparameters</a> together with the nuisance ones, because quasi-random search samples the scientific hyperparameters uniformly.
+        </p>
+        <p data-src="1718-1737">
+          The last reason depends on how many trials run at once. An adaptive method can only learn between waves, where a wave is a batch of trials launched together. <a href="#fig-waves" class="figref"></a> runs the same 16 trials in two ways.
+        </p>
+      </section>
+
+      <figure class="schematic" id="fig-waves" role="group" aria-labelledby="fig-waves-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-waves-title">An adaptive search can learn only between waves of trials</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p04-waves">
+          <div class="p04-wave-panel">
+            <div class="p04-wave-head">16 machines <span>· one wave</span></div>
+            <div class="p04-wave-row" aria-hidden="true">
+              <div class="p04-wave"><div class="p04-wave-sq c4">
+                <i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i>
+                <i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i>
+                <i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i>
+                <i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i>
+              </div><span class="p04-wave-name">wave 1</span></div>
+            </div>
+            <div class="p04-wave-foot"><strong>0 of 16</strong> trials can use an earlier result</div>
+          </div>
+          <div class="p04-wave-panel">
+            <div class="p04-wave-head">4 machines <span>· four waves</span></div>
+            <div class="p04-wave-row" aria-hidden="true">
+              <div class="p04-wave"><div class="p04-wave-sq c1"><i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i><i class="p04-sq"></i></div><span class="p04-wave-name">wave 1</span></div>
+              <div class="p04-wave-arrow"><svg viewBox="0 0 26 14"><path d="M1 7h22M17 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+              <div class="p04-wave"><div class="p04-wave-sq c1"><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i></div><span class="p04-wave-name">wave 2</span></div>
+              <div class="p04-wave-arrow"><svg viewBox="0 0 26 14"><path d="M1 7h22M17 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+              <div class="p04-wave"><div class="p04-wave-sq c1"><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i></div><span class="p04-wave-name">wave 3</span></div>
+              <div class="p04-wave-arrow"><svg viewBox="0 0 26 14"><path d="M1 7h22M17 2l6 5-6 5" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+              <div class="p04-wave"><div class="p04-wave-sq c1"><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i><i class="p04-sq is-informed"></i></div><span class="p04-wave-name">wave 4</span></div>
+            </div>
+            <div class="p04-wave-foot"><strong>12 of 16</strong> trials can use earlier results, at four times the wall-clock time</div>
+          </div>
+        </div>
+        <div class="p04-legend">
+          <span><i class="p04-sq"></i> chosen before any result exists</span>
+          <span><i class="p04-sq is-informed"></i> can be chosen using finished trials</span>
+        </div>
+        <p class="fig-caption">
+          With 16 machines all 16 trials start together, so an adaptive method chooses every trial without seeing a result and has no advantage over a non-adaptive one. With 4 machines the same budget runs in four waves, and an adaptive method can use the results of each wave to choose the next. The Playbook's footnote on this point says that beating random search with twice the budget <em>"gets much harder in the high-parallelism regime since Bayesian optimization has no opportunity to observe the results of previous trials."</em>
+        </p>
+      </figure>
+
+      <section class="prose">
+        <p data-src="1111-1145 1734-1737">
+          The Playbook recommends Bayesian optimization after exploration and when parallelism is low.
+        </p>
+        <ul>
+          <li data-src="1111-1145"><strong>After exploration.</strong> Once exploration has settled which hyperparameters matter and over what ranges, the priority shifts from understanding the problem to producing one configuration to use. Many of the advantages above then no longer apply, and the Playbook recommends Bayesian optimization tools to find the best configuration automatically, over a refined search space with as large a budget as possible (<a href="https://github.com/google-research/tuning_playbook#after-exploration-concludes" target="_blank" rel="noopener">the Playbook's section on what to do after exploration ↗</a>). It points to <a href="https://github.com/google/vizier" target="_blank" rel="noopener">Open-Source Vizier</a>. If the search space contains many divergent points, it recommends a tool that handles them properly, such as the method of Gelbart et al. <cite data-ref="gelbart2014"></cite>. <a href="06-adopting-a-change.html#after">Part 6</a> covers this <a data-concept="final-study" href="06-adopting-a-change.html#after">final study</a>.</li>
+          <li data-src="1734-1737"><strong>Low parallelism.</strong> If you can run only a few trials at a time but can afford many in sequence, the Playbook says Bayesian optimization <em>"becomes much more attractive despite making our tuning results harder to interpret."</em></li>
+        </ul>
+        <p data-src="1739-1748">
+          The authors present these advantages as their experience, and they qualify the claim about twice the budget. Their footnote credits Ben Recht and Kevin Jamieson with <a href="http://www.argmin.net/2016/06/20/hypertuning/" target="_blank" rel="noopener">pointing out</a> how strong random search with twice the budget is as a baseline, and adds that <em>"it is certainly possible to find search spaces and problems where state-of-the-art Bayesian optimization techniques crush random search that has 2X the budget."</em>
+        </p>
+      </section>
+
+      <section class="prose" id="trials">
+        <h2>How many trials?</h2>
+        <p data-src="1773-1781">
+          Every study returns a <a data-concept="best-trial" href="01-the-tuning-loop.html#studies">best trial</a>, whether it ran 6 trials or 60. The practical question is how much that best trial depends on luck, meaning on which configurations the search happened to try. The Playbook's direct answer is that <em>"there is no way to answer this question in general"</em>, and it offers one example instead (<a href="https://github.com/google-research/tuning_playbook#how-many-trials-are-needed-to-get-good-results-with-quasi-random-search" target="_blank" rel="noopener">the Playbook's section on how many trials ↗</a>).
+        </p>
+        <p>
+          A short calculation shows why a few trials leave so much to luck. Suppose the configurations good enough to win fill a fraction $p$ of the search space. Each random trial falls there with probability $p$. The chance $P_K$ that at least one of $K$ trials falls there is
+        </p>
+        $$P_K = 1 - (1 - p)^{K}.$$
+        <p>
+          With $p = 0.1$, six trials reach the good region 47% of the time, and 20 trials 88% of the time. A 95% chance takes about $3/p$ trials, 29 for the best tenth of the space and 59 for the best twentieth. The calculation assumes independent random trials.
+        </p>
+
+        <div class="scrub-calculator" aria-label="Chance that a study reaches the good region">
+          <div class="scrub-head">
+            <span>Chance of reaching the good region</span>
+            <span class="scrub-hint">Click − / + or drag a highlighted number</span>
+          </div>
+          <p class="scrub-body">
+            With <span class="scrub-num" data-var="K" data-value="20" data-min="2" data-max="100" data-step="1" data-format="int" data-unit="trials">20 trials</span> and a good region that fills <span class="scrub-num" data-var="pct" data-value="10" data-min="1" data-max="30" data-step="1" data-format="int" data-unit="%">10 %</span> of the search space, the chance that at least one trial falls in it is <span class="scrub-out" data-formula="100 * (1 - Math.pow(1 - pct / 100, K))" data-format="fixed1" data-unit="%">87.8 %</span>. A 95% chance needs <span class="scrub-out" data-formula="Math.ceil(Math.log(0.05) / Math.log(1 - pct / 100))" data-format="int" data-unit="trials">29 trials</span>.
+          </p>
+        </div>
+
+        <details class="math-aside">
+          <summary>Where $3/p$ comes from, and the distribution of the best of $K$</summary>
+          <p>Write $\delta$ for the accepted chance of missing the region. Setting $1 - (1-p)^K \ge 1 - \delta$ and taking logarithms gives</p>
+          $$K \ge \frac{\ln \delta}{\ln(1 - p)}.$$
+          <p>For $\delta = 0.05$, $-\ln \delta \approx 3.0$, and for small $p$, $-\ln(1-p) \approx p$, so $K \approx 3/p$.</p>
+          <p>The same argument gives the whole distribution of the best trial. If one trial's validation error $Y$ has cumulative distribution $F$, the best of $K$ independent trials, $Y_{(1)} = \min_i Y_i$, satisfies</p>
+          $$\Pr(Y_{(1)} \le y) = 1 - \bigl(1 - F(y)\bigr)^{K}.$$
+          <p>Each extra trial pushes this distribution toward the lower tail of $F$ and narrows it, which is the narrowing of the boxes in <a href="#fig-best-of-k" class="figref"></a>. When studies are simulated by resampling a finite set of $N$ finished trials, $F$ is the empirical distribution of those trials, so no simulated study can beat the best of the $N$. That floor matters once $K$ is a sizable fraction of $N$.</p>
+        </details>
+
+        <p data-src="1781-1785">
+          The Playbook's example uses real trials. The authors tuned a ResNet-50 on ImageNet with 100 trials and then simulated smaller budgets by bootstrapping, as <a href="#fig-bootstrap" class="figref"></a> sketches.
+        </p>
+      </section>
+
+      <figure class="schematic" id="fig-bootstrap" role="group" aria-labelledby="fig-bootstrap-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-bootstrap-title">Simulating many small studies from one large one</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <ol class="p04-flow">
+          <li>
+            <svg viewBox="0 -4 150 100" aria-hidden="true"><path class="p04-g-axis" d="M4,6V88H146"/><circle class="p04-g-dot" cx="7" cy="23.9" r="2.6"/><circle class="p04-g-dot" cx="11.6" cy="19.8" r="2.6"/><circle class="p04-g-dot" cx="16.6" cy="22" r="2.6"/><circle class="p04-g-dot" cx="19.8" cy="23.5" r="2.6"/><circle class="p04-g-dot" cx="24.8" cy="22.8" r="2.6"/><circle class="p04-g-dot" cx="28.7" cy="24.1" r="2.6"/><circle class="p04-g-dot" cx="33" cy="22.8" r="2.6"/><circle class="p04-g-dot" cx="36.2" cy="26.8" r="2.6"/><circle class="p04-g-dot" cx="40.9" cy="25.2" r="2.6"/><circle class="p04-g-dot" cx="44.9" cy="30.3" r="2.6"/><circle class="p04-g-dot" cx="49.5" cy="36.2" r="2.6"/><circle class="p04-g-dot" cx="51.9" cy="37" r="2.6"/><circle class="p04-g-dot" cx="57.6" cy="44.9" r="2.6"/><circle class="p04-g-dot" cx="61.1" cy="49.2" r="2.6"/><circle class="p04-g-dot" cx="65.7" cy="58.2" r="2.6"/><circle class="p04-g-dot" cx="68.7" cy="59.4" r="2.6"/><circle class="p04-g-dot" cx="73.6" cy="67.1" r="2.6"/><circle class="p04-g-dot" cx="76.3" cy="70.8" r="2.6"/><circle class="p04-g-dot" cx="80.9" cy="76.5" r="2.6"/><circle class="p04-g-dot" cx="86" cy="80" r="2.6"/><circle class="p04-g-dot" cx="89.7" cy="80" r="2.6"/><circle class="p04-g-dot" cx="92.4" cy="80" r="2.6"/><circle class="p04-g-dot" cx="97.5" cy="80" r="2.6"/><circle class="p04-g-dot" cx="101.2" cy="77.7" r="2.6"/><circle class="p04-g-dot" cx="106.3" cy="71.2" r="2.6"/><circle class="p04-g-dot" cx="109.2" cy="68.8" r="2.6"/><circle class="p04-g-dot" cx="113.9" cy="65.2" r="2.6"/><circle class="p04-g-dot" cx="117.7" cy="54.8" r="2.6"/><circle class="p04-g-dot" cx="121.5" cy="49.5" r="2.6"/><circle class="p04-g-dot" cx="125.5" cy="44.6" r="2.6"/><circle class="p04-g-dot" cx="129.5" cy="40.1" r="2.6"/><circle class="p04-g-dot" cx="134.1" cy="33.2" r="2.6"/><circle class="p04-g-dot" cx="138.8" cy="30.5" r="2.6"/><circle class="p04-g-dot" cx="142.7" cy="28.9" r="2.6"/><text class="p04-g-ann" x="146" y="6" text-anchor="end">error</text></svg>
+            <div class="p04-flow-title">Run one large study</div>
+            <p class="p04-flow-text">Train 100 trials once and record each one's validation error.</p>
+          </li>
+          <li>
+            <svg viewBox="0 -4 150 100" aria-hidden="true"><path class="p04-g-axis" d="M4,6V88H146"/><circle class="p04-g-dot" cx="7" cy="23.9" r="2.6"/><circle class="p04-g-dot" cx="11.6" cy="19.8" r="2.6"/><circle class="p04-g-dot" cx="16.6" cy="22" r="2.6"/><circle class="p04-g-dot" cx="24.8" cy="22.8" r="2.6"/><circle class="p04-g-dot" cx="28.7" cy="24.1" r="2.6"/><circle class="p04-g-dot" cx="33" cy="22.8" r="2.6"/><circle class="p04-g-dot" cx="36.2" cy="26.8" r="2.6"/><circle class="p04-g-dot" cx="40.9" cy="25.2" r="2.6"/><circle class="p04-g-dot" cx="49.5" cy="36.2" r="2.6"/><circle class="p04-g-dot" cx="51.9" cy="37" r="2.6"/><circle class="p04-g-dot" cx="57.6" cy="44.9" r="2.6"/><circle class="p04-g-dot" cx="61.1" cy="49.2" r="2.6"/><circle class="p04-g-dot" cx="68.7" cy="59.4" r="2.6"/><circle class="p04-g-dot" cx="73.6" cy="67.1" r="2.6"/><circle class="p04-g-dot" cx="76.3" cy="70.8" r="2.6"/><circle class="p04-g-dot" cx="80.9" cy="76.5" r="2.6"/><circle class="p04-g-dot" cx="86" cy="80" r="2.6"/><circle class="p04-g-dot" cx="92.4" cy="80" r="2.6"/><circle class="p04-g-dot" cx="97.5" cy="80" r="2.6"/><circle class="p04-g-dot" cx="101.2" cy="77.7" r="2.6"/><circle class="p04-g-dot" cx="106.3" cy="71.2" r="2.6"/><circle class="p04-g-dot" cx="109.2" cy="68.8" r="2.6"/><circle class="p04-g-dot" cx="113.9" cy="65.2" r="2.6"/><circle class="p04-g-dot" cx="121.5" cy="49.5" r="2.6"/><circle class="p04-g-dot" cx="125.5" cy="44.6" r="2.6"/><circle class="p04-g-dot" cx="129.5" cy="40.1" r="2.6"/><circle class="p04-g-dot" cx="138.8" cy="30.5" r="2.6"/><circle class="p04-g-dot" cx="142.7" cy="28.9" r="2.6"/><circle class="p04-g-pick" cx="19.8" cy="23.5" r="4"/><circle class="p04-g-pick" cx="44.9" cy="30.3" r="4"/><circle class="p04-g-pick" cx="65.7" cy="58.2" r="4"/><circle class="p04-g-pick" cx="89.7" cy="80" r="4"/><circle class="p04-g-pick" cx="117.7" cy="54.8" r="4"/><circle class="p04-g-pick" cx="134.1" cy="33.2" r="4"/><circle class="p04-g-ring" cx="89.7" cy="80" r="8"/><text class="p04-g-ann" x="101.7" y="84" text-anchor="start">best</text></svg>
+            <div class="p04-flow-title">Draw $K$ trials, keep the best</div>
+            <p class="p04-flow-text">Pick $K$ of the 100 at random (here $K = 6$). Their best is one simulated study's result.</p>
+          </li>
+          <li>
+            <svg viewBox="0 -4 150 100" aria-hidden="true"><path class="p04-g-axis" d="M30,6V88"/><circle class="p04-g-pick" cx="75" cy="19" r="2.5"/><circle class="p04-g-pick" cx="75" cy="39" r="2.5"/><circle class="p04-g-pick" cx="75" cy="69" r="2.5"/><circle class="p04-g-pick" cx="69" cy="69" r="2.5"/><circle class="p04-g-pick" cx="75" cy="59" r="2.5"/><circle class="p04-g-pick" cx="75" cy="84" r="2.5"/><circle class="p04-g-pick" cx="69" cy="84" r="2.5"/><circle class="p04-g-pick" cx="75" cy="44" r="2.5"/><circle class="p04-g-pick" cx="81" cy="84" r="2.5"/><circle class="p04-g-pick" cx="75" cy="79" r="2.5"/><circle class="p04-g-pick" cx="75" cy="74" r="2.5"/><circle class="p04-g-pick" cx="69" cy="79" r="2.5"/><circle class="p04-g-pick" cx="81" cy="79" r="2.5"/><circle class="p04-g-pick" cx="69" cy="44" r="2.5"/><circle class="p04-g-pick" cx="81" cy="44" r="2.5"/><circle class="p04-g-pick" cx="75" cy="29" r="2.5"/><circle class="p04-g-pick" cx="75" cy="49" r="2.5"/><circle class="p04-g-pick" cx="69" cy="59" r="2.5"/><circle class="p04-g-pick" cx="75" cy="54" r="2.5"/><circle class="p04-g-pick" cx="75" cy="24" r="2.5"/><circle class="p04-g-pick" cx="63" cy="79" r="2.5"/><circle class="p04-g-pick" cx="81" cy="69" r="2.5"/><circle class="p04-g-pick" cx="87" cy="79" r="2.5"/><circle class="p04-g-pick" cx="57" cy="79" r="2.5"/><circle class="p04-g-pick" cx="63" cy="84" r="2.5"/><circle class="p04-g-pick" cx="81" cy="59" r="2.5"/><circle class="p04-g-pick" cx="69" cy="19" r="2.5"/><circle class="p04-g-pick" cx="69" cy="74" r="2.5"/><circle class="p04-g-pick" cx="63" cy="69" r="2.5"/><circle class="p04-g-pick" cx="87" cy="69" r="2.5"/><circle class="p04-g-pick" cx="87" cy="84" r="2.5"/><circle class="p04-g-pick" cx="63" cy="44" r="2.5"/><circle class="p04-g-pick" cx="69" cy="24" r="2.5"/><circle class="p04-g-pick" cx="75" cy="14" r="2.5"/><circle class="p04-g-pick" cx="69" cy="14" r="2.5"/><circle class="p04-g-pick" cx="57" cy="69" r="2.5"/><circle class="p04-g-pick" cx="69" cy="49" r="2.5"/><circle class="p04-g-pick" cx="75" cy="64" r="2.5"/><circle class="p04-g-pick" cx="69" cy="39" r="2.5"/><circle class="p04-g-pick" cx="69" cy="54" r="2.5"/><text class="p04-g-ann" x="34" y="6">best of each study</text></svg>
+            <div class="p04-flow-title">Repeat many times</div>
+            <p class="p04-flow-text">Each repeat adds one dot. Lucky studies sit low and unlucky ones high.</p>
+          </li>
+          <li>
+            <svg viewBox="0 -4 150 100" aria-hidden="true"><line class="p04-g-line" x1="34" x2="34" y1="8" y2="30"/><line class="p04-g-line" x1="28" x2="40" y1="8" y2="8"/><rect class="p04-g-box" x="22" y="30" width="24" height="36"/><line class="p04-g-line" x1="22" x2="46" y1="58" y2="58" style="stroke-width:2.6"/><line class="p04-g-line" x1="34" x2="34" y1="66" y2="84"/><line class="p04-g-line" x1="28" x2="40" y1="84" y2="84"/><text class="p04-g-ann" x="54" y="12">unlucky studies</text><text class="p04-g-ann" x="54" y="32">middle half</text><text class="p04-g-ann" x="54" y="44">(the IQR)</text><text class="p04-g-ann" x="54" y="64">median</text><text class="p04-g-ann" x="54" y="88">lucky studies</text></svg>
+            <div class="p04-flow-title">Summarize as a box</div>
+            <p class="p04-flow-text">One box per $K$. The box spans the middle half of the simulated studies.</p>
+          </li>
+        </ol>
+        <p class="fig-caption">
+          The Playbook says only that the smaller budgets were simulated "via bootstrapping". I read that in its usual sense, drawing with replacement. No model is retrained in steps 2 to 4, so the spread in step 4 comes entirely from which trials each simulated study happened to include.
+        </p>
+      </figure>
+
+      <section class="prose">
+        <p data-src="1781-1796">
+          The result is the Playbook's Figure 3, which you can open from the toolbar of <a href="#fig-best-of-k" class="figref"></a>. Its bars are easy to misread. Each box summarizes the best validation error across many simulated studies of one size. The box spans the middle half of those studies (the interquartile range, or IQR), and the line inside marks the median study. The bars therefore measure study-to-study variance, not the noise of retraining one model. The Playbook gives retraining noise separately, in its text, as about $\pm 0.1\%$ on a validation error rate of about 23%.
+        </p>
+        <p data-src="1786-1796">
+          In the Playbook's figure the IQR is about 0.020 at 6 trials and about 0.004 at 20 (my readings of the plot). The authors point out how much larger the IQRs are at 6 trials than at 20, and they conclude that <em>"even with 20 trials, it is likely that the difference between especially lucky and unlucky studies will be larger than the typical variation between re-trains of this model on different random seeds, with fixed hyperparameters."</em>
+        </p>
+        <p data-src="1057-1093">
+          These two spreads have names in the Playbook's section on comparing results (<a href="https://github.com/google-research/tuning_playbook#determining-whether-to-adopt-a-training-pipeline-change-or-hyperparameter-configuration" target="_blank" rel="noopener">the Playbook's section on adopting a change ↗</a>). <dfn data-concept="trial-variance">Trial variance</dfn>, also called retrain variance, is the variation between training runs that use the same hyperparameters and different random seeds. <dfn data-concept="study-variance">Study variance</dfn> is the variation caused by the procedure that selects the hyperparameters, such as rerunning the same search with a different quasi-random seed. The Playbook notes that study variance depends on the number of trials and on the search space, and that the authors have seen it both larger and much smaller than trial variance. <a href="06-adopting-a-change.html">Part 6</a> returns to trial variance when deciding whether to adopt a change.
+        </p>
+        <p>
+          <a href="#fig-best-of-k" class="figref"></a> rebuilds the Playbook's experiment with a toy. A pool of <span data-num="fig-best-of-k:model:pool-size">100</span> synthetic trials stands in for the 100 ImageNet trials, chosen so that its spreads at 6 and 20 trials resemble the Playbook's figure. The red bar beside each box is my addition. It marks the Playbook's $\pm 0.1\%$ retrain spread around the box's median, so you can compare study-to-study variance with retraining noise directly.
+        </p>
+      </section>
+
+      <figure class="fig l-wide" id="fig-best-of-k" role="group" aria-labelledby="fig-best-of-k-title"
+              data-shows="study,best-trial,trial-result,axis-plot,study-variance,trial-variance"
+              data-playbook-img="assets/playbook/validation_error_vs_num_trials.png"
+              data-playbook-quote="Notice how large the interquartile ranges are when 6 trials were sampled, versus when 20 trials were sampled."
+              data-playbook-src="1773-1798"
+              data-playbook-caption="The Playbook's Figure 3. A ResNet-50 was tuned on ImageNet with 100 trials, and studies of 6 to 20 trials were simulated by bootstrapping from them. Each box summarizes the best validation error rate across the simulated studies of one size. The box spans the middle half of those studies and the line inside it marks the median. None of the bars show retraining noise, which the Playbook puts at about ±0.1% on this error rate of about 23%.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-best-of-k-title">The best of K trials varies less from study to study as K grows</span>
+          <span class="chip toy">Interactive toy model</span>
+        </figcaption>
+
+        <div class="fig-tutorial" data-figure="fig-best-of-k">
+          <div class="fig-tut-step-data" data-label="One study" data-params='{"shown":["6","10","20"]}' data-t="1">
+            Each step simulates one study of each size. Panel (a) shows the six trials of the first 6-trial study in blue with its best ringed, and that best becomes the first dot of the 6 column in panel (b). In this first draw the 10-trial study came out worse than the 6-trial study (0.242 against 0.235), by luck.
+          </div>
+          <div class="fig-tut-step-data" data-label="20 studies" data-params='{"shown":["6","10","20"]}' data-t="20">
+            After 20 studies the 6-trial dots already spread widely, and a quarter of them sit above 0.26. In those studies none of the six trials reached the floor of the valley in panel (a).
+          </div>
+          <div class="fig-tut-step-data" data-label="200 studies" data-params='{"shown":["6","10","20"]}' data-t="200">
+            After 200 studies the boxes have settled. The 6-trial box has an IQR of <span data-num="fig-best-of-k:default:iqr-6">0.022</span>, about eleven times the width of the red retrain bar, and the 20-trial box <span data-num="fig-best-of-k:default:iqr-20">0.0044</span>, about twice that width, as in the Playbook's figure.
+          </div>
+          <div class="fig-tut-step-data" data-label="Studies of 50" data-params='{"shown":["6","10","20","50"]}' data-t="200">
+            Studies of 50 trials have an IQR of <span data-num="fig-best-of-k:default:iqr-50">0.0019</span>, about the width of the retrain bar. With a pool of only 100 trials this column partly reflects the pool's size, because a 50-trial study contains the pool's best trial <span data-num="fig-best-of-k:model:p-lowest-50">39%</span> of the time.
+          </div>
+        </div>
+
+        <p class="fig-task">Press Play or drag the slider to draw more simulated studies, and toggle which study sizes are shown. Point at a dot in panel (b) to see that study's trials in panel (a).</p>
+        <div class="fig-panels"></div>
+        <p class="fig-caption" data-src="1069-1080 1782-1796">
+          Panel (a) shows the toy's pool of <span data-num="fig-best-of-k:model:pool-size">100</span> trials as validation error against learning rate, with <span data-num="fig-best-of-k:default:pool-infeasible">6</span> diverged trials as crosses along the top edge. The latest 6-trial study is in blue, its best trial ringed. Panel (b) has one dot per simulated study. After <span data-num="fig-best-of-k:default:draws">200</span> studies the IQR of the best is <span data-num="fig-best-of-k:default:iqr-6">0.022</span> at 6 trials, <span data-num="fig-best-of-k:default:iqr-10">0.0092</span> at 10 and <span data-num="fig-best-of-k:default:iqr-20">0.0044</span> at 20. The red bar spans the Playbook's retrain spread of $\pm$<span data-num="fig-best-of-k:model:bracket">0.001</span>, a width of <span data-num="fig-best-of-k:model:inside-width">0.002</span>. The pool is synthetic, and only its spreads at 6 and 20 trials were matched to the Playbook's figure.
+        </p>
+        <details class="fig-model"><summary>How this toy works</summary>
+          <p>The pool holds <span data-num="fig-best-of-k:model:pool-size">100</span> trials of a synthetic validation-error surface over learning rates from <span data-num="fig-best-of-k:model:pool-lr-lo">10⁻⁵</span> to <span data-num="fig-best-of-k:model:pool-lr-hi">5.6 × 10⁻²</span> and weight decays from <span data-num="fig-best-of-k:model:pool-wd-lo">10⁻⁵</span> to <span data-num="fig-best-of-k:model:pool-wd-hi">10⁻³</span>. Trials with $\log_{10} \eta &gt; -1.5$ diverge, and the others get Gaussian noise with standard deviation 0.001. Each step draws one study of each size $K$ = 6, 10, 20 and 50, with replacement from the pool, and records each study's best.</p>
+          <p>The default pool (seed <span data-num="fig-best-of-k:seed:chosen">104</span>) was chosen from <span data-num="fig-best-of-k:seed:n">300</span> seeds. A seed was admitted when its IQRs at 6 and 20 trials after 200 studies were within 25% of the Playbook figure's 0.020 and 0.0039 (<span data-num="fig-best-of-k:seed:admitted">113</span> were), and the default is the admitted seed whose 50-trial IQR is closest to the median. Across seeds 1 to 1,000 the mean IQRs at 6, 10, 20 and 50 trials are <span data-num="fig-best-of-k:model:mean-iqr-6">0.017</span>, <span data-num="fig-best-of-k:model:mean-iqr-10">0.0099</span>, <span data-num="fig-best-of-k:model:mean-iqr-20">0.0046</span> and <span data-num="fig-best-of-k:model:mean-iqr-50">0.002</span>.</p>
+          <p>Studies of 50 trials drawn from a pool of 100 are close to the pool itself. A 50-trial study contains the pool's single best trial with probability <span data-num="fig-best-of-k:model:p-lowest-50">39%</span>, so the 50-trial box partly measures the pool's size. In <span data-num="fig-best-of-k:model:reversal-200">8%</span> of pools the 50-trial IQR even comes out wider than the 20-trial IQR after 200 studies. The Playbook stopped at 20 trials out of 100. Panel (b)'s axis stops at <span data-num="fig-best-of-k:model:b-top">0.29</span>, and studies above it are marked at the top edge.</p>
+          <p>The Playbook does not state the whisker rule of its Figure 3. In my reading of the plot, the upper whiskers at 6 and 9 trials end close to 1.5 IQR above the box, the matplotlib default, and every lower whisker ends at the same value. That shared value is presumably the best of the 100 trials, which no simulated study can beat.</p>
+        </details>
+      </figure>
+
+      <section class="prose">
+        <p>
+          In the toy, as in the Playbook's figure, studies of 20 trials still vary about twice as much as retraining does. Two 20-trial studies in this setting can differ by 0.004 in their best validation error because of which trials each happened to include. That gives a sense of scale for comparing studies. <a href="06-adopting-a-change.html">Part 6</a> takes up how to account for both kinds of variance before adopting a change.
+        </p>
+      </section>
+
+      <section class="prose p04-practice" id="in-practice">
+        <h2>In practice</h2>
+        <p>
+          Each step's tag gives its source. Checking the budget by resampling is my suggestion.
+        </p>
+      </section>
+
+      <ol class="p04-steps">
+        <li>
+          <span class="p04-step-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="1.4"/><circle cx="14" cy="9" r="1.4"/><circle cx="19" cy="4" r="1.4"/><circle cx="8" cy="15" r="1.4"/><circle cx="17" cy="17" r="1.4"/><circle cx="11" cy="20" r="1.4"/></svg></span>
+          <h3>Explore with quasi-random search</h3>
+          <p>Open-Source Vizier has an implementation (set <code>algorithm="QUASI_RANDOM_SEARCH"</code>), and so does the <a href="https://github.com/mlcommons/algorithmic-efficiency/blob/main/algorithmic_efficiency/halton.py" target="_blank" rel="noopener">MLCommons Halton generator</a>. Both generate Halton sequences.</p>
+          <span class="p04-src">Playbook</span>
+        </li>
+        <li>
+          <span class="p04-step-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg></span>
+          <h3>Fall back to random search, and to a grid only in one or two dimensions</h3>
+          <p>Uniform random search is likely to be slightly less efficient than quasi-random search. A grid is acceptable for one or two hyperparameters and wasteful beyond that.</p>
+          <span class="p04-src">Playbook</span>
+        </li>
+        <li>
+          <span class="p04-step-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M5 4h14"/></svg></span>
+          <h3>Give the learning rate the first coordinate</h3>
+          <p>Bousquet et al. recommend assigning the smallest Halton bases to the hyperparameters that matter most, since base 2 fills its axis evenly from the first few trials.</p>
+          <span class="p04-src">Bousquet et al. (2017)</span>
+        </li>
+        <li>
+          <span class="p04-step-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg></span>
+          <h3>Check the budget by resampling your own trials</h3>
+          <p>Bootstrap smaller studies from the trials you have, as the Playbook did for its Figure 3, and compare the spread of their best with the retrain spread of your best trial. If the study-to-study spread is larger than the differences you want to detect, your conclusions depend on sampling variability. This check can say little about budgets close to the number of trials you ran.</p>
+          <span class="p04-src is-ours">This post</span>
+        </li>
+        <li>
+          <span class="p04-step-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></span>
+          <h3>Switch to Bayesian optimization for the final study, or when parallelism is low</h3>
+          <p>Once exploration is over, run the final study with Bayesian optimization over the refined search space, using a tool that handles divergent trials. Bayesian optimization also becomes attractive earlier if you can run only a few trials at a time.</p>
+          <span class="p04-src">Playbook</span>
+        </li>
+      </ol>
+
+      <section class="prose" id="where-this-fits">
+        <h2>Where this fits</h2>
+        <p>
+          Choosing the search method and the budget is part of designing each study in the Playbook's loop. Once a study has run, its trials have to be read, which is the subject of <a href="05-reading-the-results.html">Part 5</a>.
+        </p>
+      </section>
+
+      <div class="l-wide">
+        <div class="playbook-map" data-active-zone="loop" data-default-node="n_space"></div>
+      </div>
+
+      <section class="refs" id="references">
+        <h2>References</h2>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023)</cite>.</p>
+        <ol id="reflist"></ol>
+      </section>
+
+      <nav class="pager" aria-label="Post navigation"></nav>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Adapted from and inspired by the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue, and Nado (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>).
+  </footer>
+
+  <script src="../js/vendor/d3.v7.min.js"></script>
+  <script src="../js/vendor/katex/katex.min.js"></script>
+  <script src="../js/vendor/katex/auto-render.min.js"></script>
+  <script src="../js/lib/format.js"></script>
+  <script src="../js/lib/prng.js"></script>
+  <script src="../js/lib/halton.js"></script>
+  <script src="../js/lib/coverage.js"></script>
+  <script src="../js/lib/toyS.js"></script>
+  <script src="../js/lib/bestofk.js"></script>
+  <script src="../js/lib/placer.js"></script>
+  <script src="../js/refs.js"></script>
+  <script src="../js/concepts.js"></script>
+  <script src="../js/site.js"></script>
+  <script src="../js/components/playbook-map.js"></script>
+  <script src="../js/chart.js"></script>
+  <script src="../js/runtime.js"></script>
+  <script src="../js/figures/f5-1-coverage.js"></script>
+  <script src="../js/figures/f5-2-best-of-k.js"></script>
+  <script src="../js/figures/p04-schematics.js"></script>
+</body>
+</html>

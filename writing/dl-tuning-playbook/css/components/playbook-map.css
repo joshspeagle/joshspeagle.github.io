@@ -1,0 +1,171 @@
+/* The tuning-process map (.playbook-map). Built by js/components/playbook-map.js.
+   Link after css/site.css on every page that carries a .playbook-map.
+
+   Two views share one selection: .pmap-desk (SVG flowchart and inspector) shows when the map's
+   content box is at least 760 px wide; .pmap-list (grouped accordion) shows below that. The
+   SVG is drawn in a 1000-unit viewBox, so at the 1080-px wide layout its text renders at about
+   1.03 times the sizes given here (node labels about 15 px). Colours are custom properties of
+   site.css, so both themes work without a redraw.
+
+   Colour roles: --reader for the selected step and the edges that touch it (the interactive
+   state), --energy for the steps of the post being read, --ink-3 for the badges of posts the
+   reader has opened. Phase bands are neutral. */
+
+.playbook-map.pmap {
+  container-type: inline-size;
+  container-name: pmap;
+  border-top: 1px solid var(--border-2);
+  padding: 20px 22px 18px;
+}
+
+/* ---------- header ---------- */
+.pmap-head { margin: 0 0 12px; }
+.pmap .pmap-title { font-family: var(--font); font-size: 1.12rem; font-weight: 650; line-height: 1.3; margin: 0 0 4px; color: var(--ink); }
+.pmap-sub { margin: 0 0 8px; font-size: 0.93rem; line-height: 1.5; color: var(--ink-2); max-width: 64ch; }
+.pmap-key { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.84rem; color: var(--ink-2); }
+.pmap-key li { display: inline-flex; align-items: center; gap: 7px; margin: 0; }
+.pmap-key-icon { display: inline-block; width: 22px; height: 14px; border: 1.5px solid var(--ink-3); border-radius: 3px; background: var(--surface); }
+.pmap-key-icon.is-decision { border: 0; background: var(--ink-3); clip-path: polygon(0 50%, 22% 0, 78% 0, 100% 50%, 78% 100%, 22% 100%); position: relative; }
+.pmap-key-icon.is-decision::after { content: ""; position: absolute; inset: 1.5px; background: var(--surface); clip-path: polygon(0 50%, 22% 0, 78% 0, 100% 50%, 78% 100%, 22% 100%); }
+.pmap-key-badge {
+  display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+  font-size: 0.72rem; font-weight: 700; font-family: var(--font);
+  border: 1.5px solid var(--ink-3); color: var(--ink-2); background: var(--surface);
+}
+.pmap-key-badge.is-here { background: var(--energy); border-color: var(--energy); color: #1a1205; }
+.pmap-key-badge.is-opened { background: var(--ink-3); border-color: var(--ink-3); color: var(--surface); }
+
+/* ---------- view switch ---------- */
+.pmap-desk { display: none; }
+.pmap-list { display: block; }
+@container pmap (min-width: 760px) {
+  .pmap-desk { display: block; }
+  .pmap-list { display: none; }
+}
+
+/* ---------- wide view: SVG ---------- */
+.pmap-canvas { margin: 0 -4px; }
+.pmap-svg { display: block; width: 100%; height: auto; overflow: visible; font-family: var(--font); }
+.pmap-band-bg { fill: color-mix(in srgb, var(--surface-2) 70%, var(--surface)); stroke: var(--grid); stroke-width: 1; }
+.pmap-band.is-zone .pmap-band-bg { stroke: var(--border-2); fill: var(--surface-2); }
+.pmap-band-label { font-size: 13.5px; font-weight: 650; fill: var(--ink-2); white-space: pre; paint-order: stroke; stroke: color-mix(in srgb, var(--surface-2) 70%, var(--surface)); stroke-width: 8px; stroke-linejoin: round; }
+.pmap-band-posts { font-size: 13px; font-weight: 500; fill: var(--ink-3); }
+
+.pmap-edge-line { fill: none; stroke: var(--axis); stroke-width: 1.8; stroke-linejoin: round; }
+.pmap-edge.is-wrap .pmap-edge-line { stroke: var(--axis); }
+.pmap-edge.is-return .pmap-edge-line { stroke-dasharray: 5 4; }
+.pmap-edge.is-loop .pmap-edge-line { stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: 7 5; }
+.pmap-arrowhead { fill: var(--axis); }
+.pmap-arrowhead.is-on { fill: var(--reader); }
+.pmap-edge.is-on .pmap-edge-line { stroke: var(--reader); stroke-width: 2.6; }
+.pmap-edge-label {
+  font-size: 13px; font-weight: 650; fill: var(--ink-2);
+  paint-order: stroke; stroke: var(--surface-2); stroke-width: 5px; stroke-linejoin: round;
+}
+.pmap-edge.is-loop .pmap-edge-label { stroke: var(--surface); fill: var(--ink-2); }
+.pmap-edge.is-on .pmap-edge-label { fill: var(--reader); }
+
+.pmap-node { cursor: pointer; outline: none; }
+.pmap-shape { fill: var(--surface); stroke: var(--border-2); stroke-width: 1.5; }
+.pmap-node.is-decision .pmap-shape { stroke: var(--ink-3); stroke-width: 1.8; }
+.pmap-node-label { font-size: 14.5px; font-weight: 550; fill: var(--ink); pointer-events: none; }
+.pmap-node.is-decision .pmap-node-label { font-weight: 650; }
+.pmap-ring { fill: none; stroke: none; stroke-width: 2.5; transform-box: fill-box; transform-origin: center; transform: scale(1.06, 1.16); }
+.pmap-badge { fill: var(--surface); stroke: var(--ink-3); stroke-width: 1.5; }
+.pmap-badge-text { font-size: 12px; font-weight: 700; fill: var(--ink-2); pointer-events: none; }
+.pmap-check { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.pmap-node.is-opened .pmap-badge { fill: var(--ink-3); stroke: var(--ink-3); }
+.pmap-node.is-opened .pmap-badge-text { fill: var(--surface); }
+.pmap-node.is-here .pmap-shape { stroke: var(--energy); stroke-width: 2.6; fill: color-mix(in srgb, var(--energy) 9%, var(--surface)); }
+.pmap-node.is-here .pmap-badge { fill: var(--energy); stroke: var(--energy); }
+.pmap-node.is-here .pmap-badge-text { fill: #1a1205; }
+.pmap-node.is-zone .pmap-shape { stroke: var(--ink-2); }
+
+.pmap-node:hover .pmap-shape { stroke: var(--reader); }
+.pmap-node.is-selected .pmap-shape { fill: var(--reader-wash); stroke: var(--reader); stroke-width: 3; }
+.pmap-node:focus-visible .pmap-ring { stroke: var(--focus); stroke-dasharray: 4 3; }
+
+.pmap-return { cursor: pointer; outline: none; }
+.pmap-return-shape { fill: var(--surface); stroke: var(--ink-3); stroke-width: 1.3; stroke-dasharray: 5 4; }
+.pmap-return-label { font-size: 13.5px; font-weight: 600; fill: var(--ink-2); pointer-events: none; }
+.pmap-return:hover .pmap-return-shape { stroke: var(--reader); stroke-dasharray: none; }
+.pmap-return:focus-visible .pmap-return-shape { stroke: var(--focus); stroke-width: 2.5; stroke-dasharray: none; }
+
+/* inspector */
+.pmap-inspector {
+  display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 8px 28px;
+  margin-top: 12px; padding: 16px 18px; min-height: 188px;
+  background: var(--surface); border: 1px solid var(--border-2); border-left: 3px solid var(--reader); border-radius: 6px;
+}
+.pmap-insp-kicker { font-size: 0.8rem; font-weight: 600; color: var(--ink-3); margin-bottom: 2px; }
+.pmap .pmap-insp-title { font-family: var(--font); font-size: 1.08rem; font-weight: 650; line-height: 1.3; margin: 0 0 6px; color: var(--ink); }
+.pmap .pmap-insp-what { font-size: 0.95rem; line-height: 1.6; color: var(--ink); margin: 0 0 8px; }
+.pmap .pmap-insp-pb { font-size: 0.88rem; line-height: 1.55; color: var(--ink-2); margin: 0; }
+.pmap-insp-pb a { white-space: nowrap; }
+.pmap-insp-head { font-size: 0.8rem; font-weight: 650; color: var(--ink-2); margin: 2px 0 6px; }
+.pmap-insp-head[hidden] { display: none; }
+.pmap .pmap-insp-links { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 4px; }
+.pmap .pmap-insp-links li { margin: 0; font-size: 0.92rem; line-height: 1.45; }
+.pmap-insp-links a { text-decoration-thickness: 1px; text-underline-offset: 2px; }
+.pmap-link-part { font-weight: 650; margin-right: 6px; }
+.pmap-link-here { color: var(--energy-text); font-size: 0.85em; }
+.pmap-insp-next { display: grid; gap: 6px; }
+.pmap-next-btn {
+  appearance: none; text-align: left; cursor: pointer; display: grid; gap: 1px;
+  padding: 7px 11px; min-height: 44px; border-radius: 6px;
+  font: inherit; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border-2);
+}
+.pmap-next-btn:hover { border-color: var(--reader); background: var(--reader-wash); }
+.pmap-next-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.pmap-next-label { font-size: 0.9rem; font-weight: 650; line-height: 1.3; }
+.pmap-next-step { font-size: 0.8rem; color: var(--ink-2); line-height: 1.35; }
+.pmap-next-btn.is-branch .pmap-next-label { color: var(--ink); }
+
+/* ---------- narrow view: grouped accordion ---------- */
+.pmap .pmap-list { list-style: none; margin: 4px 0 0; padding: 0; }
+.pmap .pmap-phase { margin: 0 0 14px; padding: 0; }
+.pmap-phase-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 9px; margin: 0 0 6px; padding: 0 2px; }
+.pmap-phase-num {
+  display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%;
+  background: var(--ink-2); color: var(--surface); font-size: 0.78rem; font-weight: 700; align-self: center;
+}
+.pmap-phase-name { font-weight: 650; font-size: 0.98rem; color: var(--ink); }
+.pmap-phase-posts { font-size: 0.82rem; color: var(--ink-3); }
+.pmap .pmap-steps { list-style: none; margin: 0; padding: 0 0 0 10px; border-left: 2px solid var(--grid); margin-left: 10px; }
+.pmap .pmap-step { margin: 0 0 6px; padding: 0; }
+.pmap-step-btn {
+  appearance: none; width: 100%; display: grid; grid-template-columns: 30px 1fr 18px; align-items: center; gap: 10px;
+  min-height: 52px; padding: 7px 10px; text-align: left; cursor: pointer;
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--border-2); border-radius: 8px;
+}
+.pmap-step-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.pmap-step-icon {
+  display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 6px;
+  border: 1.5px solid var(--ink-3); font-size: 0.8rem; font-weight: 700; color: var(--ink-2); background: var(--surface);
+}
+.pmap-step.is-decision .pmap-step-icon {
+  border: 0; color: var(--surface); background: var(--ink-3); border-radius: 0;
+  clip-path: polygon(0 50%, 25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%); width: 30px;
+}
+.pmap-step-text { display: grid; gap: 1px; min-width: 0; }
+.pmap-step-title { font-size: 0.95rem; font-weight: 600; line-height: 1.3; }
+.pmap-step-meta { font-size: 0.78rem; color: var(--ink-3); }
+.pmap-step-chev { width: 9px; height: 9px; border-right: 2px solid var(--ink-3); border-bottom: 2px solid var(--ink-3); transform: rotate(45deg) translate(-2px, -2px); justify-self: center; }
+.pmap-step.is-open .pmap-step-chev { transform: rotate(225deg) translate(-2px, -2px); }
+.pmap-step.is-here .pmap-step-btn { border-color: var(--energy); box-shadow: inset 4px 0 0 var(--energy); }
+.pmap-step.is-here .pmap-step-meta { color: var(--energy-text); font-weight: 600; }
+.pmap-step.is-opened:not(.is-here) .pmap-step-icon { background: var(--surface-2); }
+.pmap-step.is-selected .pmap-step-btn { border-color: var(--reader); background: var(--reader-wash); }
+.pmap-step-panel { padding: 10px 6px 4px 12px; }
+.pmap-step-panel[hidden] { display: none; }
+.pmap-step-panel .pmap-insp-links { margin: 8px 0 10px; }
+.pmap-step-panel .pmap-insp-links a { display: inline-block; padding: 4px 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pmap-shape, .pmap-edge-line { transition: stroke 120ms ease, fill 120ms ease; }
+}
+@media print {
+  .pmap-list { display: none !important; }
+  .pmap-desk { display: block !important; }
+}

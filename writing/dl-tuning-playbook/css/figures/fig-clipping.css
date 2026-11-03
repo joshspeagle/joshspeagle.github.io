@@ -1,0 +1,6 @@
+/* fig-clipping, F9.3: the clipping threshold. Two stacked panels, the Playbook's two default plots:
+   (a) the unclipped gradient norm against step with the threshold's handle on its y axis, and (b)
+   the histogram of the norms. Stacked at every width so that each keeps the figure's full width. */
+#fig-clipping .fig-panels { flex-direction: column; flex-wrap: nowrap; gap: 8px; }
+#fig-clipping .fig-panels > .panel { flex: 0 0 auto; }
+#fig-clipping .panel > .handle { z-index: 3; }

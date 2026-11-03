@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Input pipelines, evaluation, checkpoints and multi-host training · Notes on the Deep Learning Tuning Playbook</title>
+  <meta name="description" content="Notes on the Deep Learning Tuning Playbook's additional guidance for the training pipeline: where the accelerator waits for input, why evaluations belong on a step schedule, evaluation samples, checkpoint buffers, experiment tracking, batch norm across devices and multi-host training.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232563eb'/%3E%3Cpath d='M7 22 C12 22 14 10 19 10 C22 10 23 15 25 15' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='10' r='2.6' fill='%23d97706'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="stylesheet" href="../css/figures/fig-clocks.css">
+  <link rel="stylesheet" href="../css/pages/09-pipeline-practice.css">
+</head>
+<body data-page="pages/09-pipeline-practice.html" data-root="../">
+  <header class="site-header"></header>
+
+  <main class="page">
+    <header class="post-header">
+      <div class="post-kicker">Part 9 of 9 &middot; Dynamics, stability and engineering</div>
+      <h1>Input pipelines, evaluation, checkpoints and multi-host training</h1>
+      <div class="post-meta">
+        <span>Josh Speagle</span>
+        <span class="sep"></span>
+        <span><a href="https://github.com/google-research/tuning_playbook#additional-guidance-for-the-training-pipeline" target="_blank" rel="noopener">Notes on the Playbook's section on the training pipeline ↗</a></span>
+      </div>
+    </header>
+
+    <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
+
+    <p class="lede">
+      Every earlier post in this series assumed that a training run measures what it claims to measure. The validation error comes from the right examples at comparable points in training, and the accelerator spends its time on training steps. The Playbook ends its main guide with a section of engineering advice that keeps those assumptions true. It reads like a list of unrelated tips, but most items describe a way a pipeline can produce misleading numbers without raising an error.
+    </p>
+
+    <nav class="post-roadmap" aria-label="In this post">
+      <div class="post-roadmap-head">
+        <span>In this post</span>
+      </div>
+      <div class="post-roadmap-grid">
+        <a class="roadmap-item" href="#preflight">
+          <span class="roadmap-item-title">Smoke tests (my addition)</span>
+          <span class="roadmap-item-desc">Looking at a batch, checking the step-0 loss and overfitting one batch catch wiring bugs before the first sweep.</span>
+        </a>
+        <a class="roadmap-item" href="#pipeline">
+          <span class="roadmap-item-title">Where the accelerator waits</span>
+          <span class="roadmap-item-desc">A profiler shows idle accelerator time. Prefetching hides input work while the host keeps up.</span>
+        </a>
+        <a class="roadmap-item" href="#evaluation">
+          <span class="roadmap-item-title">Evaluating during training</span>
+          <span class="roadmap-item-desc">Fixed step intervals keep slowdowns and preemptions out of the curve and the checkpoint choice.</span>
+        </a>
+        <a class="roadmap-item" href="#sample">
+          <span class="roadmap-item-title">The evaluation sample</span>
+          <span class="roadmap-item-desc">A sample that resolves real improvements, checked against the full set, with counts for rare classes.</span>
+        </a>
+        <a class="roadmap-item" href="#checkpoints">
+          <span class="roadmap-item-title">Checkpoints</span>
+          <span class="roadmap-item-desc">Keep the N best checkpoints and choose the best of them at the end of the run.</span>
+        </a>
+        <a class="roadmap-item" href="#tracking">
+          <span class="roadmap-item-title">Experiment tracking</span>
+          <span class="roadmap-item-desc">Record every study in one table, with a description and the commands to reproduce it.</span>
+        </a>
+        <a class="roadmap-item" href="#batchnorm">
+          <span class="roadmap-item-title">Batch norm across devices</span>
+          <span class="roadmap-item-desc">Batch norm statistics depend on how many examples they average over. Ghost batch norm fixes that number.</span>
+        </a>
+        <a class="roadmap-item" href="#multihost">
+          <span class="roadmap-item-title">Multi-host pipelines</span>
+          <span class="roadmap-item-desc">One host logs and checkpoints. Hosts share the initialization seed and use different data seeds.</span>
+        </a>
+        <a class="roadmap-item" href="#what-to-do">
+          <span class="roadmap-item-title">In practice</span>
+          <span class="roadmap-item-desc">What to check before the first sweep, while each trial trains, and after each study.</span>
+        </a>
+        <a class="roadmap-item" href="#where-this-fits">
+          <span class="roadmap-item-title">Where this fits</span>
+          <span class="roadmap-item-desc">A working pipeline is a precondition for every round of tuning.</span>
+        </a>
+      </div>
+    </nav>
+
+    <article class="post-body">
+
+      <section class="prose" id="preflight">
+        <h2>Smoke tests before the first sweep</h2>
+        <p class="p09-ours-tag"><span>My addition</span> The Playbook's pipeline section does not include this material.</p>
+        <p>
+          Before the Playbook's list, which starts with input performance, I run three smoke tests. A pipeline has to be wired correctly before its speed matters, because a wiring bug wastes every trial that runs on top of it. The checks in <a href="#fig-verification-ladder" class="figref"></a> come from Andrej Karpathy's 2019 blog post <em>A Recipe for Training Neural Networks</em> <cite data-ref="karpathy2019"></cite>. Each one needs a short run and no tuning.
+        </p>
+      </section>
+
+      <figure class="schematic" id="fig-verification-ladder" role="group" aria-labelledby="fig-verification-ladder-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-verification-ladder-title">Three smoke tests before the first sweep</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <ol class="p09-smoke" aria-label="Three smoke tests">
+          <li class="p09-smoke-step">
+            <span class="p09-smoke-num" aria-hidden="true">1</span>
+            <svg class="p09-smoke-art" width="132" height="76" viewBox="0 0 132 76" aria-hidden="true">
+              <g class="p09-art-tiles">
+                <rect x="6" y="8" width="26" height="26" rx="3"/><rect x="36" y="8" width="26" height="26" rx="3"/><rect x="66" y="8" width="26" height="26" rx="3"/>
+                <rect x="6" y="38" width="26" height="26" rx="3"/><rect x="36" y="38" width="26" height="26" rx="3"/>
+              </g>
+              <rect class="p09-art-bad" x="66" y="38" width="26" height="26" rx="3"/>
+              <path class="p09-art-bad-mark" d="M71 43 L87 59 M87 43 L71 59"/>
+              <path class="p09-art-lens" d="M108 30 a 14 14 0 1 0 0.1 0 M118 44 L128 56"/>
+            </svg>
+            <h3 class="p09-smoke-title">Look at a batch just before the model</h3>
+            <p class="p09-smoke-what">Karpathy's recipe visualizes the data immediately before <code>y_hat = model(x)</code>, decoding the raw tensors of data and labels.</p>
+            <p class="p09-smoke-catch"><span>Catches</span> labels left unflipped when augmentation flips the image (Karpathy's example), crops that cut out the object, padding left unmasked.</p>
+          </li>
+          <li class="p09-smoke-step">
+            <span class="p09-smoke-num" aria-hidden="true">2</span>
+            <svg class="p09-smoke-art" width="132" height="76" viewBox="0 0 132 76" aria-hidden="true">
+              <path class="p09-art-axis" d="M10 8 V66 H126"/>
+              <path class="p09-art-ref" d="M10 24 H126"/>
+              <circle class="p09-art-dot" cx="16" cy="24" r="5"/>
+              <path class="p09-art-curve" d="M16 24 C 40 46, 70 56, 124 60"/>
+              <text class="p09-art-label" x="122" y="18" text-anchor="end">ln C</text>
+            </svg>
+            <h3 class="p09-smoke-title">Check the loss at step 0</h3>
+            <p class="p09-smoke-what">The recipe checks that the loss starts at the correct value. A classifier over $C$ classes whose final layer is initialized correctly predicts nearly uniform probabilities, so its softmax cross-entropy starts near $-\ln(1/C) = \ln C$ (2.30 for ten classes).</p>
+            <p class="p09-smoke-catch"><span>Catches</span> a softmax applied twice, the wrong label encoding, a loss summed where it should be averaged.</p>
+          </li>
+          <li class="p09-smoke-step">
+            <span class="p09-smoke-num" aria-hidden="true">3</span>
+            <svg class="p09-smoke-art" width="132" height="76" viewBox="0 0 132 76" aria-hidden="true">
+              <path class="p09-art-axis" d="M10 8 V66 H126"/>
+              <path class="p09-art-curve" d="M12 14 C 30 50, 50 62, 124 64"/>
+              <path class="p09-art-batch" d="M98 12 h22 v22 h-22 z M102 16 h14 M102 21 h14 M102 26 h10"/>
+            </svg>
+            <h3 class="p09-smoke-title">Overfit one batch</h3>
+            <p class="p09-smoke-what">The recipe overfits a single batch of a few examples, as few as two, and checks that training reaches the lowest achievable loss, such as zero.</p>
+            <p class="p09-smoke-catch"><span>Catches</span> gradients that never reach some layers, parameters missing from the optimizer, inputs paired with the wrong targets.</p>
+          </li>
+        </ol>
+        <p class="fig-caption">
+          Run these checks once per new pipeline, in order. Each asks a question with a known answer (what the data should look like, what the loss should be at initialization, whether the model can memorize a single batch), so a failure points at the pipeline. The checks come from Karpathy's recipe, and the Playbook does not list them. Apart from the flipped-label example, the bugs under "Catches" are my examples.
+        </p>
+      </figure>
+
+      <section class="prose" id="preflight-next">
+        <p>
+          None of these checks measures speed. A pipeline can pass all three and still leave the accelerator idle for half of every step, which is where the Playbook's own list begins.
+        </p>
+      </section>
+
+      <section class="prose" id="pipeline">
+        <h2>Where the accelerator waits</h2>
+        <p data-src="1370-1374">
+          Suppose a training step takes 100&nbsp;ms of accelerator time, but the job runs at about four steps per second instead of ten. The missing time goes to producing the next batch: reading files, decoding and augmenting examples, and copying them to the device. A pipeline in this state is <dfn data-concept="input-pipeline">input-bound</dfn> (its speed is set by how fast the host produces examples, and the accelerator idles in between).
+        </p>
+        <blockquote class="playbook" data-src="1372-1374">
+          <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#optimizing-the-input-pipeline" target="_blank" rel="noopener">Optimizing the input pipeline ↗</a></span>
+          <p>The causes and interventions of input-bound pipelines are highly task-dependent; use a profiler and look out for common issues.</p>
+        </blockquote>
+        <p data-src="1375-1381">
+          A profiler records a timeline of what the host and the accelerator are doing. The Playbook points to <a href="https://jax.readthedocs.io/en/latest/profiling.html" target="_blank" rel="noopener">Perfetto</a> for JAX and the <a href="https://www.tensorflow.org/guide/profiler" target="_blank" rel="noopener">TensorFlow profiler</a>, and PyTorch has <code>torch.profiler</code>. <a href="#fig-input-timeline" class="figref"></a> is a simplified timeline of this kind. One input worker on the host reads and preprocesses each batch, and the accelerator runs the training step on it.
+        </p>
+      </section>
+
+      <figure class="fig l-wide" id="fig-input-timeline" role="group" aria-labelledby="fig-input-timeline-title"
+              data-playbook-quote="Common causes: Data are not colocated with the training process, causing I/O latency (this might happen when reading training data over a network). Expensive online data preprocessing (consider doing this once offline and saving). Unintentional synchronization barriers that interfere with data pipeline prefetching. For example, when synchronizing metrics between the device and host in CommonLoopUtils. [...] Common tips: Instrument input pipeline to prefetch examples (e.g. tf.data.Dataset.prefetch) [...] Remove unused features/metadata from each as early in the pipeline as possible. Increase the replication of the number of jobs generating examples for the input pipeline. For example, by using the tf.data service."
+              data-playbook-src="1382-1398"
+              data-playbook-caption="The Playbook's lists of common causes of input-bound pipelines and common tips, from the section on optimizing the input pipeline. List items are joined into sentences, and [...] marks a removed link.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-input-timeline-title">Where the accelerator waits for input</span>
+          <span class="chip toy">Interactive toy model</span>
+        </figcaption>
+        <p class="fig-task">Turn on prefetching, then switch the data source to network storage and see what prefetching can no longer hide.</p>
+        <div class="fig-tutorial" data-figure="fig-input-timeline">
+          <div class="fig-tut-step-data" data-label="No overlap" data-params='{"source":"local","prefetch":false,"workers":"1","sync":false}'>
+            Without prefetching, the worker starts on batch $i+1$ only when step $i$ asks for it. Every step pays 50&nbsp;ms of input work plus 100&nbsp;ms of compute, so the accelerator is busy 67% of the time.
+          </div>
+          <div class="fig-tut-step-data" data-label="Prefetch" data-params='{"source":"local","prefetch":true,"workers":"1","sync":false}'>
+            With prefetching, the worker prepares the next batches while the accelerator computes. Input work now runs in parallel with compute, and after the first batch the accelerator never waits.
+          </div>
+          <div class="fig-tut-step-data" data-label="Slow source" data-params='{"source":"network","prefetch":true,"workers":"1","sync":false}'>
+            Reading from network storage makes each batch take 155&nbsp;ms to produce, longer than the 100&nbsp;ms step. Prefetching overlaps the two, but the accelerator still waits 55&nbsp;ms per step for a worker that cannot keep up.
+          </div>
+          <div class="fig-tut-step-data" data-label="Two workers" data-params='{"source":"network","prefetch":true,"workers":"2","sync":false}'>
+            A second input worker produces every other batch. Together the two workers deliver a batch every 78&nbsp;ms on average, faster than the accelerator consumes them, so the waiting disappears.
+          </div>
+          <div class="fig-tut-step-data" data-label="Sync barrier" data-params='{"source":"local","prefetch":true,"workers":"1","sync":true}'>
+            A per-step synchronization makes the host wait for each step to finish before it prepares the next batch. The prefetch stops working, and the timeline looks the same as the first step of this tour.
+          </div>
+        </div>
+        <details class="fig-model">
+          <summary>How this toy works</summary>
+          <p>The constants are arbitrary round numbers chosen to make the overlap visible. A training step takes 100&nbsp;ms on the accelerator. Producing one batch takes a read time plus a preprocessing time on one input worker: 15&nbsp;ms and 35&nbsp;ms for local disk, 120&nbsp;ms and 35&nbsp;ms for network storage, and 15&nbsp;ms and 125&nbsp;ms for heavy online preprocessing.</p>
+          <p>Without prefetching, the worker starts batch $i+1$ when step $i$ ends. With prefetching, each worker starts its next batch as soon as it is free, as long as at most two finished batches per worker wait in the buffer. With two workers, batches alternate between them. A synchronization barrier makes the host wait for step $i$ to end before any worker starts batch $i+1$. Whether a real barrier blocks the input pipeline depends on whether that pipeline runs on the blocked thread, so the toy shows the case the Playbook warns about.</p>
+          <p>The readout reports the share of time the accelerator spends computing over the first 40 steps and the resulting steps per second. The timeline shows the first 1,200&nbsp;ms.</p>
+        </details>
+        <p class="fig-caption">
+          A simplified profiler trace with arbitrary constants. The top lanes are host input workers (read time in ochre, preprocessing in purple), and the bottom lane is the accelerator (training steps in blue, waiting time hatched). The accelerator waits whenever the next batch is not ready when a step ends. Prefetching removes the wait when the host produces batches faster than the accelerator consumes them, and a slow source or a synchronization barrier brings the wait back.
+        </p>
+      </figure>
+
+      <section class="prose" id="pipeline-causes">
+        <p data-src="1382-1390">
+          The Playbook lists three common causes, and each one appears as a setting in <a href="#fig-input-timeline" class="figref"></a>.
+        </p>
+        <ul class="p09-list" data-src="1382-1390">
+          <li><strong>Data far from the training process.</strong> Reading training data over a network adds I/O latency to every batch. In the toy this is the network-storage setting, where the read segment dominates.</li>
+          <li><strong>Expensive online preprocessing.</strong> Decoding and augmenting on the fly can cost more than the training step. The Playbook suggests doing such preprocessing once, offline, and saving the result.</li>
+          <li><strong>Unintentional synchronization barriers.</strong> A call that makes the host wait for the device can interfere with prefetching. The Playbook's example is synchronizing metrics between the device and the host in <a href="https://github.com/google/CommonLoopUtils" target="_blank" rel="noopener">CommonLoopUtils</a>.</li>
+        </ul>
+        <p data-src="1391-1398">
+          Its tips map onto the same picture. Prefetching (for example <code>tf.data.Dataset.prefetch</code>) lets the host prepare upcoming batches while the accelerator computes. Removing unused features and metadata from each example as early in the pipeline as possible shortens the work per batch. Running more jobs that generate examples (for example with the <a href="https://www.tensorflow.org/api_docs/python/tf/data/experimental/service" target="_blank" rel="noopener">tf.data service</a>) raises the rate at which batches arrive, which is the two-worker setting in the toy. The Playbook also notes that the right fix is task-dependent, and that broader engineering concerns, such as keeping the data's disk footprint small, can justify a slower input pipeline.
+        </p>
+        <p data-src="238-244">
+          One comparison is useful before opening a profiler (my addition). Feed the training step a batch that already sits in device memory, repeat it for a few hundred steps, and compare the steps per second with the real input pipeline. A large gap says the input pipeline is the bottleneck. The comparison is a variant of the throughput check in <a href="03-batch-size.html#feasible">Part 3</a>, where the Playbook notes that throughput which stops doubling with the batch size before the accelerator saturates points to a bottleneck such as I/O or synchronization between compute nodes.
+        </p>
+      </section>
+
+      <section class="prose" id="evaluation">
+        <h2>Evaluating during training</h2>
+        <p data-src="1405-1431">
+          Once batches arrive on time, the next question is what the pipeline measures while it trains. The Playbook separates three settings for evaluating a model, sketched in <a href="#fig-eval-settings" class="figref"></a>. <strong>Online evaluation</strong> measures the model while it serves predictions in production. <strong>Offline evaluation</strong> runs it on held-out training, validation and test sets that represent the production environment. <strong>Periodic evaluation</strong> computes metrics during training, as a proxy for the offline evaluation, often on a subset of its data.
+        </p>
+      </section>
+
+      <figure class="schematic l-text" id="fig-eval-settings" role="group" aria-labelledby="fig-eval-settings-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-eval-settings-title">Three settings for evaluating a model</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p09-evalset">
+          <div class="p09-evalset-axis" aria-hidden="true"><span>cheaper, available during training</span><span>closer to production</span></div>
+          <div class="p09-evalset-row">
+            <div class="p09-evalset-card is-focus">
+              <svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              <h3>Periodic</h3>
+              <p>During training, every fixed number of steps, often on a sample of the offline data.</p>
+              <p class="p09-evalset-verdict">The practical choice for tuning. May not fully represent production.</p>
+            </div>
+            <div class="p09-evalset-card">
+              <svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3"/></svg>
+              <h3>Offline</h3>
+              <p>After training, on full held-out sets that represent production.</p>
+              <p class="p09-evalset-verdict">Can be involved and computationally expensive.</p>
+            </div>
+            <div class="p09-evalset-card">
+              <svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.2 3 14.8 0 18M12 3c-3 3.2-3 14.8 0 18"/></svg>
+              <h3>Online</h3>
+              <p>In production, on the predictions the model actually serves.</p>
+              <p class="p09-evalset-verdict">The gold standard. Often impractical during development.</p>
+            </div>
+          </div>
+        </div>
+        <p class="fig-caption">
+          The Playbook's three evaluation settings, ordered from the cheapest and most frequent to the most faithful. Tuning runs on periodic evaluations, so the Playbook asks them to be an expedient proxy of the offline evaluation without sacrificing the reliability of the signal.
+        </p>
+      </figure>
+
+      <section class="prose" id="evaluation-setup">
+        <p data-src="1438-1450">
+          The Playbook runs periodic evaluations for three uses: to monitor training as it happens, to support <a href="#checkpoints">retrospective checkpoint selection</a>, and to examine the <a href="05-reading-the-results.html#curves">training curves</a> after the run ends. The simplest setup alternates training and evaluation on the same machine. In that setup the Playbook recommends an evaluation batch size at least as large as the training batch size, because evaluation does not keep activations for a backward pass and so needs less memory per example.
+        </p>
+
+        <h3 id="step-clock">Step intervals, not time intervals</h3>
+        <p data-src="1451-1455">
+          A timer is the easiest schedule to write ("evaluate every ten minutes"), and it makes the cost of evaluation predictable. The Playbook argues against it.
+        </p>
+        <blockquote class="playbook" data-src="1451-1455">
+          <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#setting-up-periodic-evaluations" target="_blank" rel="noopener">Setting up periodic evaluations ↗</a></span>
+          <p>Periodic evaluations should be done at regular step intervals, not time intervals. Evaluating based on time intervals can make it harder to interpret the training curves, especially when training may suffer from preemptions of the training jobs, network latency issues, etc.</p>
+        </blockquote>
+        <p>
+          <a href="#fig-clocks" class="figref"></a> replays one simulated run under both schedules. The job trains at <span data-num="fig-clocks:model:rate">10</span> steps per second, slows to <span data-num="fig-clocks:model:slow-rate">3</span> steps per second for <span data-num="fig-clocks:default:slow-seconds">600</span>&nbsp;s of network contention, and is later preempted and restarted from its last checkpoint.
+        </p>
+      </section>
+
+      <figure class="fig l-wide" id="fig-clocks" role="group" aria-labelledby="fig-clocks-title"
+              data-shows="periodic-evaluation"
+              data-playbook-quote="Periodic evaluations should be done at regular step intervals, not time intervals. Evaluating based on time intervals can make it harder to interpret the training curves, especially when training may suffer from preemptions of the training jobs, network latency issues, etc."
+              data-playbook-src="1451-1455"
+              data-playbook-caption="The Playbook's rule for scheduling periodic evaluations, from the section on setting up periodic evaluations.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-clocks-title">One run evaluated on a timer and on a step schedule</span>
+          <span class="chip toy">Interactive toy model</span>
+        </figcaption>
+        <p class="fig-task">Switch between the two schedules and compare the bars in panel (c) and the best checkpoint in panel (b).</p>
+        <div class="fig-tutorial" data-figure="fig-clocks">
+          <div class="fig-tut-step-data" data-label="Slowdown" data-params='{"schedule":"time","focus":"slow"}'>
+            The timer fires every <span data-num="fig-clocks:model:eval-seconds">25</span>&nbsp;s. While the job runs at full speed that is every <span data-num="fig-clocks:default:normal-step-spacing">250</span> steps, but during the slowdown it is every <span data-num="fig-clocks:default:slow-step-spacing">75</span> steps. The slowdown's steps receive <span data-num="fig-clocks:default:evals-slowdown">24</span> evaluations, and panel (c) shows the spike.
+          </div>
+          <div class="fig-tut-step-data" data-label="Preemption" data-params='{"schedule":"time","focus":"repeat"}'>
+            At <span data-num="fig-clocks:default:preempt-time">2,200</span>&nbsp;s the job is preempted at step <span data-num="fig-clocks:model:preempt-step">17,800</span>. It restarts from the checkpoint at step <span data-num="fig-clocks:default:restore-step">17,000</span> and trains the next 800 steps a second time. The timer evaluates that stretch again at different steps (open gold circles).
+          </div>
+          <div class="fig-tut-step-data" data-label="Best checkpoint" data-params='{"schedule":"time","focus":"best"}'>
+            The best checkpoint is the lowest evaluation. On the timer it is step <span data-num="fig-clocks:default:best-step">10,075</span>, inside the densely sampled slowdown, where the noise-free curve is already rising.
+          </div>
+          <div class="fig-tut-step-data" data-label="Step schedule" data-params='{"schedule":"step","focus":"best"}'>
+            Every <span data-num="fig-clocks:model:eval-steps">250</span> steps, the bars in panel (c) are level except where the restart repeats steps, and the repeated evaluations fall on the same steps as the first pass. The best checkpoint is step <span data-num="fig-clocks:step:best-step">6,500</span>, close to the noise-free minimum.
+          </div>
+        </div>
+        <details class="fig-model">
+          <summary>How this toy works</summary>
+          <p>Wall-clock time $t_{\text{wall}}$ maps to training steps at 10 steps per second, except from 1,000&nbsp;s to 1,600&nbsp;s, when a slowdown drops the rate to 3 steps per second. The job is preempted when it reaches step 17,800, stays down for 300&nbsp;s, and restarts from the checkpoint saved at step 17,000 (checkpoints every 1,000 steps). It reaches step 20,000 at 2,800&nbsp;s.</p>
+          <p>The validation error of the model at step $t$ is a smooth curve plus noise,</p>
+          $$V(t) = 0.2 + e^{-t/1000} + 0.01 \ln\!\left(1 + \frac{t}{1000}\right) + 0.003\,z,$$
+          <p>with $z$ a standard normal draw for each model state. The noise-free part falls to a minimum near step <span data-num="fig-clocks:model:min-step">6,640</span> and then rises slowly, a mild form of overfitting. Steps trained again after the restart are new model states and get new draws. The timer evaluates every 25&nbsp;s while the job is up, reading the model at the last completed step. The step schedule evaluates every 250 steps.</p>
+          <p>The run uses seed <span data-num="fig-clocks:seed:chosen">8</span>, picked because the two schedules choose different best checkpoints in it. Over seeds 1 to 1,000 of the same toy, the timer's best checkpoint fell inside the slowdown's steps in <span data-num="fig-clocks:seed:timer-in-slow">17%</span> of runs and the step schedule's in <span data-num="fig-clocks:seed:step-in-slow">6%</span>.</p>
+        </details>
+        <p class="fig-caption">
+          A simulated run with arbitrary constants. (a) Step against wall-clock time, with a tick on each axis per evaluation. (b) Validation error of each evaluation from step 4,000, joined in run order, with the noise-free curve in gray and the best checkpoint ringed. (c) Evaluations per 1,000 steps. On the timer, <span data-num="fig-clocks:default:evals-slowdown">24</span> of the <span data-num="fig-clocks:default:evals-total">101</span> evaluations fall in the slowdown. On the step schedule, <span data-num="fig-clocks:step:evals-slowdown">8</span> of <span data-num="fig-clocks:step:evals-total">84</span> do.
+        </p>
+      </figure>
+
+      <section class="prose" id="step-clock-why">
+        <p>
+          On the timer, evaluations fall evenly in time and therefore unevenly in steps. The slowdown's stretch of training gets more than three times the usual density of points, and the stretch repeated after the restart is evaluated twice at offset steps, so the line in panel (b) doubles back on itself. Neither feature says anything about the model. Both record what the cluster was doing.
+        </p>
+        <p>
+          The uneven density also changes which checkpoint wins. The best checkpoint is the minimum over noisy evaluations, and a stretch with more evaluations offers more chances for a low noisy value. In the run shown, the timer selects step <span data-num="fig-clocks:default:best-step">10,075</span> from the slowdown, while the step schedule selects step <span data-num="fig-clocks:step:best-step">6,500</span>, close to where the noise-free curve is lowest. Two trials that hit different slowdowns are then compared on unequal terms. On a step schedule every trial is evaluated at the same steps, so curves can be overlaid point by point and every trial gets the same number of chances.
+        </p>
+
+        <h3 id="evaluation-bugs">Periodic patterns in validation metrics</h3>
+        <p data-src="1456-1460">
+          The Playbook points out a second benefit of step intervals. When the training, validation and test split is shuffled, periodicity in the validation or test metrics can indicate an implementation bug, such as test data that overlaps the training data or training data that is not properly shuffled. Evaluating at regular step intervals makes such patterns easier to catch. In my reading, the reason is that an epoch is a fixed number of steps, so a pattern tied to the order of the training data repeats every fixed number of step-scheduled evaluations, while a timer spreads it across uneven intervals.
+        </p>
+
+        <h3 id="padding">Partial batches and saved predictions</h3>
+        <p data-src="1461-1470">
+          An evaluation set whose size is not divisible by the batch size leaves a partial final batch, which implementations usually pad to full size. The Playbook asks that the padded examples be weighted correctly so they do not bias the loss, and notes that they can often be given a weight of zero (<a href="#fig-padding" class="figref"></a>).
+        </p>
+      </section>
+
+      <figure class="schematic l-text" id="fig-padding" role="group" aria-labelledby="fig-padding-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-padding-title">Zero weights for padded evaluation examples</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p09-pad" aria-hidden="true">
+          <div class="p09-pad-batch"><span class="p09-pad-name">batch 1</span><span class="p09-pad-cells"><i></i><i></i><i></i><i></i></span><span class="p09-pad-w">1&nbsp;1&nbsp;1&nbsp;1</span></div>
+          <div class="p09-pad-batch"><span class="p09-pad-name">batch 2</span><span class="p09-pad-cells"><i></i><i></i><i></i><i></i></span><span class="p09-pad-w">1&nbsp;1&nbsp;1&nbsp;1</span></div>
+          <div class="p09-pad-batch"><span class="p09-pad-name">batch 3</span><span class="p09-pad-cells"><i></i><i></i><i class="is-pad"></i><i class="is-pad"></i></span><span class="p09-pad-w">1&nbsp;1&nbsp;<b>0&nbsp;0</b></span></div>
+          <div class="p09-pad-legend"><span><i></i> real example</span><span><i class="is-pad"></i> padding</span><span class="p09-pad-wkey">weight $w_i$</span></div>
+        </div>
+        <div class="p09-pad-math">
+          $$\bar{\ell} \;=\; \frac{\sum_{i=1}^{12} w_i\,\ell_i}{\sum_{i=1}^{12} w_i} \;=\; \frac{1}{10}\sum_{\text{real}} \ell_i$$
+        </div>
+        <p class="sr-only">Ten evaluation examples in batches of four: two full batches and a third batch with two real examples and two padded slots. The padded slots get weight zero, so the weighted mean loss averages over the ten real examples.</p>
+        <p class="fig-caption">
+          Ten evaluation examples in batches of four leave two padded slots in the last batch. With weights $w_i$ of zero on the padding, the weighted mean loss $\bar{\ell}$ averages over the ten real examples. A plain mean over all twelve slots would mix in whatever loss the padding produces.
+        </p>
+      </figure>
+
+      <section class="prose" id="saved-predictions">
+        <p data-src="1465-1470">
+          The Playbook also recommends saving enough information at each evaluation to support offline analysis, ideally the predictions on a selection of individual examples, because they are invaluable for debugging. Artifacts such as TensorFlow <a href="https://www.tensorflow.org/guide/saved_model" target="_blank" rel="noopener">SavedModels</a> make ad hoc inspection easy after the evaluation jobs finish.
+        </p>
+      </section>
+
+      <section class="prose" id="sample">
+        <h2>Choosing the evaluation sample</h2>
+        <p data-src="1478-1483">
+          A periodic evaluation job might not run fast enough to compute metrics on the full offline evaluation set in a reasonable time. The Playbook notes that this often makes a <dfn data-concept="evaluation-sample">sample for periodic evaluation</dfn> necessary, and lists what to consider when building one.
+        </p>
+        <ul class="p09-list" data-src="1484-1504">
+          <li><strong>No skew.</strong> Performance on the sample should match performance on the whole offline evaluation set.</li>
+          <li><strong>Size.</strong> The sample should be small enough to evaluate in full without trouble, and large enough to measure improvements to the model accurately, so that they are not overwhelmed by label noise.</li>
+          <li><strong>Repeated use.</strong> It should be large enough to support many evaluations across trials in sequence without adaptively fitting the validation set in a way that fails to generalize to a held-out test set. The Playbook adds that this consideration is rarely a practical concern. (For the theory of reusing a holdout set, see <cite data-ref="dwork2015">Dwork et al. (2015)</cite>.)</li>
+          <li><strong>Imbalanced classes.</strong> Performance on rare classes will often be noisy. For a class with few examples, the Playbook suggests logging the number of examples predicted correctly.</li>
+        </ul>
+        <p data-src="1500-1504">
+          The last point comes with the Playbook's own example: ".05 sensitivity improvement sounds exciting, but was it just one more example correct?" With 20 validation examples in a class, it was (<a href="#fig-rare-class" class="figref"></a>).
+        </p>
+      </section>
+
+      <figure class="schematic l-text" id="fig-rare-class" role="group" aria-labelledby="fig-rare-class-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-rare-class-title">A sensitivity gain of 0.05 on a class with 20 examples</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p09-units">
+          <div class="p09-units-row">
+            <span class="p09-units-name">Before</span>
+            <span class="p09-units-grid" aria-hidden="true"><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="p09-units-val">15 of 20 correct <b>0.75</b></span>
+          </div>
+          <div class="p09-units-row">
+            <span class="p09-units-name">After</span>
+            <span class="p09-units-grid" aria-hidden="true"><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok"></i><i class="ok new"></i><i></i><i></i><i></i><i></i></span>
+            <span class="p09-units-val">16 of 20 correct <b>0.80</b></span>
+          </div>
+        </div>
+        <p class="fig-caption">
+          Each square is one validation example of a rare class, filled when the model predicts it correctly. A sensitivity (the fraction of the class predicted correctly) rising from 0.75 to 0.80 is one more correct example, the outlined square. Logging the count, 16 of 20, makes that visible where the fraction does not.
+        </p>
+      </figure>
+
+      <section class="prose" id="sample-size">
+        <details class="math-aside">
+          <summary>How large a sample resolves a given improvement</summary>
+          <p>This rough guide is mine, from the binomial distribution. An accuracy $p$ measured on $n$ independent examples has standard error</p>
+          $$\mathrm{SE} = \sqrt{\frac{p\,(1-p)}{n}}.$$
+          <p>For $p = 0.9$, the standard error is about 0.009 on 1,000 examples and 0.003 on 10,000. A difference between two checkpoints that is smaller than about twice the standard error is hard to separate from sampling noise. Comparing two models on the same examples is less noisy than this, because the examples both get right or both get wrong cancel. For a rare class, $n$ is the number of examples in that class, which is why its metrics move in steps of $1/n$.</p>
+        </details>
+      </section>
+
+      <section class="prose" id="checkpoints">
+        <h2>Checkpoints and retrospective selection</h2>
+        <blockquote class="playbook" data-src="1510-1511">
+          <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#saving-checkpoints-and-retrospectively-selecting-the-best-checkpoint" target="_blank" rel="noopener">Saving checkpoints ↗</a></span>
+          <p>Run training for a fixed number of steps and retrospectively choose the best checkpoint from the run.</p>
+        </blockquote>
+        <p data-src="1513-1527">
+          Most frameworks can save the model's state to disk periodically, which makes a training job resilient to interruptions. The Playbook adds that the best checkpoint is often not the last one, particularly when validation performance stops improving and fluctuates about a value. It recommends that the pipeline keep the N best checkpoints seen so far (a <dfn data-concept="buffer">checkpoint buffer</dfn>) and choose the best of them at the end of training, which it calls <dfn data-concept="retrospective-selection">retrospective optimal checkpoint selection</dfn>. Because each trial runs for a pre-specified number of steps and the best checkpoints are kept, prospective early stopping (ending a run when validation performance stalls) is usually unnecessary.
+        </p>
+      </section>
+
+      <figure class="schematic" id="fig-checkpoint-buffer" role="group" aria-labelledby="fig-checkpoint-buffer-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-checkpoint-buffer-title">A buffer of the three best checkpoints</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p09-ckpt" data-schematic="checkpoint-buffer" aria-hidden="true"></div>
+        <p class="sr-only">A validation error curve with an evaluation every 1,000 steps. It falls, levels off near step 9,000 and fluctuates. The three lowest evaluations, at steps 9,000, 11,000 and 14,000, are kept in a buffer of three slots. The final checkpoint at step 20,000 is worse than all three.</p>
+        <p class="fig-caption">
+          An evaluation (dot) every 1,000 steps of a run whose validation error levels off and fluctuates. The buffer holds the three lowest evaluations seen so far, ranked, and a new checkpoint replaces the worst entry only when it beats it. At the end of training the top entry is the trial's result. The final checkpoint, at step 20,000, would not have qualified. The curve is drawn for illustration. <a href="01-the-tuning-loop.html#fig-checkpoint">Part 1</a> has an interactive version that plays the buffer forward step by step.
+        </p>
+      </figure>
+
+      <section class="prose" id="checkpoints-count">
+        <p>
+          <a href="#fig-clocks" class="figref"></a> also matters for checkpoint selection. A trial's result is a minimum over noisy evaluations, so it depends on how many evaluations the trial received, the same effect as taking the best of many trials in <a href="04-searching-the-space.html#trials">Part 4</a>. A fixed step interval gives every trial in a study the same number of evaluations at the same steps, which keeps that effect equal across trials.
+        </p>
+        <details class="math-aside">
+          <summary>How much lower the minimum of more evaluations falls</summary>
+          <p>This is my addition. If a stretch of training has a level validation error $\bar V$ and each evaluation adds independent noise with standard deviation $\sigma$, the minimum of $M$ evaluations falls below $\bar V$ by an amount that grows with $M$. For large $M$ the expected shortfall approaches $\sigma\sqrt{2\ln M}$, and for $M$ between 5 and 25 it is about $1.2\sigma$ to $2.0\sigma$ (the factors $m_K$ in the selection-bias aside of <a href="06-adopting-a-change.html#variance">Part 6</a>). In <a href="#fig-clocks" class="figref"></a> the slowdown holds 24 timer evaluations against 8 step-scheduled ones, enough to move the selected checkpoint.</p>
+        </details>
+      </section>
+
+      <section class="prose" id="tracking">
+        <h2>Experiment tracking</h2>
+        <blockquote class="playbook" data-src="1531-1533">
+          <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#setting-up-experiment-tracking" target="_blank" rel="noopener">Setting up experiment tracking ↗</a></span>
+          <p>When tracking different experiments, make sure to note a number of essentials like the best performance of a checkpoint in the study, and a short description of the study.</p>
+        </blockquote>
+        <p data-src="1535-1547">
+          Over weeks of tuning, the results that matter are spread across dozens of studies. The Playbook's authors keep <dfn data-concept="experiment-tracking">experiment tracking</dfn> results in a spreadsheet, with the six columns in <a href="#fig-tracking-sheet" class="figref"></a>. They ask for a tracking system that captures at least this information and is convenient for the people using it, and they close with a short warning: "Untracked experiments might as well not exist."
+        </p>
+      </section>
+
+      <figure class="schematic l-wide" id="fig-tracking-sheet" role="group" aria-labelledby="fig-tracking-sheet-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-tracking-sheet-title">A study-tracking spreadsheet with the Playbook's columns</span>
+          <span class="chip">Mock-up</span>
+        </figcaption>
+        <div class="p09-sheet-wrap" tabindex="0" role="region" aria-label="Spreadsheet mock-up, scrolls sideways on small screens">
+          <table class="p09-sheet">
+            <thead>
+              <tr class="p09-sheet-letters" aria-hidden="true"><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th></tr>
+              <tr class="p09-sheet-head">
+                <th class="p09-sheet-rn" aria-hidden="true">1</th>
+                <th scope="col"><span class="p09-sheet-tag">1</span>Study name</th>
+                <th scope="col"><span class="p09-sheet-tag">2</span>Config</th>
+                <th scope="col"><span class="p09-sheet-tag">3</span>Description</th>
+                <th scope="col"><span class="p09-sheet-tag">4</span>Trials</th>
+                <th scope="col"><span class="p09-sheet-tag">5</span>Best val. error</th>
+                <th scope="col"><span class="p09-sheet-tag">6</span>Reproduction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th class="p09-sheet-rn" aria-hidden="true">2</th>
+                <td><code>lr-sweep-v1</code></td>
+                <td><a class="p09-sheet-link" href="#fig-tracking-sheet" aria-disabled="true" tabindex="-1">configs/lr_sweep.py</a></td>
+                <td>Constant-LR sweep to estimate the step budget</td>
+                <td class="num">7</td>
+                <td class="num">0.251</td>
+                <td><code>train.py --config=lr_sweep</code></td>
+              </tr>
+              <tr>
+                <th class="p09-sheet-rn" aria-hidden="true">3</th>
+                <td><code>baseline-lr</code></td>
+                <td><a class="p09-sheet-link" href="#fig-tracking-sheet" aria-disabled="true" tabindex="-1">configs/baseline.py</a></td>
+                <td>Learning rate only, no weight decay</td>
+                <td class="num">20</td>
+                <td class="num">0.243</td>
+                <td>Needs the uncommitted data-loader fix</td>
+              </tr>
+              <tr class="is-best">
+                <th class="p09-sheet-rn" aria-hidden="true">4</th>
+                <td><code>wd-joint</code></td>
+                <td><a class="p09-sheet-link" href="#fig-tracking-sheet" aria-disabled="true" tabindex="-1">configs/wd_joint.py</a></td>
+                <td>Does weight decay help? Joint over LR and decay</td>
+                <td class="num">100</td>
+                <td class="num">0.232</td>
+                <td><code>train.py --config=wd_joint</code> at commit <code>a41c9e</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <ol class="p09-sheet-key">
+          <li><span class="p09-sheet-tag">1</span>Study name</li>
+          <li><span class="p09-sheet-tag">2</span>A link to wherever the study's config is stored</li>
+          <li><span class="p09-sheet-tag">3</span>Notes or a short description of the study</li>
+          <li><span class="p09-sheet-tag">4</span>Number of trials run</li>
+          <li><span class="p09-sheet-tag">5</span>Validation performance of the best checkpoint in the study</li>
+          <li><span class="p09-sheet-tag">6</span>Reproduction commands, or notes on unsubmitted changes needed to launch training</li>
+        </ol>
+        <p class="fig-caption">
+          The column headings are the Playbook's list. The rows are placeholder entries for a hypothetical image classifier, written to show what a useful cell looks like. The description says what question the study answered, and the reproduction column records the uncommitted change that a later reader would otherwise miss.
+        </p>
+      </figure>
+
+      <section class="prose" id="tracking-note">
+        <p>
+          Hosted experiment trackers record configurations and curves automatically, which covers the config, trial and performance columns. The description and reproduction columns still need someone to write them while the study is fresh, and a returning reader has no other way to recover that information.
+        </p>
+      </section>
+
+      <section class="prose" id="batchnorm">
+        <h2>Batch norm across devices</h2>
+        <blockquote class="playbook" data-src="1551-1553">
+          <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#batch-normalization-implementation-details" target="_blank" rel="noopener">Batch normalization implementation details ↗</a></span>
+          <p>Nowadays batch norm can often be replaced with LayerNorm, but in cases where it cannot, there are tricky details when changing the batch size or number of hosts.</p>
+        </blockquote>
+        <p data-src="1555-1557">
+          Batch norm <cite data-ref="ioffe2015"></cite> normalizes each feature (a channel, in a convolutional network) using the mean and variance of that feature over a group of $n$ examples. For an activation $z_i$ of example $i$,
+        </p>
+        <div class="math-block">
+          $$\hat{z}_i = \frac{z_i - \htmlClass{math-col-model}{\bar{z}}}{\sqrt{\htmlClass{math-col-model}{s^2} + \epsilon}}, \qquad \htmlClass{math-col-model}{\bar{z}} = \frac{1}{\htmlClass{math-col-third}{n}}\sum_{j=1}^{\htmlClass{math-col-third}{n}} z_j,$$
+        </div>
+        <p data-src="1555-1557">
+          where $s^2$ is the variance over the same $n$ examples and $\epsilon$ is a small constant. At test time the layer uses exponential moving averages (EMAs) of these statistics collected during training. The Playbook's first point is that with several devices, each holding part of the batch, the statistics differ from device to device unless they are explicitly synchronized. Without synchronization, $n$ equals the per-device batch size, $B/D$ for a global batch size $B$ split over $D$ devices, so changing either one changes $n$.
+        </p>
+        <p>
+          A change in $n$ is more than an implementation detail. <cite data-ref="goyal2017">Goyal et al. (2017)</cite> point out that "if the per-worker minibatch sample size $n$ is changed, it changes the underlying loss function $L$ that is optimized", because the statistics "computed by BN with different $n$ exhibit different levels of random variation". They kept $n = 32$ per worker throughout their large-batch ImageNet runs. <a href="#fig-norm-multihost" class="figref"></a> compares what each normalization scheme averages over.
+        </p>
+      </section>
+
+      <figure class="schematic l-wide" id="fig-norm-multihost" role="group" aria-labelledby="fig-norm-multihost-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-norm-multihost-title">What each normalization averages over</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p09-norm">
+          <div class="p09-norm-axes" aria-hidden="true">
+            <span class="p09-norm-axes-rows">rows: 16 examples on 2 devices</span>
+            <span class="p09-norm-axes-cols">columns: 6 features</span>
+          </div>
+          <div class="p09-norm-grid" data-norm-panels></div>
+        </div>
+        <p class="sr-only">Four grids of 16 examples by 6 features, split across two devices of 8 examples. Per-device batch norm averages one feature over the 8 examples of one device. Synchronized batch norm averages one feature over all 16 examples. Ghost batch norm averages one feature over a ghost batch of 4 examples. Layer norm averages one example over its 6 features.</p>
+        <p class="fig-caption">
+          Each grid is one layer's activations for a global batch of 16 examples (rows) split over 2 devices, with 6 features (columns). Shaded cells are the values that one mean and variance are computed from. Per-device batch norm averages one feature over the 8 examples on a device, so its $n$ changes with the batch size and the device count. Synchronized batch norm averages over the whole batch. Ghost batch norm <cite data-ref="hoffer2017"></cite> averages over fixed virtual batches (4 examples here) inside each device. Layer norm averages one example over its features and uses no other examples.
+        </p>
+      </figure>
+
+      <section class="prose" id="batchnorm-details">
+        <p data-src="1558-1563">
+          The Playbook reports that anecdotally, mostly on ImageNet, computing the statistics over only about 64 examples works better in practice. It points to ghost batch norm, introduced by <cite data-ref="hoffer2017">Hoffer et al. (2017)</cite>, which computes the statistics over small virtual batches inside a large batch. The 64 is the Playbook authors' anecdote. Hoffer et al. used ghost batches of 128, mostly on CIFAR. Decoupling the total batch size from the number of examples in the statistics is particularly useful when comparing batch sizes, which is where <a href="03-batch-size.html#batchnorm">Part 3</a> meets the same issue.
+        </p>
+        <p data-src="1564-1571">
+          The Playbook flags implementation details about per-device batch sizes and about the moving averages used at test time.
+        </p>
+        <ul class="p09-list" data-src="1564-1571">
+          <li><strong>Per-device batches larger than the ghost batch.</strong> Ghost batch norm implementations do not always handle a per-device batch size larger than the virtual batch size. In that case each device has to subsample its batch to compute statistics over the intended number of examples.</li>
+          <li><strong>The EMAs used at test time.</strong> The moving averages are linear combinations of training statistics, so synchronizing them across devices before they are saved in a checkpoint is enough. Some common implementations never synchronize them and save the EMA from the first device.</li>
+        </ul>
+        <p>
+          Layer norm <cite data-ref="ba2016"></cite> normalizes each example over its own features, and group norm <cite data-ref="wuhe2018"></cite> over groups of channels within an example. Neither uses other examples, so neither depends on the batch size or the number of devices, which is why the Playbook suggests replacing batch norm where possible.
+        </p>
+      </section>
+
+      <section class="prose" id="multihost">
+        <h2>Multi-host pipelines</h2>
+        <blockquote class="playbook" data-src="1575-1577">
+          <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#considerations-for-multi-host-pipelines" target="_blank" rel="noopener">Considerations for multi-host pipelines ↗</a></span>
+          <p>For logging, evals, RNGs, checkpointing, and data sharding, multi-host training can make it very easy to introduce bugs!</p>
+        </blockquote>
+        <p data-src="1578-1585">
+          A <dfn data-concept="multi-host">multi-host pipeline</dfn> runs one training job across several machines, each driving its own accelerators. In the usual setup every host runs the same program, so anything that should happen once, or should differ between hosts, has to be arranged explicitly. <a href="#fig-multihost" class="figref"></a> lays out the Playbook's four rules as what should be the same across hosts and what should differ.
+        </p>
+      </section>
+
+      <figure class="schematic l-wide" id="fig-multihost" role="group" aria-labelledby="fig-multihost-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-multihost-title">What is shared and what differs across hosts</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p09-hosts" role="table" aria-label="Multi-host rules by host">
+          <div class="p09-hosts-row p09-hosts-head" role="row">
+            <span role="columnheader">Rule</span>
+            <span role="columnheader" class="p09-host-h"><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Host 0</span>
+            <span role="columnheader" class="p09-host-h"><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Host 1</span>
+            <span role="columnheader" class="p09-host-h"><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Host 2</span>
+            <span role="columnheader" class="p09-host-h"><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/><path d="M7 7.5h.01M7 16.5h.01"/></svg>Host 3</span>
+          </div>
+          <div class="p09-hosts-row" role="row">
+            <span role="rowheader" class="p09-rule"><b>Logging and checkpoints</b><small>one host only</small></span>
+            <span role="cell" class="p09-cell is-on"><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>writes</span>
+            <span role="cell" class="p09-cell is-off">none</span>
+            <span role="cell" class="p09-cell is-off">none</span>
+            <span role="cell" class="p09-cell is-off">none</span>
+          </div>
+          <div class="p09-hosts-row" role="row">
+            <span role="rowheader" class="p09-rule"><b>Batch norm statistics</b><small>synchronized before evaluation or a checkpoint</small></span>
+            <span role="cell" class="p09-cell p09-span4 is-sync"><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 0 1 13.7-5.6M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6M4 20v-5h5"/></svg>averaged across all hosts</span>
+          </div>
+          <div class="p09-hosts-row" role="row">
+            <span role="rowheader" class="p09-rule"><b>Initialization seed</b><small>the same on every host</small></span>
+            <span role="cell" class="p09-cell p09-seed is-same">seed 17</span>
+            <span role="cell" class="p09-cell p09-seed is-same">seed 17</span>
+            <span role="cell" class="p09-cell p09-seed is-same">seed 17</span>
+            <span role="cell" class="p09-cell p09-seed is-same">seed 17</span>
+          </div>
+          <div class="p09-hosts-row" role="row">
+            <span role="rowheader" class="p09-rule"><b>Shuffling and preprocessing seed</b><small>different on every host</small></span>
+            <span role="cell" class="p09-cell p09-seed h0">seed 17 + 0</span>
+            <span role="cell" class="p09-cell p09-seed h1">seed 17 + 1</span>
+            <span role="cell" class="p09-cell p09-seed h2">seed 17 + 2</span>
+            <span role="cell" class="p09-cell p09-seed h3">seed 17 + 3</span>
+          </div>
+          <div class="p09-hosts-row" role="row">
+            <span role="rowheader" class="p09-rule"><b>Data files</b><small>sharded across hosts</small></span>
+            <span role="cell" class="p09-cell p09-shard h0"><i></i><i></i>shards 0, 4, 8</span>
+            <span role="cell" class="p09-cell p09-shard h1"><i></i><i></i>shards 1, 5, 9</span>
+            <span role="cell" class="p09-cell p09-shard h2"><i></i><i></i>shards 2, 6, 10</span>
+            <span role="cell" class="p09-cell p09-shard h3"><i></i><i></i>shards 3, 7, 11</span>
+          </div>
+        </div>
+        <p class="fig-caption">
+          The Playbook's rules for a job on four hosts. Matching colors mean identical values. Only host 0 writes logs and checkpoints. Batch norm statistics are averaged across hosts before an evaluation or a checkpoint. The initialization seed is shared so that every replica starts from the same weights, while the seeds for shuffling and preprocessing differ by host. Data files are split between hosts. The seed values and the offset-by-host scheme are placeholders for whatever your framework provides.
+        </p>
+      </figure>
+
+      <section class="prose" id="multihost-details">
+        <ul class="p09-list" data-src="1578-1585">
+          <li><strong>Log and checkpoint on one host.</strong> Otherwise every host writes the same files, and the copies overwrite or duplicate one another.</li>
+          <li><strong>Synchronize batch norm statistics before evaluation or checkpointing.</strong> The saved model then reflects the statistics of all hosts, the multi-host form of the EMA point in the <a href="#batchnorm">batch norm section</a>.</li>
+          <li><strong>Mark each RNG seed by its role.</strong> The Playbook calls it critical to use seeds that are the same across hosts for model initialization and seeds that differ across hosts for data shuffling and preprocessing. In my reading, different initialization seeds start the replicas from different weights, and identical data seeds can give hosts identical batches when they read the same files.</li>
+          <li><strong>Shard data files across hosts.</strong> The Playbook recommends this for performance.</li>
+        </ul>
+      </section>
+
+      <section class="prose p09-practice" id="what-to-do">
+        <h2>In practice</h2>
+        <p>
+          The Playbook's advice for the training pipeline sorts by when you act on it. Items marked as my addition are not in the Playbook.
+        </p>
+        <div class="p09-phases">
+          <div class="p09-phase">
+            <div class="p09-phase-head"><span class="p09-phase-n">1</span><h3>Before the first sweep</h3></div>
+            <ol class="p09-checks">
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg><span><a href="#preflight">Run the smoke tests</a> on a new pipeline: look at a batch, check the step-0 loss, overfit one batch. <em class="p09-ours">My addition</em></span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h4l3-12 4 12 3-6h4"/></svg><span><a href="#pipeline">Profile the input pipeline</a>. Compare steps per second against a cached batch, prefetch, and add input workers if the host cannot keep up.</span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/></svg><span>On several hosts, <a href="#multihost">log and checkpoint on host 0</a>, mark each seed by its role, and shard the data files.</span></li>
+            </ol>
+          </div>
+          <div class="p09-phase">
+            <div class="p09-phase-head"><span class="p09-phase-n">2</span><h3>While each trial trains</h3></div>
+            <ol class="p09-checks">
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><a href="#step-clock">Evaluate every fixed number of steps</a>, with an evaluation batch at least as large as the training batch.</span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="5" height="8"/><rect x="10" y="8" width="5" height="8"/><path d="M17 8h4v8h-4z" stroke-dasharray="2 2"/></svg><span><a href="#padding">Give padded examples zero weight</a> and save predictions on a selection of examples.</span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/></svg><span><a href="#checkpoints">Keep the N best checkpoints</a>, with batch norm statistics synchronized before each save.</span></li>
+            </ol>
+          </div>
+          <div class="p09-phase">
+            <div class="p09-phase-head"><span class="p09-phase-n">3</span><h3>After each study</h3></div>
+            <ol class="p09-checks">
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l3 3 6-6"/><circle cx="17" cy="16" r="4"/></svg><span><a href="#checkpoints">Select the best checkpoint retrospectively</a> as the trial's result.</span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M9 4v16"/></svg><span><a href="#tracking">Add a row to the tracking sheet</a>: name, config link, description, trials, best validation performance, reproduction notes.</span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6" stroke-dasharray="2 2"/></svg><span><a href="#sample">Check the evaluation sample</a> against the full offline set, and read rare-class results as counts.</span></li>
+            </ol>
+          </div>
+        </div>
+        <p>
+          The <a href="reference.html">reference page</a> collects the Playbook's rules from all nine posts in one place.
+        </p>
+      </section>
+
+      <section class="prose" id="where-this-fits">
+        <h2>Where this fits</h2>
+        <p>
+          In the Playbook's workflow, a working pipeline is a precondition for everything else. The flowchart highlights the node where these checks belong.
+        </p>
+      </section>
+
+      <div class="l-wide">
+        <div class="playbook-map" data-active-zone="foundation" data-default-node="d_baseline"></div>
+      </div>
+
+      <section class="refs" id="references">
+        <h2>References</h2>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023)</cite>.</p>
+        <ol id="reflist"></ol>
+      </section>
+
+      <nav class="pager" aria-label="Post navigation"></nav>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Adapted from and inspired by the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue, and Nado (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>).
+  </footer>
+
+  <script src="../js/vendor/d3.v7.min.js"></script>
+  <script src="../js/vendor/katex/katex.min.js"></script>
+  <script src="../js/vendor/katex/auto-render.min.js"></script>
+  <script src="../js/lib/format.js"></script>
+  <script src="../js/lib/prng.js"></script>
+  <script src="../js/lib/curves.js"></script>
+  <script src="../js/lib/clock.js"></script>
+  <script src="../js/lib/placer.js"></script>
+  <script src="../js/refs.js"></script>
+  <script src="../js/concepts.js"></script>
+  <script src="../js/site.js"></script>
+  <script src="../js/components/playbook-map.js"></script>
+  <script src="../js/chart.js"></script>
+  <script src="../js/runtime.js"></script>
+  <script src="../js/figures/f11-1-clocks.js"></script>
+  <script src="../js/figures/p09-input-timeline.js"></script>
+  <script src="../js/figures/p09-schematics.js"></script>
+</body>
+</html>

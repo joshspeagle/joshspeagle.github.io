@@ -1,0 +1,137 @@
+/* 07-training-horizon.css: page-specific layout for Part 7 (How long to train).
+   Owned by the post07 revision (notes/review-2026-11/changes/post07.md). Shared tokens only:
+   every colour is a site.css custom property, so both themes work without overrides. */
+
+/* ---------- shared schematic pieces ---------- */
+.p07-cap-key { display: inline-block; width: 18px; height: 0; vertical-align: middle; margin: 0 4px 0 2px; }
+.p07-cap-key.model { border-top: 3px solid var(--model); }
+.p07-cap-key.context { border-top: 2px dashed var(--context); }
+.p07-cap-key.energy { border-top: 3px solid var(--energy); }
+
+/* ---------- Figure: the two regimes (two small panels side by side, stacked on phones) ---------- */
+.p07-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 22px; margin: 6px 0 10px; }
+.p07-pane { margin: 0; }
+.p07-pane-head { margin-bottom: 2px; }
+.p07-pane-name { display: block; font-weight: 700; font-size: 0.98rem; color: var(--ink); }
+.p07-pane-q { display: block; font-size: 0.86rem; color: var(--ink-2); }
+.p07-pane > svg { display: block; width: 100%; height: auto; overflow: visible; }
+.p07-svg text { font-family: var(--font); font-size: 13px; fill: var(--ink-2); }
+.p07-svg text.strong { fill: var(--ink); font-weight: 600; }
+.p07-svg text.model { fill: var(--model-label); font-weight: 600; }
+.p07-svg text.energy { fill: var(--energy-text, var(--ink)); font-weight: 600; }
+.p07-svg .axis { stroke: var(--axis); stroke-width: 1.2; fill: none; }
+.p07-svg .train { stroke: var(--context); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
+.p07-svg .val { stroke: var(--model); stroke-width: 3; fill: none; stroke-linecap: round; }
+.p07-svg .val-ghost { stroke: var(--model); stroke-width: 2; stroke-dasharray: 2 5; fill: none; opacity: 0.6; stroke-linecap: round; }
+.p07-svg .budget { stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 4 4; }
+.p07-svg .wall { stroke: var(--energy); stroke-width: 3; }
+.p07-svg .ring { fill: none; stroke: var(--model); stroke-width: 2; }
+.p07-svg .dot { fill: var(--model); }
+@media (max-width: 639px) {
+  .p07-pair { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- Procedure: the learning-rate sweep, as numbered steps ---------- */
+ol.p07-steps { list-style: none; counter-reset: p07step; padding: 0; margin: 1.2rem auto 1.6rem; }
+ol.p07-steps > li {
+  counter-increment: p07step; position: relative; padding: 2px 0 14px 48px; margin: 0;
+}
+ol.p07-steps > li::before {
+  content: counter(p07step); position: absolute; left: 0; top: 0;
+  width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center;
+  font: 700 0.95rem/1 var(--font); color: var(--model-label);
+  background: var(--model-tint); border: 1.5px solid var(--model);
+}
+ol.p07-steps > li:not(:last-child)::after {
+  content: ""; position: absolute; left: 16px; top: 34px; bottom: 2px; border-left: 2px solid var(--grid);
+}
+ol.p07-steps > li.is-check::before { content: "!"; color: var(--data-label); background: var(--data-tint); border-color: var(--data); }
+ol.p07-steps .p07-step-head { display: block; font-weight: 700; color: var(--ink); }
+
+/* ---------- Figure: tuning in rounds (trial bars against the production length) ---------- */
+.p07-rounds { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 10px 18px; align-items: start; margin: 6px 0 8px; }
+.p07-round-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin-bottom: 8px; }
+.p07-round-name { font-weight: 700; color: var(--ink); }
+.p07-round-sub { font-size: 0.86rem; color: var(--ink-2); }
+.p07-track { position: relative; height: 9px; margin: 4px 0; border-radius: 2px; background: var(--surface-2); outline: 1px solid var(--grid); }
+.p07-track > span { position: absolute; left: 0; top: 0; bottom: 0; width: var(--w); border-radius: 2px; background: var(--model); }
+.p07-track.is-best > span { background: var(--energy); }
+.p07-round-axis { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--ink-2); margin-top: 6px; }
+.p07-round-cost { font-size: 0.86rem; color: var(--ink-2); margin-top: 8px; }
+.p07-round-arrow { align-self: center; display: grid; justify-items: center; gap: 4px; font-size: 0.8rem; color: var(--ink-2); text-align: center; max-width: 110px; }
+.p07-round-arrow svg { width: 44px; height: 20px; }
+.p07-round-arrow path { stroke: var(--energy); stroke-width: 2.5; fill: none; }
+@media (max-width: 639px) {
+  .p07-rounds { grid-template-columns: minmax(0, 1fr); }
+  .p07-round-arrow { max-width: none; grid-auto-flow: column; justify-content: start; align-items: center; }
+  .p07-round-arrow svg { transform: rotate(90deg); }
+}
+
+/* ---------- Figure: what transfers from Round 1 (a ladder of four tiers) ---------- */
+.p07-ladder { list-style: none; padding: 0 0 0 30px; margin: 8px 0 10px; position: relative; }
+.p07-ladder::before {
+  content: ""; position: absolute; left: 9px; top: 6px; bottom: 6px; width: 6px; border-radius: 3px;
+  background: linear-gradient(to bottom, var(--model), color-mix(in srgb, var(--model) 15%, var(--surface-2)));
+}
+.p07-ladder > li {
+  display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); gap: 2px 16px; align-items: baseline;
+  padding: 10px 0; border-bottom: 1px solid var(--grid);
+}
+.p07-ladder > li:last-child { border-bottom: 0; }
+.p07-tier { font-weight: 700; color: var(--ink); grid-row: span 2; }
+.p07-tier-items { font-weight: 600; color: var(--model-label); }
+.p07-tier-why { grid-column: 2; font-size: 0.92rem; color: var(--ink-2); line-height: 1.5; }
+.p07-ladder-ends { padding-left: 30px; font-size: 0.86rem; font-weight: 600; color: var(--ink-2); }
+@media (max-width: 639px) {
+  .p07-ladder > li { grid-template-columns: minmax(0, 1fr); }
+  .p07-tier { grid-row: auto; }
+  .p07-tier-why { grid-column: 1; }
+}
+
+/* ---------- Figure: schedule families (four small cards) ---------- */
+.p07-sched { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 6px 0 10px; }
+.p07-sched-card { border: 1px solid var(--grid); border-radius: 6px; padding: 10px 10px 8px; background: var(--surface); }
+.p07-sched-name { font-weight: 700; color: var(--ink); font-size: 0.95rem; }
+.p07-sched-card > svg { display: block; width: 100%; height: auto; margin: 4px 0 2px; }
+.p07-sched-card .warm { fill: color-mix(in srgb, var(--ink-3) 20%, transparent); stroke: none; }
+.p07-sched-card .half { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 3 3; }
+.p07-sched-card .above { fill: var(--model-tint); stroke: var(--model); stroke-width: 1; }
+.p07-sched-eq { font-size: 0.9rem; color: var(--ink); min-height: 1.6em; }
+.p07-sched-stat { font-size: 0.86rem; color: var(--ink-2); margin-top: 2px; }
+.p07-sched-stat strong { color: var(--model-label); }
+.p07-sched-key { font-size: 0.86rem; color: var(--ink-2); display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.p07-sched-key i { display: inline-block; width: 14px; height: 10px; vertical-align: -1px; margin-right: 5px; border-radius: 2px; }
+.p07-sched-key i.warm { background: color-mix(in srgb, var(--ink-3) 20%, transparent); outline: 1px solid var(--grid); }
+.p07-sched-key i.above { background: var(--model-tint); outline: 1px solid var(--model); height: 6px; vertical-align: 1px; }
+@media (max-width: 899px) { .p07-sched { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 639px) { .p07-sched { gap: 10px; } .p07-sched-card { padding: 8px 8px 6px; } }
+
+/* ---------- In practice: three phases, steps numbered across the phases ---------- */
+.p07-fork { margin: 1.4rem auto 0.6rem; counter-reset: p07c; }
+.p07-fork-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; position: relative; }
+.p07-fork-col { border: 1px solid var(--border-2); border-radius: 6px; padding: 12px 16px 6px; background: var(--surface); }
+.p07-fork-col.is-free { border-top: 3px solid var(--model); }
+.p07-fork-col.is-after { border-top: 3px solid var(--ink-3); }
+.p07-fork-col.is-bound { border-top: 3px solid var(--energy); }
+.p07-fork-head { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
+.p07-fork-head svg { flex: 0 0 auto; width: 22px; height: 22px; }
+.p07-fork-head svg * { stroke: var(--ink-2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.p07-fork-sub { display: block; font-weight: 500; font-size: 0.86rem; color: var(--ink-2); margin-bottom: 4px; }
+ol.p07-check { list-style: none; padding: 0; margin: 10px 0 0; }
+ol.p07-check > li { counter-increment: p07c; position: relative; padding: 0 0 12px 38px; font-size: 0.95rem; line-height: 1.5; }
+ol.p07-check > li::before {
+  content: counter(p07c); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; font: 700 0.82rem/1 var(--font); color: var(--surface); background: var(--ink-2);
+}
+.is-free ol.p07-check > li::before { background: var(--model); color: #fff; }
+.is-bound ol.p07-check > li::before { background: var(--energy); color: #fff; }
+ol.p07-check strong { display: block; color: var(--ink); }
+ol.p07-check a.p07-more { font-size: 0.86rem; white-space: nowrap; }
+@media (max-width: 899px) {
+  .p07-fork-cols { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- "In this post": title above takeaway inside the shared .post-roadmap-item card ---------- */
+nav.post-roadmap a.roadmap-item { text-decoration: none; }
+nav.post-roadmap .roadmap-item-title { display: block; }
+nav.post-roadmap .roadmap-item-desc { display: block; }

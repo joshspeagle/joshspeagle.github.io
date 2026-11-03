@@ -1,0 +1,7 @@
+/* site/css/figures/ holds one stylesheet per figure, named after the figure's element id, such as
+   fig-warmup.css (implementation-plan.md, WO-I2). The page that shows the figure links it after
+   site.css. Every rule in the file is scoped to the figure's element id (#fig-warmup ...), so
+   parallel builders never edit a shared stylesheet. Colours come from site.css's tokens and role
+   classes and never from a literal, and no rule sets opacity. tests/lib/css.test.js checks all
+   three. A recap loads no figure stylesheet, so a recap's layout lives in site.css. This file holds
+   this comment alone. */

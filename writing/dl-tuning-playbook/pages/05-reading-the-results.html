@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Reading the results of a tuning study · Notes on the Deep Learning Tuning Playbook</title>
+  <meta name="description" content="Notes on the Deep Learning Tuning Playbook's advice for examining a finished tuning study: search-space boundaries, sampling density, training curves, isolation plots and fair baselines.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232855a6'/%3E%3Cpath d='M7 22 C12 22, 13 10, 18 10 C22 10, 22 17, 26 14' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='10' r='2.6' fill='%23d4850e'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="stylesheet" href="../css/figures/fig-range.css">
+  <link rel="stylesheet" href="../css/figures/fig-gallery.css">
+  <link rel="stylesheet" href="../css/figures/fig-isolation.css">
+  <link rel="stylesheet" href="../css/figures/fig-baseline.css">
+  <link rel="stylesheet" href="../css/pages/05-reading-the-results.css">
+</head>
+<body data-page="pages/05-reading-the-results.html" data-root="../">
+  <header class="site-header"></header>
+  <main class="page">
+
+    <header class="post-header">
+      <div class="post-kicker">Part 5 of 9 &middot; Running, reading and deciding</div>
+      <h1>Reading the results of a tuning study</h1>
+      <div class="post-meta">
+        <span>Josh Speagle</span>
+        <span class="sep"></span>
+        <span><a href="https://github.com/google-research/tuning_playbook#extracting-insight-from-experimental-results" target="_blank" rel="noopener">Notes on the Playbook's section on extracting insight from experimental results ↗</a></span>
+      </div>
+    </header>
+
+    <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
+
+    <p class="lede">
+      A tuning study has finished, and you have a table of fifty runs sorted by validation error. Copying the top row into your config file is tempting. The Playbook asks a few questions about the study first, because a search range that is too narrow, too few samples or unhealthy training runs can each point to the wrong winner. Each question has a plot that answers it, and I found that once I knew what to look for, most of these plots took a minute to read.
+    </p>
+
+    <nav class="post-roadmap" aria-label="In this post">
+      <div class="post-roadmap-head">In this post</div>
+      <div class="post-roadmap-grid">
+        <a class="roadmap-item post-roadmap-item" href="#checklist">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Questions before the winner</strong>
+            <span class="roadmap-item-desc">Check the study itself before weighing what it says about your goal.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#boundaries">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Search-space edges</strong>
+            <span class="roadmap-item-desc">Best trials piled against an edge mean a better value may lie outside the range.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#density">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Enough samples</strong>
+            <span class="roadmap-item-desc">Count how many trials fell near the best one, and how many failed.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#curves">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Training curves</strong>
+            <span class="roadmap-item-desc">The shape of the best runs' curves points to overfitting, noise, the wrong step budget or a bug.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#isolation">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Isolation plots</strong>
+            <span class="roadmap-item-desc">Compare values of the hyperparameter you care about using the best run at each value.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#baseline">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">A fair baseline</strong>
+            <span class="roadmap-item-desc">Tune the baseline's learning rate as carefully as the candidate's, or the comparison is biased.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#in-practice">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">In practice</strong>
+            <span class="roadmap-item-desc">A routine for every finished study, from axis plots to a fair baseline.</span>
+          </div>
+        </a>
+        <a class="roadmap-item post-roadmap-item" href="#protocol">
+          <div class="post-roadmap-body">
+            <strong class="roadmap-item-title">Where this fits</strong>
+            <span class="roadmap-item-desc">Reading a study sits between running it and deciding whether to adopt a change.</span>
+          </div>
+        </a>
+      </div>
+    </nav>
+
+    <article class="post-body">
+
+      <!-- ===================== Questions before the winner ===================== -->
+      <section class="prose" id="checklist">
+        <h2>Questions to ask before reading the winner</h2>
+
+        <p data-src="800-842">
+          Every round of experiments has a goal, such as finding out whether weight decay helps. Before weighing the evidence a study gives toward that goal, the Playbook <cite data-ref="playbook"></cite> asks a set of questions about the study itself. Its reasoning is that the right questions often turn up problems that need fixing first, and that skipping them can lead to the wrong conclusion (<a href="https://github.com/google-research/tuning_playbook#extracting-insight-from-experimental-results" target="_blank" rel="noopener">the Playbook's section on extracting insight</a>). The questions are:
+        </p>
+
+        <ul class="p05-questions">
+          <li><strong>Is the search space large enough?</strong> If the best trials sit near an edge of a searched range, a better value may lie beyond it.</li>
+          <li><strong>Have enough points been sampled?</strong> If few trials fall in the good region, the best of them is partly luck.</li>
+          <li><strong>What fraction of trials is infeasible?</strong> An <dfn data-concept="infeasible-trial">infeasible trial</dfn> is one that diverges, reaches a very bad loss, or fails to run. Many of them waste budget, and sometimes they point to a bug.</li>
+          <li><strong>Does the model show optimization issues?</strong> Loss spikes and divergence get their own treatment in <a href="08-training-instabilities.html">Part 8</a>.</li>
+          <li><strong>What do the training curves of the best trials show?</strong> For example, do they show problematic overfitting?</li>
+        </ul>
+
+        <p data-src="836-842">
+          If an answer reveals a problem, the Playbook recommends refining the study (a better search space, more trials, or some other fix) and running it again before drawing conclusions. Experiments are expensive, so the authors also suggest reading each study for what else it can teach, even when that is not the round's goal.
+        </p>
+
+        <p data-src="1036-1055">
+          Three kinds of plot answer nearly all of these questions (<a href="#fig-three-plots" class="figref"></a>). The Playbook recommends generating the first two automatically for every study, since a plot that takes effort to make is a plot people skip (<a href="https://github.com/google-research/tuning_playbook#automate-generically-useful-plots" target="_blank" rel="noopener">its section on automating plots</a>).
+        </p>
+      </section>
+
+      <figure class="schematic" id="fig-three-plots" role="group" aria-labelledby="fig-three-plots-title">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-three-plots-title">Three plots for reading a finished study</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <div class="p05-plots">
+          <div class="p05-plot-card">
+            <svg viewBox="0 0 200 110" width="200" height="110" aria-hidden="true" focusable="false" class="p05-mini">
+              <path class="mini-axis" d="M14 8 V96 H192"/>
+              <g class="mini-dots">
+                <circle cx="30" cy="30" r="3.2"/><circle cx="44" cy="44" r="3.2"/><circle cx="58" cy="36" r="3.2"/><circle cx="70" cy="58" r="3.2"/><circle cx="84" cy="52" r="3.2"/><circle cx="96" cy="70" r="3.2"/><circle cx="132" cy="72" r="3.2"/><circle cx="146" cy="60" r="3.2"/><circle cx="158" cy="48" r="3.2"/>
+              </g>
+              <g class="mini-best"><circle cx="108" cy="80" r="4.2"/><circle cx="118" cy="82" r="4.2"/><circle cx="124" cy="78" r="4.2"/></g>
+              <g class="mini-x"><path d="M168 12 l6 6 m0 -6 l-6 6"/><path d="M180 12 l6 6 m0 -6 l-6 6"/></g>
+            </svg>
+            <h3>Basic hyperparameter axis plot</h3>
+            <p>Validation error of every trial against one hyperparameter, one point per trial, infeasible trials as crosses.</p>
+            <p class="p05-answers">Answers: edges, sampling, infeasible fraction.</p>
+          </div>
+          <div class="p05-plot-card">
+            <svg viewBox="0 0 200 110" width="200" height="110" aria-hidden="true" focusable="false" class="p05-mini">
+              <path class="mini-axis" d="M14 8 V96 H192"/>
+              <path class="mini-train" d="M16 16 C 40 70, 80 84, 190 90"/>
+              <path class="mini-val" d="M16 14 C 40 60, 80 68, 110 66 S 160 56, 190 48"/>
+            </svg>
+            <h3>Training curves</h3>
+            <p>Training and validation error against training step, for at least the best few trials.</p>
+            <p class="p05-answers">Answers: overfitting, noise, step budget, bugs.</p>
+          </div>
+          <div class="p05-plot-card">
+            <svg viewBox="0 0 200 110" width="200" height="110" aria-hidden="true" focusable="false" class="p05-mini">
+              <path class="mini-axis" d="M14 8 V96 H192"/>
+              <path class="mini-line" d="M34 52 L70 70 L106 80 L142 72 L178 30"/>
+              <g class="mini-best"><circle cx="34" cy="52" r="4.2"/><circle cx="70" cy="70" r="4.2"/><circle cx="106" cy="80" r="5.2"/><circle cx="142" cy="72" r="4.2"/><circle cx="178" cy="30" r="4.2"/></g>
+            </svg>
+            <h3>Isolation plot</h3>
+            <p>The best trial at each value of the hyperparameter you are studying, after tuning the others.</p>
+            <p class="p05-answers">Answers: did the change help, and was the comparison fair?</p>
+          </div>
+        </div>
+        <p class="fig-caption">
+          Schematic sketches of each plot's layout. The axis plot and the training curves check the health of a study, and the isolation plot reads its answer. All three return later in this post as working figures.
+        </p>
+      </figure>
+
+      <!-- ===================== Search-space edges ===================== -->
+      <section class="prose" id="boundaries">
+        <h2>Is the search space large enough?</h2>
+
+        <p data-src="844-866">
+          Suppose you searched learning rates between $10^{-5}$ and $5 \times 10^{-4}$. You chose that range before running anything, so nothing guarantees that the best learning rate lies inside it. The Playbook's check is the <span data-concept="axis-plot">basic hyperparameter axis plot</span>: validation error on the vertical axis, one hyperparameter on the horizontal axis (on a log scale for the learning rate), and one point per trial. Each point should be the best validation error the trial reached at any point during training, which <a href="01-the-tuning-loop.html">Part 1</a> covers.
+        </p>
+
+        <p data-src="866-872">
+          The Playbook calls a search space suspicious when its best point is close to the boundary. If the best points cluster toward one edge, it recommends expanding the range in that direction until the best observed point is no longer near the edge (<a href="https://github.com/google-research/tuning_playbook#identifying-bad-search-space-boundaries" target="_blank" rel="noopener">its section on bad search-space boundaries</a>). Its Figure 1 shows a bad and an acceptable range from a real study, and it opens from the toolbar of <a href="#fig-range" class="figref"></a>. The Playbook does not put a number on "close". <a href="#fig-range" class="figref"></a> marks the outer 10% of the log range at each end as an edge zone, a working threshold of my own.
+        </p>
+      </section>
+
+      <figure class="fig l-wide" id="fig-range" role="group" aria-labelledby="fig-range-title"
+              data-shows="boundary-check,density-check,infeasible-trial"
+              data-playbook-img="assets/playbook/bad_search_space.png"
+              data-playbook-img2="assets/playbook/good_search_space.png"
+              data-playbook-alt1="Playbook plot titled Bad search space boundaries: error rate on the validation set against peak learning rate from 1e-5 to about 2e-4, with the top 3 trials at the right edge"
+              data-playbook-alt2="Playbook plot titled Good search space boundaries: the same study widened to learning rates up to 1e-1, with the top 3 trials in the middle and many infeasible trials at high learning rates"
+              data-playbook-src="844-879"
+              data-playbook-caption="Figure 1 of the Playbook: examples of bad search-space boundaries (left, best trials near the edge of the search space) and acceptable boundaries (right, best trials in the middle). Red crosses are infeasible trials.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-range-title">Best trials against the edge of the learning-rate range</span>
+          <span class="chip toy">Interactive toy study</span>
+        </figcaption>
+        <p class="fig-task" data-task="F6.1" data-teaches="boundary-check,density-check,infeasible-trial" data-uses="quasi-random,search-space">
+          Drag either end of the range on the horizontal axis, or pick a case below, and watch where the three best trials (blue) sit.
+        </p>
+
+        <div class="fig-tutorial" data-figure="fig-range">
+          <div class="fig-tut-step-data" data-label="Range too narrow" data-preset="narrow">
+            The search ran from $10^{-5}$ to $5 \times 10^{-4}$. All three best trials sit in the upper edge zone, and error is still falling at the right edge. This is the Playbook's "bad" case.
+          </div>
+          <div class="fig-tut-step-data" data-label="Range widened" data-preset="widened">
+            Widening the range to $10^{-1}$ puts the three best trials in the middle. The best error drops from 0.275 to 0.238. Six trials above about $4 \times 10^{-2}$ diverge (crosses at the top), as in the Playbook's "good" case.
+          </div>
+          <div class="fig-tut-step-data" data-label="A stability limit" data-preset="instability">
+            Here every learning rate above about $6 \times 10^{-4}$ diverges, 21 of 50 trials. The best trials sit just below the lowest diverged learning rate. A wider range would add more crosses, so the next step is to look for the instability instead.
+          </div>
+          <div class="fig-tut-step-data" data-label="Too few trials" data-preset="sparse">
+            The same wide range with 10 trials instead of 50. Only two trials come within 0.03 of the best error, so the bottom of the valley is barely sampled.
+          </div>
+        </div>
+
+        <p class="fig-caption">
+          Each point is one trial of a synthetic quasi-random study, plotted at its best validation error. Gray points are feasible trials, blue points the three best, crosses at the top infeasible trials. The ticks on the horizontal axis mark the edge zones, the outer 10% of the log range at each end (a site convention).
+        </p>
+        <details class="fig-model">
+          <summary>How this toy works</summary>
+          <div class="fig-model-body">
+            <p>
+              Each trial draws a learning rate from a one-dimensional quasi-random (Halton) sequence across the chosen range and a weight decay from a second coordinate, so trials at the same learning rate can differ in error. The noise-free error is a bowl in $\log_{10}\eta$ with its minimum near $\eta = 3 \times 10^{-3}$, plus small per-trial noise. Trials above a divergence threshold (by default $\eta \approx 3 \times 10^{-2}$, and $\eta \approx 5.6 \times 10^{-4}$ in the stability-limit case) report a diverged run. Moving a range end moves every trial smoothly, because trial $k$ always uses the $k$-th point of the sequence. "Draw again" changes the noise.
+            </p>
+          </div>
+        </details>
+      </figure>
+
+      <section class="prose">
+        <p>
+          With the <button type="button" class="preset-link" data-figure="fig-range" data-preset="narrow">narrow range</button> (the default), all <span data-num="fig-range:default:upper-count">3</span> best trials sit in the upper edge zone, and the best error is <span data-num="fig-range:default:best-error">0.275</span>. With the range <button type="button" class="preset-link" data-figure="fig-range" data-preset="widened">widened to $10^{-1}$</button>, the best trials move to the middle and the best error falls to <span data-num="fig-range:widened:best-error">0.238</span>. The narrow study's best trial is the largest learning rate it was allowed to try.
+        </p>
+
+        <p data-src="873-879">
+          A run of failed trials above one learning rate changes that reading. The Playbook notes that when all trials above some learning rate are infeasible, and the best trials sit at the edge of that region, the model may have a stability problem that keeps it from using higher learning rates. In <button type="button" class="preset-link" data-figure="fig-range" data-preset="instability">the stability-limit case</button>, <span data-num="fig-range:instability:infeasible-count">21</span> of 50 trials diverge, the lowest at a learning rate of <span data-num="fig-range:instability:first-cross">6.1 × 10⁻⁴</span>, and the best trials sit just below. None of them is in an edge zone, because the range itself is wide enough. Widening it further would add more crosses. The remedies (learning-rate warmup, gradient clipping and others) belong to <a href="08-training-instabilities.html">Part 8</a> on <span data-concept="stability-limit">training instabilities</span>.
+        </p>
+      </section>
+
+      <!-- ===================== Enough samples ===================== -->
+      <section class="prose" id="density">
+        <h2>Have you sampled enough points?</h2>
+
+        <p data-src="883-897">
+          A range can contain the best learning rate and still say little about it, if one or two trials fell nearby. The Playbook is candid that "it can be very difficult to know" whether a search space was sampled densely enough. Its working practice is to sample what you can afford, then calibrate your confidence by looking at axis plots repeatedly and judging how many points fall in the good region. If there are too few, it suggests running more trials or being less ambitious about the tuning goal (<a href="https://github.com/google-research/tuning_playbook#not-sampling-enough-points-in-the-search-space" target="_blank" rel="noopener">its section on sampling enough points</a>).
+        </p>
+
+        <p>
+          The <button type="button" class="preset-link" data-figure="fig-range" data-preset="sparse">too few trials</button> case in <a href="#fig-range" class="figref"></a> shows the problem. It searches the same wide range with 10 trials instead of 50, and <span data-num="fig-range:sparse:near-best">2</span> of them come within 0.03 of the best error, against <span data-num="fig-range:widened:near-best">8</span> in the 50-trial study. The 0.03 tolerance is a site convention; any fixed tolerance makes the same point.
+        </p>
+
+        <p>
+          A rough count shows why the good region empties quickly as a study grows. If trials are spread evenly in log space, the share of them that falls inside the good region along one hyperparameter is about the width of that region divided by the width of the range. With several tuned hyperparameters the shares multiply. For a study of $K$ trials,
+        </p>
+
+        $$K_{\text{good}} \approx K \left(\frac{\Delta}{W}\right)^{D},$$
+
+        <p>
+          where $\Delta$ is the width of the good region and $W$ the width of the searched range (both in decades, assumed the same for every axis), and $D$ is the number of tuned hyperparameters. The estimate is my own and does not come from the Playbook. It assumes a box-shaped good region and even coverage.
+        </p>
+
+        <div class="scrub-calculator p05-calc" role="region" aria-label="Expected number of trials in the good region">
+          <p class="scrub-calc-prose">
+            A study of
+            <span class="scrub-num" data-var="K" data-value="50" data-min="10" data-max="200" data-step="10" data-format="int" data-unit="trials">50 trials</span>
+            searches ranges
+            <span class="scrub-num" data-var="W" data-value="4" data-min="1" data-max="6" data-step="0.5" data-format="fixed1" data-unit="decades wide">4.0 decades wide</span>
+            around a good region
+            <span class="scrub-num" data-var="dg" data-value="1" data-min="0.2" data-max="2" data-step="0.1" data-format="fixed1" data-unit="decade wide">1.0 decade wide</span>
+            in
+            <span class="scrub-num" data-var="D" data-value="2" data-min="1" data-max="5" data-step="1" data-format="int" data-unit="tuned hyperparameters">2 tuned hyperparameters</span>.
+            About
+            <span class="scrub-out" data-formula="K * Math.pow(Math.min(1, dg / W), D)" data-format="fixed1" data-unit="trials">3.1 trials</span>
+            fall in the good region.
+          </p>
+        </div>
+
+        <p data-src="823-832">
+          Infeasible trials take budget too. The Playbook advises that when a very large fraction of a study's trials is infeasible, you adjust the search space to avoid sampling them, which sometimes requires reparameterizing it, and it warns that many infeasible trials can also indicate a bug in the training code. In the widened study, <span data-num="fig-range:widened:infeasible-count">6</span> of 50 trials diverge, all above <span data-num="fig-range:widened:first-cross">3.7 × 10⁻²</span>, more than a decade above the best trials. Lowering the upper end to just below the first failure would spend those trials closer to the best region without bringing it near an edge.
+        </p>
+      </section>
+
+      <!-- ===================== Training curves ===================== -->
+      <section class="prose" id="curves">
+        <h2>What do the training curves show?</h2>
+
+        <p data-src="901-925">
+          So far each trial has been one number, its best validation error. Two trials with the same number can have very different runs behind them. The Playbook says the authors always look at the <dfn data-concept="training-curves">training curves</dfn> (training error and validation error plotted against training step) of at least the best few trials of every study, because the curves are an easy way to spot common failure modes and to decide what to do next (<a href="https://github.com/google-research/tuning_playbook#examining-the-training-curves" target="_blank" rel="noopener">its section on examining the training curves</a>). It lists the questions to ask of them. <a href="#fig-gallery" class="figref"></a> sketches the curve shape behind each one, with the likely cause and the Playbook's suggested response.
+        </p>
+      </section>
+
+      <figure class="schematic l-wide" id="fig-gallery" role="group" aria-labelledby="fig-gallery-title"
+              data-playbook-quote="Problematic overfitting occurs when the validation error starts increasing at some point during training. [...] The most likely causes of step-to-step variance are batch variance [...], small validation sets, and using a learning rate that's too high late in training. [...] training loss increasing during training usually indicates a bug in the training pipeline."
+              data-playbook-src="901-992"
+              data-playbook-caption="From the Playbook's section on examining the training curves.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-gallery-title">Six training-curve shapes and what each suggests</span>
+          <span class="chip">Schematic</span>
+        </figcaption>
+        <p class="sym-legend" aria-hidden="true">
+          <span class="sym-key sym-key-val"></span>validation error
+          <span class="sym-key sym-key-train"></span>training error
+          <span class="sym-key sym-key-hl"></span>the feature to look for
+        </p>
+        <div class="sym-grid">
+          <div class="sym-card">
+            <div class="sym-plot" data-curve="overfit"></div>
+            <h3 class="sym-title">Validation error turns upward</h3>
+            <dl>
+              <dt>Likely cause</dt><dd>Problematic overfitting. The model needs more regularization in this configuration.</dd>
+              <dt>What to do</dt><dd>Add or retune regularization (dropout, label smoothing, weight decay) and rerun before comparing.</dd>
+            </dl>
+          </div>
+          <div class="sym-card">
+            <div class="sym-plot" data-curve="variance"></div>
+            <h3 class="sym-title">Noisy late in training</h3>
+            <dl>
+              <dt>Likely cause</dt><dd>Batch-to-batch variance, a small validation set, or a learning rate still too high late in training.</dd>
+              <dt>What to do</dt><dd>Larger batches, more validation data, learning-rate decay, or Polyak averaging.</dd>
+            </dl>
+          </div>
+          <div class="sym-card">
+            <div class="sym-plot" data-curve="improving"></div>
+            <h3 class="sym-title">Still improving at the last step</h3>
+            <dl>
+              <dt>Likely cause</dt><dd>The run is compute-bound. More steps would still help.</dd>
+              <dt>What to do</dt><dd>Train for more steps or change the learning-rate schedule (<a href="07-training-horizon.html">Part 7</a>).</dd>
+            </dl>
+          </div>
+          <div class="sym-card">
+            <div class="sym-plot" data-curve="saturated"></div>
+            <h3 class="sym-title">Flat long before the end</h3>
+            <dl>
+              <dt>Likely cause</dt><dd>The run is not compute-bound. The last part of training adds nothing.</dd>
+              <dt>What to do</dt><dd>You may be able to train for fewer steps (<a href="07-training-horizon.html">Part 7</a>).</dd>
+            </dl>
+          </div>
+          <div class="sym-card">
+            <div class="sym-plot" data-curve="rising"></div>
+            <h3 class="sym-title">Training error rises</h3>
+            <dl>
+              <dt>Likely cause</dt><dd>Usually a bug in the training pipeline.</dd>
+              <dt>What to do</dt><dd>Debug the pipeline before reading any comparison from this study.</dd>
+            </dl>
+          </div>
+          <div class="sym-card">
+            <div class="sym-plot" data-curve="spike"></div>
+            <h3 class="sym-title">Sudden spikes</h3>
+            <dl>
+              <dt>Likely cause</dt><dd>Training instability, often from a learning rate near the stability limit.</dd>
+              <dt>What to do</dt><dd>Diagnose it as an optimization failure: warmup, gradient clipping (<a href="08-training-instabilities.html">Part 8</a>).</dd>
+            </dl>
+          </div>
+        </div>
+        <p class="fig-caption">
+          Schematic shapes with no units. Each plots error (vertical) against training step (horizontal). The first five cards follow the questions in the Playbook's section on training curves. The sixth comes from its checklist question about optimization issues.
+        </p>
+      </figure>
+
+      <section class="prose">
+        <p data-src="926-965">
+          The Playbook adds a subtlety about overfitting that matters whenever you pick a best trial. When a study compares values of a <span data-concept="scientific-hp">scientific hyperparameter</span> (the one whose effect you want to measure), check the best trial at each of those values for problematic overfitting. If any of them overfits, the Playbook recommends rerunning with more regularization before comparing. Its example is a study of the number of hidden layers. If the best run with the most layers overfits, try it again with more regularization instead of concluding that fewer layers are better. The exception is a study whose scientific hyperparameter is itself a regularizer, where weak settings are expected to overfit.
+        </p>
+
+        <p data-src="954-965">
+          Picking the best trial also favors whatever happens to regularize, the Playbook points out. Anything that makes training worse can act as a regularizer, including a learning rate small enough to slow optimization down. So the best trial at each setting can be selected for a "bad" value of some other hyperparameter, and problematic overfitting in any trial of the study, best or not, is worth a look.
+        </p>
+
+        <p data-src="966-978">
+          Step-to-step noise matters for a reason that is easy to miss. Each trial's score depends on which evaluation step happened to be lowest. Late noise makes that a matter of luck, which blurs the comparison between settings and makes the best trial hard to reproduce in production, where the final model may not stop on the same lucky step.
+        </p>
+      </section>
+
+      <!-- ===================== Isolation plots ===================== -->
+      <section class="prose" id="isolation">
+        <h2>Did the change help? Isolation plots</h2>
+
+        <p data-src="996-1018">
+          Once a study passes these checks, you can read what it says about your goal. Suppose the goal is to find the best weight decay for your model. You try five weight-decay values. Each value needs its own learning rate, because the best learning rate can move when the weight decay changes. So you train each of the five values with 20 different learning rates, which makes 100 runs. This is the design behind Figure 2 of the Playbook.
+        </p>
+
+        <p>
+          Plotted against weight decay, the 100 runs form five columns, as in panel (a) of <a href="#fig-iso-steps" class="figref"></a>. The spread within a column mostly reflects the learning rate, good or bad. The question "how good can this weight decay be?" is answered by the best run in its column. Keep that one run per column, drop the rest, and you get panel (b).
+        </p>
+      </section>
+
+      <figure class="schematic l-wide" id="fig-iso-steps" role="group" aria-labelledby="fig-iso-steps-title"
+              data-playbook-img="assets/playbook/isolation_plot.png"
+              data-playbook-src="996-1027"
+              data-playbook-caption="Figure 2 of the Playbook: an isolation plot of the best validation error against weight decay for ResNet-50 on ImageNet. Each value of weight decay was tried with 20 different learning rates.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-iso-steps-title">From 100 runs to an isolation plot</span>
+          <span class="chip">Synthetic example</span>
+        </figcaption>
+        <p class="sym-legend" aria-hidden="true">
+          <span class="iso-key iso-key-best"></span>best run at a weight decay
+          <span class="iso-key iso-key-run"></span>other runs
+          <span class="iso-key-x">×</span>diverged (top row)
+        </p>
+        <div class="iso-steps">
+          <div class="iso-step">
+            <p class="iso-step-head"><span class="iso-step-letter">(a)</span> All 100 runs</p>
+            <div class="iso-panel" data-panel="a"></div>
+          </div>
+          <div class="iso-arrow" aria-hidden="true">
+            <svg viewBox="0 0 48 24" width="48" height="24"><path d="M2 12 H40 M32 4 L42 12 L32 20" /></svg>
+            <span>keep the best run in each column</span>
+          </div>
+          <div class="iso-step">
+            <p class="iso-step-head"><span class="iso-step-letter">(b)</span> The isolation plot</p>
+            <div class="iso-panel" data-panel="b"></div>
+          </div>
+        </div>
+        <p class="fig-caption">
+          Synthetic numbers in the layout of the Playbook's Figure 2: five weight-decay values, each trained with 20 learning rates. Blue circles are the best run at each value. Crosses mark runs whose learning rate was too high and diverged. The isolation plot keeps one point per value, so each point answers "how good is this weight decay once its learning rate is tuned?"
+        </p>
+      </figure>
+
+      <section class="prose">
+        <p data-src="1003-1018">
+          The Playbook defines an <dfn data-concept="isolation-plot">isolation plot</dfn> as a special case of the axis plot in which each point is the best trial across some or all of the <span data-concept="nuisance-hp">nuisance hyperparameters</span>. Nuisance hyperparameters are the ones you have to tune for a fair comparison but are not asking about, here the learning rate. In the Playbook's words, the plot shows performance after "optimizing away" the nuisance hyperparameters, which makes an apples-to-apples comparison between values of the scientific hyperparameter. For weight decay $\lambda$ and learning rate $\eta$, the point at each $\lambda$ is
+        </p>
+
+        $$\hat{L}_{\text{iso}}(\lambda) = \min_{k \in \mathcal{T}(\lambda)} \hat{L}_{\text{trial}}(\lambda, \eta_k),$$
+
+        <p>
+          where $\mathcal{T}(\lambda)$ is the set of trials run with weight decay $\lambda$, $\eta_k$ is the learning rate of trial $k$, and $\hat{L}_{\text{trial}}$ is a trial's best validation error.
+        </p>
+
+        <p data-src="1028-1032">
+          Quasi-random search does not produce neat columns. Every trial has its own weight decay, so no two share a value. The Playbook's approximation is to cut the horizontal axis into <dfn data-concept="bucket">buckets</dfn> and take the best trial in each vertical slice. <a href="#fig-isolation" class="figref"></a> does this for a synthetic 100-trial study over learning rate and weight decay. Panel (a) shows where each trial sat in the two-dimensional search space. Panel (b) shows the same trials against weight decay alone, with the best trial of each bucket joined into the isolation curve.
+        </p>
+      </section>
+
+      <figure class="fig l-wide" id="fig-isolation" role="group" aria-labelledby="fig-isolation-title"
+              data-shows="isolation-plot,bucket,nuisance-hp,infeasible-trial"
+              data-playbook-img="assets/playbook/isolation_plot.png"
+              data-playbook-src="996-1032"
+              data-playbook-caption="Figure 2 of the Playbook: an isolation plot that investigates the best value of weight decay for ResNet-50 trained on ImageNet.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-isolation-title">An isolation plot from a quasi-random study</span>
+          <span class="chip toy">Interactive toy study</span>
+        </figcaption>
+        <p class="fig-task" data-task="F6.3" data-teaches="isolation-plot,bucket" data-uses="quasi-random,nuisance-hp,infeasible-trial">
+          Drag the highlighted slice across either panel to see which trial wins each bucket, and change the number of buckets.
+        </p>
+
+        <div class="fig-tutorial" data-figure="fig-isolation">
+          <div class="fig-tut-step-data" data-label="One bucket" data-params='{"buckets":8,"slice":3}'>
+            The highlighted bucket holds every trial with weight decay between $1.8 \times 10^{-5}$ and $10^{-4}$, 12 trials. In panel (a) they spread across the full learning-rate range. Only the best of them, error 0.232 at a learning rate of $2.0 \times 10^{-3}$, becomes a point of the isolation curve.
+          </div>
+          <div class="fig-tut-step-data" data-label="Weak weight decay" data-params='{"buckets":8,"slice":0}'>
+            The leftmost bucket has the weakest weight decay. Even its best trial does worse than the best trial of the bucket in step 1, so the curve rises toward the left.
+          </div>
+          <div class="fig-tut-step-data" data-label="Four buckets" data-params='{"buckets":4,"slice":1}'>
+            With four wide buckets, each holds many trials, so each bucket's best is close to the best that weight-decay range can do. The curve has four points, so it locates the best weight decay coarsely.
+          </div>
+          <div class="fig-tut-step-data" data-label="Sixteen buckets" data-params='{"buckets":16,"slice":6}'>
+            With sixteen narrow buckets the curve has more points, but each bucket holds a few trials (6 in the highlighted one). A bucket with no trial near a good learning rate sits higher than its neighbors, as at the far left.
+          </div>
+        </div>
+
+        <p class="fig-caption">
+          (a) A synthetic quasi-random study of <span data-num="fig-isolation:model:trials">100</span> trials over weight decay and learning rate. Crosses are trials that diverged at high learning rates (<span data-num="fig-isolation:default:infeasible-count">21</span> here). (b) The same trials against weight decay alone, as faint points, with the best trial of each bucket joined into the isolation curve.
+        </p>
+        <details class="fig-model">
+          <summary>How this toy works</summary>
+          <div class="fig-model-body">
+            <p>
+              Validation error is a bowl over $\log_{10}\lambda \in [-7, -1]$ and $\log_{10}\eta \in [-5, -0.5]$ whose best learning rate shifts with the weight decay, plus Gaussian noise with standard deviation <span data-num="fig-isolation:model:sigma">0.001</span>. Trials with $\eta$ above <span data-num="fig-isolation:model:u-div">10^−1.5</span> diverge. Buckets are equal widths in $\log_{10}\lambda$. "Draw again" places a new quasi-random study.
+            </p>
+          </div>
+        </details>
+      </figure>
+
+      <section class="prose">
+        <p>
+          The number of buckets is a trade-off that the Playbook leaves to the reader. Wide buckets hold many trials, so their best trial is close to the best that range of weight decay can do, but the curve has few points. Narrow buckets give more points, but some will hold no trial near a good learning rate and sit too high.
+        </p>
+
+        <details class="math-aside">
+          <summary>Why sparse buckets sit too high</summary>
+          <p>
+            Write $L^*(\lambda)$ for the error at weight decay $\lambda$ with a perfectly tuned learning rate. A bucket's best trial uses one of the few learning rates that happened to fall in the bucket, so without noise its error is at least $L^*(\lambda)$, and the gap shrinks as more trials fall in the bucket. With evaluation noise, the minimum of many noisy trials also tends to come out below its expected value, which pulls the other way. The second effect is the subject of <a href="06-adopting-a-change.html">Part 6</a>.
+          </p>
+        </details>
+      </section>
+
+      <!-- ===================== A fair baseline ===================== -->
+      <section class="prose" id="baseline">
+        <h2>Comparing against a baseline</h2>
+
+        <p data-src="1019-1027">
+          Often the question is whether weight decay belongs in the model. The Playbook's answer is to compare the best point of the isolation plot against the baseline with no weight decay, with one condition: "For a fair comparison, the baseline should also have its learning rate equally well tuned."
+        </p>
+
+        <p>
+          The condition is easy to break without noticing. Suppose that in your model, adding weight decay moves the best learning rate from about <span data-num="fig-baseline:model:none-best-lr">0.013</span> down to <span data-num="fig-baseline:model:wd-best-lr">0.0032</span>. You tune the learning rate carefully for the weight-decay runs and settle on the range <span data-num="fig-baseline:model:preferred-lo">0.0025</span> to <span data-num="fig-baseline:model:preferred-hi">0.004</span>. Then, to save compute, you restrict the baseline to those same rates. <a href="#fig-baseline" class="figref"></a> shows the result in a toy where both models are equally good once tuned.
+        </p>
+      </section>
+
+      <figure class="fig static l-wide" id="fig-baseline" role="group" aria-labelledby="fig-baseline-title"
+              data-shows="fair-baseline,isolation-plot,nuisance-hp,scientific-hp"
+              data-playbook-quote="If our goal is to determine whether to include weight decay at all, then we would compare the best point from this plot against the baseline of no weight decay. For a fair comparison, the baseline should also have its learning rate equally well tuned."
+              data-playbook-src="1019-1027"
+              data-playbook-caption="From the Playbook's section on isolation plots.">
+        <figcaption class="fig-head">
+          <span class="fig-num"></span>
+          <span class="fig-title" id="fig-baseline-title">A baseline held to the candidate's learning rates</span>
+          <span class="chip toy">Toy model</span>
+        </figcaption>
+
+        <div class="fig-panels"></div>
+
+        <p class="fig-caption">
+          Validation error against learning rate for a model with weight decay (blue) and without (ochre), each with a shaded noise band of ±<span data-num="fig-baseline:model:band">0.001</span>. (a) With each learning rate tuned, the minima are <span data-num="fig-baseline:model:wd-best-error">0.230</span> and <span data-num="fig-baseline:model:none-best-error">0.2305</span>, a difference of <span data-num="fig-baseline:model:tie">0.0005</span> inside the noise. (b) With the baseline held to the rates the weight-decay study searched, the baseline's best is <span data-num="fig-baseline:model:unfair-best-error">0.2455</span>, and weight decay appears to win by <span data-num="fig-baseline:model:false-win">0.0155</span>.
+        </p>
+        <details class="fig-model">
+          <summary>How this toy works</summary>
+          <div class="fig-model-body">
+            <p>
+              Both curves are parabolas in $\log_{10}\eta$, $L(\eta) = L^\star + a\,(\log_{10}\eta - \log_{10}\eta^\star)^2$, with the same curvature $a =$ <span data-num="fig-baseline:model:curvature">0.06</span> and different optima $\eta^\star$. The shift of the best learning rate with weight decay is an assumption of the toy. How large it is in a real model depends on the model and the optimizer.
+            </p>
+          </div>
+        </details>
+      </figure>
+
+      <section class="prose">
+        <p>
+          The apparent gain in panel (b) comes from where the baseline was evaluated. A check that catches it is the edge check from earlier in this post applied to each arm of the comparison. Plot validation error against learning rate for the candidate and for the baseline, and confirm that each one's best trial sits inside its own searched range. In panel (b) the baseline's best rate is the upper end of the range it was given, which is the "bad" pattern of <a href="#fig-range" class="figref"></a>.
+        </p>
+        <p>
+          Once the study is healthy and the comparison is fair, one question remains: is the measured difference larger than the run-to-run noise? <a href="06-adopting-a-change.html">Part 6</a> takes up that question.
+        </p>
+      </section>
+
+      <!-- ===================== In practice ===================== -->
+      <section class="prose p05-practice" id="in-practice">
+        <h2>In practice</h2>
+        <p>
+          I now follow this routine after every study, in the order the Playbook suggests. Each step names what to look for and what to do about it.
+        </p>
+
+        <ol class="p05-steps">
+          <li class="p05-step">
+            <span class="p05-step-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><path d="M5 4 V27 H29" class="ic-axis"/><circle cx="11" cy="12" r="2"/><circle cx="16" cy="18" r="2"/><circle cx="21" cy="21" r="2"/><circle cx="26" cy="22" r="2.6" class="ic-hl"/></svg></span>
+            <div class="p05-step-body">
+              <h3>Plot every tuned hyperparameter</h3>
+              <p class="p05-if"><strong>Best trials near one edge</strong> <span class="p05-then" aria-label="then">→</span> expand the range that way and rerun.</p>
+              <p class="p05-if"><strong>A run of failed trials just above the best trials</strong> <span class="p05-then" aria-label="then">→</span> treat it as instability (<a href="08-training-instabilities.html">Part 8</a>).</p>
+            </div>
+          </li>
+          <li class="p05-step">
+            <span class="p05-step-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><path d="M5 4 V27 H29" class="ic-axis"/><path d="M8 8 l4 4 m0 -4 l-4 4 M20 8 l4 4 m0 -4 l-4 4" class="ic-x"/><circle cx="14" cy="22" r="2"/><circle cx="18" cy="23" r="2.6" class="ic-hl"/></svg></span>
+            <div class="p05-step-body">
+              <h3>Count the good region and the failures</h3>
+              <p class="p05-if"><strong>One or two trials near the best</strong> <span class="p05-then" aria-label="then">→</span> run more trials or narrow the goal.</p>
+              <p class="p05-if"><strong>Many infeasible trials</strong> <span class="p05-then" aria-label="then">→</span> move or reparameterize the range, and check for bugs.</p>
+            </div>
+          </li>
+          <li class="p05-step">
+            <span class="p05-step-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><path d="M5 4 V27 H29" class="ic-axis"/><path d="M7 7 C 12 20, 18 21, 28 23" class="ic-train"/><path d="M7 6 C 12 17, 16 17, 20 17 S 26 14, 28 12" class="ic-val"/></svg></span>
+            <div class="p05-step-body">
+              <h3>Open the curves of the best few trials</h3>
+              <p>Match them against <a href="#fig-gallery" class="figref"></a>. Fix overfitting, noise or a bug before comparing settings.</p>
+            </div>
+          </li>
+          <li class="p05-step">
+            <span class="p05-step-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><path d="M5 4 V27 H29" class="ic-axis"/><path d="M8 12 L13 19 L18 22 L23 18 L28 9" class="ic-val"/><circle cx="18" cy="22" r="2.6" class="ic-hl"/></svg></span>
+            <div class="p05-step-body">
+              <h3>Read the goal from an isolation plot</h3>
+              <p>Use the best trial at each value of the scientific hyperparameter. With quasi-random search, bucket the axis.</p>
+            </div>
+          </li>
+          <li class="p05-step">
+            <span class="p05-step-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><path d="M5 4 V27 H29" class="ic-axis"/><path d="M7 8 Q 13 30 19 8" class="ic-val"/><path d="M13 8 Q 19 30 25 8" class="ic-train"/></svg></span>
+            <div class="p05-step-body">
+              <h3>Tune the baseline as well as the candidate</h3>
+              <p>Give it the same nuisance hyperparameters and search effort, and check that its best trial is not at an edge.</p>
+            </div>
+          </li>
+        </ol>
+
+        <p class="p05-practice-quote" data-src="1036-1055">
+          The Playbook closes its section on plots by paraphrasing Geoffrey Hinton: "Every time you plot something new, you learn something new." The authors automatically generate axis plots for every varied hyperparameter and training curves for every trial (<a href="https://github.com/google-research/tuning_playbook#automate-generically-useful-plots" target="_blank" rel="noopener">its section on automating plots</a>).
+        </p>
+      </section>
+
+      <!-- ===================== Where this fits ===================== -->
+      <section class="prose" id="protocol">
+        <h2>Where this fits</h2>
+        <p>
+          Reading a study sits between running it (<a href="04-searching-the-space.html">Part 4</a>) and deciding whether to adopt a change (<a href="06-adopting-a-change.html">Part 6</a>). A clipped range loops back to a new search space, and unstable curves lead to <a href="08-training-instabilities.html">Part 8</a>.
+        </p>
+      </section>
+
+      <div class="l-wide">
+        <div class="playbook-map" data-active-zone="diagnosis" data-default-node="n_read"></div>
+      </div>
+
+      <section class="refs" id="references">
+        <h2>References</h2>
+        <ol id="reflist"></ol>
+      </section>
+
+      <nav class="pager" aria-label="Post navigation"></nav>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Adapted from and inspired by the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue, and Nado (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>).
+  </footer>
+
+  <script defer src="../js/vendor/d3.v7.min.js"></script>
+  <script defer src="../js/vendor/katex/katex.min.js"></script>
+  <script defer src="../js/vendor/katex/auto-render.min.js"></script>
+  <script defer src="../js/lib/format.js"></script>
+  <script defer src="../js/lib/prng.js"></script>
+  <script defer src="../js/lib/halton.js"></script>
+  <script defer src="../js/lib/toyS.js"></script>
+  <script defer src="../js/lib/boundary.js"></script>
+  <script defer src="../js/lib/isolation.js"></script>
+  <script defer src="../js/lib/baseline.js"></script>
+  <script defer src="../js/lib/placer.js"></script>
+  <script defer src="../js/refs.js"></script>
+  <script defer src="../js/concepts.js"></script>
+  <script defer src="../js/site.js"></script>
+  <script defer src="../js/components/playbook-map.js"></script>
+  <script defer src="../js/chart.js"></script>
+  <script defer src="../js/runtime.js"></script>
+  <script defer src="../js/figures/f6-1-range.js"></script>
+  <script defer src="../js/figures/f6-2-gallery.js"></script>
+  <script defer src="../js/figures/f6-3-isolation.js"></script>
+  <script defer src="../js/figures/f6-4-baseline.js"></script>
+  <script defer src="../js/figures/p05-schematics.js"></script>
+</body>
+</html>

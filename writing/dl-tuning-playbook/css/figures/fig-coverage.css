@@ -1,0 +1,69 @@
+/* fig-coverage.css: the layout of F5.1, coverage as points arrive (implementation-plan.md WO-F5.1).
+   The panels are a grid. Its first column holds (a)'s y axis, and (a) spans it and the first
+   strategy column, so that the three frames (a), (b) and (c) have one width; the script reads
+   --cov-yaxis and --cov-gap to set (a)'s left margin. From 640 px each strategy's learning-rate
+   strip sits under its frame and (d) spans the row under them. Below 640 px the frames stay one row
+   of small multiples, the three learning-rate strips become full-width rows and (d) follows
+   (design-system.md §3.5 item 8). The DOM order is (a), its strip, (b), its strip, (c), its strip,
+   (d). */
+#fig-coverage .fig-panels {
+  --cov-yaxis: 46px;
+  --cov-gap: 14px;
+  display: grid;
+  grid-template-columns: var(--cov-yaxis) repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "a a b c"
+    "la la lb lc"
+    "d d d d";
+  column-gap: var(--cov-gap);
+  row-gap: 0;
+  align-items: start;
+}
+#fig-coverage .panel[data-panel="a"] { grid-area: a; }
+#fig-coverage .panel[data-panel="b"] { grid-area: b; }
+#fig-coverage .panel[data-panel="c"] { grid-area: c; }
+#fig-coverage .panel[data-panel="a-lr"] { grid-area: la; }
+#fig-coverage .panel[data-panel="b-lr"] { grid-area: lb; }
+#fig-coverage .panel[data-panel="c-lr"] { grid-area: lc; }
+#fig-coverage .panel[data-panel="d"] { grid-area: d; margin-top: 10px; }
+/* the strategy headers keep one line, so the three frames start at one height */
+#fig-coverage .panel[data-panel="a"] .panel-head,
+#fig-coverage .panel[data-panel="b"] .panel-head,
+#fig-coverage .panel[data-panel="c"] .panel-head { flex-wrap: nowrap; white-space: nowrap; }
+/* a strip under its frame has no header */
+#fig-coverage .panel[data-panel$="-lr"] .panel-head { display: none; }
+/* the strip names of the phone layout */
+#fig-coverage .strip-name { fill: var(--ink-2); font-size: var(--fs-tick); }
+
+@media (max-width: 639px) {
+  #fig-coverage .fig-panels {
+    --cov-yaxis: 30px;
+    --cov-gap: 6px;
+    grid-template-areas:
+      "a a b c"
+      "la la la la"
+      "lb lb lb lb"
+      "lc lc lc lc"
+      "d d d d";
+  }
+  #fig-coverage .panel[data-panel="a-lr"] { margin-top: 4px; }
+  #fig-coverage .panel[data-panel="d"] { margin-top: 8px; }
+}
+
+/* Below 800 px a strategy header may be wider than its column ("(c) quasi-random" in 100 px on a
+   phone, "(a) grid, 81 of 100 placed, 19 unused" at 640 px), so each wraps and holds two lines,
+   and the three frames still start at one height. */
+@media (max-width: 799px) {
+  #fig-coverage .panel[data-panel="a"] .panel-head,
+  #fig-coverage .panel[data-panel="b"] .panel-head,
+  #fig-coverage .panel[data-panel="c"] .panel-head {
+    flex-wrap: wrap; white-space: normal; align-content: flex-start; min-height: calc(2.8em + 4px);
+  }
+}
+/* Print (design-system.md §6.7): html.tp-print is laid out as a 680-px viewport, the paper's
+   column, so the headers wrap as below 800 px. */
+#fig-coverage:is(html.tp-print *) .panel[data-panel="a"] .panel-head,
+#fig-coverage:is(html.tp-print *) .panel[data-panel="b"] .panel-head,
+#fig-coverage:is(html.tp-print *) .panel[data-panel="c"] .panel-head {
+  flex-wrap: wrap; white-space: normal; align-content: flex-start; min-height: calc(2.8em + 4px);
+}

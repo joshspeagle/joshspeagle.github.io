@@ -1,0 +1,8 @@
+/* fig-budget-line, F8.2: the step-budget line (implementation-plan.md WO-F8.2).
+   Panel (a) stands above panel (b) at every width, each at the full width of the panels, with the
+   same left and right margins, so that the two frames align (the script's margins). The budget's
+   handle stands above the press band along its line and above the reading element of (a), so that a
+   press on the dot or the line moves the budget (design-system.md §6.2). */
+#fig-budget-line .fig-panels { flex-direction: column; gap: 10px; }
+#fig-budget-line .fig-panels > .panel { flex: 0 0 auto; width: 100%; }
+#fig-budget-line .panel > .handle { z-index: 3; }

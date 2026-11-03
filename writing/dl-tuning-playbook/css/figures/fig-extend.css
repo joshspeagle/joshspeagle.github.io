@@ -1,0 +1,32 @@
+/* fig-extend.css: the layout of F8.3, extending a schedule (implementation-plan.md WO-F8.3).
+   The panels come in the order (a), (a)'s strip, (b), (b)'s strip. From 900 px the two families sit
+   side by side as small multiples (design-system.md §3.5 item 7), each frame above its strip. (a)
+   carries the y axis. The first grid column is the width of that axis less the gap that (b) keeps
+   as its left margin (f8-3-extend.js: Y_AXIS.desktop 84 px and GAP 18 px), so that both frames and
+   both strips take one x pixel range. Below 900 px the families stack, each with its own axes: side
+   by side the frames would be under 300 px wide, too narrow for the direct labels. */
+#fig-extend .fig-panels {
+  --ext-yaxis: 66px;
+  display: grid;
+  grid-template-columns: var(--ext-yaxis) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 0;
+  row-gap: 0;
+  align-items: start;
+}
+#fig-extend .fig-panels > .panel[data-panel="a"] { grid-column: 1 / 3; grid-row: 1; }
+#fig-extend .fig-panels > .panel[data-panel="a-below"] { grid-column: 1 / 3; grid-row: 2; }
+#fig-extend .fig-panels > .panel[data-panel="b"] { grid-column: 3; grid-row: 1; }
+#fig-extend .fig-panels > .panel[data-panel="b-below"] { grid-column: 3; grid-row: 2; }
+/* a strip has no header of its own: it reads as the foot of the frame above it */
+#fig-extend .fig-panels > .panel[data-panel$="-below"] > .panel-head { display: none; }
+@media (max-width: 899px) {
+  #fig-extend .fig-panels { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  #fig-extend .fig-panels > .panel[data-panel] { grid-column: 1; grid-row: auto; }
+  #fig-extend .fig-panels > .panel[data-panel="b"] { margin-top: 14px; }
+}
+/* Print (design-system.md §6.7): html.tp-print is laid out as a 680-px viewport, the paper's
+   column, so the families stack as below 900 px; sideBySide() in f8-3-extend.js agrees. */
+#fig-extend:is(html.tp-print *) .fig-panels { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+#fig-extend:is(html.tp-print *) .fig-panels > .panel[data-panel] { grid-column: 1; grid-row: auto; }
+#fig-extend:is(html.tp-print *) .fig-panels > .panel[data-panel="b"] { margin-top: 14px; }
