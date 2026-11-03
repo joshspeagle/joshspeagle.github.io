@@ -71,4 +71,4 @@ All colors are defined in `assets/data/tokens.json` with paired `dark` and `ligh
    - **Awards:** Research Prizes & Academic Awards 2-column grid + Competitive Fellowships + Group & Mentee Fellowships showcase.
    - **News:** Featured Press & Research Highlights 3-card spotlight grid above the filterable chronological feed.
 8. **Writing (`writing.html` & `writing/dl-tuning-playbook/`):**
-   - **Featured Series Spotlight & 4-Act Curriculum Map:** Tier-1 `.art-panel.writing-spotlight` module with live `localStorage` reading-progress tracking (`tp-posts-opened`), dynamic next-part resume CTA, and a 4-column curriculum grid (`Act I`–`Act IV`) above a dual-row filterable feed (`Filter by format` and `Filter by curriculum act`).
+   - **Editorial index:** Each series is one framed panel (`.wr-series`) with its summary and entry links in a sticky left column and a book-style table of contents on the right (act headings, then numbered parts with a one-line summary). Standalone essays render below as a plain dated list. The series pages under `writing/<series-slug>/` keep their own reading-focused design.

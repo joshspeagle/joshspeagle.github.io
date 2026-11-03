@@ -95,7 +95,7 @@ PAGES = {
     "service": dict(file="service.html", nav="Service", canonical="/service.html",
                     layout="header", scripts=["board.js", "listview.js"], sitemap="0.6", sources=["content"]),
     "writing": dict(file="writing.html", nav=None, canonical="/writing.html",
-                    layout="header", scripts=["board.js", "listview.js"], sitemap=None,
+                    layout="header", scripts=["board.js"], sitemap=None,
                     noindex=True, sources=["content"]),
     "404": dict(file="404.html", nav=None, title=f"Page not found · {SITE_NAME}",
                 canonical=None, layout="notfound", scripts=["board.js"], sitemap=None,

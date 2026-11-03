@@ -155,70 +155,9 @@
     });
   }
 
-  function initSeriesProgress() {
-    document.querySelectorAll('[data-series-progress]').forEach(function (panel) {
-      const key = panel.getAttribute('data-storage-key') || 'tp-posts-opened';
-      const total = parseInt(panel.getAttribute('data-total-parts') || '9', 10) || 9;
-      let opened = [];
-      try {
-        const raw = JSON.parse(window.localStorage.getItem(key) || '[]');
-        if (Array.isArray(raw)) {
-          opened = raw.map(Number).filter(function (n) { return n >= 1 && n <= total; });
-        }
-      } catch (e) {
-        opened = [];
-      }
-      const openedSet = new Set(opened);
-      const count = openedSet.size;
-      const pct = Math.round((count / total) * 100);
-
-      const labelEl = panel.querySelector('[data-progress-label]');
-      const pctEl = panel.querySelector('[data-progress-pct]');
-      const barEl = panel.querySelector('[data-progress-bar]');
-      const fillEl = panel.querySelector('[data-progress-fill]');
-      const ctaEl = panel.querySelector('[data-progress-cta]');
-
-      if (labelEl) labelEl.textContent = 'Reading progress: ' + count + ' of ' + total + ' parts opened';
-      if (pctEl) pctEl.textContent = pct + '%';
-      if (barEl) barEl.setAttribute('aria-valuenow', String(count));
-      if (fillEl) fillEl.style.width = pct + '%';
-
-      let nextUnread = null;
-      for (let i = 1; i <= total; i++) {
-        const card = panel.querySelector('.wr-part-card[data-part-num="' + i + '"]');
-        const isRead = openedSet.has(i);
-        if (card) {
-          card.classList.toggle('is-opened', isRead);
-          const st = card.querySelector('[data-part-status]');
-          if (st) {
-            const def = st.getAttribute('data-default-label') || '';
-            st.textContent = isRead ? ('✓ Opened · ' + def) : def;
-          }
-          if (!isRead && !nextUnread) {
-            nextUnread = { num: i, url: card.getAttribute('data-part-url') || card.getAttribute('href') };
-          }
-        }
-      }
-
-      if (ctaEl && count > 0 && nextUnread && nextUnread.url) {
-        ctaEl.setAttribute('href', nextUnread.url);
-        ctaEl.textContent = 'Continue to Part ' + nextUnread.num;
-      }
-
-      document.querySelectorAll('.writing-card[data-part-num]').forEach(function (item) {
-        const pnum = parseInt(item.getAttribute('data-part-num') || '0', 10);
-        const isRead = openedSet.has(pnum);
-        item.classList.toggle('is-opened', isRead);
-        const badge = item.querySelector('[data-part-read-badge]');
-        if (badge) badge.hidden = !isRead;
-      });
-    });
-  }
-
   function init() {
     document.querySelectorAll('[data-listview]').forEach(initRoot);
     initTimelineExpand();
-    initSeriesProgress();
   }
   if (document.readyState !== 'loading') init(); else document.addEventListener('DOMContentLoaded', init);
 })();
