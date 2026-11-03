@@ -29,7 +29,7 @@
     <article class="post-body">
       <section class="prose index-intro" id="intro">
         <p class="lede">
-          Google Research's <em>Deep Learning Tuning Playbook</em> is a rare thing in machine learning: a written account, by people who have trained neural networks for many years, of how they actually get good results in practice. Much of its advice fits in a sentence, such as re-tuning the learning rate whenever the batch size changes, or scoring a training run by its best checkpoint rather than its last. Why each of those sentences is true usually takes considerably longer to explain, and that explanation is what this series is about.
+          Google Research's <em>Deep Learning Tuning Playbook</em> offers something rare in machine learning, a written account by people who have trained neural networks for many years of how they actually get good results in practice. Much of its advice fits in a sentence, such as re-tuning the learning rate whenever the batch size changes, or scoring a training run by its best checkpoint rather than its last. Why each of those sentences is true usually takes considerably longer to explain, and that explanation is what this series is about.
         </p>
         <p>
           I wrote these posts to understand the Playbook myself. Coming to it as a statistician, I kept finding that the advice made the most sense once I could see the mechanism underneath it, so for each part we work through the argument, write down a simple model of what is going on, and build a small simulation wherever a picture helps us see why the advice holds. I'm sharing them in the hope that they are useful to others who are learning to tune models systematically, and to anyone curious about where these rules of thumb come from.
@@ -132,7 +132,7 @@
             <div class="series-act-head">
               <span class="series-act-num">Act II</span>
               <h3 id="act-2-title">Running, reading and deciding</h3>
-              <p>One round of experiments: placing the trials, checking what came back, and deciding what to keep.</p>
+              <p>How to place the trials in a round of experiments, check what comes back, and decide what to keep.</p>
             </div>
             <ol class="series-posts" start="4">
               <li><a class="series-post" href="pages/04-searching-the-space.html">
@@ -197,14 +197,14 @@
       <section class="prose" id="more">
         <h2>Reference material</h2>
         <ul class="index-more">
-          <li><a href="pages/reference.html"><strong>Reference</strong></a>: the Playbook's rules in one place, a glossary of the terms used in the series, a table matching Playbook sections to posts, and the full bibliography.</li>
+          <li><a href="pages/reference.html"><strong>Reference</strong></a> collects the Playbook's rules in one place, along with a glossary of the terms used in the series, a table matching Playbook sections to posts, and the full bibliography.</li>
         </ul>
       </section>
     </article>
   </main>
 
   <footer class="site-footer">
-    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue and Nado, used under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
   <script src="js/vendor/katex/katex.min.js"></script>
