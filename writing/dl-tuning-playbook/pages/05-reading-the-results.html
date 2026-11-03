@@ -100,12 +100,12 @@
               <g class="mini-best"><circle cx="34" cy="52" r="4.2"/><circle cx="70" cy="70" r="4.2"/><circle cx="106" cy="80" r="5.2"/><circle cx="142" cy="72" r="4.2"/><circle cx="178" cy="30" r="4.2"/></g>
             </svg>
             <h3>Isolation plot</h3>
-            <p>The best trial at each value of the hyperparameter you are studying, after tuning the others.</p>
+            <p>The best trial at each value of the scientific hyperparameter, after tuning the others.</p>
             <p class="p05-answers">Answers: did the change help, and was the comparison fair?</p>
           </div>
         </div>
         <p class="fig-caption">
-          Schematic sketches of each plot's layout. The axis plot and the training curves tell us whether a study is healthy, while the isolation plot reads off its answer. Each returns later in this post as a working figure.
+          Each card sketches the layout of one diagnostic plot. The axis plot and the training curves tell us whether a study is healthy, while the isolation plot reads off its answer. Each returns later in this post as a working figure.
         </p>
       </figure>
 
@@ -155,7 +155,7 @@
         </div>
 
         <p class="fig-caption">
-          Each point is one trial of a synthetic quasi-random study, plotted at its best validation error. Gray points are feasible trials, blue points are the three best, and crosses along the top are infeasible trials. The ticks on the horizontal axis mark the edge zones, which cover the outer 10% of the log range at each end (a convention of these notes).
+          Each point is one trial of a synthetic quasi-random study, plotted at its best validation error. Gray points are feasible trials, blue points are the three best, and crosses along the top are infeasible trials. The ticks on the horizontal axis mark the edge zones, which cover the outer 10% of the log range at each end (my convention in these notes). The figure opens on a 50-trial study over $10^{-5}$ to $5 \times 10^{-4}$, where all <span data-num="fig-range:default:upper-count">3</span> best trials sit in the upper edge zone and the best validation error is <span data-num="fig-range:default:best-error">0.275</span>.
         </p>
         <details class="fig-model">
           <summary>How this toy works</summary>
@@ -186,7 +186,7 @@
         </p>
 
         <p>
-          We can see the problem in the <button type="button" class="preset-link" data-figure="fig-range" data-preset="sparse">too few trials</button> case of <a href="#fig-range" class="figref"></a>, which searches the same wide range with 10 trials instead of 50. Only <span data-num="fig-range:sparse:near-best">2</span> of them come within 0.03 of the best error, compared with <span data-num="fig-range:widened:near-best">8</span> in the 50-trial study, so the bottom of the valley is described by almost nothing. (The 0.03 tolerance is a convention of these notes, and any fixed tolerance would make the same point.)
+          We can see the problem in the <button type="button" class="preset-link" data-figure="fig-range" data-preset="sparse">too few trials</button> case of <a href="#fig-range" class="figref"></a>, which searches the same wide range with 10 trials instead of 50. Only <span data-num="fig-range:sparse:near-best">2</span> of them come within 0.03 of the best error, compared with <span data-num="fig-range:widened:near-best">8</span> in the 50-trial study, so the bottom of the valley is described by almost nothing. (The 0.03 tolerance is simply a convenient cutoff for counting nearby runs.)
         </p>
 
         <p>
@@ -196,7 +196,7 @@
         $$K_{\text{good}} \approx K \left(\frac{\Delta}{W}\right)^{D},$$
 
         <p>
-          where $\Delta$ is the width of the good region and $W$ the width of the searched range (both in decades, and assumed the same for every axis), and $D$ is the number of tuned hyperparameters. This is my own back-of-the-envelope estimate rather than anything in the Playbook, and it assumes a box-shaped good region with even coverage, but it captures the essential point: the count falls geometrically with $D$, so a budget that comfortably covers one hyperparameter can leave only a few trials in the good region once we tune several. The calculator below lets us play with the numbers.
+          where $\Delta$ is the width of the good region and $W$ the width of the searched range (both in decades, and assumed the same for every axis), and $D$ is the number of tuned hyperparameters. This back-of-the-envelope estimate is my own rather than the Playbook's and assumes a box-shaped good region with even coverage, but it captures why the count falls geometrically with $D$, so a budget that comfortably covers one hyperparameter can leave only a few trials in the good region once we tune several. The calculator below lets us play with the numbers.
         </p>
 
         <div class="scrub-calculator p05-calc" role="region" aria-label="Expected number of trials in the good region">
@@ -225,7 +225,7 @@
         <h2>What do the training curves show?</h2>
 
         <p data-src="901-925">
-          So far we have reduced each trial to a single number, its best validation error, but two trials with the same number can have very different runs behind them. This is why the Playbook's authors always look at the <dfn data-concept="training-curves">training curves</dfn> (training and validation error plotted against training step) of at least the best few trials in every study: the curves are a cheap way to spot common failure modes and to decide what to do next (<a href="https://github.com/google-research/tuning_playbook#examining-the-training-curves" target="_blank" rel="noopener">its section on examining the training curves</a>). They pose a short list of questions to ask of the curves, and <a href="#fig-gallery" class="figref"></a> sketches the shape behind each one alongside its likely cause and the suggested response.
+          So far we have reduced each trial to a single number, its best validation error, but two trials with the same number can have very different runs behind them. This is why the Playbook's authors always look at the <dfn data-concept="training-curves">training curves</dfn> (training and validation error plotted against training step) of at least the best few trials in every study, because the curves are a cheap way to spot common failure modes and to decide what to do next (<a href="https://github.com/google-research/tuning_playbook#examining-the-training-curves" target="_blank" rel="noopener">its section on examining the training curves</a>). They pose a short list of questions to ask of the curves, and <a href="#fig-gallery" class="figref"></a> sketches the shape behind each one alongside its likely cause and the suggested response.
         </p>
       </section>
 
@@ -273,7 +273,7 @@
             <h3 class="sym-title">Flat long before the end</h3>
             <dl>
               <dt>Likely cause</dt><dd>The run is not compute-bound. The last part of training adds nothing.</dd>
-              <dt>What to do</dt><dd>You may be able to train for fewer steps (<a href="07-training-horizon.html">Part 7</a>).</dd>
+              <dt>What to do</dt><dd>We may be able to train for fewer steps (<a href="07-training-horizon.html">Part 7</a>).</dd>
             </dl>
           </div>
           <div class="sym-card">
@@ -289,7 +289,7 @@
             <h3 class="sym-title">Sudden spikes</h3>
             <dl>
               <dt>Likely cause</dt><dd>Training instability, often from a learning rate near the stability limit.</dd>
-              <dt>What to do</dt><dd>Diagnose it as an optimization failure: warmup, gradient clipping (<a href="08-training-instabilities.html">Part 8</a>).</dd>
+              <dt>What to do</dt><dd>Diagnose it as an optimization failure using warmup or gradient clipping (<a href="08-training-instabilities.html">Part 8</a>).</dd>
             </dl>
           </div>
         </div>
@@ -300,7 +300,7 @@
 
       <section class="prose">
         <p data-src="926-965">
-          Overfitting deserves a closer look, because it interacts with how we pick a best trial. When a study compares values of a <span data-concept="scientific-hp">scientific hyperparameter</span> (the one whose effect we want to measure), the Playbook asks us to check the best trial at each of those values for problematic overfitting, and to rerun with more regularization before comparing if any of them overfits. Its example is a study of the number of hidden layers: if the best run with the most layers overfits, the right move is to try it again with more regularization rather than to conclude that fewer layers are better. The exception is a study whose scientific hyperparameter is itself a regularizer, since there we expect the weak settings to overfit.
+          Overfitting deserves a closer look, because it interacts with how we pick a best trial. When a study compares values of a <span data-concept="scientific-hp">scientific hyperparameter</span> (the one whose effect we want to measure), the Playbook asks us to check the best trial at each of those values for problematic overfitting, and to rerun with more regularization before comparing if any of them overfits. Its example is a study of the number of hidden layers, where if the best run with the most layers overfits, the right move is to try it again with more regularization rather than to conclude that fewer layers are better. The exception is a study whose scientific hyperparameter is itself a regularizer, since there we expect the weak settings to overfit.
         </p>
 
         <p data-src="954-965">
@@ -360,7 +360,7 @@
 
       <section class="prose">
         <p data-src="1003-1018">
-          This is what the Playbook calls an <dfn data-concept="isolation-plot">isolation plot</dfn>: a special case of the axis plot in which each point is the best trial across some or all of the <span data-concept="nuisance-hp">nuisance hyperparameters</span>, meaning the ones we have to tune for a fair comparison but are not asking about (here, the learning rate). In the authors' phrase, the plot shows performance after "optimizing away" the nuisance hyperparameters, which is what makes the comparison between values of the scientific hyperparameter apples-to-apples. Statistically, I find it helpful to think of this as a profile: for weight decay $\lambda$ and learning rate $\eta$, the point at each $\lambda$ is
+          This is what the Playbook calls an <dfn data-concept="isolation-plot">isolation plot</dfn>, a special case of the axis plot in which each point is the best trial across some or all of the <span data-concept="nuisance-hp">nuisance hyperparameters</span>, meaning the ones we have to tune for a fair comparison but are not asking about (here, the learning rate). In the authors' phrase, the plot shows performance after "optimizing away" the nuisance hyperparameters, which keeps the comparison between values of the scientific hyperparameter on an equal footing. Statistically, I find it helpful to think of this as a profile. For weight decay $\lambda$ and learning rate $\eta$, the point at each $\lambda$ is
         </p>
 
         $$\hat{L}_{\text{iso}}(\lambda) = \min_{k \in \mathcal{T}(\lambda)} \hat{L}_{\text{trial}}(\lambda, \eta_k),$$
@@ -370,7 +370,7 @@
         </p>
 
         <p data-src="1028-1032">
-          In practice, though, the quasi-random search from Part 4 does not produce neat columns, because every trial has its own weight decay and no two share a value. The Playbook's workaround is to cut the horizontal axis into <dfn data-concept="bucket">buckets</dfn> and take the best trial in each vertical slice. <a href="#fig-isolation" class="figref"></a> does this for a synthetic 100-trial study over learning rate and weight decay: panel (a) shows where each trial sat in the two-dimensional search space, and panel (b) shows the same trials against weight decay alone, with the best trial of each bucket joined into the isolation curve.
+          In practice, though, the quasi-random search from Part 4 does not produce neat columns, because every trial has its own weight decay and no two share a value. The Playbook's workaround is to cut the horizontal axis into <dfn data-concept="bucket">buckets</dfn> and take the best trial in each vertical slice. <a href="#fig-isolation" class="figref"></a> does this for a synthetic 100-trial study over learning rate and weight decay, where panel (a) shows where each trial sat in the two-dimensional search space, and panel (b) shows the same trials against weight decay alone, with the best trial of each bucket joined into the isolation curve.
         </p>
       </section>
 
@@ -404,7 +404,7 @@
         </div>
 
         <p class="fig-caption">
-          (a) A synthetic quasi-random study of <span data-num="fig-isolation:model:trials">100</span> trials over weight decay and learning rate. Crosses are trials that diverged at high learning rates (<span data-num="fig-isolation:default:infeasible-count">21</span> here). (b) The same trials against weight decay alone, as faint points, with the best trial of each bucket joined into the isolation curve.
+          (a) A synthetic quasi-random study of <span data-num="fig-isolation:model:trials">100</span> trials over weight decay and learning rate. Crosses are trials that diverged at high learning rates (<span data-num="fig-isolation:default:infeasible-count">21</span> here). (b) The same trials against weight decay alone, as faint points, with the best trial of each bucket joined into the isolation curve. The figure opens with 8 buckets and highlights the slice from <span data-num="fig-isolation:default:slice-low">1.8 × 10⁻⁵</span> to <span data-num="fig-isolation:default:slice-high">10⁻⁴</span>, whose <span data-num="fig-isolation:default:slice-trials">12</span> trials reach a best error of <span data-num="fig-isolation:default:winner-error">0.232</span> at learning rate <span data-num="fig-isolation:default:winner-lr">0.0020</span>.
         </p>
         <details class="fig-model">
           <summary>How this toy works</summary>
@@ -481,7 +481,7 @@
       <section class="prose p05-practice" id="in-practice">
         <h2>In practice</h2>
         <p>
-          Putting the pieces together gives a routine you can run after every study, in roughly the order the Playbook suggests. Each step below names what to look for and what to do about it.
+          Putting the pieces together gives a routine we can run after every study, in roughly the order the Playbook suggests. Each step below names what to look for and what to do about it.
         </p>
 
         <ol class="p05-steps">
@@ -533,7 +533,7 @@
       <section class="prose" id="protocol">
         <h2>Where this fits</h2>
         <p>
-          Reading a study sits between running it (<a href="04-searching-the-space.html">Part 4</a>) and deciding whether to adopt a change (<a href="06-adopting-a-change.html">Part 6</a>). It is also where the loop most often doubles back: a clipped range sends us back to design a new search space, while unstable curves send us on to <a href="08-training-instabilities.html">Part 8</a>.
+          Reading a study sits between running it (<a href="04-searching-the-space.html">Part 4</a>) and deciding whether to adopt a change (<a href="06-adopting-a-change.html">Part 6</a>). It is also where the loop most often doubles back, as a clipped range sends us back to design a new search space, while unstable curves send us on to <a href="08-training-instabilities.html">Part 8</a>.
         </p>
       </section>
 
@@ -551,7 +551,7 @@
   </main>
 
   <footer class="site-footer">
-    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Adapted from and inspired by the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue, and Nado (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>).
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
   <script defer src="../js/vendor/d3.v7.min.js"></script>

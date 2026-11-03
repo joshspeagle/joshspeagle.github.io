@@ -72,7 +72,7 @@
               <text x="37" y="30" text-anchor="middle">5 seeds</text>
             </svg>
             <dl>
-              <dt>Varies</dt><dd>The random seed: initialization, shuffle order, dropout masks, augmentation, arithmetic order.</dd>
+              <dt>Varies</dt><dd>The random seed, including initialization, shuffle order, dropout masks, augmentation, and arithmetic order.</dd>
               <dt>Fixed</dt><dd>The hyperparameters and the data split.</dd>
             </dl>
             <p class="p06-source-tag is-rerun">Measured by rerunning the best trial</p>
@@ -216,7 +216,7 @@
       <section class="prose" id="reruns">
         <h2>Rerunning the best trial</h2>
         <p>
-          If both the noise and the selection bias live in the seed, the natural remedy is to draw more seeds, and that is what the Playbook recommends: "before adopting a candidate change, consider running the best trial N times to characterize the run-to-run trial variance." The authors qualify this in three ways. We can usually get away with re-estimating the trial variance only after major changes to the pipeline, some applications need fresher estimates, and in others a <dfn data-concept="rerun">rerun of the best trial</dfn> costs too much to be worth it. Bouthillier et al. add a practical detail: reruns that changed only the initialization seed captured less of the variance than reruns that changed every source of randomness, so a rerun should also vary the shuffle order, augmentation and dropout seeds.
+          If both the noise and the selection bias live in the seed, the natural remedy is to draw more seeds, and the Playbook recommends that "before adopting a candidate change, consider running the best trial N times to characterize the run-to-run trial variance." The authors qualify this in three ways. We can usually get away with re-estimating the trial variance only after major changes to the pipeline, some applications need fresher estimates, and in others a <dfn data-concept="rerun">rerun of the best trial</dfn> costs too much to be worth it. Bouthillier et al. add a practical detail, finding that reruns that changed only the initialization seed captured less of the variance than reruns that changed every source of randomness, so a rerun should also vary the shuffle order, augmentation and dropout seeds.
         </p>
         <p>
           To see what seed noise does to a comparison, consider Figure 3. Panel (a) draws the runs of a baseline and a candidate, while panel (b) simulates the gap between the means of two identical configurations 400 times, which is the spread we would see if the change did nothing at all. The shaded band covers two standard errors on either side of zero.
@@ -255,7 +255,7 @@
         <details class="fig-model">
           <summary>How this toy works</summary>
           <p>
-            Baseline run $k$ has error $23 + \sigma z_k$ and candidate run $k$ has error $23 - g + \sigma z'_k$, in percentage points, where $g$ is the true gain and $z_k, z'_k$ are standard normal draws. The observed gap is the baseline mean minus the candidate mean. Panel (b) shows 400 draws of $\sigma\sqrt{2/N}\,z$, the gap between two configurations with no true difference, binned in steps of 0.025 points. The band uses the true $\sigma$ from the slider. In practice you estimate $\sigma$ from the reruns themselves (see the aside below the figure). The default $\sigma = 0.1$ reads the Playbook's "+/- 0.1%" retrain variation for a ResNet-50 on ImageNet as a standard deviation, which is my interpretation. Seed 142 was chosen so that the default draws sit close to their expected values.
+            Baseline run $k$ has error $23 + \sigma z_k$ and candidate run $k$ has error $23 - g + \sigma z'_k$, in percentage points, where $g$ is the true gain and $z_k, z'_k$ are standard normal draws. The observed gap is the baseline mean minus the candidate mean. Panel (b) shows 400 draws of $\sigma\sqrt{2/N}\,z$, the gap between two configurations with no true difference, binned in steps of 0.025 points. The band uses the true $\sigma$ from the slider. In practice we estimate $\sigma$ from the reruns themselves (see the aside below the figure). The default $\sigma = 0.1$ reads the Playbook's "+/- 0.1%" retrain variation for a ResNet-50 on ImageNet as a standard deviation. Seed 142 was chosen so that the default draws sit close to their expected values.
           </p>
         </details>
       </figure>
@@ -325,19 +325,19 @@
           </div>
         </div>
         <p class="fig-caption">
-          The top row shows the candidate's reruns with their mean and ±1 standard error, the middle row shows the baseline's five reruns, and the bottom row shows the best trial of each repeated study of the candidate. All values are synthetic, in percentage points of validation error. The default spreads are my reading of the Playbook's ImageNet example: the seed spread of 0.1 points treats its ±0.1% retrain variation as a standard deviation, and the search spread of 0.3 points is the 20-trial box's interquartile range in the Playbook's Figure 3 (about 0.4 points) divided by 1.35, which converts an interquartile range to a standard deviation for a normal distribution.
+          The top row shows the candidate's reruns with their mean and ±1 standard error, the middle row shows the baseline's five reruns, and the bottom row shows the best trial of each repeated study of the candidate. All values are synthetic, in percentage points of validation error. The default spreads follow my reading of the Playbook's ImageNet example, where the seed spread of 0.1 points treats its ±0.1% retrain variation as a standard deviation, and the search spread of 0.3 points is the 20-trial box's interquartile range in the Playbook's Figure 3 (about 0.4 points) divided by 1.35, which converts an interquartile range to a standard deviation for a normal distribution.
         </p>
         <details class="fig-model">
           <summary>How this toy works</summary>
           <p>
-            A run of configuration $j$ has error $L_j + u_j + e$, with $L_{\text{b}} = $ <span data-num="fig-reruns:model:incumbent-true">23</span> points for the baseline and $L_{\text{c}} = L_{\text{b}} - 0.2$ for the candidate. The study offset $u_j \sim \mathcal{N}(0, \sigma_{\text{study}}^2)$ is drawn once per study and shared by every rerun of that study's best trial, and the seed noise $e \sim \mathcal{N}(0, \sigma_{\text{trial}}^2)$ is drawn fresh for every run. "Rerun" adds a candidate run with its study's offset. "Repeat the study" draws a new offset and adds that study's best trial. This is the variance-components picture of Bouthillier et al. (their Eq. 7). The Gaussian offset is a simplification of mine. The search spread of 0.3 points is a standard deviation, from the 20-trial box's interquartile range of about 0.4 points in Playbook Figure 3 divided by 1.35 (<a href="04-searching-the-space.html#trials">Part 4, How many trials?</a>, reads the same box). Up to <span data-num="fig-reruns:model:limit">60</span> steps; default seed <span data-num="fig-reruns:seed:chosen">225</span>, chosen as a median case from <span data-num="fig-reruns:seed:n">1,000</span> seeds.
+            A run of configuration $j$ has error $L_j + u_j + e$, with $L_{\text{b}} = $ <span data-num="fig-reruns:model:incumbent-true">23</span> points for the baseline and $L_{\text{c}} = L_{\text{b}} - 0.2$ for the candidate. The study offset $u_j \sim \mathcal{N}(0, \sigma_{\text{study}}^2)$ is drawn once per study and shared by every rerun of that study's best trial, and the seed noise $e \sim \mathcal{N}(0, \sigma_{\text{trial}}^2)$ is drawn fresh for every run. "Rerun" adds a candidate run with its study's offset. "Repeat the study" draws a new offset and adds that study's best trial. This is the variance-components picture of Bouthillier et al. (their Eq. 7). The Gaussian offset is a simplification of mine. The search spread of 0.3 points is a standard deviation, from the 20-trial box's interquartile range of about 0.4 points in Playbook Figure 3 divided by 1.35 (<a href="04-searching-the-space.html#trials">Part 4, How many trials?</a>, reads the same box). The simulation runs for up to <span data-num="fig-reruns:model:limit">60</span> steps from default seed <span data-num="fig-reruns:seed:chosen">225</span>, chosen as a median case from <span data-num="fig-reruns:seed:n">1,000</span> seeds.
           </p>
         </details>
       </figure>
 
       <section class="prose">
         <p>
-          Whether search luck matters, then, depends on what we are claiming. If the claim is "this configuration beats that one", reruns measure the right thing, because the selected points are what we would actually ship. If instead the claim is about a change in general (a new schedule beats the old one when both are well tuned), study variance enters the comparison. In that case I think the protections are a search dense enough to pass the checks in <a href="05-reading-the-results.html#density">Part 5, Have you sampled enough points?</a>, a fair amount of tuning for the baseline, and, when the budget allows, repeating the study.
+          Whether search luck matters, then, depends on what we are claiming. If the claim is "this configuration beats that one", reruns measure the right thing, because the selected points are what we would actually ship. If instead the claim is about a change in general (a new schedule beats the old one when both are well tuned), study variance enters the comparison. In that case I think the protections are a search dense enough to pass the checks in <a href="05-reading-the-results.html#density">Part 5, Have we sampled enough points?</a>, a fair amount of tuning for the baseline, and, when the budget allows, repeating the study.
         </p>
       </section>
 
@@ -411,12 +411,12 @@
       <section class="prose" id="practice">
         <h2>In practice</h2>
         <p>
-          Putting the pieces together, this is the sequence I follow when a study's best trial beats the baseline. Steps 1, 4, 5 and 6 restate the Playbook, while steps 2 and 3 are my reading of it, and the threshold in step 2 is my own convention.
+          Putting the pieces together, this is the sequence I follow when a study's best trial beats the baseline. Each step is tagged below to distinguish the Playbook's rules from my own conventions.
         </p>
         <ol class="p06-steps">
           <li>
             <span class="p06-step-head">Rerun the best trial and the baseline</span>
-            <p class="p06-step-body">Run each N times with fresh seeds, varying every source of randomness you control. Reuse a recent estimate of the trial variance unless the pipeline changed substantially. <span class="p06-step-src">Playbook; Bouthillier et al.</span></p>
+            <p class="p06-step-body">Run each N times with fresh seeds, varying every source of randomness we control. Reuse a recent estimate of the trial variance unless the pipeline changed substantially. <span class="p06-step-src">Playbook; Bouthillier et al.</span></p>
           </li>
           <li>
             <span class="p06-step-head">Compare the gap with its standard error</span>
@@ -436,7 +436,7 @@
           </li>
           <li class="is-later">
             <span class="p06-step-head">When exploration ends, run one final study</span>
-            <p class="p06-step-body">Use Bayesian optimization over the refined search space with the largest budget you can, handle divergent trials, then consider the test set. <span class="p06-step-src">Playbook</span></p>
+            <p class="p06-step-body">Use Bayesian optimization over the refined search space with the largest budget we can, handle divergent trials, then consider the test set. <span class="p06-step-src">Playbook</span></p>
           </li>
         </ol>
       </section>
@@ -444,7 +444,7 @@
       <section class="prose" id="where-this-fits">
         <h2>Where this fits</h2>
         <p>
-          Adopting a change closes one round of the Playbook's loop, and the new baseline becomes the starting point for the next. In <a href="07-training-horizon.html">Part 7</a> we turn to a hyperparameter that the rounds so far have quietly held fixed: how long each training run should be.
+          Adopting a change closes one round of the Playbook's loop, and the new baseline becomes the starting point for the next. In <a href="07-training-horizon.html">Part 7</a> we turn to a hyperparameter that the rounds so far have quietly held fixed, namely how long each training run should be.
         </p>
       </section>
 
@@ -462,7 +462,7 @@
   </main>
 
   <footer class="site-footer">
-    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Adapted from and inspired by the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue, and Nado (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>).
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
   <script defer src="../js/vendor/d3.v7.min.js"></script>

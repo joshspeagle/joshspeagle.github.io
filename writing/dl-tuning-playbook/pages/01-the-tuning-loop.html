@@ -102,7 +102,7 @@
 
       <section class="prose" id="exploration-prose">
         <p id="exploration">
-          That last example hints at how rounds are distributed over a project. In practice, according to the Playbook, most of the time goes to gaining insight into the problem, which it calls <dfn data-concept="exploration-exploitation">exploration</dfn>, and comparatively little to greedily lowering validation error, or exploitation (<a href="https://github.com/google-research/tuning_playbook#exploration-vs-exploitation" target="_blank" rel="noopener">exploration vs exploitation ↗</a>). This changes what counts as a successful round. A round in which a new regularizer fails to help is still useful if the plots show us why, because that insight carries forward: it tells us which hyperparameters the validation error is sensitive to, which ones interact and need to be re-tuned together, and which ones we can leave alone in future rounds. Only once the search space is well understood does a final stage switch to exploitation, which the Playbook suggests running with <span data-concept="adaptive-search">Bayesian optimization</span> (<a href="06-adopting-a-change.html#after">Part 6</a>).
+          That last example hints at how rounds are distributed over a project. In practice, according to the Playbook, most of the time goes to gaining insight into the problem, which it calls <dfn data-concept="exploration-exploitation">exploration</dfn>, and comparatively little to greedily lowering validation error, or exploitation (<a href="https://github.com/google-research/tuning_playbook#exploration-vs-exploitation" target="_blank" rel="noopener">exploration vs exploitation ↗</a>). This changes what counts as a successful round. A round in which a new regularizer fails to help is still useful if the plots show us why, because that insight carries forward and tells us which hyperparameters the validation error is sensitive to, which ones interact and need to be re-tuned together, and which ones we can leave alone in future rounds. Only once the search space is well understood does a final stage switch to exploitation, which the Playbook suggests running with <span data-concept="adaptive-search">Bayesian optimization</span> (<a href="06-adopting-a-change.html#after">Part 6</a>).
         </p>
         <p>
           Every step of the loop involves comparing training runs, so before anything else we need to decide which single number should stand for a run.
@@ -171,7 +171,7 @@
         </p>
         <details class="math-aside">
           <summary>Why the best checkpoint reads below the plateau</summary>
-          <p>The toy's plateau is exactly 0.2, yet the selected checkpoint reads 0.1899. This is an order-statistics effect: taking the minimum of 20 noisy evaluations picks out the one with the largest downward fluctuation, so on average the minimum sits below the true plateau, and more evaluations give more chances for a low reading. Over 300 seeds of the toy, the median gap between the last and the selected checkpoint grows from <span data-num="fig-checkpoint:model:median-difference-interval-2500">0.007</span> when we evaluate every 2,500 steps to <span data-num="fig-checkpoint:model:median-difference-interval-250">0.011</span> when we evaluate every 250 steps.</p>
+          <p>The toy's plateau is exactly 0.2, yet the selected checkpoint reads 0.1899. This is an order-statistics effect, since taking the minimum of 20 noisy evaluations picks out the one with the largest downward fluctuation, so on average the minimum sits below the true plateau, and more evaluations give more chances for a low reading. Over 300 seeds of the toy, the median gap between the last and the selected checkpoint grows from <span data-num="fig-checkpoint:model:median-difference-interval-2500">0.007</span> when we evaluate every 2,500 steps to <span data-num="fig-checkpoint:model:median-difference-interval-250">0.011</span> when we evaluate every 250 steps.</p>
           <p>Here I'd go a step further than the Playbook, which doesn't discuss this bias. I think it has two practical consequences. Every trial we compare should be evaluated on the same schedule, so that no trial gets more chances at a low reading than another. And any number we report for the final model should come from a separate test set, because the selected checkpoint's validation error is biased low, a small instance of the winner's curse.</p>
         </details>
         <p>
@@ -182,7 +182,7 @@
       <section class="prose" id="studies">
         <h2>Reading a set of runs</h2>
         <p>
-          Designing a study comes down to a few choices: which hyperparameters vary across trials, the range of values each may take (together, the <dfn data-concept="search-space">search space</dfn>), and how many trials to run. A search algorithm then chooses each trial's settings within that space (<a href="https://github.com/google-research/tuning_playbook#creating-a-set-of-studies" target="_blank" rel="noopener">creating a set of studies ↗</a>). <a href="#fig-study" class="figref"></a> shows a study of 20 trials that varies the learning rate $\eta$ and the weight decay $\lambda$ together. Each trial trains for 20,000 steps and reports its best checkpoint as above, and the trial with the lowest result is the study's <dfn data-concept="best-trial">best trial</dfn>.
+          Designing a study comes down to choosing which hyperparameters vary across trials, the range of values each may take (together, the <dfn data-concept="search-space">search space</dfn>), and how many trials to run. A search algorithm then chooses each trial's settings within that space (<a href="https://github.com/google-research/tuning_playbook#creating-a-set-of-studies" target="_blank" rel="noopener">creating a set of studies ↗</a>). <a href="#fig-study" class="figref"></a> shows a study of 20 trials that varies the learning rate $\eta$ and the weight decay $\lambda$ together. Each trial trains for 20,000 steps and reports its best checkpoint as above, and the trial with the lowest result is the study's <dfn data-concept="best-trial">best trial</dfn>.
         </p>
         <p id="axis-plot">
           A table sorted by score would tell us which trial won, but not whether the search space was in the right place to begin with. For that question the Playbook recommends a <dfn data-concept="axis-plot">basic hyperparameter axis plot</dfn>, in which every trial's validation score is plotted against one hyperparameter, one point per trial (<a href="https://github.com/google-research/tuning_playbook#identifying-bad-search-space-boundaries" target="_blank" rel="noopener">identifying bad search space boundaries ↗</a>). The first thing to look for is where the best trials sit. If they crowd against one edge of the range, a better value may well lie beyond it, and the remedy is to widen the search in that direction and run again.
@@ -255,7 +255,7 @@
             The fixed learning rate sits where the four-layer model does best, 3.2 × 10⁻³. At that learning rate four layers score 0.250 and six layers 0.267, so the deeper model looks worse.
           </div>
           <div class="fig-tut-step-data" data-label="Another learning rate" data-params='{"lr":0.0005012,"fair":false}'>
-            Fix the learning rate at 5 × 10⁻⁴ instead and the ranking flips. Six layers score 0.235 and four layers 0.282. Which model wins depends on a value you chose before the experiment.
+            Fix the learning rate at 5 × 10⁻⁴ instead and the ranking flips. Six layers score 0.235 and four layers 0.282. Which model wins depends on a value chosen before the experiment.
           </div>
           <div class="fig-tut-step-data" data-label="A fair comparison" data-params='{"lr":0.0031623,"fair":true}'>
             Searching the learning rate separately for each model and comparing the lowest points answers the question. Six layers reach 0.235 and four layers 0.250.
@@ -281,7 +281,7 @@
           <li class="role-fixed"><strong><dfn data-concept="fixed-hp">Fixed hyperparameters</dfn></strong> keep a single value for the whole round. Fixing a hyperparameter saves trials but adds a <dfn data-concept="caveat">caveat</dfn>, because our conclusion may not hold at other values of it.</li>
         </ul>
         <p>
-          With these roles in place, we can say precisely what a round compares: the best score that each value of the scientific hyperparameter reaches once the nuisance hyperparameters have been tuned,
+          With these roles in place, we can say precisely that a round compares the best score each value of the scientific hyperparameter reaches once the nuisance hyperparameters have been tuned,
         </p>
         <div class="math-block">
           $$L^\star(h_{\text{sci}}) \;=\; \min_{\mathbf{h}_{\text{nuis}}} \, L(h_{\text{sci}},\, \mathbf{h}_{\text{nuis}}).$$
@@ -301,7 +301,7 @@
       <section class="prose" id="rules">
         <h3>Which role does a hyperparameter take?</h3>
         <p>
-          The Playbook stresses a subtlety here: a role is not a property of the hyperparameter itself, because it changes with the goal of the round. The activation function, for instance, could be scientific in a round that compares ReLU and tanh, nuisance in a round that tunes it separately for each depth, and fixed in a round that tests something else on a ReLU network. Even so, some kinds of hyperparameters tend to fall into the same roles, and the Playbook offers rules of thumb for them:
+          The Playbook stresses a subtlety here, namely that a role is not a property of the hyperparameter itself, because it changes with the goal of the round. The activation function, for instance, could be scientific in a round that compares ReLU and tanh, nuisance in a round that tunes it separately for each depth, and fixed in a round that tests something else on a ReLU network. Even so, some kinds of hyperparameters tend to fall into the same roles, and the Playbook offers rules of thumb for them:
         </p>
         <ul>
           <li><strong>Optimizer hyperparameters</strong>, such as the learning rate, momentum and Adam's $\beta$ parameters, are usually nuisance hyperparameters because they tend to interact most strongly with other changes. They are rarely scientific, since the best learning rate for today's pipeline may no longer be best after the next change to it. Fixing some of them is still acceptable when resources are short or when there is strong evidence that they don't interact with the question at hand.</li>
@@ -333,7 +333,7 @@
 
       <section class="prose" id="conditional">
         <p>
-          The third goal in <a href="#fig-roles" class="figref"></a> raises one more complication, because each optimizer brings its own settings: Nesterov momentum adds a momentum coefficient, while Adam adds $\beta_1$, $\beta_2$ and $\epsilon$. Hyperparameters like these, which exist only for some values of the scientific hyperparameters, are what the Playbook calls <dfn data-concept="conditional-hp">conditional hyperparameters</dfn>. Both optimizers do have a learning rate, but the authors warn against treating the two as a single hyperparameter, because the ranges that work well for each typically differ by several orders of magnitude. Each optimizer's study therefore gets its own learning-rate search.
+          The third goal in <a href="#fig-roles" class="figref"></a> raises one more complication, because each optimizer brings its own settings. Nesterov momentum adds a momentum coefficient, while Adam adds $\beta_1$, $\beta_2$ and $\epsilon$. Hyperparameters like these, which exist only for some values of the scientific hyperparameters, are what the Playbook calls <dfn data-concept="conditional-hp">conditional hyperparameters</dfn>. Both optimizers do have a learning rate, but the authors warn against treating the two as a single hyperparameter, because the ranges that work well for each typically differ by several orders of magnitude. Each optimizer's study therefore gets its own learning-rate search.
         </p>
         <p>
           Every nuisance hyperparameter we tune consumes trials, however, and the number of trials in a round is set by the compute we have.
@@ -485,7 +485,7 @@
           Of course, the toy's ideal width depends on knowing where every option's optimum lies, which we never know in a real round. The Playbook's practical answer is to start with a generous range and then check it: plot the trials on an axis plot, and widen the range if the best ones sit near an edge (<a href="05-reading-the-results.html">Part 5</a> covers these checks).
         </p>
         <p>
-          The same budget arithmetic governs how many nuisance hyperparameters we can afford to tune. For Adam, the Playbook's FAQ offers a rule of thumb keyed to study size (<a href="https://github.com/google-research/tuning_playbook#how-should-adams-hyperparameters-be-tuned" target="_blank" rel="noopener">how to tune Adam ↗</a>): tune the learning rate alone below 10 trials, add $\beta_1$ between 10 and 25, add $\epsilon$ from 25 on, and add $\beta_2$ once you can run substantially more than 25. The authors are explicit that general statements about search spaces and trial counts are hard to make, so I'd treat this ladder as a starting point rather than a rule.
+          The same budget arithmetic governs how many nuisance hyperparameters we can afford to tune. For Adam, the Playbook's FAQ offers a rule of thumb keyed to study size (<a href="https://github.com/google-research/tuning_playbook#how-should-adams-hyperparameters-be-tuned" target="_blank" rel="noopener">how to tune Adam ↗</a>): tune the learning rate alone below 10 trials, add $\beta_1$ between 10 and 25, add $\epsilon$ from 25 on, and add $\beta_2$ once we can run substantially more than 25. The authors are explicit that general statements about search spaces and trial counts are hard to make, so I'd treat this ladder as a starting point rather than a rule.
         </p>
       </section>
 
@@ -514,17 +514,17 @@
         </div>
         <div class="scope-step" role="listitem">
           <div class="scope-num" aria-hidden="true">4</div>
-          <div class="scope-q"><h3>What will you hold still?</h3><p>Mark them <span class="role-tag fixed">fixed</span>. Write down the caveat each one adds.</p></div>
+          <div class="scope-q"><h3>What will stay fixed?</h3><p>Mark them <span class="role-tag fixed">fixed</span>. Write down the caveat each one adds.</p></div>
           <div class="scope-ex"><span class="scope-ex-tag">Example</span>The optimizer, dropout and ReLU stay as they are, so the answer holds for this optimizer and activation.</div>
         </div>
         <div class="scope-step" role="listitem">
           <div class="scope-num" aria-hidden="true">5</div>
-          <div class="scope-q"><h3>How will you spend the trials?</h3><p>Divide the budget among the values, make the learning-rate range wide enough for every value, and tune no more nuisance hyperparameters than the trials per study support.</p></div>
+          <div class="scope-q"><h3>How will we spend the trials?</h3><p>Divide the budget among the values, make the learning-rate range wide enough for every value, and tune no more nuisance hyperparameters than the trials per study support.</p></div>
           <div class="scope-ex"><span class="scope-ex-tag">Example</span>48 trials, 24 per depth, learning rate over 3 decades.</div>
         </div>
         <div class="scope-step" role="listitem">
           <div class="scope-num" aria-hidden="true">6</div>
-          <div class="scope-q"><h3>How will you score and check?</h3><p>Score each trial by its best checkpoint on one evaluation schedule. Before reading the answer, check on axis plots that no best trial sits at an edge.</p></div>
+          <div class="scope-q"><h3>How will we score and check?</h3><p>Score each trial by its best checkpoint on one evaluation schedule. Before reading the answer, check on axis plots that no best trial sits at an edge.</p></div>
           <div class="scope-ex"><span class="scope-ex-tag">Example</span>If the six-layer study's best learning rate sits at the bottom of the range, extend the range downward and rerun.</div>
         </div>
       </div>
@@ -557,7 +557,7 @@
   </main>
 
   <footer class="site-footer">
-    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>).
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
   <script src="../js/vendor/d3.v7.min.js"></script>

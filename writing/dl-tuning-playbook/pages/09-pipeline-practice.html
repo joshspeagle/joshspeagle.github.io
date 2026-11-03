@@ -30,7 +30,7 @@
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
     <p class="lede">
-      Every earlier post in this series quietly assumed that a training run measures what it claims to measure: that the validation error comes from the right examples at comparable points in training, and that the accelerator spends its time on training steps rather than waiting. The Playbook closes its main guide with a section of engineering advice whose job is to keep those assumptions true. At first glance it reads like a list of unrelated tips, but I think most of the items share a theme, because each one describes a way a pipeline can produce misleading numbers without ever raising an error. In this final post we'll start with a few smoke tests of my own, then follow the Playbook through input throughput, the schedule and sample for periodic evaluation, checkpoint selection and experiment tracking, and finish with the subtler problems of batch norm across devices and multi-host training.
+      Every earlier post in this series quietly assumed that a training run measures what it claims to measure, with validation error computed on the right examples at comparable points in training and the accelerator spending its time on training steps rather than waiting. The Playbook closes its main guide with a section of engineering advice whose job is to keep those assumptions true. At first glance it reads like a list of unrelated tips, but I think most of the items share a theme, because each one describes a way a pipeline can produce misleading numbers without ever raising an error. In this final post we'll start with a few smoke tests of my own, then follow the Playbook through input throughput, the schedule and sample for periodic evaluation, checkpoint selection and experiment tracking, and finish with the subtler problems of batch norm across devices and multi-host training.
     </p>
 
 
@@ -40,7 +40,7 @@
         <h2>Smoke tests before the first sweep</h2>
         <p class="p09-ours-tag"><span>My addition</span> This section goes beyond the Playbook, whose pipeline guidance does not cover it.</p>
         <p>
-          The Playbook's list begins with input performance, but I'd put a more basic question first: is the pipeline wired correctly at all? Speed only matters once the answer is yes, because a wiring bug silently wastes every trial that runs on top of it. The three checks I use, shown in <a href="#fig-verification-ladder" class="figref"></a>, come from Andrej Karpathy's 2019 blog post <em>A Recipe for Training Neural Networks</em> <cite data-ref="karpathy2019"></cite>, and each needs only a short run with no tuning.
+          The Playbook's list begins with input performance, but I'd first ask whether the pipeline is wired correctly at all. Speed only matters once the answer is yes, because a wiring bug silently wastes every trial that runs on top of it. The three checks I use, shown in <a href="#fig-verification-ladder" class="figref"></a>, come from Andrej Karpathy's 2019 blog post <em>A Recipe for Training Neural Networks</em> <cite data-ref="karpathy2019"></cite>, and each needs only a short run with no tuning.
         </p>
       </section>
 
@@ -105,7 +105,7 @@
       <section class="prose" id="pipeline">
         <h2>Where does the accelerator wait?</h2>
         <p data-src="1370-1374">
-          Suppose a training step takes 100&nbsp;ms of accelerator time, yet the job runs at about four steps per second instead of ten. Where did the rest of the time go? Usually into producing the next batch: reading files, decoding and augmenting examples, and copying them to the device. A pipeline in this state is <dfn data-concept="input-pipeline">input-bound</dfn>, meaning its speed is set by how fast the host produces examples while the accelerator idles in between. The Playbook is candid that there is no universal fix.
+          Suppose a training step takes 100&nbsp;ms of accelerator time, yet the job runs at about four steps per second instead of ten. Where did the rest of the time go? Usually it goes into reading files, decoding and augmenting examples, and copying the next batch to the device. A pipeline in this state is <dfn data-concept="input-pipeline">input-bound</dfn>, meaning its speed is set by how fast the host produces examples while the accelerator idles in between. The Playbook is candid that there is no universal fix.
         </p>
         <blockquote class="playbook" data-src="1372-1374">
           <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#optimizing-the-input-pipeline" target="_blank" rel="noopener">Optimizing the input pipeline ↗</a></span>
@@ -145,7 +145,7 @@
         </div>
         <details class="fig-model">
           <summary>How this toy works</summary>
-          <p>The constants are arbitrary round numbers chosen to make the overlap visible. A training step takes 100&nbsp;ms on the accelerator. Producing one batch takes a read time plus a preprocessing time on one input worker: 15&nbsp;ms and 35&nbsp;ms for local disk, 120&nbsp;ms and 35&nbsp;ms for network storage, and 15&nbsp;ms and 125&nbsp;ms for heavy online preprocessing.</p>
+          <p>The constants are arbitrary round numbers chosen to make the overlap visible. A training step takes 100&nbsp;ms on the accelerator. Producing one batch takes a read time plus a preprocessing time on one input worker, set to 15&nbsp;ms and 35&nbsp;ms for local disk, 120&nbsp;ms and 35&nbsp;ms for network storage, and 15&nbsp;ms and 125&nbsp;ms for heavy online preprocessing.</p>
           <p>Without prefetching, the worker starts batch $i+1$ when step $i$ ends. With prefetching, each worker starts its next batch as soon as it is free, as long as at most two finished batches per worker wait in the buffer. With two workers, batches alternate between them. A synchronization barrier makes the host wait for step $i$ to end before any worker starts batch $i+1$. Whether a real barrier blocks the input pipeline depends on whether that pipeline runs on the blocked thread, so the toy shows the case the Playbook warns about.</p>
           <p>The readout reports the share of time the accelerator spends computing over the first 40 steps and the resulting steps per second. The timeline shows the first 1,200&nbsp;ms.</p>
         </details>
@@ -167,7 +167,7 @@
           The suggested remedies map onto the same picture. Prefetching (for example <code>tf.data.Dataset.prefetch</code>) lets the host prepare upcoming batches while the accelerator computes, which hides input work as long as it is shorter than a step. Stripping unused features and metadata from each example as early in the pipeline as possible shortens the work per batch. Running more jobs that generate examples (for example with the <a href="https://www.tensorflow.org/api_docs/python/tf/data/experimental/service" target="_blank" rel="noopener">tf.data service</a>) raises the rate at which batches arrive, which is the two-worker setting in the toy. The authors also note that broader engineering concerns, such as keeping the data's disk footprint small, can justify accepting a slower input pipeline.
         </p>
         <p data-src="238-244">
-          Before opening a profiler at all, I find one cheap comparison useful (this is my suggestion, not the Playbook's). We feed the training step a batch that already sits in device memory, repeat it for a few hundred steps, and compare the steps per second against the real input pipeline. A large gap tells us the input pipeline is the bottleneck. This is a variant of the throughput check in <a href="03-batch-size.html#feasible">Part 3</a>, where the Playbook notes that throughput which stops doubling with the batch size before the accelerator saturates points to a bottleneck such as I/O or synchronization between compute nodes.
+          Before opening a profiler at all, I find one cheap comparison of my own useful. We feed the training step a batch that already sits in device memory, repeat it for a few hundred steps, and compare the steps per second against the real input pipeline. A large gap tells us the input pipeline is the bottleneck. This is a variant of the throughput check in <a href="03-batch-size.html#feasible">Part 3</a>, where the Playbook notes that throughput which stops doubling with the batch size before the accelerator saturates points to a bottleneck such as I/O or synchronization between compute nodes.
         </p>
       </section>
 
@@ -278,7 +278,7 @@
 
         <h3 id="evaluation-bugs">Periodic patterns in validation metrics</h3>
         <p data-src="1456-1460">
-          Step intervals have a second, less obvious benefit that the Playbook points out. When the training, validation and test split is shuffled, periodicity in the validation or test metrics can indicate an implementation bug, such as test data that overlaps the training data or training data that is not properly shuffled, and regular step intervals make such patterns easier to catch. The Playbook doesn't spell out why, but I read it this way: an epoch is a fixed number of steps, so a pattern tied to the order of the training data repeats every fixed number of step-scheduled evaluations, while a timer smears it across uneven intervals.
+          Step intervals have a second, less obvious benefit that the Playbook points out. When the training, validation and test split is shuffled, periodicity in the validation or test metrics can indicate an implementation bug, such as test data that overlaps the training data or training data that is not properly shuffled, and regular step intervals make such patterns easier to catch. The Playbook doesn't spell out why, but because an epoch is a fixed number of steps, a pattern tied to the order of the training data repeats every fixed number of step-scheduled evaluations, while a timer smears it across uneven intervals.
         </p>
 
         <h3 id="padding">Partial batches and saved predictions</h3>
@@ -326,7 +326,7 @@
           <li><strong>Imbalanced classes.</strong> Performance on rare classes will often be noisy, so for a class with few examples the Playbook suggests logging the number of examples predicted correctly.</li>
         </ul>
         <p data-src="1500-1504">
-          The authors illustrate the last point with a pointed question: ".05 sensitivity improvement sounds exciting, but was it just one more example correct?" With 20 validation examples in a class, the answer is yes (<a href="#fig-rare-class" class="figref"></a>).
+          The authors illustrate the last point by asking, ".05 sensitivity improvement sounds exciting, but was it just one more example correct?" With 20 validation examples in a class, the answer is yes (<a href="#fig-rare-class" class="figref"></a>).
         </p>
       </section>
 
@@ -518,7 +518,7 @@
 
       <section class="prose" id="batchnorm-details">
         <p data-src="1558-1563">
-          If $n$ matters, which value should we pick? The Playbook reports that anecdotally, mostly on ImageNet, computing the statistics over only about 64 examples works better in practice, and it points to ghost batch norm, introduced by <cite data-ref="hoffer2017">Hoffer et al. (2017)</cite>, which computes the statistics over small virtual batches inside a large batch. We should keep the provenance of the numbers straight here: the 64 is the Playbook authors' anecdote, while Hoffer et al. used ghost batches of 128, mostly on CIFAR. Whatever the value, decoupling the total batch size from the number of examples in the statistics is particularly useful when comparing batch sizes, which is where <a href="03-batch-size.html#batchnorm">Part 3</a> ran into the same issue.
+          If $n$ matters, which value should we pick? The Playbook reports that anecdotally, mostly on ImageNet, computing the statistics over only about 64 examples works better in practice, and it points to ghost batch norm, introduced by <cite data-ref="hoffer2017">Hoffer et al. (2017)</cite>, which computes the statistics over small virtual batches inside a large batch. To keep the provenance of the numbers straight, 64 is the Playbook authors' anecdote, while Hoffer et al. used ghost batches of 128, mostly on CIFAR. Whatever the value, decoupling the total batch size from the number of examples in the statistics is particularly useful when comparing batch sizes, which is where <a href="03-batch-size.html#batchnorm">Part 3</a> ran into the same issue.
         </p>
         <p data-src="1564-1571">
           Two implementation details deserve attention, one about per-device batch sizes and one about the moving averages used at test time.
@@ -539,7 +539,7 @@
           <p>For logging, evals, RNGs, checkpointing, and data sharding, multi-host training can make it very easy to introduce bugs!</p>
         </blockquote>
         <p data-src="1578-1585">
-          A <dfn data-concept="multi-host">multi-host pipeline</dfn> runs one training job across several machines, each driving its own accelerators. In the usual setup every host runs the same program, and that symmetry is the source of the trouble: anything that should happen only once, or should differ between hosts, has to be arranged explicitly. I find it easiest to read the Playbook's four rules as a statement of what should be shared across hosts and what should differ, which is how <a href="#fig-multihost" class="figref"></a> lays them out.
+          A <dfn data-concept="multi-host">multi-host pipeline</dfn> runs one training job across several machines, each driving its own accelerators. In the usual setup every host runs the same program, and that symmetry is the source of the trouble, since anything that should happen only once or differ between hosts has to be arranged explicitly. I find it easiest to read the Playbook's four rules as a statement of what should be shared across hosts and what should differ, which is how <a href="#fig-multihost" class="figref"></a> lays them out.
         </p>
       </section>
 
@@ -591,7 +591,7 @@
           </div>
         </div>
         <p class="fig-caption">
-          The Playbook's rules for a job on four hosts, where matching colors mean identical values. Only host 0 writes logs and checkpoints, and batch norm statistics are averaged across hosts before an evaluation or a checkpoint. The initialization seed is shared so that every replica starts from the same weights, while the seeds for shuffling and preprocessing differ by host, and the data files are split between hosts. The seed values and the offset-by-host scheme are placeholders for whatever your framework provides.
+          The Playbook's rules for a job on four hosts, where matching colors mean identical values. Only host 0 writes logs and checkpoints, and batch norm statistics are averaged across hosts before an evaluation or a checkpoint. The initialization seed is shared so that every replica starts from the same weights, while the seeds for shuffling and preprocessing differ by host, and the data files are split between hosts. The seed values and the offset-by-host scheme are placeholders for whatever the framework provides.
         </p>
       </figure>
 
@@ -599,7 +599,7 @@
         <ul class="p09-list" data-src="1578-1585">
           <li><strong>Log and checkpoint on one host.</strong> Otherwise every host writes the same files, and the copies overwrite or duplicate one another.</li>
           <li><strong>Synchronize batch norm statistics before evaluation or checkpointing.</strong> The saved model then reflects the statistics of all hosts, which is the multi-host form of the EMA point in the <a href="#batchnorm">batch norm section</a>.</li>
-          <li><strong>Mark each RNG seed by its role.</strong> The Playbook calls it critical to use seeds that are the same across hosts for model initialization and seeds that differ across hosts for data shuffling and preprocessing. The reasoning is left implicit, but I read it as guarding against two opposite failures: different initialization seeds start the replicas from different weights, while identical data seeds can give hosts identical batches when they read the same files.</li>
+          <li><strong>Mark each RNG seed by its role.</strong> The Playbook calls it critical to use seeds that are the same across hosts for model initialization and seeds that differ across hosts for data shuffling and preprocessing. The reasoning is left implicit, but I read it as guarding against two opposite failures, since different initialization seeds start the replicas from different weights, while identical data seeds can give hosts identical batches when they read the same files.</li>
           <li><strong>Shard data files across hosts.</strong> The Playbook recommends this for performance.</li>
         </ul>
       </section>
@@ -607,13 +607,13 @@
       <section class="prose p09-practice" id="what-to-do">
         <h2>In practice</h2>
         <p>
-          Taken together, the advice in this post is easiest to use if you sort it by when you act on it rather than by topic. Items marked as my addition are not in the Playbook.
+          Taken together, the advice in this post is easiest to use when sorted by the stage at which we act on it rather than by topic. Items marked as my addition are not in the Playbook.
         </p>
         <div class="p09-phases">
           <div class="p09-phase">
             <div class="p09-phase-head"><span class="p09-phase-n">1</span><h3>Before the first sweep</h3></div>
             <ol class="p09-checks">
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg><span><a href="#preflight">Run the smoke tests</a> on a new pipeline: look at a batch, check the step-0 loss, overfit one batch. <em class="p09-ours">My addition</em></span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg><span><a href="#preflight">Run the smoke tests</a> on a new pipeline by inspecting a batch, checking the step-0 loss, and overfitting one batch. <em class="p09-ours">My addition</em></span></li>
               <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h4l3-12 4 12 3-6h4"/></svg><span><a href="#pipeline">Profile the input pipeline</a>. Compare steps per second against a cached batch, prefetch, and add input workers if the host cannot keep up.</span></li>
               <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/></svg><span>On several hosts, <a href="#multihost">log and checkpoint on host 0</a>, mark each seed by its role, and shard the data files.</span></li>
             </ol>
@@ -630,7 +630,7 @@
             <div class="p09-phase-head"><span class="p09-phase-n">3</span><h3>After each study</h3></div>
             <ol class="p09-checks">
               <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l3 3 6-6"/><circle cx="17" cy="16" r="4"/></svg><span><a href="#checkpoints">Select the best checkpoint retrospectively</a> as the trial's result.</span></li>
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M9 4v16"/></svg><span><a href="#tracking">Add a row to the tracking sheet</a>: name, config link, description, trials, best validation performance, reproduction notes.</span></li>
+              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M9 4v16"/></svg><span><a href="#tracking">Add a row to the tracking sheet</a> with the study name, config link, description, trial count, best validation performance, and reproduction notes.</span></li>
               <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6" stroke-dasharray="2 2"/></svg><span><a href="#sample">Check the evaluation sample</a> against the full offline set, and read rare-class results as counts.</span></li>
             </ol>
           </div>
@@ -662,7 +662,7 @@
   </main>
 
   <footer class="site-footer">
-    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Adapted from and inspired by the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue, and Nado (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>).
+    By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
   <script src="../js/vendor/d3.v7.min.js"></script>
