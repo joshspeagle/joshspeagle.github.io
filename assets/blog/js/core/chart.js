@@ -1,11 +1,11 @@
 /*
  * chart.js: the chart helpers of version 2 (TP.chart).
  *
- * It carries out notes/revamp/design-system.md (DS) §11.5 with DS §4 (marks), §5 (labels and
+ * It carries out series design spec (DS) §11.5 with design system (marks), §5 (labels and
  * annotations), §6.2 (handles), §8 (linking, reading, tooltips, dismissal) and §9 (motion), as
- * notes/revamp/implementation-plan.md WO-I4 specifies. The label placer's geometry lives in
+ * series design spec WO-I4 specifies. The label placer's geometry lives in
  * site/js/lib/placer.js (TP.placer), which this file feeds and renders. Colours come from the role
- * classes and mark classes of site/css/site.css (DS §2.3 rule 7), so a theme change needs no redraw.
+ * classes and mark classes of site/css/site.css (design system rule 7), so a theme change needs no redraw.
  * Classic script. The pure helpers (snapping, stepping, keys, ticks, interpolation, the ramp) load
  * in Node for node --test. The DOM helpers need a document and D3 v7.
  *
@@ -31,7 +31,7 @@
  *     plotAspect: n | fn(w, phone),   // or the frame's height over width, for a slope panel
  *     maxHeight: px | fn(w, phone),   // a height cap met by shrinking the width, centred
  *     nameMargin: px,                 // right margin reserved for names outside the frame
- *                                     // (desktop layout only, DS §5.6)
+ *                                     // (desktop layout only, design system)
  *     inner: true | fn(phone),        // an inner frame of small multiples: no y tick labels or
  *                                     // y title, and no x tick labels or x title below 640 px;
  *                                     // a function decides it per layout (a stack on a phone)
@@ -78,11 +78,11 @@
  *   C.line(p, rows, x, y, {role, series, key, dash: 'ghost'|'level'|'trail', weight, alpha,
  *                          ghost, cache, decimate, layer})
  *       3-px series line (context: 1.5 px). alpha is allowed on a line only for an ensemble of
- *       seeds (DS §4.6, ruled for F8.2): 0.3 opacity at 1.5 px, full opacity on highlight.
+ *       seeds (design system, ruled for F8.2): 0.3 opacity at 1.5 px, full opacity on highlight.
  *       ghost: false keeps the line out of C.ghost's copy.
  *   C.markers(p, rows, x, y, {role, series, key, shape: 'circle'|'diamond'|'square',
  *                             fill: 'filled'|'open', size, color: fn(d, i), thin: px, keep})
- *       sizes of DS §4.1 by shape and fill; defaults by role (DS §4.2): model filled circle,
+ *       sizes of design system by shape and fill; defaults by role (design system): model filled circle,
  *       third open circle, fourth open diamond, data open square. thin keeps markers at least
  *       thin px apart along x, both ends and keep(d, i) kept, and no thinned marker within thin
  *       px of a kept one; beside a kept point the spacing counts outward from it (rows in order
@@ -91,21 +91,21 @@
  *   C.markerPath(p, rows, x, y, {role, key, shape: 'circle'|'left'|'right', fill, r})
  *       hundreds of markers as one path.
  *   C.dots(p, rows, x, y, {role, series, key, r (2), alpha, include, cache, round, obstacle})
- *       a cloud of 4-px dots; alpha only for a dense cloud or an ensemble (DS §4.6).
+ *       a cloud of 4-px dots; alpha only for a dense cloud or an ensemble (design system).
  *   C.bars(p, rows [{x0, x1, y, key}], {role, series, key, base, gap, maxWidth, fill: 'filled'|'open'})
  *       open: a 2-px edge in the role's mark tone on the surface (site.css .bar.open)
  *   C.rug(p, xs, {role, key, y0, y1})          structure, or 1.5-px ticks in the role's token
  *   C.band(p, x0, x1, {role, name, key, id, axis: 'x'|'y', y0, y1})   opaque tint, a region
  *   C.area(p, rows, x, y0, y1, {role, name, key, id})               a band around a curve
  *   C.boxplot(p, rows [{x, min, q1, median, q3, max, draws, key}], {role, key, dots, width})
- *       dots: a stack of 4-px draws with the unfilled, cased box over it (DS §4.6)
+ *       dots: a stack of 4-px draws with the unfilled, cased box over it (design system)
  *   C.ring(p, x, y, {role, key, series})       the best trial's 20-px ring
  *   C.cross(p, rows, x, y, {role, key, series, edge: 'top'|'bottom'}) -> count
  *       infeasible crosses; a value outside the frame or undefined stands at the frame edge
  *   C.ref(p, points, {kind: 'truth'|'limit'|'level'|'reader'|'pin', role, key, series, cursor})
  *       points: [[x, y], ...], or {x: v} (vertical) or {y: v} (horizontal) across the frame.
  *       A reader's line with series 'cursor' or cursor: true is a running figure's cursor
- *       (DS §4.9) and carries the attribute data-cursor, which the runtime harness reads.
+ *       (design system) and carries the attribute data-cursor, which the runtime harness reads.
  *   C.level(p, 'x'|'y', value, {role ('ref'), text, line, tick, side, series, key, cursor})
  *       -> {name, line, record}
  *       names a level on the axis in its role's label tone and hides regular tick labels within
@@ -117,7 +117,7 @@
  *                        rival: true | {series, gaps: [{x, y, px}]}})
  *       reader: two edges, a 4-px axis bar and handles; highlight: the tint, context edges and the
  *       name at the top inside. onChange([x0, x1], {transient}), onSettle([x0, x1]).
- *       A reader window's edges are structure, which a label may cross (DS §5.2 item 3). With
+ *       A reader window's edges are structure, which a label may cross (design system item 3). With
  *       rival they are also rivals of series rival.series (default the window's id), so a label
  *       of another series keeps 1 h clear of them and one of that series may stand beside them.
  *       Each gap leaves the edge at data x out within px of data y, for example around a ring on
@@ -136,7 +136,7 @@
  *                   | {type: 'line', points: [[x, y], ...]} | {type: 'line', of: series}
  *                   | {type: 'region', x0, x1, y0, y1} | {type: 'region', of: regionId},
  *            names: regionId, phone: {text} | {header: true}, captionNames, keySentence,
- *            select: {pressed, onPress}}     // a label that selects its series (DS §6.4)
+ *            select: {pressed, onPress}}     // a label that selects its series (design system)
  *     Places the items with the labels queued by C.annotation, C.band and C.window, from scratch,
  *     or with hold keeping positions that stay admissible: hold when any of hold, playing,
  *     transient or transition is true (pass the draw context), or by default during
@@ -148,18 +148,18 @@
  *     C.place: the same obstacles before that call's labels, its queued labels and the placement it
  *     held. It draws nothing and changes nothing, so a label search tries features against one
  *     render (F3.2). Null when no C.place ran in the current render. ids, a list of label ids,
- *     limits the search for far positions of callouts (DS §5.10) to the callouts it names. The
+ *     limits the search for far positions of callouts (design system) to the callouts it names. The
  *     entries of labels that are not callouts are exact for any ids.
  *   C.labelReport(panel | element | id) -> [{id, text, form, x, y, box, anchor, position, tier,
  *       dFeature, dRival, ratio, leader, reason, toCaption, fault, panel, annotation}]
  *   C.annotation(p, {kind: 'bracket'|'tangent'|'region'|'callout', anchor, text, id, side, gap, series,
  *                    names, reach, phone, captionNames, keySentence}) -> record
  *     names is the id of a region (a band, a tint or a window) whose name or whose features the
- *     text concerns, which may hold the text (DS §5.2 item 7), as for C.place items. A callout
+ *     text concerns, which may hold the text (design system item 7), as for C.place items. A callout
  *     (anchor {x, y, r, series}) is placed as a point label within 0.5 h of its mark; where that
  *     gives no position in the frame, it stands up to reach h from the mark (default 3, which is
  *     also the largest reach: the far positions stop at 3 h whatever reach says; 0 keeps it
- *     within 0.5 h) with a leader to the mark (DS §5.10, §5.4), reported with tier 'leader',
+ *     within 0.5 h) with a leader to the mark (design system, §5.4), reported with tier 'leader',
  *     position 'far <direction>' and ratio Infinity, its dRival at least 1 h.
  *     bracket anchor {x0, x1, y} (y omitted: on the x axis) or {y0, y1, x}; side 'above'|'below'|
  *     'left'|'right' says where the bracket stands relative to the marks, and gap (px, default 6)
@@ -192,7 +192,7 @@
  *     a click on the axis, touch value block, value named on the axis while dragged or focused.
  *
  * COLOUR AND KEYS
- *   C.ramp(role, t) -> CSS colour between the stops of DS §2.4 ('model' only; t in [0, 1])
+ *   C.ramp(role, t) -> CSS colour between the stops of design system ('model' only; t in [0, 1])
  *   C.colorbar(panel | element, {role, domain, log, label, ticks, format, steps, thickness, gap})
  *       -> {node, t(value)}: the ramp's key in SVG, right of the frame for a panel
  *   C.key(figure | panel, [{kind, role, text}], {layout: 'row'|'column', x, y}) -> svg node
@@ -204,7 +204,7 @@
  * MOTION
  *   C.transition(from, to, {draw(state, ctx), duration, owner, onEnd}) -> {finish(), cancel(),
  *       running(), finished (a promise), duration}
- *     DS §9 rule 1: rows matched by key, numbers interpolated under cubic in-out, draw called once
+ *     design system rule 1: rows matched by key, numbers interpolated under cubic in-out, draw called once
  *     per frame with ctx {transition: true, hold: true}, then draw(to, {transition: false,
  *     hold: false, end: true}). duration omitted: 750 ms, or 400 ms when the largest move of a
  *     keyed mark is under 40 px. A cut under reduced motion. A new transition with the same owner
@@ -221,7 +221,7 @@
  */
 (function (global) {
   'use strict';
-  var TP = global.TP = global.TP || {};
+  var TP = global.Blog = global.TP = global.Blog || global.TP || {};
   var C = TP.chart = TP.chart || {};
   var d3 = global.d3;
   var doc = global.document;
@@ -261,7 +261,7 @@
     return k == null ? null : String(k);
   };
 
-  /* DS §4.2's thinning of markers on a dense curve: both ends and every kept point stay, and the
+  /* design system's thinning of markers on a dense curve: both ends and every kept point stay, and the
      others stand at least thin px apart along x and at least thin px from every kept point. A
      stretch between a kept point and an end is thinned outward from the kept point, so that the
      spacing is measured from the point the argument selects; a stretch between two kept points,
@@ -329,7 +329,7 @@
     return out;
   };
 
-  /** Which regular tick labels a named level hides (DS §5.5): those within h of a name along
+  /** Which regular tick labels a named level hides (design system): those within h of a name along
       the axis and, on the x axis, those whose label box comes within 2 px of the name's box.
       ticks and names: [{pos, w}] in px along the axis (pos the centre). Returns booleans. */
   C.hiddenTicks = function (ticks, names, h, axis) {
@@ -358,7 +358,7 @@
     out.sort(function (a, b) { return a - b; });
     return out;
   }
-  /** The value a handle snaps to (DS §6.2): the nearest of a list (nearest in log space on a log
+  /** The value a handle snaps to (design system): the nearest of a list (nearest in log space on a log
       axis, the lower on a tie), or a multiple of a step (on a log axis a step in decades), within
       [min, max]. */
   C.snap = function (v, snap, o) {
@@ -386,7 +386,7 @@
     }
     return v;
   };
-  /** One keyboard step of a handle (DS §6.2). dir: 1 or -1 (an arrow, one snap step), 10 or -10
+  /** One keyboard step of a handle (design system). dir: 1 or -1 (an arrow, one snap step), 10 or -10
       (Page Up or Down: a tenth of the range, a decade on a log axis, at least one snap step),
       'home' or 'end'. Without a snap an arrow moves a hundredth of the range. */
   C.stepValue = function (v, snap, dir, o) {
@@ -420,14 +420,14 @@
     return finite(snap) && snap > 0 ? C.snap(r, snap, o) : tidy(r);
   };
 
-  /* ---------- the family ramp (DS §2.4) ---------- */
+  /* ---------- the family ramp (design system) ---------- */
 
   /** A colour between two stops of the model ramp as a color-mix() of custom properties, so a
       theme change needs no redraw. t = 0 is q0 (the least of the quantity), t = 1 is q6. Four
       members take t = 0, 1/3, 2/3, 1 (q0, q2, q4, q6); three take 0, 0.5, 1 (q0, q3, q6). */
   C.ramp = function (role, t) {
     if (role !== 'model') {
-      warnOnce('TP.chart.ramp: only the model role has a bound ramp (DS 2.4), not "' + role + '"');
+      warnOnce('TP.chart.ramp: only the model role has a bound ramp (design system), not "' + role + '"');
       return 'var(--' + roleOf(role) + ')';
     }
     t = clamp(finite(t) ? t : 0, 0, 1);
@@ -459,7 +459,7 @@
     return out;
   };
 
-  /* ---------- interpolation by key (DS §9 rule 1) ---------- */
+  /* ---------- interpolation by key (design system rule 1) ---------- */
 
   function isPlain(o) {
     if (o === null || typeof o !== 'object' || Array.isArray(o) || ArrayBuffer.isView(o)) return false;
@@ -505,7 +505,7 @@
     }
     return t < 1 ? a : b;
   }
-  /** The frame of a transition at eased time t (DS §9 rule 1). Arrays of rows that carry a key
+  /** The frame of a transition at eased time t (design system rule 1). Arrays of rows that carry a key
       are matched by key and kept in the order of `to`: a row only in `from` is cut out at the
       start, a row only in `to` is cut in at the end. Numbers interpolate linearly, arrays of equal
       length element by element. Strings, booleans, paths of different point sets and other values
@@ -546,7 +546,7 @@
     });
     return best;
   };
-  /** The duration of a transition (DS §9): 400 ms where the largest move is under 40 px, else
+  /** The duration of a transition (design system): 400 ms where the largest move is under 40 px, else
       750 ms, and 750 ms when nothing keyed moves. */
   C.durationFor = function (px) { return px == null || !finite(px) ? 750 : px < 40 ? 400 : 750; };
 
@@ -710,7 +710,7 @@
     return el;
   };
   /** Fill an SVG text node with lines of rich text; lines after the first restart at x = 0 and
-      step down by lineHeight (1.2 times the font size, DS §3.1). */
+      step down by lineHeight (1.2 times the font size, design system). */
   C.svgText = function (node, lines, lineHeight) {
     while (node.firstChild) node.removeChild(node.firstChild);
     if (!Array.isArray(lines)) lines = [lines];
@@ -733,7 +733,7 @@
 
   /* ---------- text measurement ----------
      Text is measured on a canvas at the size it renders, with the computed letter spacing and word
-     spacing (DS §11.5, the audit's P18), cached per string. The sizes and spacings come from probe
+     spacing (design system, the audit's P18), cached per string. The sizes and spacings come from probe
      text elements inside each panel's SVG, so they follow --fs-label, --fs-tick and any
      text-spacing override. */
   var ctx2d = null, sizeCache = new Map(), docType = null;
@@ -955,7 +955,7 @@
       if (xl && yl) return yl + ' against ' + xl;
       return yl || xl || 'chart';
     }
-    /* The name is the visible letter and a fixed description of the axes (DS §5.7). The live note
+    /* The name is the visible letter and a fixed description of the axes (design system). The live note
        never enters it. */
     el.setAttribute('aria-label', letter ? letter + ' ' + describeText() : describeText());
 
@@ -994,7 +994,7 @@
       return p;
     }
     if (opts.note) p.setNote(opts.note);
-    /* header forms of labels that have no admissible position (DS §5.6) */
+    /* header forms of labels that have no admissible position (design system) */
     p._setHeadLabels = function (list) {
       var sig = list.map(function (l) { return l.cls + '|' + l.text; }).join('\n');
       if (sig === p._headSig) return;
@@ -1432,7 +1432,7 @@
     var weight = o.weight || (dash === 'ghost' ? 2.5 : dash === 'level' || dash === 'trail' ? 2 : r === 'context' ? 1.5 : 3);
     if (o.weight) path.style('stroke-width', o.weight + 'px');
     if (o.alpha != null && o.alpha < 1) {
-      /* DS §4.6: an ensemble of seeds at 0.3 opacity and 1.5 px; alpha is never emphasis */
+      /* design system: an ensemble of seeds at 0.3 opacity and 1.5 px; alpha is never emphasis */
       path.style('stroke-opacity', o.alpha).attr('data-alpha', o.alpha);
     }
     var k = typeof o.key === 'function' ? C.keyOf(o.key, rows, 0) : o.key != null ? String(o.key) : null;
@@ -1443,14 +1443,14 @@
       p._lines[series] = pts;
       if (k != null && !p._lines[k]) p._lines[k] = pts;
       /* a level line counts as a series of the frame, so that a label beside it and one other
-         series takes its role's label tone (DS §5.3); a trail is a second reading of its series */
+         series takes its role's label tone (design system); a trail is a second reading of its series */
       if (dash !== 'trail') seen(p, series);
       p._drawn.push({ kind: dash === 'level' ? 'level' : 'line', role: r, series: series, rows: rows, x: xAcc, y: yAcc, ghost: o.ghost !== false && r !== 'context' && r !== 'ref' && dash !== 'trail' });
     }
     return path;
   };
 
-  /* marker geometry by shape and fill (DS §4.1): r is the drawn size's half, ring the stroke */
+  /* marker geometry by shape and fill (design system): r is the drawn size's half, ring the stroke */
   function markerSpec(r, o) {
     var shape = o.shape || (r === 'data' ? 'square' : r === 'fourth' ? 'diamond' : 'circle');
     var fill = o.fill || (r === 'data' || r === 'third' || r === 'fourth' ? 'open' : 'filled');
@@ -1474,7 +1474,7 @@
     layer.node().appendChild(n);
     return n;
   }
-  /** Markers, one element per row, sized by role and form (DS §4.1, §4.2). */
+  /** Markers, one element per row, sized by role and form (design system, §4.2). */
   C.markers = function (p, rows, xAcc, yAcc, o) {
     o = o || {};
     var r = roleOf(o.role), series = seriesOf(o, r), spec = markerSpec(r, o);
@@ -1537,7 +1537,7 @@
   };
 
   /** A cloud of small dots (4 px): one path, or one circle per dot where alpha is set so that
-      overlaps pile up. alpha is for density or an ensemble alone (DS §2.3 rule 5, §4.6). */
+      overlaps pile up. alpha is for density or an ensemble alone (design system rule 5, §4.6). */
   C.dots = function (p, rows, xAcc, yAcc, o) {
     o = o || {};
     var r = roleOf(o.role), series = seriesOf(o, r), rad = o.r || 2;
@@ -1642,7 +1642,7 @@
   }
 
   /** An opaque tint over [x0, x1] (axis 'x', full height unless y0, y1) or [y0, y1] (axis 'y'),
-      under the gridlines (DS §4.6), with its name inside it in text ink. */
+      under the gridlines (design system), with its name inside it in text ink. */
   C.band = function (p, a0, a1, o) {
     o = o || {};
     var r = roleOf(o.role), axis = o.axis || 'x', X0, X1, Y0, Y1;
@@ -1691,7 +1691,7 @@
     return { node: path.node(), id: id, box: bx };
   };
 
-  /** Box plots (DS §4.6): rows [{x, min, q1, median, q3, max, draws, key}]. With dots, a stack of
+  /** Box plots (design system): rows [{x, min, q1, median, q3, max, draws, key}]. With dots, a stack of
       4-px draws with the unfilled box over it, its edges and median over a surface casing;
       without, the box in the tint with its edge in the token. Whiskers leaving the frame stop at
       the edge under an arrowhead. Returns the boxes in plot px. */
@@ -1757,7 +1757,7 @@
     return out;
   };
 
-  /** The best trial's ring: 20 px, 2 px, no fill, in the series' token (DS §4.4). */
+  /** The best trial's ring: 20 px, 2 px, no fill, in the series' token (design system). */
   C.ring = function (p, xv, yv, o) {
     o = o || {};
     var r = roleOf(o.role);
@@ -1769,7 +1769,7 @@
     return c;
   };
 
-  /** Infeasible crosses (DS §4.5): 10 px, 2 px, round caps, in the runner's token, at the trial's
+  /** Infeasible crosses (design system): 10 px, 2 px, round caps, in the runner's token, at the trial's
       value, or at the frame edge its result left by (undefined results at o.edge, default the top).
       Returns the count, for the header's "k of n diverged". */
   C.cross = function (p, rows, xAcc, yAcc, o) {
@@ -1806,7 +1806,7 @@
     return out;
   }
   var REF_CLASS = { truth: 'ref-truth', limit: 'ref-limit', reader: 'reader-line', pin: 'reader-pin' };
-  /** A reference (DS §4.7): a truth (dotted), a limit the text states (dashed 4 4), a level the
+  /** A reference (design system): a truth (dotted), a limit the text states (dashed 4 4), a level the
       toy computes (dash-dot in the toy's hue), a reader's line or a pinned reader line. */
   C.ref = function (p, points, o) {
     o = o || {};
@@ -1818,7 +1818,7 @@
     var path = (o.layer || p.layers.refs).append('path').attr('class', cls).attr('d', pathOf(pts));
     var k = o.key != null ? String(o.key) : null;
     if (k != null) { path.attr('data-key', k); regKey(p, k, { el: path.node(), type: 'line', pts: pts }); }
-    /* a running figure's cursor (DS §4.9): the reader's line of series 'cursor', or o.cursor */
+    /* a running figure's cursor (design system): the reader's line of series 'cursor', or o.cursor */
     if (kind === 'reader' && (o.cursor || o.series === 'cursor')) path.attr('data-cursor', '');
     var width = kind === 'truth' ? 2.5 : kind === 'level' ? 2 : 1.5;
     var sid = o.series != null ? String(o.series) : kind === 'level' ? 'level:' + r : 'ref:' + kind;
@@ -1832,7 +1832,7 @@
   };
   function dataOf(p, pts) { return pts.map(function (q) { return [p.x.invert(q[0]), p.y.invert(q[1])]; }); }
 
-  /** Name a level on an axis (DS §5.5): its value at the axis in its role's label tone, with the
+  /** Name a level on an axis (design system): its value at the axis in its role's label tone, with the
       regular tick labels within 1 h hidden. line draws its line across the frame as well.
       Returns {name, line, record}: record is the name's entry {node, pos, w, axis, value, role,
       side}, the one kept in the panel's list of axis names, or null. */
@@ -1853,7 +1853,7 @@
     return out;
   };
 
-  /** A reader window or a highlight window over [x0, x1] (DS §4.10, §8.1). */
+  /** A reader window or a highlight window over [x0, x1] (design system, §8.1). */
   C.window = function (p, a0, a1, o) {
     o = o || {};
     var kind = o.kind || 'reader', id = String(o.id || o.name || ('window-' + (++uid)));
@@ -1935,7 +1935,7 @@
     return out;
   };
 
-  /** A travelled path in the trail tone (2 px) with the filled marker at its head (DS §4.9). */
+  /** A travelled path in the trail tone (2 px) with the filled marker at its head (design system). */
   C.trail = function (p, points, o) {
     o = o || {};
     var r = roleOf(o.role), series = seriesOf(o, r);
@@ -1960,7 +1960,7 @@
     return out;
   };
 
-  /* ---------- the ghost (DS §4.8) ---------- */
+  /* ---------- the ghost (design system) ---------- */
 
   function copyData(d) {
     if (d.data) return d.data.slice();
@@ -2066,18 +2066,18 @@
     return 'r-context';
   }
 
-  /* ---------- callouts beyond 0.5 h (DS §5.10) ----------
+  /* ---------- callouts beyond 0.5 h (design system) ----------
      A callout is text with a leader to its feature. The placer places it as a point label within
      0.5 h of its mark. Where that gives no position in the frame (the label would be dropped or
      go to the header), farCallouts tries positions farther out, at 0.75 h to reach h from the
      mark's drawn edge, in the directions of FAR_DIRS (straight up and down first, because a
      callout's feature is often the extreme of a curve), and takes the first where:
        the box lies in the frame and touches no ink, its own series' included;
-       no rival lies within 1 h of the box (the 'clear' distance of DS §5.2 item 1);
+       no rival lies within 1 h of the box (the 'clear' distance of design system item 1);
        the box sits in no region it does not name (item 7);
        the box keeps 0.5 h from annotation lines, from every placed label's box and leader, and
        1 h from every other label's point feature;
-       the leader (DS §5.4), from the mark's edge toward the box's centre, crosses no rival, no
+       the leader (design system), from the mark's edge toward the box's centre, crosses no rival, no
        annotation and no label, and arrives at 45 degrees or more to its own series' line through
        the mark.
      The entry takes tier 'leader', position 'far <direction>', candidate -1 and ratio Infinity (the
@@ -2287,7 +2287,7 @@
     }
     return { dF: dF, dR: dR, lead: lead };
   }
-  /** Place labels (DS §5.2 to §5.6) through TP.placer and draw them. See the API block. */
+  /** Place labels (design system to §5.6) through TP.placer and draw them. See the API block. */
   /* The placement of C.place without its output: the items and the queued labels pending, against
      the index ix, with previous as the last placement held. It changes nothing in the panel. */
   function placeCompute(p, items, o, pending, ix, previous, ids) {
@@ -2416,7 +2416,7 @@
     return c.res.labels.map(function (e) { return { id: e.id, form: e.form, box: e.box, fault: c.res.faults.indexOf(e.id) >= 0 }; });
   };
 
-  /* A label that selects its series (DS §6.4): an HTML button over the label's box with
+  /* A label that selects its series (design system): an HTML button over the label's box with
      aria-pressed, the label's text as its name and a 44 x 44-px target. */
   function labelButton(p, entry, it) {
     var B = p._labelButtons[it.id];
@@ -2464,10 +2464,10 @@
     }, []);
   };
 
-  /* ============================== annotations (DS §5.10) ============================== */
+  /* ============================== annotations (design system) ============================== */
 
   function inFrame(p, X, Y) { return X >= -0.5 && X <= p.width + 0.5 && Y >= -0.5 && Y <= p.height + 0.5; }
-  var CALLOUT_REACH = 3;   // a callout may stand up to 3 h from its mark, with a leader (DS §5.10)
+  var CALLOUT_REACH = 3;   // a callout may stand up to 3 h from its mark, with a leader (design system)
   C.annotation = function (p, o) {
     o = o || {};
     var kind = o.kind, a = o.anchor || {}, id = String(o.id || (kind + '-' + p._annotations.length));
@@ -2554,7 +2554,7 @@
     }, []);
   };
 
-  /* ============================== handles (DS §6.2, §4.10) ============================== */
+  /* ============================== handles (design system, §4.10) ============================== */
 
   var HANDLE_KEYS = { ArrowLeft: -1, ArrowDown: -1, ArrowRight: 1, ArrowUp: 1, PageDown: -10, PageUp: 10, Home: 'home', End: 'end' };
 
@@ -2802,7 +2802,7 @@
     });
   }
 
-  /* ============================== reading (DS §8.3 to §8.5) ============================== */
+  /* ============================== reading (design system to §8.5) ============================== */
 
   var readers = [], docWired = false;
   function wireDoc() {
@@ -3072,7 +3072,7 @@
     return R;
   }
   /* The tooltip on the side with more empty ground, clear of the hovered mark and its label
-     (DS §8.4): each candidate is scored by the obstacles and label boxes it covers. */
+     (design system): each candidate is scored by the obstacles and label boxes it covers. */
   function placeTip(R, X, Y) {
     var p = R.p, tip = R.tip;
     tip.style.display = 'block';
@@ -3117,13 +3117,13 @@
       refresh: R.refresh
     };
   }
-  /** Read curves by x value (DS §8.3): crosshair, a temporary tick in text ink, each series'
+  /** Read curves by x value (design system): crosshair, a temporary tick in text ink, each series'
       marker and the tooltip. See the API block. */
   C.hover = function (p, o) { return ensureReader(p, 'hover', o); };
   /** Read points: the nearest point within 40 px takes the 28-px highlight ring and the tooltip. */
   C.pointHover = function (p, o) { return ensureReader(p, 'point', o); };
 
-  /* ============================== linking (DS §8.1, §8.2) ============================== */
+  /* ============================== linking (design system, §8.2) ============================== */
 
   function notifyLinks(p, info) {
     p._links.forEach(function (G) {
@@ -3223,7 +3223,7 @@
 
   /* ============================== colour bar and keys ============================== */
 
-  /** The ramp's key in SVG (DS §2.4, §5.1). A panel target draws it right of the frame. */
+  /** The ramp's key in SVG (design system, §5.1). A panel target draws it right of the frame. */
   C.colorbar = function (target, spec) {
     spec = spec || {};
     var r = spec.role || 'model', dom = spec.domain || [0, 1], log = !!spec.log, n = spec.steps || 32;
@@ -3285,7 +3285,7 @@
       case 'pin': ln('reader-pin'); break;
       case 'band': sw.append('rect').attr('class', 'band').attr('x', 2).attr('y', fx2(mid - 6)).attr('width', KEY_W - 4).attr('height', 12); break;
       case 'cross': sw.append('path').attr('class', 'cross').attr('d', 'M' + (cx - 4) + ',' + (mid - 4) + 'L' + (cx + 4) + ',' + (mid + 4) + 'M' + (cx - 4) + ',' + (mid + 4) + 'L' + (cx + 4) + ',' + (mid - 4)); break;
-      /* a bracket in text ink at structure weight (DS 5.10), 4-px ticks down from its bar */
+      /* a bracket in text ink at structure weight (design system), 4-px ticks down from its bar */
       case 'annotation': sw.append('path').attr('class', 'annotation').attr('d', 'M1.5,' + fx2(mid + 2.5) + 'V' + fx2(mid - 1.5) + 'H' + (KEY_W - 1.5) + 'V' + fx2(mid + 2.5)); break;
       case 'ring': sw.append('circle').attr('class', 'ring').attr('cx', cx).attr('cy', fx2(mid)).attr('r', 7); break;
       case 'handle':
@@ -3334,7 +3334,7 @@
     });
     return { w: Math.ceil(w), h: Math.ceil(y + rowH - 6) };
   }
-  /** A key for an encoding no axis carries (DS §5.1), in SVG so it prints. See the API block. */
+  /** A key for an encoding no axis carries (design system), in SVG so it prints. See the API block. */
   C.key = function (target, entries, o) {
     o = o || {};
     entries = entries || [];

@@ -3803,6 +3803,10 @@
           "startUrl": "writing/dl-tuning-playbook/pages/01-the-tuning-loop.html",
           "referenceUrl": "writing/dl-tuning-playbook/pages/reference.html",
           "sourceUrl": "https://github.com/google-research/tuning_playbook",
+          "ctaLabel": "Start with Part 1",
+          "overviewLabel": "Introduction & overview",
+          "referenceLabel": "Rules, glossary & references",
+          "sourceLabel": "The original Playbook on GitHub ↗",
           "summary": [
             "Google Research's <em>Deep Learning Tuning Playbook</em> (Godbole, Dahl, Gilmer, Shallue and Nado, 2023) collects years of practical experience training neural networks into short, concrete rules, such as re-tuning the learning rate whenever the batch size changes and scoring a run by its best checkpoint rather than its last. Each rule fits in a sentence, but the reasons behind it usually do not.",
             "In this series I work through those reasons. Each part takes a group of the Playbook's recommendations, writes down a simple model of the mechanism behind them, and uses small interactive simulations to show when and why the advice holds."

@@ -41,6 +41,7 @@ from pages_service import generate_content as gen_service      # noqa: E402
 from pages_software import generate_content as gen_software    # noqa: E402
 from pages_news import generate_content as gen_news            # noqa: E402
 from pages_writing import generate_content as gen_writing      # noqa: E402
+from build_writing import build_all as build_writing           # noqa: E402
 
 SITE_URL = "https://joshspeagle.com"
 SITE_NAME = "Joshua S. Speagle"
@@ -1910,6 +1911,7 @@ def main():
 
     write_sitemap()
     write_feed(data)
+    build_writing()
 
     if failures:
         print(f"Done with {failures} page(s) failing. See the errors above.", file=sys.stderr)

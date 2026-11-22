@@ -6,10 +6,13 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>Tuning a network one question at a time · Notes on the Deep Learning Tuning Playbook</title>
   <meta name="description" content="Notes on the Deep Learning Tuning Playbook's incremental tuning loop: scoring a run by its best checkpoint, reading a study, fair comparisons through scientific, nuisance and fixed hyperparameters, and spending a fixed budget of trials.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232855a6'/%3E%3Cpath d='M7 22 C12 22, 13 10, 18 10 C22 10, 22 17, 26 14' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='10' r='2.6' fill='%23d4850e'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="../css/site.css">
-  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+  <script data-theme-boot>(function(){try{var t=localStorage.getItem('preferred-theme')||'dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="../../../assets/css/fonts.css">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/editorial.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/diagram-map.css">
   <link rel="stylesheet" href="../css/figures/fig-checkpoint.css">
   <link rel="stylesheet" href="../css/figures/fig-study.css">
   <link rel="stylesheet" href="../css/figures/fig-roles.css">
@@ -17,9 +20,9 @@
   <link rel="stylesheet" href="../css/pages/01-the-tuning-loop.css">
 </head>
 <body data-page="pages/01-the-tuning-loop.html" data-root="../">
-  <header class="site-header"></header>
+  <header class="site-header"><a class="skip" href="#content">Skip to content</a><div class="header-brand-group"><a class="brand-crumb brand-home" href="../../../index.html">Josh Speagle</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand-crumb brand-writing" href="../../../writing.html">Writing</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand" href="../index.html"><span class="brand-series">DL Tuning Playbook</span></a><span class="where">Part 1 of 9</span></div><nav aria-label="Series navigation" id="site-nav" class="site-nav"><a class="btn small" href="../index.html">Contents</a><a class="btn small" href="../pages/reference.html">Reference</a></nav></header>
 
-  <main class="page">
+  <main id="content" class="page">
     <header class="post-header">
       <div class="post-kicker">Part 1 of 9 &middot; Experimental method and setup</div>
       <h1>Tuning a network one question at a time</h1>
@@ -57,13 +60,13 @@
         </blockquote>
 
         <p id="round-goal">
-          Each round cycles through the four steps in <a href="#fig-loop" class="figref"></a>, and the first of them largely decides whether the other three can succeed. The Playbook asks for a <dfn data-concept="round-goal">goal</dfn> narrow enough that a single round of experiments can make real progress on it. Its examples range from trying one potential improvement (a new regularizer, a preprocessing choice), to understanding the effect of a single hyperparameter such as the activation function, to greedily lowering validation error late in a project (<a href="https://github.com/google-research/tuning_playbook#choosing-the-goal-for-the-next-round-of-experiments" target="_blank" rel="noopener">choosing the goal ↗</a>).
+          Each round cycles through the four steps in <a href="#fig-loop" class="figref"> data-static-figref="1">Figure 1</a>, and the first of them largely decides whether the other three can succeed. The Playbook asks for a <dfn data-concept="round-goal">goal</dfn> narrow enough that a single round of experiments can make real progress on it. Its examples range from trying one potential improvement (a new regularizer, a preprocessing choice), to understanding the effect of a single hyperparameter such as the activation function, to greedily lowering validation error late in a project (<a href="https://github.com/google-research/tuning_playbook#choosing-the-goal-for-the-next-round-of-experiments" target="_blank" rel="noopener">choosing the goal ↗</a>).
         </p>
       </section>
 
       <figure class="schematic" id="fig-loop" role="group" aria-labelledby="fig-loop-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 1</span>
           <span class="fig-title" id="fig-loop-title">The four steps of a tuning round</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -125,7 +128,7 @@
           $$\hat{L}_{\text{trial}}(\mathbf{h}) \;=\; \min_{t \,\in\, \mathcal{T}_{\text{eval}}} L_{\text{val}}(\boldsymbol{\theta}_t).$$
         </div>
         <p>
-          Here $\boldsymbol{\theta}_t$ are the model's weights at step $t$, $L_{\text{val}}$ is the validation error, and $\mathcal{T}_{\text{eval}}$ is the set of steps at which we evaluate (every 1,000 steps in <a href="#fig-checkpoint" class="figref"></a>). Because every trial runs to its full step budget and the checkpoint is chosen afterwards, we never need an early-stopping rule that has to guess, partway through training, when to quit. This is why the Playbook considers prospective early stopping usually unnecessary.
+          Here $\boldsymbol{\theta}_t$ are the model's weights at step $t$, $L_{\text{val}}$ is the validation error, and $\mathcal{T}_{\text{eval}}$ is the set of steps at which we evaluate (every 1,000 steps in <a href="#fig-checkpoint" class="figref"> data-static-figref="1">Figure 2</a>). Because every trial runs to its full step budget and the checkpoint is chosen afterwards, we never need an early-stopping rule that has to guess, partway through training, when to quit. This is why the Playbook considers prospective early stopping usually unnecessary.
         </p>
       </section>
 
@@ -135,7 +138,7 @@
               data-playbook-src="1508-1528"
               data-playbook-caption="The Playbook has no figure for this section. Its summary and its reason for the practice:">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 2</span>
           <span class="fig-title" id="fig-checkpoint-title">Scoring a run by its best saved checkpoint</span>
           <span class="chip toy">Interactive toy</span>
         </figcaption>
@@ -167,7 +170,7 @@
 
       <section class="prose" id="checkpoint-notes">
         <p>
-          In <a href="#fig-checkpoint" class="figref"></a> the run has stopped improving by around step 5,000, so the whole 0.0090 gap between the last checkpoint and the best one is evaluation noise. On a run that overfits, the gap would also include the damage done by the later training steps.
+          In <a href="#fig-checkpoint" class="figref"> data-static-figref="1">Figure 2</a> the run has stopped improving by around step 5,000, so the whole 0.0090 gap between the last checkpoint and the best one is evaluation noise. On a run that overfits, the gap would also include the damage done by the later training steps.
         </p>
         <details class="math-aside">
           <summary>Why the best checkpoint reads below the plateau</summary>
@@ -182,7 +185,7 @@
       <section class="prose" id="studies">
         <h2>Reading a set of runs</h2>
         <p>
-          Designing a study comes down to choosing which hyperparameters vary across trials, the range of values each may take (together, the <dfn data-concept="search-space">search space</dfn>), and how many trials to run. A search algorithm then chooses each trial's settings within that space (<a href="https://github.com/google-research/tuning_playbook#creating-a-set-of-studies" target="_blank" rel="noopener">creating a set of studies ↗</a>). <a href="#fig-study" class="figref"></a> shows a study of 20 trials that varies the learning rate $\eta$ and the weight decay $\lambda$ together. Each trial trains for 20,000 steps and reports its best checkpoint as above, and the trial with the lowest result is the study's <dfn data-concept="best-trial">best trial</dfn>.
+          Designing a study comes down to choosing which hyperparameters vary across trials, the range of values each may take (together, the <dfn data-concept="search-space">search space</dfn>), and how many trials to run. A search algorithm then chooses each trial's settings within that space (<a href="https://github.com/google-research/tuning_playbook#creating-a-set-of-studies" target="_blank" rel="noopener">creating a set of studies ↗</a>). <a href="#fig-study" class="figref"> data-static-figref="1">Figure 3</a> shows a study of 20 trials that varies the learning rate $\eta$ and the weight decay $\lambda$ together. Each trial trains for 20,000 steps and reports its best checkpoint as above, and the trial with the lowest result is the study's <dfn data-concept="best-trial">best trial</dfn>.
         </p>
         <p id="axis-plot">
           A table sorted by score would tell us which trial won, but not whether the search space was in the right place to begin with. For that question the Playbook recommends a <dfn data-concept="axis-plot">basic hyperparameter axis plot</dfn>, in which every trial's validation score is plotted against one hyperparameter, one point per trial (<a href="https://github.com/google-research/tuning_playbook#identifying-bad-search-space-boundaries" target="_blank" rel="noopener">identifying bad search space boundaries ↗</a>). The first thing to look for is where the best trials sit. If they crowd against one edge of the range, a better value may well lie beyond it, and the remedy is to widen the search in that direction and run again.
@@ -195,7 +198,7 @@
               data-playbook-src="844-870"
               data-playbook-caption="The Playbook's Figure 1: axis plots of a real study, error rate against peak learning rate. On the left the best trials sit at the edge of the search space. On the right the range was extended and the best trials sit inside it. Red crosses are trials that diverged.">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 3</span>
           <span class="fig-title" id="fig-study-title">One study, three views</span>
           <span class="chip toy">Interactive toy</span>
         </figcaption>
@@ -218,13 +221,13 @@
           A synthetic study of <span data-num="fig-study:model:trials">20</span> quasi-random trials (trials placed by a quasi-random sequence, <a href="04-searching-the-space.html#coverage">Part 4</a>). (a) Learning rate against weight decay, colored by each trial's best validation error. (b) The axis plot, best validation error against one hyperparameter. (c) The training curve of the chosen trial, with its best checkpoint ringed and its last checkpoint open. The best trial, number <span data-num="fig-study:default:best-trial">10</span>, reaches <span data-num="fig-study:default:best-value">0.232</span> at step <span data-num="fig-study:default:best-step">11,000</span>, with learning rate <span data-num="fig-study:default:best-lr">3.1 &times; 10⁻³</span>, <span data-num="fig-study:default:best-position">66%</span> of the way across the learning-rate range.
         </p>
         <details class="fig-model"><summary>Model and assumptions</summary>
-          <p>Each trial's best validation error comes from a smooth bowl in $u = \log_{10}\eta$ whose center depends on the weight decay $v = \log_{10}\lambda$, $E(u, v) = \min\{E_{\max},\ E_0 + c\,(u - x^\star(v))^2 + \mathrm{pen}(v)\} + \sigma\varepsilon$, with floor $E_0 =$ <span data-num="fig-study:model:floor">0.23</span>, curvature $c =$ <span data-num="fig-study:model:curvature">0.06</span>, cap $E_{\max} =$ <span data-num="fig-study:model:cap">0.8</span> and trial noise $\sigma =$ <span data-num="fig-study:model:sigma">0.001</span>. The best weight decay is <span data-num="fig-study:model:wd-star">3.2 &times; 10⁻⁵</span>. Each trial's training curve in (c) is drawn from the curve family of <a href="#fig-checkpoint" class="figref"></a> and shifted so that its best checkpoint equals the trial's result.</p>
+          <p>Each trial's best validation error comes from a smooth bowl in $u = \log_{10}\eta$ whose center depends on the weight decay $v = \log_{10}\lambda$, $E(u, v) = \min\{E_{\max},\ E_0 + c\,(u - x^\star(v))^2 + \mathrm{pen}(v)\} + \sigma\varepsilon$, with floor $E_0 =$ <span data-num="fig-study:model:floor">0.23</span>, curvature $c =$ <span data-num="fig-study:model:curvature">0.06</span>, cap $E_{\max} =$ <span data-num="fig-study:model:cap">0.8</span> and trial noise $\sigma =$ <span data-num="fig-study:model:sigma">0.001</span>. The best weight decay is <span data-num="fig-study:model:wd-star">3.2 &times; 10⁻⁵</span>. Each trial's training curve in (c) is drawn from the curve family of <a href="#fig-checkpoint" class="figref"> data-static-figref="1">Figure 2</a> and shifted so that its best checkpoint equals the trial's result.</p>
         </details>
       </figure>
 
       <section class="prose" id="studies-notes">
         <p>
-          In <a href="#fig-study" class="figref"></a> the best trial sits comfortably inside the learning-rate range, which is what we hope to see. Switching panel (b) to weight decay gives a less tidy picture. The points spread up and down because each trial also had its own learning rate, so a trial with a good weight decay can still score badly if its learning rate was far off. On a projection like this, the informative feature is the lower edge of the cloud, which traces the best score reached at each weight decay.
+          In <a href="#fig-study" class="figref"> data-static-figref="1">Figure 3</a> the best trial sits comfortably inside the learning-rate range, which is what we hope to see. Switching panel (b) to weight decay gives a less tidy picture. The points spread up and down because each trial also had its own learning rate, so a trial with a good weight decay can still score badly if its learning rate was far off. On a projection like this, the informative feature is the lower edge of the cloud, which traces the best score reached at each weight decay.
         </p>
         <p>
           That vertical spread is a hint of the next problem, because it shows that a hyperparameter we are not studying can still decide how good an option looks.
@@ -237,7 +240,7 @@
           Let's take a concrete round. Our model has four hidden layers, and we want to know whether six would reduce validation error. The quickest experiment keeps everything else from the current configuration, including the learning rate we tuned for four layers, changes the depth, and runs once.
         </p>
         <p>
-          The trouble is that the best learning rate generally depends on the architecture, so the value that suited four layers need not suit six. Running the six-layer model at the four-layer model's learning rate tests the new model at a setting tuned for the old one, and <a href="#fig-slice" class="figref"></a> shows how that can mislead us.
+          The trouble is that the best learning rate generally depends on the architecture, so the value that suited four layers need not suit six. Running the six-layer model at the four-layer model's learning rate tests the new model at a setting tuned for the old one, and <a href="#fig-slice" class="figref"> data-static-figref="1">Figure 4</a> shows how that can mislead us.
         </p>
       </section>
 
@@ -246,7 +249,7 @@
               data-playbook-src="566-572"
               data-playbook-caption="The Playbook's own example of this comparison:">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 4</span>
           <span class="fig-title" id="fig-slice-title">A fixed learning rate can reverse a comparison</span>
           <span class="chip toy">Interactive toy</span>
         </figcaption>
@@ -291,7 +294,7 @@
         </p>
         <details class="math-aside">
           <summary>How much a fixed learning rate distorts the comparison</summary>
-          <p>Suppose each option's validation error is a parabola in $x = \log_{10}\eta$ centered on its own best learning rate $x^\star(h_{\text{sci}})$, as in <a href="#fig-slice" class="figref"></a>:</p>
+          <p>Suppose each option's validation error is a parabola in $x = \log_{10}\eta$ centered on its own best learning rate $x^\star(h_{\text{sci}})$, as in <a href="#fig-slice" class="figref"> data-static-figref="1">Figure 4</a>:</p>
           $$L(h_{\text{sci}}, x) = L^\star(h_{\text{sci}}) + c\,\big(x - x^\star(h_{\text{sci}})\big)^2.$$
           <p>At a fixed learning rate $x_0$, option A scores $L^\star(A) + c\,(x_0 - x^\star_A)^2$ and option B scores $L^\star(B) + c\,(x_0 - x^\star_B)^2$. The fixed comparison therefore charges each option a penalty that grows with the square of its distance from $x_0$. If we fix $x_0$ at the old model's best learning rate, the old model pays nothing while the new model pays $c\,(x^\star_A - x^\star_B)^2$. In the toy that penalty is $0.05 \times 0.8^2 = 0.032$, which is larger than the true advantage of $0.015$, and so the ranking reverses.</p>
           <p>A statistician would recognize the curve $L^\star(h_{\text{sci}})$, a minimum over the nuisance parameters at each value of the parameter of interest, as a profile, the same construction that underlies the profile likelihood. The Playbook doesn't use the word, but its "optimizing away" is exactly this operation.</p>
@@ -310,7 +313,7 @@
           <li><strong>Architecture</strong> choices such as the number of layers are usually scientific or fixed because, as the Playbook notes, they tend to have large effects on training speed and memory use.</li>
         </ul>
         <p>
-          <a href="#fig-roles" class="figref"></a> applies these rules to three goals, using the Playbook's own examples. Pick a goal and press a hyperparameter to read why it takes its role, or switch to "Test yourself" and try assigning the roles first.
+          <a href="#fig-roles" class="figref"> data-static-figref="1">Figure 5</a> applies these rules to three goals, using the Playbook's own examples. Pick a goal and press a hyperparameter to read why it takes its role, or switch to "Test yourself" and try assigning the roles first.
         </p>
       </section>
 
@@ -320,7 +323,7 @@
               data-playbook-src="546-560"
               data-playbook-caption="The Playbook's definitions of the three roles:">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 5</span>
           <span class="fig-title" id="fig-roles-title">The same hyperparameters under three goals</span>
           <span class="chip">Exercise</span>
         </figcaption>
@@ -333,7 +336,7 @@
 
       <section class="prose" id="conditional">
         <p>
-          The third goal in <a href="#fig-roles" class="figref"></a> raises one more complication, because each optimizer brings its own settings. Nesterov momentum adds a momentum coefficient, while Adam adds $\beta_1$, $\beta_2$ and $\epsilon$. Hyperparameters like these, which exist only for some values of the scientific hyperparameters, are what the Playbook calls <dfn data-concept="conditional-hp">conditional hyperparameters</dfn>. Both optimizers do have a learning rate, but the authors warn against treating the two as a single hyperparameter, because the ranges that work well for each typically differ by several orders of magnitude. Each optimizer's study therefore gets its own learning-rate search.
+          The third goal in <a href="#fig-roles" class="figref"> data-static-figref="1">Figure 5</a> raises one more complication, because each optimizer brings its own settings. Nesterov momentum adds a momentum coefficient, while Adam adds $\beta_1$, $\beta_2$ and $\epsilon$. Hyperparameters like these, which exist only for some values of the scientific hyperparameters, are what the Playbook calls <dfn data-concept="conditional-hp">conditional hyperparameters</dfn>. Both optimizers do have a learning rate, but the authors warn against treating the two as a single hyperparameter, because the ranges that work well for each typically differ by several orders of magnitude. Each optimizer's study therefore gets its own learning-rate search.
         </p>
         <p>
           Every nuisance hyperparameter we tune consumes trials, however, and the number of trials in a round is set by the compute we have.
@@ -357,13 +360,13 @@
           $$K = \frac{K_{\text{total}}}{M}, \qquad \rho = \frac{K}{W}.$$
         </div>
         <p>
-          With 16 trials over 3 decades, each study samples about 5.3 trials per decade. Whether that is enough depends on how the range lines up with each option's learning-rate valley, and <a href="#fig-range-sketch" class="figref"></a> sketches what goes wrong when the range is too narrow or too wide for one value's curve.
+          With 16 trials over 3 decades, each study samples about 5.3 trials per decade. Whether that is enough depends on how the range lines up with each option's learning-rate valley, and <a href="#fig-range-sketch" class="figref"> data-static-figref="1">Figure 6</a> sketches what goes wrong when the range is too narrow or too wide for one value's curve.
         </p>
       </section>
 
       <figure class="schematic" id="fig-range-sketch" role="group" aria-labelledby="fig-range-sketch-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 6</span>
           <span class="fig-title" id="fig-range-sketch-title">Five trials, three search ranges</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -434,10 +437,10 @@
           <summary>How far above the floor a sparse study's best trial sits</summary>
           <p>If $K$ trials are spread roughly evenly over $W$ decades, neighboring trials are about $W/K$ apart, so the trial nearest the best learning rate can be up to half of that away. Near its floor the curve is a parabola with curvature $c$, which means the best trial can sit as much as</p>
           $$\Delta L_{\max} \approx c\left(\frac{W}{2K}\right)^{2}$$
-          <p>above the floor. In the toy of <a href="#fig-spread" class="figref"></a>, $c = 2.4$ per squared decade and $K = 16$. At $W = 1.375$ decades the bound is 0.004, while at $W = 5$ decades it is 0.059, ten times the 0.006 margin between the best option and the runner-up. Because the excess shrinks with the square of the density, doubling the trials per decade cuts it by a factor of four.</p>
+          <p>above the floor. In the toy of <a href="#fig-spread" class="figref"> data-static-figref="1">Figure 7</a>, $c = 2.4$ per squared decade and $K = 16$. At $W = 1.375$ decades the bound is 0.004, while at $W = 5$ decades it is 0.059, ten times the 0.006 margin between the best option and the runner-up. Because the excess shrinks with the square of the density, doubling the trials per decade cuts it by a factor of four.</p>
         </details>
         <p>
-          To see how often these failures actually change the answer, <a href="#fig-spread" class="figref"></a> repeats a whole design many times. The toy has three options for a scientific hyperparameter, each with its own learning-rate valley, and option 2 is truly best by a margin of six times the trial-to-trial noise. For each range width, the figure reruns the design <span data-num="fig-spread:model:repeats">200</span> times and records how often it picks option 2.
+          To see how often these failures actually change the answer, <a href="#fig-spread" class="figref"> data-static-figref="1">Figure 7</a> repeats a whole design many times. The toy has three options for a scientific hyperparameter, each with its own learning-rate valley, and option 2 is truly best by a margin of six times the trial-to-trial noise. For each range width, the figure reruns the design <span data-num="fig-spread:model:repeats">200</span> times and records how often it picks option 2.
         </p>
       </section>
 
@@ -447,7 +450,7 @@
               data-playbook-src="753-798"
               data-playbook-caption="The Playbook has no figure for this trade-off. Its statement of it:">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 7</span>
           <span class="fig-title" id="fig-spread-title">How the search range decides which option wins</span>
           <span class="chip toy">Interactive toy</span>
         </figcaption>
@@ -548,11 +551,11 @@
 
       <section class="refs" id="references">
         <h2>References</h2>
-        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023)</cite>. Optimizer comparisons that depend on the tuning protocol are studied by <cite data-ref="choi2019">Choi et al. (2019)</cite>.</p>
-        <ol id="reflist"></ol>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023) <span class="cit-num"><a href="#ref-playbook">[2]</a></span></cite>. Optimizer comparisons that depend on the tuning protocol are studied by <cite data-ref="choi2019">Choi et al. (2019) <span class="cit-num"><a href="#ref-choi2019">[1]</a></span></cite>.</p>
+        <ol id="reflist"><li id="ref-choi2019">Dami Choi, Christopher J. Shallue, Zachary Nado, Jaehoon Lee, Chris J. Maddison, George E. Dahl (2019). <a href="https://arxiv.org/abs/1910.05446" target="_blank" rel="noopener">On Empirical Comparisons of Optimizers for Deep Learning</a>. arXiv:1910.05446.</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li></ol>
       </section>
 
-      <nav class="pager" aria-label="Post navigation"></nav>
+      <nav class="pager" aria-label="Post navigation"><a class="prev" href="../index.html"><small>&larr; Previous Post</small>Notes on the Deep Learning Tuning Playbook</a><a class="next" href="../pages/02-starting-a-project.html"><small>Next Post &rarr;</small>Starting a new project</a></nav>
     </article>
   </main>
 
@@ -560,23 +563,25 @@
     By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
-  <script src="../js/vendor/d3.v7.min.js"></script>
-  <script src="../js/vendor/katex/katex.min.js"></script>
-  <script src="../js/vendor/katex/auto-render.min.js"></script>
-  <script src="../js/lib/format.js"></script>
-  <script src="../js/lib/prng.js"></script>
+  <script src="../../../assets/vendor/d3.v7.min.js"></script>
+  <script src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script src="../../../assets/vendor/katex/auto-render.min.js"></script>
+  <script src="../../../assets/blog/js/core/format.js"></script>
+  <script src="../../../assets/blog/js/core/prng.js"></script>
   <script src="../js/lib/halton.js"></script>
   <script src="../js/lib/toyS.js"></script>
   <script src="../js/lib/curves.js"></script>
   <script src="../js/lib/desiderata.js"></script>
   <script src="../js/lib/roles.js"></script>
-  <script src="../js/lib/placer.js"></script>
+  <script src="../../../assets/blog/js/core/placer.js"></script>
+  <script src="../js/data/config.js"></script>
   <script src="../js/refs.js"></script>
   <script src="../js/concepts.js"></script>
-  <script src="../js/site.js"></script>
-  <script src="../js/components/playbook-map.js"></script>
-  <script src="../js/chart.js"></script>
-  <script src="../js/runtime.js"></script>
+  <script src="../../../assets/blog/js/article.js"></script>
+  <script src="../js/data/flowmap-data.js"></script>
+  <script src="../../../assets/blog/js/flowmap.js"></script>
+  <script src="../../../assets/blog/js/core/chart.js"></script>
+  <script src="../../../assets/blog/js/core/runtime.js"></script>
   <script src="../js/figures/f1-1-checkpoint.js"></script>
   <script src="../js/figures/f1-2-study.js"></script>
   <script src="../js/figures/p01-slice.js"></script>

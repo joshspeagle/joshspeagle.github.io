@@ -6,17 +6,20 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>How long to train · Notes on the Deep Learning Tuning Playbook</title>
   <meta name="description" content="Notes on the Tuning Playbook's advice for choosing max_train_steps: compute-bound versus not compute-bound workloads, a learning-rate sweep for the first budget, reading where the best checkpoints fall, learning-rate schedules, and tuning in rounds of increasing length.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232563eb'/%3E%3Cpath d='M7 22 C12 22 14 10 19 10 C22 10 23 15 25 15' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='10' r='2.6' fill='%23d97706'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="../css/site.css">
-  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+  <script data-theme-boot>(function(){try{var t=localStorage.getItem('preferred-theme')||'dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="../../../assets/css/fonts.css">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/editorial.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/diagram-map.css">
   <link rel="stylesheet" href="../css/figures/fig-sweep.css">
   <link rel="stylesheet" href="../css/figures/fig-budget-line.css">
   <link rel="stylesheet" href="../css/figures/fig-extend.css">
   <link rel="stylesheet" href="../css/pages/07-training-horizon.css">
 </head>
 <body data-page="pages/07-training-horizon.html" data-root="../">
-  <header class="site-header"></header>
+  <header class="site-header"><a class="skip" href="#main">Skip to content</a><div class="header-brand-group"><a class="brand-crumb brand-home" href="../../../index.html">Josh Speagle</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand-crumb brand-writing" href="../../../writing.html">Writing</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand" href="../index.html"><span class="brand-series">DL Tuning Playbook</span></a><span class="where">Part 7 of 9</span></div><nav aria-label="Series navigation" id="site-nav" class="site-nav"><a class="btn small" href="../index.html">Contents</a><a class="btn small" href="../pages/reference.html">Reference</a></nav></header>
 
   <main id="main" class="page">
     <header class="post-header">
@@ -45,7 +48,7 @@
 
       <figure class="schematic" id="fig-regimes" role="group" aria-labelledby="fig-regimes-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 1</span>
           <span class="fig-title" id="fig-regimes-title">Two ways a run can end</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -141,7 +144,7 @@
               data-playbook-quote="Run a constant learning rate sweep (i.e. grid search the learning rate) without data augmentation and without regularization where each trial trains for N steps. The number of steps required for the fastest trial in the sweep to reach perfect training performance is our initial guess for max_train_steps. ... At a minimum, we should check that the optimal learning rate in the study is not at the boundary of the search space."
               data-playbook-src="1228-1251">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 2</span>
           <span class="fig-title" id="fig-sweep-title">A learning-rate sweep sets the first step budget</span>
           <span class="chip toy">Interactive toy model</span>
         </figcaption>
@@ -179,7 +182,7 @@
               data-playbook-quote="Never tune the max_train_steps number in a study. Pick a value and use it for all trials. From these trials, plot the training step that retrospective checkpoint selection finds in order to refine the choice of max_train_steps. For example, if the best step is always during the first 10% of training, then the maximum number of steps is way too high. Alternatively, if the best step is consistently in the last 25% of training we might benefit from training longer and re-tuning the decay schedule."
               data-playbook-src="1194-1202">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 3</span>
           <span class="fig-title" id="fig-budget-line-title">Where the best checkpoints fall at different budgets</span>
           <span class="chip toy">Interactive toy model</span>
         </figcaption>
@@ -217,7 +220,7 @@
 
       <figure class="schematic" id="fig-schedule-families" role="group" aria-labelledby="fig-schedule-families-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 4</span>
           <span class="fig-title" id="fig-schedule-families-title">Four common learning-rate schedules</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -304,7 +307,7 @@
 
       <figure class="schematic" id="fig-rounds" role="group" aria-labelledby="fig-rounds-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 5</span>
           <span class="fig-title" id="fig-rounds-title">Many short trials, then a few long ones</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -347,7 +350,7 @@
 
       <figure class="schematic" id="fig-transfer" role="group" aria-labelledby="fig-transfer-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 6</span>
           <span class="fig-title" id="fig-transfer-title">What a short run can decide for a long one</span>
           <span class="chip">The Playbook's ranking</span>
         </figcaption>
@@ -363,7 +366,7 @@
       </figure>
 
       <section class="prose" id="short-horizon">
-        <p data-src="1323-1335">The schedule sits at the bottom of the ranking, and here the Playbook points to <cite data-ref="wu2018">Wu et al. (2018)</cite> on "the dangers of trying to pick learning rates myopically." Wu et al. called this effect <em>short-horizon bias</em>, showing that when the learning rate or its decay is chosen by how well a run does after a small number of steps, the choice is biased toward step sizes that are too small. They show that the bias requires two ingredients, noisy gradients and a loss surface whose curvature differs a lot between directions, and most network training has both. The size of the effect can be large. In one of their experiments, a two-layer network on MNIST, the decay exponent tuned for a 100-step horizon and the one tuned for a 20,000-step horizon differed by more than two orders of magnitude.</p>
+        <p data-src="1323-1335">The schedule sits at the bottom of the ranking, and here the Playbook points to <cite data-ref="wu2018">Wu et al. (2018) <span class="cit-num"><a href="#ref-wu2018">[4]</a></span></cite> on "the dangers of trying to pick learning rates myopically." Wu et al. called this effect <em>short-horizon bias</em>, showing that when the learning rate or its decay is chosen by how well a run does after a small number of steps, the choice is biased toward step sizes that are too small. They show that the bias requires two ingredients, noisy gradients and a loss surface whose curvature differs a lot between directions, and most network training has both. The size of the effect can be large. In one of their experiments, a two-layer network on MNIST, the decay exponent tuned for a 100-step horizon and the one tuned for a 20,000-step horizon differed by more than two orders of magnitude.</p>
 
         <details class="math-aside">
           <summary>Why short runs favor small learning rates, in one dimension</summary>
@@ -395,7 +398,7 @@
               data-playbook-quote="One common pitfall when adjusting learning rate schedules between rounds is using all the extra training steps with too small of a learning rate. ... (Speculation) Use the extra steps to extend the period of training at a high learning rate. E.g. if linear schedule then keep the length of the decay fixed from Round 1 and extend the period of constant lr in the beginning. For cosine decay, just keep the base lr from Round 1 and extend max_train_steps as in Chinchilla paper."
               data-playbook-src="1285-1352">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 7</span>
           <span class="fig-title" id="fig-extend-title">Where Round 2 spends its extra steps</span>
           <span class="chip">Interactive, closed-form schedules</span>
         </figcaption>
@@ -409,11 +412,11 @@
       <section class="prose" id="extend-more">
         <p>As we drag Round 2 longer, the pitfall's share climbs toward 100%, because every added step runs at Round 1's final rate. The linear extension moves the other way, since its decay keeps a fixed length while the run grows around it. The stretched cosine sits in between and always spends half of Round 2 below half the base rate, because stretching preserves its shape.</p>
 
-        <p data-src="1325-1352">The cosine advice leans on the Chinchilla paper <cite data-ref="hoffmann2022"></cite>, which the Playbook elsewhere also reads as suggesting that even decay schedules transfer, a claim the authors doubt. What Hoffmann et al. actually did was match each cosine cycle to the length of its run, and they found that cycles more than about 25% longer than the run clearly hurt. That supports matching the cosine length to the run length. They did not, however, tune a schedule at one length and test it at another, so the Playbook's doubt about transfer still stands.</p>
+        <p data-src="1325-1352">The cosine advice leans on the Chinchilla paper <cite data-ref="hoffmann2022"><span class="cit-num"><a href="#ref-hoffmann2022">[2]</a></span></cite>, which the Playbook elsewhere also reads as suggesting that even decay schedules transfer, a claim the authors doubt. What Hoffmann et al. actually did was match each cosine cycle to the length of its run, and they found that cycles more than about 25% longer than the run clearly hurt. That supports matching the cosine length to the run length. They did not, however, tune a schedule at one length and test it at another, so the Playbook's doubt about transfer still stands.</p>
 
         <aside class="callout insight">
           <div class="callout-head">Since the Playbook</div>
-          <p>More recent work on language-model pretraining has tested this constant-then-decay shape directly. <cite data-ref="hagele2024">Hägele et al. (2024)</cite> found that a constant rate followed by a cooldown over the final 10 to 20% of steps performed about as well as a well-tuned cosine schedule, and that a longer run could resume from a checkpoint saved before the cooldown instead of starting over. That supports the direction of the Playbook's speculation, although the two disagree on the length of the decay, with the Playbook keeping Round 1's decay length in steps while Hägele et al. keep the cooldown a fixed fraction of the run. For long runs they found that a smaller fraction can work, as long as the cooldown still spans enough steps. They also found the best constant rate to be about half the best cosine peak, which means a base rate tuned for one family does not carry over to another. Their experiments used decoder-only language models from 33M to 8B parameters.</p>
+          <p>More recent work on language-model pretraining has tested this constant-then-decay shape directly. <cite data-ref="hagele2024">Hägele et al. (2024) <span class="cit-num"><a href="#ref-hagele2024">[3]</a></span></cite> found that a constant rate followed by a cooldown over the final 10 to 20% of steps performed about as well as a well-tuned cosine schedule, and that a longer run could resume from a checkpoint saved before the cooldown instead of starting over. That supports the direction of the Playbook's speculation, although the two disagree on the length of the decay, with the Playbook keeping Round 1's decay length in steps while Hägele et al. keep the cooldown a fixed fraction of the run. For long runs they found that a smaller fraction can work, as long as the cooldown still spans enough steps. They also found the best constant rate to be about half the best cosine peak, which means a base rate tuned for one family does not carry over to another. Their experiments used decoder-only language models from 33M to 8B parameters.</p>
         </aside>
 
         <p data-src="1353-1362">Finally, nothing limits us to two rounds. More can make sense for teams with mature pipelines and very expensive production runs, though the Playbook notes they will often be overkill. In the limit where analysis time did not matter and compute efficiency were the overriding concern, the authors' ideal would be to increase run length exponentially over many rounds, with each round checking that earlier choices still hold and each new idea passing through progressively longer, de-risking experiments.</p>
@@ -465,11 +468,11 @@
 
       <section class="refs" id="references">
         <h2>References</h2>
-        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023)</cite>.</p>
-        <ol id="reflist"></ol>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023) <span class="cit-num"><a href="#ref-playbook">[1]</a></span></cite>.</p>
+        <ol id="reflist"><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li><li id="ref-hoffmann2022">Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza Rutherford, et al. (2022). <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener">Training Compute-Optimal Large Language Models</a>. Advances in Neural Information Processing Systems 35 (NeurIPS 2022).</li><li id="ref-hagele2024">Alexander Hägele, Elie Bakouch, Atli Kosson, Loubna Ben Allal, Leandro Von Werra, Martin Jaggi (2024). <a href="https://arxiv.org/abs/2405.18392" target="_blank" rel="noopener">Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations</a>. Advances in Neural Information Processing Systems 37 (NeurIPS 2024).</li><li id="ref-wu2018">Yuhuai Wu, Mengye Ren, Renjie Liao, Roger B. Grosse (2018). <a href="https://arxiv.org/abs/1803.02021" target="_blank" rel="noopener">Understanding Short-Horizon Bias in Stochastic Meta-Optimization</a>. International Conference on Learning Representations (ICLR 2018).</li></ol>
       </section>
 
-      <nav class="pager" aria-label="Post navigation"></nav>
+      <nav class="pager" aria-label="Post navigation"><a class="prev" href="../pages/06-adopting-a-change.html"><small>&larr; Previous Post</small>Deciding whether to adopt a change</a><a class="next" href="../pages/08-training-instabilities.html"><small>Next Post &rarr;</small>Finding and fixing training instabilities</a></nav>
     </article>
   </main>
 
@@ -477,23 +480,25 @@
     By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
-  <script src="../js/vendor/d3.v7.min.js"></script>
-  <script src="../js/vendor/katex/katex.min.js"></script>
-  <script src="../js/vendor/katex/auto-render.min.js"></script>
-  <script src="../js/lib/format.js"></script>
-  <script src="../js/lib/prng.js"></script>
+  <script src="../../../assets/vendor/d3.v7.min.js"></script>
+  <script src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script src="../../../assets/vendor/katex/auto-render.min.js"></script>
+  <script src="../../../assets/blog/js/core/format.js"></script>
+  <script src="../../../assets/blog/js/core/prng.js"></script>
   <script src="../js/lib/curves.js"></script>
   <script src="../js/lib/toyS.js"></script>
   <script src="../js/lib/toyD.js"></script>
   <script src="../js/lib/schedules.js"></script>
   <script src="../js/lib/budget.js"></script>
-  <script src="../js/lib/placer.js"></script>
+  <script src="../../../assets/blog/js/core/placer.js"></script>
+  <script src="../js/data/config.js"></script>
   <script src="../js/refs.js"></script>
   <script src="../js/concepts.js"></script>
-  <script src="../js/site.js"></script>
-  <script src="../js/components/playbook-map.js"></script>
-  <script src="../js/chart.js"></script>
-  <script src="../js/runtime.js"></script>
+  <script src="../../../assets/blog/js/article.js"></script>
+  <script src="../js/data/flowmap-data.js"></script>
+  <script src="../../../assets/blog/js/flowmap.js"></script>
+  <script src="../../../assets/blog/js/core/chart.js"></script>
+  <script src="../../../assets/blog/js/core/runtime.js"></script>
   <script src="../js/figures/f8-1-sweep.js"></script>
   <script src="../js/figures/f8-2-budget-line.js"></script>
   <script src="../js/figures/f8-3-extend.js"></script>

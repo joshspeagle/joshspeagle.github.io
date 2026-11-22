@@ -7,18 +7,16 @@
 .index-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 1.3rem auto 0.4rem; }
 .index-btn {
   display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px;
-  border-radius: 6px; border: 1px solid var(--border-2); background: var(--surface);
+  border-radius: var(--radius); border: 1px solid var(--border-2); background: var(--surface);
   font-size: 0.95rem; font-weight: 600; color: var(--ink); text-decoration: none;
 }
 .index-btn:hover { border-color: var(--model); color: var(--ink); }
 .index-btn.is-primary { background: var(--model); border-color: var(--model); color: #fff; }
 .index-btn.is-primary:hover { background: var(--model-label); color: #fff; }
+:root:not([data-theme="light"]) .index-btn.is-primary,
+:root:not([data-theme="light"]) .index-btn.is-primary:hover,
 :root[data-theme="dark"] .index-btn.is-primary,
 :root[data-theme="dark"] .index-btn.is-primary:hover { color: #06101f; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .index-btn.is-primary,
-  :root:not([data-theme="light"]) .index-btn.is-primary:hover { color: #06101f; }
-}
 .index-btn:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 
 /* ---------- where each kind of material comes from ---------- */

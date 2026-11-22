@@ -1,273 +1,136 @@
-/* Tuning Playbook, illustrated: the shared stylesheet of version 2.
+/* Shared editorial blog stylesheet for long-form essays and interactive series.
 
-   It carries out notes/revamp/design-system.md (DS): the tokens of DS 2, the type and layout of
-   DS 3, the mark weights and dashes of DS 4, focus, targets and reduced motion of DS 6.8 and
-   10.1, the classes of DS 11.8 and the page components of DS 13. Contrast ratios quoted below
-   are DS 2's, measured by notes/revamp/design_tokens.py against the surface a mark sits on.
+   Defines base typography, two-theme tokens (dark default inheriting from tokens.css,
+   light override under [data-theme="light"]), print light-theme tokens, responsive grid
+   breakout layout, interactive figure frames, docks, sliders, callouts, sidenotes,
+   practice checklists, and concept popovers.
 
-   Every colour is a custom property of section 1, so a theme change needs no redraw (DS 2.3
-   rule 7). No rule sets opacity: alpha is for density, never for emphasis (DS 2.3 rule 5), and
-   C.dots sets the one alpha a figure may carry. No rule animates or transitions (DS 9 rule 5).
+   Per-figure layout overrides live alongside the series in figure-specific stylesheets
+   scoped to #<figure-id>. */
 
-   A figure's own layout rules live in site/css/figures/<element id>.css, one file per figure,
-   linked by its page after this file and holding only rules scoped to #<element id>.
+/* ---------- 1. Tokens (Inherits dark-first root tokens.css; light under [data-theme="light"]) ---------- */
 
-   Sections: 1 tokens, 2 role classes, 3 base, 4 header, pager and footer, 5 page grid,
-   6 opening, glosses and pointers, 7 margin notes, callouts, sources and citations, 8 the figure
-   card and its anatomy, 9 controls, 10 the dock and the run strip, 11 panels, handles and
-   reading, 12 marks and text inside SVG, 13 self-checks, rule prompts and worked examples,
-   14 retrieval, "What to do" and the performance task, 15 contents and reference pages,
-   16 responsive, 17 print and motion. */
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  /* Core surfaces & typography mapped to joshspeagle.com tokens.css */
+  --bg: var(--bg-0, #060912);
+  --surface: var(--chip, #101835);
+  --surface-2: var(--bg-1, #0a1022);
+  --ink: var(--text, #eef1fb);
+  --ink-2: var(--text-2, #b4bddc);
+  --ink-3: var(--text-3, #8c99c4);
+  --grid: #1b2547;
+  --axis: #283663;
+  --border: rgba(255, 255, 255, 0.09);
+  --border-2: rgba(255, 255, 255, 0.18);
+  --shadow: 0 10px 28px rgba(2, 5, 14, 0.55);
+  --shadow-card: 0 14px 34px -10px rgba(0, 0, 0, 0.48);
 
-/* ---------- 0. Self-Hosted Fonts (Inter, Source Serif 4, JetBrains Mono) ---------- */
-
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 300;
-  font-display: swap;
-  src: url('../fonts/inter-300-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/inter-400-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('../fonts/inter-500-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('../fonts/inter-600-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('../fonts/inter-700-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Inter';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/inter-400-italic.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Source Serif 4';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/source-serif-4-400-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Source Serif 4';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('../fonts/source-serif-4-600-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Source Serif 4';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('../fonts/source-serif-4-700-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'Source Serif 4';
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/source-serif-4-400-italic.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('../fonts/jetbrains-mono-400-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('../fonts/jetbrains-mono-500-normal.woff2') format('woff2');
-}
-@font-face {
-  font-family: 'JetBrains Mono';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('../fonts/jetbrains-mono-700-normal.woff2') format('woff2');
-}
-
-/* ---------- 1. Tokens (joshspeagle.com Archival Paper & Night-Sky Navy System) ---------- */
-
-:root {
-  color-scheme: light;
-  /* surfaces and text (Warm Archival Paper light theme from joshspeagle.com) */
-  --bg: #f7f5ef;
-  --surface: #fffefb;
-  --surface-2: #efede5;
-  --ink: #141821;
-  --ink-2: #3f4859;
-  --ink-3: #616b7d;
-  --grid: #e2ddd1;
-  --axis: #c5bcab;
-  --border: #dcd6c8;
-  --border-2: #c5bcab;
-  --copper-rgb: 168 113 74;
-  --energy: #c2410c;
-  --energy-rgb: 194 65 12;
-  --energy-text: #9a3412;
-  --shadow: 0 6px 20px rgba(20, 24, 33, 0.06), 0 1px 3px rgba(20, 24, 33, 0.05);
-  --shadow-card: 0 4px 14px rgba(20, 24, 33, 0.05), 0 1px 2px rgba(20, 24, 33, 0.04);
-  /* semantic roles of figure marks: mark tone, label tone, tint and trail tone */
-  --model: #0b6bcb;   --model-label: #0856a6;   --model-tint: #dcebfb;   --model-trail: #3b8ee0;
-  --model-q0: #00396e;  --model-q1: #005096;  --model-q2: #0061b4;  --model-q3: #006fcd;
-  --model-q4: #007be2;  --model-q5: #0786f4;  --model-q6: #1e90ff;
-  --data: #b82820;    --data-label: #9e1f18;    --data-tint: #ffe1dd;
-  --third: #b86e00;   --third-label: #8f5400;   --third-tint: #fce8c5;   --third-trail: #cc8418;
-  --fourth: #6b2fb5;  --fourth-label: #58229c;  --fourth-tint: #ede3ff;  --fourth-trail: #854ec9;
-  --fifth: #2b7a62;   --fifth-label: #21634f;
-  --context: #6b7280;
+  /* Semantic roles for figures and diagrams (--energy stays UI-only) */
+  --model: #6eb1ff;   --model-label: #82bcff;   --model-tint: #132a52;   --model-trail: #60a3f0;
+  --model-q0: #c0ddff;  --model-q1: #b5d6ff;  --model-q2: #a9d0ff;  --model-q3: #9cc9ff;
+  --model-q4: #8ec2ff;  --model-q5: #7fbaff;  --model-q6: #6eb1ff;
+  --data: #f06860;    --data-label: #f47b74;    --data-tint: #4a1215;
+  --third: #f0d050;   --third-label: #f4da6e;   --third-tint: #352b00;   --third-trail: #dfc03f;
+  --fourth: #a678f0;  --fourth-label: #b892f7;  --fourth-tint: #2c1654;  --fourth-trail: #834dc3;
+  --fifth: #7cd4b8;   --fifth-label: #7cd4b8;
+  --context: #8b95b3;
   --ref: var(--ink);
-  --reader: #006368;  --reader-wash: #dff0ef;
-  --hi: var(--ink);   --hi-tint: #f3f0e6;
-  --link: #0b5cab;
+  --reader: #2bb8b6;  --reader-wash: #122e33;
+  --hi: var(--ink);   --hi-tint: #162042;
+  --link: #78b8ff;
   --focus: var(--reader);
-  --paper: #fffefb;
+  --paper: #101835;
   --c: var(--context);  --cl: var(--ink);  --ct: var(--surface-2);  --ctr: var(--context);
-  /* type inside figures — sized for comfortable desktop and mobile reading */
+
+  /* Typography & geometry */
   --fs-label: 14px;   --fs-tick: 13px;   --fs-head: 14px;
   --header-h: 58px;
   --dock-h: 0px;
-  /* angular technical geometry */
   --radius: 3px;
   --radius-sm: 2px;
   --text-col: 680px;
   --side-col: 230px;
   --col-gap: 32px;
-  --font: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-serif: 'Source Serif 4', Georgia, Cambria, serif;
-  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font: var(--font-sans);
+  --mono: var(--font-mono);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: var(--bg-0, #f7f5ef);
+  --surface: #fffefb;
+  --surface-2: var(--bg-1, #efede5);
+  --ink: var(--text, #14161d);
+  --ink-2: var(--text-2, #424550);
+  --ink-3: var(--text-3, #65635c);
+  --grid: #e2ddd1;
+  --axis: #c5bcab;
+  --border: #dcd6c8;
+  --border-2: #c5bcab;
+  --shadow: 0 6px 20px rgba(20, 24, 33, 0.06), 0 1px 3px rgba(20, 24, 33, 0.05);
+  --shadow-card: 0 4px 14px rgba(20, 24, 33, 0.05), 0 1px 2px rgba(20, 24, 33, 0.04);
+
+  --model: #0b6bcb;   --model-label: #0856a6;   --model-tint: #dcebfb;   --model-trail: #3b8ee0;
+  --model-q0: #00396e;  --model-q1: #005096;  --model-q2: #0061b4;  --model-q3: #006fcd;
+  --model-q4: #007be2;  --model-q5: #0786f4;  --model-q6: #1e90ff;
+  --data: #b82820;    --data-label: #9e1f18;    --data-tint: #ffe1dd;
+  --third: #b56800;   --third-label: #7d4800;   --third-tint: #fce8c5;   --third-trail: #cc8418;
+  --fourth: #6b2fb5;  --fourth-label: #58229c;  --fourth-tint: #ede3ff;  --fourth-trail: #854ec9;
+  --fifth: #2b7a62;   --fifth-label: #21634f;
+  --context: #525866;
+  --reader: #006368;  --reader-wash: #dff0ef;
+  --hi-tint: #f3f0e6;
+  --link: #0b5cab;
+  --paper: #fffefb;
 }
 
 @media (max-width: 639px) {
   :root { --fs-label: 13px; --fs-tick: 12px; }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --bg: #060912;
-    --surface: #101835;
-    --surface-2: #0a1022;
-    --ink: #f4f1ea;
-    --ink-2: #b8bfd0;
-    --ink-3: #8690a8;
-    --grid: #1b2547;
-    --axis: #283663;
-    --border: #1e294d;
-    --border-2: #2b3a6b;
-    --copper-rgb: 184 128 94;
-    --energy: #f97316;
-    --energy-rgb: 249 115 22;
-    --energy-text: #fb923c;
-    --shadow: 0 10px 28px rgba(2, 5, 14, 0.55);
-    --shadow-card: 0 6px 18px rgba(2, 5, 14, 0.45);
-    --model: #6eb1ff;   --model-label: #82bcff;   --model-tint: #132a52;   --model-trail: #60a3f0;
-    --model-q0: #c0ddff;  --model-q1: #b5d6ff;  --model-q2: #a9d0ff;  --model-q3: #9cc9ff;
-    --model-q4: #8ec2ff;  --model-q5: #7fbaff;  --model-q6: #6eb1ff;
-    --data: #f06860;    --data-label: #f47b74;    --data-tint: #4a1215;
-    --third: #f6c047;   --third-label: #f6c047;   --third-tint: #372700;   --third-trail: #eab539;
-    --fourth: #a678f0;  --fourth-label: #b892f7;  --fourth-tint: #2c1654;  --fourth-trail: #834dc3;
-    --fifth: #7cd4b8;   --fifth-label: #7cd4b8;
-    --context: #6c7896;
-    --reader: #2bb8b6;  --reader-wash: #122e33;
-    --link: #78b8ff;
-    --hi-tint: #162042;
-  }
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #060912;
-  --surface: #101835;
-  --surface-2: #0a1022;
-  --ink: #f4f1ea;
-  --ink-2: #b8bfd0;
-  --ink-3: #8690a8;
-  --grid: #1b2547;
-  --axis: #283663;
-  --border: #1e294d;
-  --border-2: #2b3a6b;
-  --copper-rgb: 184 128 94;
-  --energy: #f97316;
-  --energy-rgb: 249 115 22;
-  --energy-text: #fb923c;
-  --shadow: 0 10px 28px rgba(2, 5, 14, 0.55);
-  --shadow-card: 0 6px 18px rgba(2, 5, 14, 0.45);
-  --model: #6eb1ff;   --model-label: #82bcff;   --model-tint: #132a52;   --model-trail: #60a3f0;
-  --model-q0: #c0ddff;  --model-q1: #b5d6ff;  --model-q2: #a9d0ff;  --model-q3: #9cc9ff;
-  --model-q4: #8ec2ff;  --model-q5: #7fbaff;  --model-q6: #6eb1ff;
-  --data: #f06860;    --data-label: #f47b74;    --data-tint: #4a1215;
-  --third: #f6c047;   --third-label: #f6c047;   --third-tint: #372700;   --third-trail: #eab539;
-  --fourth: #a678f0;  --fourth-label: #b892f7;  --fourth-tint: #2c1654;  --fourth-trail: #834dc3;
-  --fifth: #7cd4b8;   --fifth-label: #7cd4b8;
-  --context: #6c7896;
-  --reader: #2bb8b6;  --reader-wash: #122e33;
-  --link: #78b8ff;
-  --hi-tint: #162042;
-}
-
-/* Print uses the light tokens whatever the theme (DS 2.3 rule 8). The selectors have the dark
-   blocks' specificity and come after them, so they win in both dark cases. The block restates
-   the light value of every colour token, the unchanged base tokens included. */
 @media print {
-  :root:not([data-theme="light"]), :root[data-theme] {
+  :root, :root[data-theme="dark"], :root[data-theme="light"], :root[data-theme] {
     color-scheme: light;
     --bg: #f9f9f7;
     --surface: #fcfcfb;
     --surface-2: #f1f0ec;
     --ink: #0b0b0b;
-    --ink-2: #52514e;
-    --ink-3: #6a6862;
+    --ink-2: #424550;
+    --ink-3: #525866;
     --grid: #e1e0d9;
     --axis: #c3c2b7;
-    --border: rgba(11, 11, 11, 0.10);
+    --border: rgba(11, 11, 11, 0.14);
+    --border-2: #c5bcab;
+    --copper-rgb: 168 113 74;
+    --energy: #b86200;
+    --energy-rgb: 184 98 0;
+    --energy-ink: #0b0704;
+    --energy-text: #6b3a00;
     --shadow: 0 2px 8px rgba(11, 11, 11, 0.12);
-    --model: #1e90ff;   --model-label: #0075d8;   --model-tint: #d8e9ff;   --model-trail: #4ea1ff;
+    --shadow-card: none;
+    --model: #0b6bcb;   --model-label: #0856a6;   --model-tint: #d8e9ff;   --model-trail: #3b8ee0;
     --model-q0: #00396e;  --model-q1: #005096;  --model-q2: #0061b4;  --model-q3: #006fcd;
     --model-q4: #007be2;  --model-q5: #0786f4;  --model-q6: #1e90ff;
-    --data: #b22222;    --data-label: #b22222;    --data-tint: #ffe1dd;
-    --third: #bb8b00;   --third-label: #966e00;   --third-tint: #ffe5b1;   --third-trail: #cb9a25;
-    --fourth: #4b0082;  --fourth-label: #4b0082;  --fourth-tint: #ede3ff;  --fourth-trail: #733cb2;
-    --fifth: #508674;   --fifth-label: #497f6d;
-    --context: #9e9e9e;
+    --data: #b22222;    --data-label: #9e1f18;    --data-tint: #ffe1dd;
+    --third: #b56800;   --third-label: #7d4800;   --third-tint: #fce8c5;   --third-trail: #cc8418;
+    --fourth: #58229c;  --fourth-label: #4b0082;  --fourth-tint: #ede3ff;  --fourth-trail: #733cb2;
+    --fifth: #2b7a62;   --fifth-label: #21634f;
+    --context: #525866;
     --reader: #005a5e;  --reader-wash: #e3eceb;
     --hi-tint: #f6f6f3;
+    --link: #0b5cab;
     --paper: #fcfcfb;
   }
 }
 
-/* ---------- 2. Role classes (DS 2.3 rule 7) ---------- */
+/* ---------- 2. Role classes (design system rule 7) ---------- */
 /* A role class sets the four properties the mark classes of section 12 read: --c the mark tone,
-   --cl the label tone, --ct the tint and --ctr the trail tone. A role with no tint in DS 2.4 takes
+   --cl the label tone, --ct the tint and --ctr the trail tone. A role with no tint in design system takes
    the neutral --surface-2, and a role with no trail tone takes its mark tone, so no mark reads an
    undefined value. The fifth token has no binding yet. The figure that binds it solves its tint and
-   trail in design_tokens.py and adds them here (DS 2.4). */
+   trail in design_tokens.py and adds them here (design system). */
 .r-model   { --c: var(--model);   --cl: var(--model-label);  --ct: var(--model-tint);  --ctr: var(--model-trail); }
 .r-data    { --c: var(--data);    --cl: var(--data-label);   --ct: var(--data-tint);   --ctr: var(--data); }
 .r-third   { --c: var(--third);   --cl: var(--third-label);  --ct: var(--third-tint);  --ctr: var(--third-trail); }
@@ -298,7 +161,7 @@ body {
 }
 a { color: var(--link); text-decoration-thickness: 1px; text-underline-offset: 2px; }
 a:hover { text-decoration-thickness: 2px; }
-/* every focused element shows a 2-px ring offset 2 px outside it (DS 6.8) */
+/* every focused element shows a 2-px ring offset 2 px outside it (design system) */
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 h1, h2, h3, figure.fig, section { scroll-margin-top: 8px; }
 h1, h2, h3 { line-height: 1.25; font-weight: 600; letter-spacing: -0.01em; margin: 0; }
@@ -323,7 +186,7 @@ th { color: var(--ink-2); font-weight: 600; }
    container, and Firefox makes an overflowing scroll container a tab stop. */
 .katex-display { margin: calc(0.6em - 6px) 0; padding: 6px 0; overflow-x: auto; overflow-y: hidden; position: relative; }
 .katex { font-size: 1.05em; }
-/* a symbol whose control has hover or focus (DS 6.3): the reader wash behind it, text ink kept */
+/* a symbol whose control has hover or focus (design system): the reader wash behind it, text ink kept */
 .hp { border-radius: 3px; }
 .hp.on { background: var(--reader-wash); box-shadow: 0 0 0 2px var(--reader-wash); }
 var { font-style: italic; }
@@ -352,8 +215,8 @@ main:focus { outline: none; }
 .site-header .brand span { color: var(--ink-3); font-weight: 400; }
 .site-header .where { color: var(--ink-3); }
 .site-header nav { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-/* the header's buttons keep a 28-px box, so the header stays 45 px tall at 1440 px (DS 3.5), and
-   a ::before extends each target to 44 px inside the header's padding (DS 6.8) */
+/* the header's buttons keep a 28-px box, so the header stays 45 px tall at 1440 px (design system), and
+   a ::before extends each target to 44 px inside the header's padding (design system) */
 .site-header .btn { position: relative; }
 .pager {
   display: flex; justify-content: space-between; gap: 16px;
@@ -370,7 +233,7 @@ main:focus { outline: none; }
 }
 .site-footer a { color: inherit; }
 
-/* ---------- 5. Page grid (DS 3.2) ---------- */
+/* ---------- 5. Page grid (design system) ---------- */
 /* Prose, lists, callouts and one-panel figures take the text column (680 px). .l-wide takes the
    text and side columns (952 px), and .l-full stays available. Each section of main is a subgrid of
    the page grid, so that a figure inside a section can take .l-wide. section.task is a box and
@@ -405,13 +268,13 @@ main.page {
   position: relative;
 }
 
-/* ---------- 6. Opening, glosses and pointers (DS 13.2 to 13.4) ---------- */
+/* ---------- 6. Opening, glosses and pointers (design system to 13.4) ---------- */
 .lede { font-size: 1.15rem; color: var(--ink-2); margin-top: 0.6rem; margin-bottom: 1.6rem; }
 /* the assumes line, the section assumes line and the forward pointer share one treatment, so a
    reader learns to recognize the sentences that point to other sections */
 .assumes, .assumes-section, .assumes-lead, .next-use { font-size: 0.95rem; line-height: 1.55; color: var(--ink-2); }
 .lede + .assumes { margin-top: -0.8rem; margin-bottom: 1.6rem; }
-/* The list form of an assumes line (PW §6, DS §13): a one-clause lead, then one concept per item,
+/* The list form of an assumes line (PW §6, design system): a one-clause lead, then one concept per item,
    its link and its gloss, in the line's type. The items keep the text column's left edge with a
    small hanging indent, so a gloss that wraps stays under its item. */
 .assumes-lead { margin-bottom: 0.3em; }
@@ -420,7 +283,7 @@ ul.assumes > li { margin: 0 0 0.25em; padding-left: 1em; text-indent: -1em; }
 ul.assumes > li::before { content: "\2013\00a0"; color: var(--ink-3); }
 .lede + .assumes-lead { margin-top: -0.8rem; }
 .next-use { margin-top: 0.4rem; }
-/* the gloss takes the size and colour of the text around it, with no fill, border or hue (DS 13.3) */
+/* the gloss takes the size and colour of the text around it, with no fill, border or hue (design system) */
 .gloss { font: inherit; color: inherit; background: none; }
 /* Concept terms and popover card (v4 shaded non-hyperlink hover pills) */
 dfn[data-concept],
@@ -494,8 +357,8 @@ span[data-concept]:hover {
 .worked-example .example-title, .worked-example .sc-title {
   font-size: 1.04rem; font-weight: 600; margin: 0 0 0.5em; color: var(--ink);
 }
-/* a link inside a sentence that applies a preset (DS 6.5), and a clause of a choose-the-clause
-   check (DS 13.5): link text in the reader token with a dotted underline, which tells it from a
+/* a link inside a sentence that applies a preset (design system), and a clause of a choose-the-clause
+   check (design system): link text in the reader token with a dotted underline, which tells it from a
    navigation link. Inline targets are exempt from the 44-px size (WCAG 2.5.5). */
 button.preset-link, button.clause {
   font: inherit; color: var(--reader); background: none; border: 0; padding: 0; margin: 0;
@@ -511,7 +374,7 @@ button.clause[aria-pressed="true"] {
 }
 
 /* ---------- 7. Margin notes, callouts, sources and citations ---------- */
-/* margin notes (DS 3.6): in the side column at 1120 px and wider, a note opened by a tap below */
+/* margin notes (design system): in the side column at 1120 px and wider, a note opened by a tap below */
 main.page { counter-reset: sidenote; }
 .sn-toggle { display: none; }
 .sn-mark {
@@ -532,15 +395,15 @@ main.page { counter-reset: sidenote; }
 }
 .sidenote::before { content: counter(sidenote) " "; color: var(--link); font-size: 0.85em; vertical-align: super; line-height: 0; }
 .sidenote.since::before { content: ""; }
-/* the tags "From the literature" and "Our addition" are neutral, and their labels name them (DS 2.5);
-   span.lit-label is the same tag on a "What to do" item from the literature (DS 13.8) */
+/* the tags "From the literature" and "Our addition" are neutral, and their labels name them (design system);
+   span.lit-label is the same tag on a "What to do" item from the literature (design system) */
 .sidenote .tag, .lit-label {
   display: inline-block; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
   padding: 1px 6px; border-radius: 3px; margin-right: 4px; vertical-align: 1px;
   background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--border);
 }
 
-/* callouts (DS 2.5, 3.6): neutral fills, identified by their labels */
+/* callouts (design system, 3.6): neutral fills, identified by their labels */
 blockquote.playbook, aside.ours {
   margin: 1.2em 0 1.4em;
   padding: 0.7em 1em 0.7em 1.1em;
@@ -577,7 +440,7 @@ section.refs ol { font-size: 0.9rem; color: var(--ink-2); padding-left: 1.6em; }
 section.refs li { margin-bottom: 0.5em; }
 section.refs li:target { background: var(--hi-tint); }
 
-/* ---------- 8. The figure card and its anatomy (DS 3.3, 3.4) ---------- */
+/* ---------- 8. The figure card and its anatomy (design system, 3.4) ---------- */
 figure.fig {
   display: flow-root;
   margin: 1.6rem 0 2rem;
@@ -606,7 +469,7 @@ figure.fig {
    "The authors' data", drawn with borders, which print */
 .chip.toy::before { content: ""; width: 12px; height: 0; border-top: 3px solid var(--model); }
 .chip.source::before { content: ""; width: 9px; height: 9px; border: 2px solid var(--data); }
-/* 2. the task line: one or two sentences, a prediction, a target or a question (DS 5.9) */
+/* 2. the task line: one or two sentences, a prediction, a target or a question (design system) */
 .fig-task { font-size: 0.95rem; line-height: 1.5; color: var(--ink); margin: 0 0 10px; }
 /* 6. the readout: a plain paragraph computed from the state. Its twin p.sr-only is the live region.
    It reserves two lines before the figure's first draw, because F6.1, F1.2, F3.3 and F5.1 write
@@ -618,10 +481,10 @@ figure.fig {
 }
 /* 7. the caption */
 .fig-caption { font-size: 0.86rem; line-height: 1.5; color: var(--ink-2); margin: 12px 0 0; }
-/* 8. the key link sits beside the model note, on the row of its summary (DS 2.5, 13.13) */
+/* 8. the key link sits beside the model note, on the row of its summary (design system, 13.13) */
 p.fig-key { float: right; margin: 6px 0 0 16px; font-size: 0.86rem; line-height: 20px; }
 p.fig-key a { display: inline-block; padding: 12px 0; }
-/* 9 and 10. the model note and the data table. Each summary is a 44-px target (DS 6.8). */
+/* 9 and 10. the model note and the data table. Each summary is a 44-px target (design system). */
 figure.fig details { margin-top: 6px; font-size: 0.86rem; line-height: 1.5; color: var(--ink-2); }
 figure.fig details > summary { cursor: pointer; color: var(--reader); padding: 12px 0; line-height: 20px; }
 figure.fig details[open] > summary { margin-bottom: 2px; }
@@ -635,8 +498,8 @@ figure.fig.source .pair img { flex: 1 1 260px; min-width: 0; }
 /* A recap redraws an earlier figure small, with no controls. site.css styles it alone, because the
    page does not load the repeated figure's stylesheet. */
 figure.fig.recap { padding: 10px 12px; }
-/* A recap's panels are small multiples (DS 3.5 item 7): one row at every width, each panel at
-   least 80 px wide (DS 3.5 item 3). The panels of a case still wrap (DS 3.5 item 6). */
+/* A recap's panels are small multiples (design system item 7): one row at every width, each panel at
+   least 80 px wide (design system item 3). The panels of a case still wrap (design system item 6). */
 .recap-body { display: flex; flex-wrap: nowrap; gap: 14px; }
 .recap-body > .panel { flex: 1 1 0; min-width: 80px; }
 /* A recap whose frames stack below 640 px (F1.2's recap, f1-2-study.js): in a row the first frame
@@ -669,13 +532,13 @@ div.case { display: flex; flex-wrap: wrap; gap: 14px; }
 div.case > .panel { flex: 1 1 200px; }
 div.case { margin: 0.4em 0 1em; }
 
-/* ---------- 9. Controls (DS 6.3 to 6.6, 6.8) ---------- */
+/* ---------- 9. Controls (design system to 6.6, 6.8) ---------- */
 /* Every control has a 44 x 44-px target at every width. Labels and values are 13.1 px, buttons
-   and segments 13.8 px (DS 3.1). */
+   and segments 13.8 px (design system). */
 .ctl { display: flex; flex-direction: column; gap: 2px; min-width: 150px; flex: 1 1 150px; max-width: 260px; }
 .ctl label, .ctl .lbl { font-size: 0.82rem; line-height: 1.35; color: var(--ink-2); }
 .ctl output { font-size: 0.82rem; color: var(--ink); font-variant-numeric: tabular-nums; margin-left: 0.4em; }
-/* a slider: native range, the reader accent, a 44-px target (DS 6.3) */
+/* a slider: native range, the reader accent, a 44-px target (design system) */
 .ctl input[type="range"] { width: 100%; accent-color: var(--reader); margin: 0; height: 44px; }
 /* A special value the text names: a tick under the track with a short name in --ink-3. TP.ui.range
    wraps a slider that has ticks in div.range and writes div.range-ticks after the input, holding one
@@ -719,10 +582,10 @@ div.case { margin: 0.4em 0 1em; }
 .btn:hover, button.preset:hover, button.reset:hover, button.draw:hover { border-color: var(--axis); color: var(--ink); }
 .btn.small { font-size: 0.86rem; padding: 5px 10px; min-height: 28px; }
 /* controls that stay together on one row when a row of controls wraps, such as "Draw again" and
-   the seed it prints (DS 6.6), or a pin button and the control it pins (DS 4.8) */
+   the seed it prints (design system), or a pin button and the control it pins (design system) */
 .btn-group { display: inline-flex; flex-wrap: nowrap; align-items: center; gap: 8px; }
 span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabular-nums; align-self: center; white-space: nowrap; }
-/* Items shown together (DS 6.4): div.toggles holds button.btn toggles in a wrapping row, and the
+/* Items shown together (design system): div.toggles holds button.btn toggles in a wrapping row, and the
    .ctl that holds them takes the row's width. At the maximum, a toggle that cannot be pressed
    carries aria-disabled="true". Its text takes --ink-3 (5.43:1 on the surface, 4.63:1 on the wash;
    6.10:1 and 5.43:1 dark) and its edge is dashed, so it reads as unavailable and stays legible. */
@@ -732,8 +595,8 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
   color: var(--ink-3); border: 1px dashed var(--ink-3); cursor: not-allowed;
 }
 
-/* segment buttons: a discrete choice (DS 6.4). The edge is an inset outline, which takes no space,
-   so a row of segments is 44 px tall like every other row of the dock (DS 3.5 item 4). */
+/* segment buttons: a discrete choice (design system). The edge is an inset outline, which takes no space,
+   so a row of segments is 44 px tall like every other row of the dock (design system item 4). */
 .seg { display: inline-flex; max-width: 100%; outline: 1px solid var(--axis); outline-offset: -1px; border-radius: 999px; overflow: hidden; }
 /* under its label in a .ctl, a segment control is as wide as its buttons */
 .ctl > .seg { align-self: flex-start; }
@@ -747,7 +610,7 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
 /* the focus ring sits inside the button, because .seg clips whatever lies outside its border */
 .seg button:focus-visible { outline-offset: -4px; }
 
-/* The pressed toggle (DS 2.5): the reader wash, a 3-px reader bar on the bottom edge and weight
+/* The pressed toggle (design system): the reader wash, a 3-px reader bar on the bottom edge and weight
    600. The bar gives the state 6.66:1 on the wash (4.65:1 dark). The wash alone is 1.17:1. */
 .btn[aria-pressed="true"], button.preset[aria-pressed="true"], .seg button[aria-pressed="true"],
 .options button[aria-pressed="true"], .rule-prompt button[aria-pressed="true"] {
@@ -755,7 +618,7 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
   box-shadow: inset 0 -3px 0 var(--reader);
 }
 
-/* ---------- 10. The dock and the run strip (DS 3.4, 3.5, 6.9, 7.8) ---------- */
+/* ---------- 10. The dock and the run strip (design system, 3.5, 6.9, 7.8) ---------- */
 /* div.fig-controls-more holds the controls the dock does not hold, with Reset last. div.fig-dock
    holds div.fig-controls and, in a running figure, div.run-strip. From 640 px up the two read as
    consecutive rows of controls above the panels. Below 640 px the dock sticks (section 16). */
@@ -786,7 +649,7 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
 .run-speed { flex: 0 0 auto; }
 .run-speed-cycle { display: none; padding: 0 10px; }
 
-/* ---------- 11. Panels, handles and reading (DS 3.4, 5.7, 6.2, 8.3, 8.4) ---------- */
+/* ---------- 11. Panels, handles and reading (design system, 5.7, 6.2, 8.3, 8.4) ---------- */
 .fig-panels { display: flex; gap: 18px; flex-wrap: wrap; }
 .panel { flex: 1 1 300px; min-width: 0; position: relative; }
 /* a column of stacked panels inside .fig-panels, such as two strips that share an x axis */
@@ -802,7 +665,7 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
 /* a label moved to the panel's header takes its series' label tone (a role class on the span) */
 .panel-label { color: var(--cl); }
 /* a note followed by header labels ends in a semicolon, as chart.js separates the labels, so
-   that "5 of 13 diverged" and a header label do not read as one phrase (DS 5.7) */
+   that "5 of 13 diverged" and a header label do not read as one phrase (design system) */
 .panel-note:has(+ .panel-labels)::after { content: ";"; }
 /* the keys a figure draws for encodings no axis carries (C.key), a full row under the panels */
 .fig-keys { flex: 1 1 100%; min-width: 0; }
@@ -813,10 +676,10 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
    height cap is narrower than its panel and is centred. */
 .panel svg { display: block; max-width: 100%; height: auto; margin: 0 auto; overflow: visible; }
 
-/* the reading element over the plot (DS 8.3): chart.js sets its box to the plot area */
+/* the reading element over the plot (design system): chart.js sets its box to the plot area */
 .reader { position: absolute; z-index: 1; cursor: crosshair; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
 
-/* The handle (DS 4.10, 6.2): a 14-px reader dot with a 2-px surface ring, centred in a 44 x 44-px
+/* The handle (design system, 6.2): a 14-px reader dot with a 2-px surface ring, centred in a 44 x 44-px
    target. chart.js sets left and top to the value's point, and the negative margins centre the
    target on it. The dot is ::after and the hover disc ::before. aria-orientation sets the cursor:
    ew-resize along x, ns-resize along y, grab for a free handle. */
@@ -843,16 +706,16 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
 .handle.dragging:not([aria-orientation]) { cursor: grabbing; }
 /* On keyboard focus, a 2-px reader ring 3 px outside the dot's surface ring. The dot takes a
    surface casing 9 px wide under the ring, so the ring meets the surface on both sides and keeps
-   its 3:1 whatever lies behind the handle, such as bars or a filled region (DS 6.8; F9.3). */
+   its 3:1 whatever lies behind the handle, such as bars or a filled region (design system; F9.3). */
 .handle:focus-visible { outline: none; }
 .handle:focus-visible::after { outline: 2px solid var(--reader); outline-offset: 5px; box-shadow: 0 0 0 9px var(--surface); }
-/* the band along the line a handle sets, which a press also drags (DS 6.2, the onLine option) */
+/* the band along the line a handle sets, which a press also drags (design system, the onLine option) */
 .handle-band { position: absolute; z-index: 2; }
 .handle-band.x { cursor: ew-resize; touch-action: pan-y; }
 .handle-band.y { cursor: ns-resize; touch-action: none; }
 /* the axis route (WCAG 2.5.7): a strip along the axis whose click moves the nearest handle there */
 .handle-axis { position: absolute; z-index: 1; cursor: pointer; touch-action: pan-y; }
-/* A label that selects its series (DS 6.4): a transparent HTML button over the label's box, with
+/* A label that selects its series (design system): a transparent HTML button over the label's box, with
    a 44 x 44-px target. The SVG label beneath it shows the text and the chosen state. */
 .label-select {
   position: absolute; z-index: 3; margin: 0; padding: 0; border: 0; overflow: hidden;
@@ -865,7 +728,7 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
   color: var(--ink); background: var(--surface); border: 1px solid var(--border); border-radius: 4px; box-shadow: var(--shadow);
 }
 
-/* The tooltip (DS 8.4): one row per value, the value first in weight 600 text ink, a 12 x 3-px
+/* The tooltip (design system): one row per value, the value first in weight 600 text ink, a 12 x 3-px
    stroke in the row's token (a role class on the i), the name in --ink-2, all at 13 px. */
 .tip:not(.callout) {
   position: absolute; z-index: 5; pointer-events: none;
@@ -879,11 +742,11 @@ span.seed { font-size: 0.82rem; color: var(--ink-2); font-variant-numeric: tabul
 .tip .row i { display: inline-block; width: 12px; height: 0; border-top: 3px solid var(--c); }
 .tip .row span { color: var(--ink-2); }
 
-/* ---------- 12. Marks and text inside SVG (DS 2.3 rule 7, 4, 5, 8.1) ---------- */
+/* ---------- 12. Marks and text inside SVG (design system rule 7, 4, 5, 8.1) ---------- */
 /* The rules apply inside any SVG, so the panels, recaps, cases and the contents page's key draw
    with one set. Role-dependent marks read the four properties of their role class. The marks of
    a fixed role (reference, reader, structure, annotation, highlight) read that role's token.
-   Dashed and dash-dotted lines take butt caps, and the dotted truth keeps round caps (DS 4.1). */
+   Dashed and dash-dotted lines take butt caps, and the dotted truth keeps round caps (design system). */
 :where(.panel, .key-draw, .recap) svg text { font-family: var(--font); font-size: var(--fs-tick); fill: var(--ink-3); }
 
 /* structure: axes, ticks, zero lines, rugs, contours, the crosshair and window edges, 1 px */
@@ -913,7 +776,7 @@ svg .level.ghost { stroke-width: 2px; stroke-dasharray: 7 5; }
 /* reference ink: a truth, target or analytic result dotted, a limit the text states dashed */
 svg .ref-truth { fill: none; stroke: var(--ref); stroke-width: 2.5px; stroke-dasharray: 0 5; stroke-linecap: round; }
 svg .ref-limit { fill: none; stroke: var(--ref); stroke-width: 1.5px; stroke-dasharray: 4 4; stroke-linecap: butt; }
-/* The reader's marks (DS 4.10): a line for a value read at, the cursor, a window edge or a
+/* The reader's marks (design system): a line for a value read at, the cursor, a window edge or a
    threshold the reader moves, the same line dashed when pinned, and the 4-px bar of a reader
    window along its axis. */
 svg .reader-line { fill: none; stroke: var(--reader); stroke-width: 1.5px; }
@@ -923,26 +786,26 @@ svg .window-bar { fill: var(--reader); stroke: none; }
 svg .trail { fill: none; stroke: var(--ctr); stroke-width: 2px; stroke-linejoin: round; stroke-linecap: round; }
 /* a discarded candidate, a family member left out of a highlight: context grey, 1.5 px */
 svg .context { fill: none; stroke: var(--context); stroke-width: 1.5px; stroke-linejoin: round; stroke-linecap: round; }
-/* bands, intervals and boxes: the opaque tint of the series, under the gridlines (DS 4.6) */
+/* bands, intervals and boxes: the opaque tint of the series, under the gridlines (design system) */
 svg .band { fill: var(--ct); stroke: none; }
 svg .stem { fill: none; stroke: var(--c); stroke-width: 1.5px; stroke-linecap: butt; }
 svg .box { fill: var(--ct); stroke: var(--c); stroke-width: 1.5px; }
 svg .box.over { fill: none; }
 svg .median { fill: none; stroke: var(--c); stroke-width: 3px; stroke-linecap: butt; }
-/* a bar, and the arrowhead where a whisker or a set leaves the frame (DS 9 rule 3): the role's token */
+/* a bar, and the arrowhead where a whisker or a set leaves the frame (design system rule 3): the role's token */
 svg .bar, svg .arrowhead { fill: var(--c); stroke: none; }
-/* an open bar (C.bars' fill: 'open'): a 2-px edge in its token on the surface (DS 4.1, 4.3) */
+/* an open bar (C.bars' fill: 'open'): a 2-px edge in its token on the surface (design system, 4.3) */
 svg .bar.open { fill: var(--surface); stroke: var(--c); stroke-width: 2px; }
 /* a highlight window the text names: the highlight tint, with context-grey edges (.structure) */
 svg .hi-window { fill: var(--hi-tint); stroke: none; }
 /* a --surface casing under a mark, 3 px wider than a box's edge or median and 4 px wider than a
-   highlighted line (DS 4.1, 4.6, 8.1). It comes after the marks so its stroke wins. */
+   highlighted line (design system, 4.6, 8.1). It comes after the marks so its stroke wins. */
 svg .casing { fill: none; stroke: var(--surface); stroke-linejoin: round; }
 svg .casing.stem, svg .casing.box { stroke-width: 4.5px; }
 svg .casing.median { stroke-width: 6px; }
 svg .casing.line { stroke-width: 8px; }
 
-/* The highlight (DS 8.1, 8.2). C.link sets .has-hi on the element that holds the family while an
+/* The highlight (design system, 8.2). C.link sets .has-hi on the element that holds the family while an
    item is highlighted, and .is-hi on each element of the item. Every other keyed element inside
    turns context grey at full opacity, and a highlighted line gains 1 px. */
 svg .has-hi [data-key]:not(.is-hi), svg.has-hi [data-key]:not(.is-hi), .has-hi svg [data-key]:not(.is-hi) {
@@ -955,10 +818,10 @@ svg .has-hi .dot.ramp[data-key]:not(.is-hi), svg.has-hi .dot.ramp[data-key]:not(
 svg .has-hi .open.ramp[data-key]:not(.is-hi), svg.has-hi .open.ramp[data-key]:not(.is-hi), .has-hi svg .open.ramp[data-key]:not(.is-hi) { stroke: var(--context); }
 
 /* Text in SVG:
-   - a direct label in its series' label tone, with a 3-px surface halo under the glyphs and no box (DS 5.3)
-   - an annotation in text ink at structure weight (DS 5.10)
-   - a level named on the axis at the tick size, in the tone of what it belongs to (DS 5.5)
-   - a leader in the label's tone (DS 5.4) */
+   - a direct label in its series' label tone, with a 3-px surface halo under the glyphs and no box (design system)
+   - an annotation in text ink at structure weight (design system)
+   - a level named on the axis at the tick size, in the tone of what it belongs to (design system)
+   - a leader in the label's tone (design system) */
 svg .label, svg text.annotation, svg .annotation text, svg .level-name {
   stroke: var(--surface); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round;
 }
@@ -968,7 +831,7 @@ svg :is(path, line, polyline).annotation, svg .annotation :is(path, line, polyli
 svg .level-name { fill: var(--cl); font-size: var(--fs-tick); font-variant-numeric: tabular-nums; }
 svg .leader { fill: none; stroke: var(--cl); stroke-width: 1px; }
 
-/* ---------- 13. Self-checks, rule prompts and worked examples (DS 13.5, 13.6) ---------- */
+/* ---------- 13. Self-checks, rule prompts and worked examples (design system, 13.6) ---------- */
 .self-check {
   margin: 1.4em 0 1.8em; padding: 14px 16px 16px;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -1012,7 +875,7 @@ svg .leader { fill: none; stroke: var(--cl); stroke-width: 1px; }
 details.worked { margin: 1.2em 0 1.6em; padding: 0 0 2px 16px; border-left: 3px solid var(--border); }
 details.worked > ol { margin-top: 0.3em; }
 
-/* ---------- 14. Retrieval, "What to do" and the performance task (DS 13.7 to 13.9) ---------- */
+/* ---------- 14. Retrieval, "What to do" and the performance task (design system to 13.9) ---------- */
 /* the retrieval block holds one prompt per rule of the "What to do" list, each hiding its action */
 details.retrieve {
   margin: 0 0 10px; padding: 0 16px;
@@ -1072,7 +935,7 @@ pre.template {
 }
 .btn.copy { margin-top: 2px; }
 
-/* ---------- 15. Contents and reference pages (DS 13.11, 13.12) ---------- */
+/* ---------- 15. Contents and reference pages (design system, 13.12) ---------- */
 /* The outline of the acts, the site's only map of them. Markup: ol.outline > li per act, holding
    the act's name in an h3, its hinge in a p, and an ol or ul of its pages, each li a link followed
    by its decision line in a p. The pages outside the acts follow in their own li. */
@@ -1124,12 +987,12 @@ table.worked-case td:nth-child(2) { white-space: nowrap; }
 }
 pre.bibtex { font-family: var(--mono); font-size: 0.82rem; background: var(--surface-2); padding: 0.8em 1em; border-radius: 6px; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.45; }
 
-/* ---------- 16. Responsive (DS 3.2, 3.5) ---------- */
+/* ---------- 16. Responsive (design system, 3.5) ---------- */
 @media (min-width: 640px) {
   .site-header .btn::before { content: ""; position: absolute; left: 0; right: 0; top: -8px; bottom: -8px; }
 }
 /* 1120 px and wider: the finished product sits beside the standard, the two across the text and
-   side columns, so each item can be checked against the product by eye (DS 13.9) */
+   side columns, so each item can be checked against the product by eye (design system) */
 @media (min-width: 1120px) {
   main.page > section.task:has(.standard-pair) { grid-column: text-start / side-end; }
   section.task > :is(h2, p) { max-width: var(--text-col); }
@@ -1203,7 +1066,7 @@ pre.bibtex { font-family: var(--mono); font-size: 0.82rem; background: var(--sur
 
 /* ---------- 17. Print and motion ---------- */
 /* Print shows each figure's default state in the light tokens (section 1), hides the header, the
-   controls and the pager, and prints margin notes inline (DS 6.7, 10.1). */
+   controls and the pager, and prints margin notes inline (design system, 10.1). */
 @media print {
   .site-header, .pager, .fig-controls-more, .fig-dock, .tip, .handle-value,
   .sn-mark, .sn-toggle, .skip, .btn.copy, .btn.check, details.fig-table { display: none; }
@@ -1255,7 +1118,7 @@ html.tp-print .sidenote, html.tp-print .sn-toggle:checked + .sidenote {
   }
 }
 /* Reduced motion: nothing in this file animates, and this rule removes any transition a script
-   adds. Scripts read TP.motion.reduced() (DS 9 rule 7). */
+   adds. Scripts read TP.motion.reduced() (design system rule 7). */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }
@@ -1945,7 +1808,7 @@ button.draw {
   color: var(--ink-2);
   background: var(--surface);
   border: 1px solid var(--border-2);
-  border-radius: 2px;
+  border-radius: var(--radius);
   padding: 5px 11px;
   min-height: 32px;
   min-width: 32px;
@@ -2002,7 +1865,7 @@ span.seed {
   max-width: 100%;
   outline: 1px solid var(--border-2);
   outline-offset: -1px;
-  border-radius: 2px;
+  border-radius: var(--radius);
   overflow: hidden;
   background: var(--surface);
 }
@@ -3269,3 +3132,197 @@ nav.post-roadmap .roadmap-item-desc { display: block; font-size: 0.86rem; line-h
 }
 
 cite.ref.has-label { font-style: normal; }
+
+/* ==========================================================================
+   21. Shared Blog Kernel Refinements (Concept Borders, In-Brief, Practice Steps, Mobile)
+   ========================================================================== */
+
+/* Cancel legacy 3-sided border on concept terms */
+main.page :is(dfn, span, a)[data-concept] {
+  border: 0;
+  border-bottom: 1px dotted color-mix(in srgb, var(--model) 60%, transparent);
+  border-radius: 2px;
+}
+
+/* Unify interactive button and tool radii to var(--radius) (3px) */
+:is(.btn, button.preset, button.reset, button.draw, .seg, .fig-tool, .fig-tour-btn, .run-btn, .run-speed-cycle) {
+  border-radius: var(--radius);
+}
+
+/* Compact "In brief" takeaway box below lede */
+.in-brief {
+  margin: 0 auto 1.9rem;
+  padding: 14px 18px 14px 20px;
+}
+.in-brief-head {
+  margin-bottom: 0.5rem;
+}
+.in-brief ul {
+  margin: 0;
+  padding-left: 1.25em;
+  font-size: 0.96rem;
+  line-height: 1.56;
+}
+.in-brief li {
+  margin-bottom: 0.4rem;
+}
+.in-brief li:last-child {
+  margin-bottom: 0;
+}
+
+/* Shared "In practice" actionable checklist (ol.practice-steps) */
+ol.practice-steps {
+  list-style: none;
+  counter-reset: ps;
+  padding: 0;
+  margin: 1rem auto 1.5rem;
+  display: grid;
+  gap: 10px;
+}
+ol.practice-steps > li {
+  counter-increment: ps;
+  position: relative;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 14px 16px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.practice-steps-icon {
+  width: 44px;
+  height: 44px;
+  padding: 9px;
+  border-radius: var(--radius);
+  position: relative;
+  background: color-mix(in srgb, var(--energy) 14%, var(--surface));
+  color: var(--energy-text);
+}
+.practice-steps-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.practice-steps-icon::after {
+  content: counter(ps);
+  position: absolute;
+  right: -6px;
+  top: -6px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: var(--energy);
+  color: var(--energy-ink, #0b0704);
+}
+/* Fallback badge when an ol.practice-steps item omits .practice-steps-icon */
+ol.practice-steps > li:not(:has(> .practice-steps-icon)) {
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+}
+ol.practice-steps > li:not(:has(> .practice-steps-icon))::before {
+  content: counter(ps);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--energy);
+  color: var(--energy-ink, #0b0704);
+  margin-top: 2px;
+}
+main.page ol.practice-steps h3,
+main.page ol.practice-steps h4 {
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 650;
+  margin: 2px 0 3px;
+}
+main.page ol.practice-steps p {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+}
+
+/* Mobile header & touch-target compliance (<= 639px) */
+@media (max-width: 639px) {
+  .post-header .post-meta .sep {
+    display: none;
+  }
+  .site-header .header-brand-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+  .site-header .brand-writing {
+    display: inline-flex !important;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 4px;
+    font-size: 0.84rem;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+  .site-header .brand-writing::before {
+    content: "← ";
+    color: var(--energy-text);
+  }
+  .site-header .brand-home,
+  .site-header .brand-owner,
+  .site-header .brand-sep {
+    display: none !important;
+  }
+  .site-header .brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 0;
+  }
+  .site-header .brand-series {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .nav-toggle,
+  .btn,
+  button.preset,
+  button.reset,
+  button.draw,
+  .seg button,
+  .run-btn,
+  .run-speed-cycle,
+  .fig-tool,
+  .fig-tour-btn {
+    min-height: 44px;
+  }
+  .run-btn,
+  .run-speed-cycle,
+  .fig-tour-dot {
+    min-width: 44px;
+    width: 44px;
+    height: 44px;
+  }
+  .fig-controls-more,
+  .fig-dock {
+    padding: 6px 10px;
+    gap: 6px 8px;
+  }
+  .fig-controls {
+    gap: 6px 8px;
+  }
+}

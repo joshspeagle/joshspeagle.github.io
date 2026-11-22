@@ -6,17 +6,20 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>Design sheet · Notes on the Deep Learning Tuning Playbook</title>
   <meta name="description" content="The components, color roles and type of the Deep Learning Tuning Playbook notes, with live specimens and the markup that produces them.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232855a6'/%3E%3Cpath d='M7 22 C12 22, 13 10, 18 10 C22 10, 22 17, 26 14' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='10' r='2.6' fill='%23d4850e'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="js/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="css/site.css">
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
+  <script data-theme-boot>(function(){try{var t=localStorage.getItem('preferred-theme')||'dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="../../assets/css/fonts.css">
+  <link rel="stylesheet" href="../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../assets/blog/css/editorial.css">
+  <link rel="stylesheet" href="../../assets/blog/css/diagram-map.css">
   <link rel="stylesheet" href="css/figures/fig-checkpoint.css">
-  <link rel="stylesheet" href="css/components/playbook-map.css">
   <link rel="stylesheet" href="css/pages/design-sheet.css">
 </head>
 <body data-page="design-sheet.html" data-root="">
-  <header class="site-header"></header>
+  <header class="site-header"><a class="skip" href="#content">Skip to content</a><div class="header-brand-group"><a class="brand-crumb brand-home" href="../../index.html">Josh Speagle</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand-crumb brand-writing" href="../../writing.html">Writing</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand" href="index.html"><span class="brand-series">DL Tuning Playbook</span></a><span class="where">Design sheet</span></div><nav aria-label="Series navigation" id="site-nav" class="site-nav"><a class="btn small" href="index.html">Contents</a><a class="btn small" href="pages/reference.html">Reference</a></nav></header>
 
-  <main class="page">
+  <main id="content" class="page">
     <header class="post-header">
       <div class="post-kicker">Reference for the series</div>
       <h1>Design sheet</h1>
@@ -203,7 +206,7 @@
               data-playbook-src="1508-1528"
               data-playbook-caption="The Playbook's illustration of evaluating more frequently early in training.">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 1</span>
           <span class="fig-title" id="fig-checkpoint-title">Scoring a training run by its best saved checkpoint</span>
           <span class="chip toy">Interactive toy model</span>
         </figcaption>
@@ -364,19 +367,21 @@
     By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook">Deep Learning Tuning Playbook</a> by Godbole, Dahl, Gilmer, Shallue and Nado, used under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
   </footer>
 
-  <script src="js/vendor/d3.v7.min.js"></script>
-  <script src="js/vendor/katex/katex.min.js"></script>
-  <script src="js/vendor/katex/auto-render.min.js"></script>
-  <script src="js/lib/format.js"></script>
-  <script src="js/lib/prng.js"></script>
+  <script src="../../assets/vendor/d3.v7.min.js"></script>
+  <script src="../../assets/vendor/katex/katex.min.js"></script>
+  <script src="../../assets/vendor/katex/auto-render.min.js"></script>
+  <script src="../../assets/blog/js/core/format.js"></script>
+  <script src="../../assets/blog/js/core/prng.js"></script>
   <script src="js/lib/curves.js"></script>
-  <script src="js/lib/placer.js"></script>
+  <script src="../../assets/blog/js/core/placer.js"></script>
+  <script src="js/data/config.js"></script>
   <script src="js/refs.js"></script>
   <script src="js/concepts.js"></script>
-  <script src="js/site.js"></script>
-  <script src="js/components/playbook-map.js"></script>
-  <script src="js/chart.js"></script>
-  <script src="js/runtime.js"></script>
+  <script src="../../assets/blog/js/article.js"></script>
+  <script src="js/data/flowmap-data.js"></script>
+  <script src="../../assets/blog/js/flowmap.js"></script>
+  <script src="../../assets/blog/js/core/chart.js"></script>
+  <script src="../../assets/blog/js/core/runtime.js"></script>
   <script src="js/figures/f1-1-checkpoint.js"></script>
 </body>
 </html>

@@ -1,9 +1,9 @@
 /*
  * runtime.js: the runtime of running figures, TP.run(fig, spec).
  *
- * Design: notes/revamp/design-system.md (DS) §7 in full, with §4.8 and §4.9 (the ghost, the
+ * Design: series design spec (DS) §7 in full, with §4.8 and §4.9 (the ghost, the
  * record and the cursor), §6.7 (state and printing), §9 (motion) and §10 (accessibility), and
- * notes/revamp/implementation-plan.md (the plan) WO-I6. A classic script on window.TP. Every page
+ * series design spec (the plan) WO-I6. A classic script on window.TP. Every page
  * with a running figure loads it after site.js and chart.js. It needs TP.prng (lib/prng.js). The
  * engine needs no DOM, so Node loads this file for tests/lib/runtime.test.js and drives it with
  * the third argument of TP.run (section G).
@@ -26,12 +26,12 @@
  *   default seed from fig.params.seed, and the starting values, the URL's cursor and whether the
  *   URL restored the figure from fig.initial(). It calls fig.attach(run) once, appends
  *   div.run-strip to fig.dock, and computes nothing until fig.on('prepare') fires, when the
- *   figure first comes within one viewport of the screen (DS §7.7 item 1). Before that the strip
+ *   figure first comes within one viewport of the screen (design system item 1). Before that the strip
  *   shows step 0 and TP.fig has drawn the frames alone. TP.fig routes every control, preset,
  *   "Draw again" and Reset to run.setMany, run.settle, run.reset and run.scrub, and updates the
  *   live region, the data table and the URL on run.on('settle').
  *
- * B. THE SPEC (DS §7.2; a "function" field may be a number or a function of the parameters)
+ * B. THE SPEC (design system; a "function" field may be a number or a function of the parameters)
  *   init(params, rng)            the state at step 0. rng is the generator of the label "init".
  *   advance(state, params, rng, t, kind)   the state at step t + 1 from the state at step t. It
  *                                may change state in place and return it, because the runtime
@@ -72,12 +72,12 @@
  *   ahead: false                 when true the record is computed to `limit` ahead of the cursor
  *   recordPanel: 'a'             the panel whose record scrubs (pass run.recordHandlers() to
  *                                C.hover); the runtime writes the counter into its header note
- *   reset: 'show'|'replay'       what Reset does (DS §7.3)
+ *   reset: 'show'|'replay'       what Reset does (design system)
  *   counter(t, frontier, run)    optional: the counter's text ("16 trials"). The default is
  *                                "step 340 of 1,000", "step 340" for an open run, and, with
  *                                actions, "5 reruns, 1 repeat" (each kind with an s added)
  *
- * C. THE METHODS (DS §7.3, plan WO-I6)
+ * C. THE METHODS (design system, plan WO-I6)
  *   run.start(from)      play from the cursor (or step from). At the end (until or limit) it
  *                        replays from step 0. Steps are of the kind pressed last.
  *   run.pause()          pause and settle
@@ -107,7 +107,7 @@
  *                        action. autoDone and touched let a figure printed before it autoplayed
  *                        still autoplay after printing.
  *   run.restore(snap)    recomputes that record and shows step t
- *   run.touch()          marks the figure touched (DS §7.7 item 6) for a figure's own handle or
+ *   run.touch()          marks the figure touched (design system item 6) for a figure's own handle or
  *                        press that changes no parameter, such as F7.1's mark: autoplay ends,
  *                        the run continues as the reader's, and the figure never plays by itself
  *                        again
@@ -135,7 +135,7 @@
  *     t, frontier, steps, limit   the cursor, the frontier, and the run's two lengths
  *     rows, ghostRows      the record and the previous run's record (null without a ghost);
  *                          read them without copying. Rows beyond t are drawn ahead in the
- *                          trail tone (DS §4.9).
+ *                          trail tone (design system).
  *     changes              [{t, name, value}], the live changes, each marked on the step axis
  *     kind                 the kind of the step that produced state t (action form)
  *     playing, transient   hold labels in place when either is true
@@ -146,7 +146,7 @@
  *     run
  *
  * E. TIME
- *   The loop (DS §7.4): each animation frame adds dt (at most 100 ms) × speed to the playback
+ *   The loop (design system): each animation frame adds dt (at most 100 ms) × speed to the playback
  *   clock, maps the clock to a step through the pace, and advances the cursor whole step by
  *   whole step toward it, testing until after each step and computing for at most 8 ms, after
  *   which it sets the clock back to the cursor's time. It draws once. A paused figure requests
@@ -157,7 +157,7 @@
  *     ease    time(t) = 500 t for t <= E, then a constant rate over the rest of D
  *   Past S each pace keeps the rate it had at S. TP.run.pace(kind, S, D, E) returns
  *   {step(clock), time(t)} for tests.
- *   The record and keyframes (DS §7.5): stateAt(t) copies the keyframe at or before t and
+ *   The record and keyframes (design system): stateAt(t) copies the keyframe at or before t and
  *   advances the copy with the parameters in force at each step and each step's own generator,
  *   so any step is recomputed exactly. Behind the frontier, play and scrubbing recompute and add
  *   nothing; at the frontier, play extends the record with the current parameters.
@@ -165,9 +165,9 @@
  *   needs more than 10 ms continues in chunks of at most 8 ms per animation frame. The view
  *   keeps the previous state until the state at the cursor exists; a newer restart cancels the
  *   pending one; any other operation first completes it. finish(), reset({now}) and restore
- *   compute at once whatever the budget, as printing requires (DS §6.7).
+ *   compute at once whatever the budget, as printing requires (design system).
  *
- * F. CHANGES, ACTIONS, AUTOPLAY AND THE STRIP (DS §7.6 to §7.8)
+ * F. CHANGES, ACTIONS, AUTOPLAY AND THE STRIP (design system to §7.8)
  *   live      the value applies from the cursor's step on; the later record and changes are
  *             discarded and the change is kept with its step. A playing run continues; a paused
  *             one plays `span` steps once the change settles (computed at once under reduced
@@ -214,12 +214,12 @@
  */
 (function (global) {
   'use strict';
-  var TP = global.TP = global.TP || {};
+  var TP = global.Blog = global.TP = global.Blog || global.TP || {};
   var hasOwn = Object.prototype.hasOwnProperty;
   var MAX_ROWS = 50000;
   var MAX_OPEN = 1e7;          // the furthest an open run is computed to reach its until
-  var FRAME_BUDGET = 8;        // ms of computation per animation frame (DS §7.4)
-  var INPUT_BUDGET = 10;       // ms an input may compute before chunking (DS §1)
+  var FRAME_BUDGET = 8;        // ms of computation per animation frame (design system)
+  var INPUT_BUDGET = 10;       // ms an input may compute before chunking (design system)
 
   function isFn(f) { return typeof f === 'function'; }
   function finite(v) { return typeof v === 'number' && isFinite(v); }
@@ -235,7 +235,7 @@
   }
 
   /* ======================================================================================
-     The paces (DS §7.4). step(clock) is the last whole step reached at playback time clock
+     The paces (design system). step(clock) is the last whole step reached at playback time clock
      (ms at 1×), and time(t) its inverse. Past S each keeps its rate at S.
      ====================================================================================== */
   var EPS = 1e-7;
@@ -277,7 +277,7 @@
   }
 
   /* ======================================================================================
-     The page queue (DS §7.7 item 3): one running figure plays by itself at a time.
+     The page queue (design system item 3): one running figure plays by itself at a time.
      ====================================================================================== */
   var pageQueue = {
     current: null,
@@ -299,7 +299,7 @@
     }
   };
 
-  /* A generator for one seed, built on its first draw (DS §7.5). fork builds none. */
+  /* A generator for one seed, built on its first draw (design system). fork builds none. */
   function lazyRng(seed, stats) {
     var g = null;
     function get() {
@@ -429,7 +429,7 @@
       if (t % Rr.every !== 0) Rr.tail = true;
       if (Rr.rows.length > MAX_ROWS && !warnedRows) {
         warnedRows = true;
-        report('keeps more than ' + MAX_ROWS + ' rows; raise `every` (DS §7.5)');
+        report('keeps more than ' + MAX_ROWS + ' rows; raise `every` (design system)');
       }
     }
     function testUntil(Rr, t) {
@@ -657,7 +657,7 @@
       emit('settle', { reason: reason, quiet: false });
     }
 
-    /* ---------- chunked computation (DS §7.5) ---------- */
+    /* ---------- chunked computation (design system) ---------- */
     /* job: {R, target, stopAtUntil, swapAt, onSwap, onDone, kind} */
     /* Extend the job's record for at most budget ms (null: to the end). When a restart's new
        run reaches the cursor it replaces the run shown: at once within the input event, and
@@ -1178,7 +1178,7 @@
       maybeAutoplay();
     }
 
-    /* ---------- autoplay and visibility (DS §7.7) ---------- */
+    /* ---------- autoplay and visibility (design system) ---------- */
     function eligible() {
       return inited && !touched && !restored && !autoDone && !playing && !job && !E.reduced()
         && cursor < endStep()
@@ -1203,7 +1203,7 @@
       else maybeAutoplay();
     }
 
-    /* ---------- the run strip (DS §7.8) ---------- */
+    /* ---------- the run strip (design system) ---------- */
     var strip = null, playBtn = null, backBtn = null, fwdBtn = null, scrubEl = null, segEl = null, cycleBtn = null;
     var playState = '';
     function svgIcon(d) {

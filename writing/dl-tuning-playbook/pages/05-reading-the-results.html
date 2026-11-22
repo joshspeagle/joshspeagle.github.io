@@ -1,15 +1,18 @@
 <!doctype html>
-<html lang="en" data-theme="auto">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>Reading the results of a tuning study · Notes on the Deep Learning Tuning Playbook</title>
   <meta name="description" content="Notes on the Deep Learning Tuning Playbook's advice for examining a finished tuning study: search-space boundaries, sampling density, training curves, isolation plots and fair baselines.">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232855a6'/%3E%3Cpath d='M7 22 C12 22, 13 10, 18 10 C22 10, 22 17, 26 14' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='18' cy='10' r='2.6' fill='%23d4850e'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="../css/site.css">
-  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+  <script data-theme-boot>(function(){try{var t=localStorage.getItem('preferred-theme')||'dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="../../../assets/css/fonts.css">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/editorial.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/diagram-map.css">
   <link rel="stylesheet" href="../css/figures/fig-range.css">
   <link rel="stylesheet" href="../css/figures/fig-gallery.css">
   <link rel="stylesheet" href="../css/figures/fig-isolation.css">
@@ -17,8 +20,8 @@
   <link rel="stylesheet" href="../css/pages/05-reading-the-results.css">
 </head>
 <body data-page="pages/05-reading-the-results.html" data-root="../">
-  <header class="site-header"></header>
-  <main class="page">
+  <header class="site-header"><a class="skip" href="#content">Skip to content</a><div class="header-brand-group"><a class="brand-crumb brand-home" href="../../../index.html">Josh Speagle</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand-crumb brand-writing" href="../../../writing.html">Writing</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand" href="../index.html"><span class="brand-series">DL Tuning Playbook</span></a><span class="where">Part 5 of 9</span></div><nav aria-label="Series navigation" id="site-nav" class="site-nav"><a class="btn small" href="../index.html">Contents</a><a class="btn small" href="../pages/reference.html">Reference</a></nav></header>
+  <main id="content" class="page">
 
     <header class="post-header">
       <div class="post-kicker">Part 5 of 9 &middot; Running, reading and deciding</div>
@@ -43,7 +46,7 @@
         <h2>Questions to ask before reading the winner</h2>
 
         <p data-src="800-842">
-          Every round of experiments has a goal, such as finding out whether weight decay helps. It is tempting to go straight to that goal, but the evidence a study offers is only as good as the study itself, so the Playbook <cite data-ref="playbook"></cite> first asks a handful of questions about how the study went. The authors' reasoning is that these questions often turn up problems that need fixing before anything else, and that skipping them is an easy way to reach the wrong conclusion (<a href="https://github.com/google-research/tuning_playbook#extracting-insight-from-experimental-results" target="_blank" rel="noopener">the Playbook's section on extracting insight</a>). There are five of them:
+          Every round of experiments has a goal, such as finding out whether weight decay helps. It is tempting to go straight to that goal, but the evidence a study offers is only as good as the study itself, so the Playbook <cite data-ref="playbook"><span class="cit-num"><a href="#ref-playbook">[1]</a></span></cite> first asks a handful of questions about how the study went. The authors' reasoning is that these questions often turn up problems that need fixing before anything else, and that skipping them is an easy way to reach the wrong conclusion (<a href="https://github.com/google-research/tuning_playbook#extracting-insight-from-experimental-results" target="_blank" rel="noopener">the Playbook's section on extracting insight</a>). There are five of them:
         </p>
 
         <ul class="p05-questions">
@@ -59,13 +62,13 @@
         </p>
 
         <p data-src="1036-1055">
-          Conveniently, three kinds of plot answer nearly all of these questions, and <a href="#fig-three-plots" class="figref"></a> sketches each of them. The Playbook recommends generating the first two automatically for every study, on the reasonable grounds that a plot which takes effort to make is a plot people skip (<a href="https://github.com/google-research/tuning_playbook#automate-generically-useful-plots" target="_blank" rel="noopener">its section on automating plots</a>).
+          Conveniently, three kinds of plot answer nearly all of these questions, and <a href="#fig-three-plots" class="figref"> data-static-figref="1">Figure 1</a> sketches each of them. The Playbook recommends generating the first two automatically for every study, on the reasonable grounds that a plot which takes effort to make is a plot people skip (<a href="https://github.com/google-research/tuning_playbook#automate-generically-useful-plots" target="_blank" rel="noopener">its section on automating plots</a>).
         </p>
       </section>
 
       <figure class="schematic" id="fig-three-plots" role="group" aria-labelledby="fig-three-plots-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 1</span>
           <span class="fig-title" id="fig-three-plots-title">Three plots for reading a finished study</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -118,7 +121,7 @@
         </p>
 
         <p data-src="866-872">
-          A search space is suspicious, in the Playbook's terms, when its best point lies close to the boundary. If the best points cluster toward one edge, the remedy is to expand the range in that direction until the best observed point is no longer near the edge (<a href="https://github.com/google-research/tuning_playbook#identifying-bad-search-space-boundaries" target="_blank" rel="noopener">its section on bad search-space boundaries</a>). The Playbook's own Figure 1 shows a bad and an acceptable range from a real study, and it can be opened from the toolbar of <a href="#fig-range" class="figref"></a>. Since the authors never put a number on "close", I needed a working threshold for the toy, so <a href="#fig-range" class="figref"></a> marks the outer 10% of the log range at each end as an edge zone.
+          A search space is suspicious, in the Playbook's terms, when its best point lies close to the boundary. If the best points cluster toward one edge, the remedy is to expand the range in that direction until the best observed point is no longer near the edge (<a href="https://github.com/google-research/tuning_playbook#identifying-bad-search-space-boundaries" target="_blank" rel="noopener">its section on bad search-space boundaries</a>). The Playbook's own Figure 1 shows a bad and an acceptable range from a real study, and it can be opened from the toolbar of <a href="#fig-range" class="figref"> data-static-figref="1">Figure 2</a>. Since the authors never put a number on "close", I needed a working threshold for the toy, so <a href="#fig-range" class="figref"> data-static-figref="1">Figure 2</a> marks the outer 10% of the log range at each end as an edge zone.
         </p>
       </section>
 
@@ -131,7 +134,7 @@
               data-playbook-src="844-879"
               data-playbook-caption="Figure 1 of the Playbook: examples of bad search-space boundaries (left, best trials near the edge of the search space) and acceptable boundaries (right, best trials in the middle). Red crosses are infeasible trials.">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 2</span>
           <span class="fig-title" id="fig-range-title">Best trials against the edge of the learning-rate range</span>
           <span class="chip toy">Interactive toy study</span>
         </figcaption>
@@ -186,7 +189,7 @@
         </p>
 
         <p>
-          We can see the problem in the <button type="button" class="preset-link" data-figure="fig-range" data-preset="sparse">too few trials</button> case of <a href="#fig-range" class="figref"></a>, which searches the same wide range with 10 trials instead of 50. Only <span data-num="fig-range:sparse:near-best">2</span> of them come within 0.03 of the best error, compared with <span data-num="fig-range:widened:near-best">8</span> in the 50-trial study, so the bottom of the valley is described by almost nothing. (The 0.03 tolerance is simply a convenient cutoff for counting nearby runs.)
+          We can see the problem in the <button type="button" class="preset-link" data-figure="fig-range" data-preset="sparse">too few trials</button> case of <a href="#fig-range" class="figref"> data-static-figref="1">Figure 2</a>, which searches the same wide range with 10 trials instead of 50. Only <span data-num="fig-range:sparse:near-best">2</span> of them come within 0.03 of the best error, compared with <span data-num="fig-range:widened:near-best">8</span> in the 50-trial study, so the bottom of the valley is described by almost nothing. (The 0.03 tolerance is simply a convenient cutoff for counting nearby runs.)
         </p>
 
         <p>
@@ -225,7 +228,7 @@
         <h2>What do the training curves show?</h2>
 
         <p data-src="901-925">
-          So far we have reduced each trial to a single number, its best validation error, but two trials with the same number can have very different runs behind them. This is why the Playbook's authors always look at the <dfn data-concept="training-curves">training curves</dfn> (training and validation error plotted against training step) of at least the best few trials in every study, because the curves are a cheap way to spot common failure modes and to decide what to do next (<a href="https://github.com/google-research/tuning_playbook#examining-the-training-curves" target="_blank" rel="noopener">its section on examining the training curves</a>). They pose a short list of questions to ask of the curves, and <a href="#fig-gallery" class="figref"></a> sketches the shape behind each one alongside its likely cause and the suggested response.
+          So far we have reduced each trial to a single number, its best validation error, but two trials with the same number can have very different runs behind them. This is why the Playbook's authors always look at the <dfn data-concept="training-curves">training curves</dfn> (training and validation error plotted against training step) of at least the best few trials in every study, because the curves are a cheap way to spot common failure modes and to decide what to do next (<a href="https://github.com/google-research/tuning_playbook#examining-the-training-curves" target="_blank" rel="noopener">its section on examining the training curves</a>). They pose a short list of questions to ask of the curves, and <a href="#fig-gallery" class="figref"> data-static-figref="1">Figure 3</a> sketches the shape behind each one alongside its likely cause and the suggested response.
         </p>
       </section>
 
@@ -234,7 +237,7 @@
               data-playbook-src="901-992"
               data-playbook-caption="From the Playbook's section on examining the training curves.">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 3</span>
           <span class="fig-title" id="fig-gallery-title">Six training-curve shapes and what each suggests</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -321,7 +324,7 @@
         </p>
 
         <p>
-          Plotted against weight decay, the 100 runs form five columns, as in panel (a) of <a href="#fig-iso-steps" class="figref"></a>. Most of the spread within a column reflects whether the learning rate was good or bad, which is not what we are asking about. The question we care about is "how good can this weight decay be?", and the best run in its column answers it. If we keep that one run per column and drop the rest, we get panel (b).
+          Plotted against weight decay, the 100 runs form five columns, as in panel (a) of <a href="#fig-iso-steps" class="figref"> data-static-figref="1">Figure 4</a>. Most of the spread within a column reflects whether the learning rate was good or bad, which is not what we are asking about. The question we care about is "how good can this weight decay be?", and the best run in its column answers it. If we keep that one run per column and drop the rest, we get panel (b).
         </p>
       </section>
 
@@ -330,7 +333,7 @@
               data-playbook-src="996-1027"
               data-playbook-caption="Figure 2 of the Playbook: an isolation plot of the best validation error against weight decay for ResNet-50 on ImageNet. Each value of weight decay was tried with 20 different learning rates.">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 4</span>
           <span class="fig-title" id="fig-iso-steps-title">From 100 runs to an isolation plot</span>
           <span class="chip">Synthetic example</span>
         </figcaption>
@@ -370,7 +373,7 @@
         </p>
 
         <p data-src="1028-1032">
-          In practice, though, the quasi-random search from Part 4 does not produce neat columns, because every trial has its own weight decay and no two share a value. The Playbook's workaround is to cut the horizontal axis into <dfn data-concept="bucket">buckets</dfn> and take the best trial in each vertical slice. <a href="#fig-isolation" class="figref"></a> does this for a synthetic 100-trial study over learning rate and weight decay, where panel (a) shows where each trial sat in the two-dimensional search space, and panel (b) shows the same trials against weight decay alone, with the best trial of each bucket joined into the isolation curve.
+          In practice, though, the quasi-random search from Part 4 does not produce neat columns, because every trial has its own weight decay and no two share a value. The Playbook's workaround is to cut the horizontal axis into <dfn data-concept="bucket">buckets</dfn> and take the best trial in each vertical slice. <a href="#fig-isolation" class="figref"> data-static-figref="1">Figure 5</a> does this for a synthetic 100-trial study over learning rate and weight decay, where panel (a) shows where each trial sat in the two-dimensional search space, and panel (b) shows the same trials against weight decay alone, with the best trial of each bucket joined into the isolation curve.
         </p>
       </section>
 
@@ -380,7 +383,7 @@
               data-playbook-src="996-1032"
               data-playbook-caption="Figure 2 of the Playbook: an isolation plot that investigates the best value of weight decay for ResNet-50 trained on ImageNet.">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 5</span>
           <span class="fig-title" id="fig-isolation-title">An isolation plot from a quasi-random study</span>
           <span class="chip toy">Interactive toy study</span>
         </figcaption>
@@ -438,7 +441,7 @@
         </p>
 
         <p>
-          That condition sounds obvious, but it is easy to break without noticing. Suppose that in our model, adding weight decay moves the best learning rate from about <span data-num="fig-baseline:model:none-best-lr">0.013</span> down to <span data-num="fig-baseline:model:wd-best-lr">0.0032</span>. We tune the learning rate carefully for the weight-decay runs and settle on the range <span data-num="fig-baseline:model:preferred-lo">0.0025</span> to <span data-num="fig-baseline:model:preferred-hi">0.004</span>, and then, to save compute, we restrict the baseline to those same rates. <a href="#fig-baseline" class="figref"></a> shows what happens in a toy where both models are equally good once tuned.
+          That condition sounds obvious, but it is easy to break without noticing. Suppose that in our model, adding weight decay moves the best learning rate from about <span data-num="fig-baseline:model:none-best-lr">0.013</span> down to <span data-num="fig-baseline:model:wd-best-lr">0.0032</span>. We tune the learning rate carefully for the weight-decay runs and settle on the range <span data-num="fig-baseline:model:preferred-lo">0.0025</span> to <span data-num="fig-baseline:model:preferred-hi">0.004</span>, and then, to save compute, we restrict the baseline to those same rates. <a href="#fig-baseline" class="figref"> data-static-figref="1">Figure 6</a> shows what happens in a toy where both models are equally good once tuned.
         </p>
       </section>
 
@@ -448,7 +451,7 @@
               data-playbook-src="1019-1027"
               data-playbook-caption="From the Playbook's section on isolation plots.">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 6</span>
           <span class="fig-title" id="fig-baseline-title">A baseline held to the candidate's learning rates</span>
           <span class="chip toy">Toy model</span>
         </figcaption>
@@ -470,7 +473,7 @@
 
       <section class="prose">
         <p>
-          The apparent gain in panel (b) has nothing to do with weight decay; it comes entirely from where the baseline was evaluated. Fortunately, the edge check from earlier in this post catches it if we apply it to each arm of the comparison separately. We plot validation error against learning rate for the candidate and for the baseline, and confirm that each one's best trial sits inside its own searched range. In panel (b) the baseline's best rate is the upper end of the range it was given, which is exactly the "bad" pattern of <a href="#fig-range" class="figref"></a>.
+          The apparent gain in panel (b) has nothing to do with weight decay; it comes entirely from where the baseline was evaluated. Fortunately, the edge check from earlier in this post catches it if we apply it to each arm of the comparison separately. We plot validation error against learning rate for the candidate and for the baseline, and confirm that each one's best trial sits inside its own searched range. In panel (b) the baseline's best rate is the upper end of the range it was given, which is exactly the "bad" pattern of <a href="#fig-range" class="figref"> data-static-figref="1">Figure 2</a>.
         </p>
         <p>
           Once the study is healthy and the comparison is fair, one question still remains, which is whether the measured difference is larger than the run-to-run noise. That is where <a href="06-adopting-a-change.html">Part 6</a> picks up.
@@ -505,7 +508,7 @@
             <span class="p05-step-icon" aria-hidden="true"><svg viewBox="0 0 32 32" width="32" height="32"><path d="M5 4 V27 H29" class="ic-axis"/><path d="M7 7 C 12 20, 18 21, 28 23" class="ic-train"/><path d="M7 6 C 12 17, 16 17, 20 17 S 26 14, 28 12" class="ic-val"/></svg></span>
             <div class="p05-step-body">
               <h3>Open the curves of the best few trials</h3>
-              <p>Match them against <a href="#fig-gallery" class="figref"></a>. Fix overfitting, noise or a bug before comparing settings.</p>
+              <p>Match them against <a href="#fig-gallery" class="figref"> data-static-figref="1">Figure 3</a>. Fix overfitting, noise or a bug before comparing settings.</p>
             </div>
           </li>
           <li class="p05-step">
@@ -543,10 +546,10 @@
 
       <section class="refs" id="references">
         <h2>References</h2>
-        <ol id="reflist"></ol>
+        <ol id="reflist"><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li></ol>
       </section>
 
-      <nav class="pager" aria-label="Post navigation"></nav>
+      <nav class="pager" aria-label="Post navigation"><a class="prev" href="../pages/04-searching-the-space.html"><small>&larr; Previous Post</small>Where to put your trials, and how many to run</a><a class="next" href="../pages/06-adopting-a-change.html"><small>Next Post &rarr;</small>Deciding whether to adopt a change</a></nav>
     </article>
   </main>
 
@@ -554,27 +557,29 @@
     By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
-  <script defer src="../js/vendor/d3.v7.min.js"></script>
-  <script defer src="../js/vendor/katex/katex.min.js"></script>
-  <script defer src="../js/vendor/katex/auto-render.min.js"></script>
-  <script defer src="../js/lib/format.js"></script>
-  <script defer src="../js/lib/prng.js"></script>
-  <script defer src="../js/lib/halton.js"></script>
-  <script defer src="../js/lib/toyS.js"></script>
-  <script defer src="../js/lib/boundary.js"></script>
-  <script defer src="../js/lib/isolation.js"></script>
-  <script defer src="../js/lib/baseline.js"></script>
-  <script defer src="../js/lib/placer.js"></script>
-  <script defer src="../js/refs.js"></script>
-  <script defer src="../js/concepts.js"></script>
-  <script defer src="../js/site.js"></script>
-  <script defer src="../js/components/playbook-map.js"></script>
-  <script defer src="../js/chart.js"></script>
-  <script defer src="../js/runtime.js"></script>
-  <script defer src="../js/figures/f6-1-range.js"></script>
-  <script defer src="../js/figures/f6-2-gallery.js"></script>
-  <script defer src="../js/figures/f6-3-isolation.js"></script>
-  <script defer src="../js/figures/f6-4-baseline.js"></script>
-  <script defer src="../js/figures/p05-schematics.js"></script>
+  <script src="../../../assets/vendor/d3.v7.min.js"></script>
+  <script src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script src="../../../assets/vendor/katex/auto-render.min.js"></script>
+  <script src="../../../assets/blog/js/core/format.js"></script>
+  <script src="../../../assets/blog/js/core/prng.js"></script>
+  <script src="../js/lib/halton.js"></script>
+  <script src="../js/lib/toyS.js"></script>
+  <script src="../js/lib/boundary.js"></script>
+  <script src="../js/lib/isolation.js"></script>
+  <script src="../js/lib/baseline.js"></script>
+  <script src="../../../assets/blog/js/core/placer.js"></script>
+  <script src="../js/data/config.js"></script>
+  <script src="../js/refs.js"></script>
+  <script src="../js/concepts.js"></script>
+  <script src="../../../assets/blog/js/article.js"></script>
+  <script src="../js/data/flowmap-data.js"></script>
+  <script src="../../../assets/blog/js/flowmap.js"></script>
+  <script src="../../../assets/blog/js/core/chart.js"></script>
+  <script src="../../../assets/blog/js/core/runtime.js"></script>
+  <script src="../js/figures/f6-1-range.js"></script>
+  <script src="../js/figures/f6-2-gallery.js"></script>
+  <script src="../js/figures/f6-3-isolation.js"></script>
+  <script src="../js/figures/f6-4-baseline.js"></script>
+  <script src="../js/figures/p05-schematics.js"></script>
 </body>
 </html>
