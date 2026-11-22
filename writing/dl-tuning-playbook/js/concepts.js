@@ -1,35 +1,6 @@
-/* The reader model's manifest: TP.concepts, TP.sections, TP.pointers, TP.questions and
-   TP.symptoms (notes/revamp/reader-model.md §6, implementation-plan.md WO-I7).
-
-   This file is generated, and nobody edits it by hand. It is written by
-   notes/revamp/tools/reader-model/emit_manifest.py from model.py (the concepts, the gloss register,
-   the pointer overrides, the questions and the symptoms), computed.json (fluentAt) and headings.py
-   (TP.sections). The commands run from notes/revamp/tools/reader-model. After a heading changes in
-   headings.py:
-
-     python3 emit_manifest.py
-
-   and then, from the repository root, `npm run fix:titles`, which rewrites the title of every
-   concept link on the built pages. After model.py changes, the reader model is regenerated first:
-
-     python3 compute.py && python3 gen.py && python3 assemble.py && python3 emit_manifest.py
-
-   `python3 emit_manifest.py --check` writes nothing and exits 1 when this file differs from what
-   the script would write.
-
-   TP.concepts   id -> {name, aliases, home, gloss, phrase, deps, src, kind, ours, fluentAt} for a
-                 site concept, with fluentAt absent where no task makes the concept fluent, and
-                 id -> {name, aliases, prior: true} for prior knowledge. home is "page#section", and
-                 src is empty for the site's additions.
-   TP.sections   page -> {section id: heading}, in document order.
-   TP.openings   page file -> the page files its opening names beyond those its tasks use (OPENING_ADDS)
-   TP.pointers   "page#section" -> the concepts its forward pointer names, for each section that
-                 leaves its other concepts to the glosses at their callbacks (reader-model.md §4,
-                 rule 5).
-   TP.questions  [{outcome, outcomeName, text, targets}], in the contents page's order.
-   TP.symptoms   [{text, targets}].
-
-   Every page file, home and target is relative to site/pages/, as the pages' links are. */
+/* Concept glossary and section title index for Notes on the Deep Learning Tuning Playbook.
+ * Exposes window.TP.concepts and window.TP.sections for hover definitions and cross-references.
+ */
 
 (function (global) {
   var TP = global.TP = global.TP || {};
@@ -272,10 +243,10 @@
       fluentAt: "SC1.6"
     },
     "sharpness": {
-      name: "sharpness, the top eigenvalue of the loss's Hessian",
+      name: "sharpness, the top eigenvalue of the loss Hessian",
       aliases: ["sharpness"],
       home: "02-starting-a-project.html#optimizer",
-      gloss: "The largest eigenvalue of the training loss's Hessian, the loss's largest curvature, which sets the divergence bound of gradient descent at 2 divided by the sharpness (our addition, after Cohen et al.).",
+      gloss: "The largest eigenvalue of the training loss Hessian, measuring curvature along the steepest direction. For plain gradient descent it sets the stability limit 2 divided by the sharpness (author note, after Cohen et al. 2021).",
       phrase: "the largest curvature of the loss, the top eigenvalue of its Hessian",
       deps: [],
       src: "",
@@ -417,8 +388,8 @@
       name: "critical batch size",
       aliases: [],
       home: "03-batch-size.html#training-time",
-      gloss: "The batch size up to which perfect scaling holds and beyond which larger batches give diminishing reductions in steps.",
-      phrase: "the batch size beyond which larger batches give diminishing returns in steps",
+      gloss: "The noise-scale batch size B_crit where doubling batch size saves half as many marginal steps, distinct from hardware saturation B_sat and the Playbook's end-of-perfect-scaling threshold.",
+      phrase: "the noise-scale batch size beyond which larger batches give diminishing returns in steps",
       deps: ["perfect-scaling"],
       src: "L282-L291",
       kind: "concept",
@@ -899,16 +870,38 @@
       fluentAt: "SC5.5"
     },
     "schedule-family": {
-      name: "adding a learning-rate decay schedule, and its family",
+      name: "learning-rate decay schedule and its family",
       aliases: ["decay schedule", "schedule family"],
       home: "07-training-horizon.html#schedule",
-      gloss: "A non-constant learning-rate schedule, which the playbook is confident matters, with linear or cosine decay as its preference, tuned as a nuisance hyperparameter and not adjusted by hand against the validation set.",
-      phrase: "a non-constant decay schedule, linear or cosine by the playbook's preference",
+      gloss: "A non-constant learning-rate schedule tuned as a nuisance hyperparameter and never adjusted by hand against validation curves. Classical options include linear and cosine decay, while modern large runs often use Warmup-Stable-Decay (WSD) with a short 1-sqrt cooldown.",
+      phrase: "a decay schedule family such as linear, cosine, or Warmup-Stable-Decay",
       deps: ["round", "nuisance-hp", "max-train-steps"],
       src: "L404-L405, L621-L624, L1170-L1176, L1589-L1643",
       kind: "procedure",
       ours: false,
       fluentAt: "SC5.5"
+    },
+    "decay-schedule": {
+      name: "learning-rate decay schedule",
+      aliases: ["decay schedule", "learning-rate decay"],
+      home: "07-training-horizon.html#schedule",
+      gloss: "A schedule lowering the learning rate toward zero or a small floor near the end of training. Tuned as a nuisance hyperparameter together with peak learning rate and step budget.",
+      phrase: "lowering the learning rate toward the end of a training run",
+      deps: ["schedule-family", "max-train-steps"],
+      src: "L621-L624, L1589-L1643",
+      kind: "concept",
+      ours: false
+    },
+    "short-horizon-bias": {
+      name: "short-horizon bias",
+      aliases: ["short horizon bias"],
+      home: "07-training-horizon.html#short-horizon",
+      gloss: "Choosing hyperparameters or optimizers from truncated or overly short runs, which systematically favors aggressive initial progress over strong final validation performance.",
+      phrase: "favoring fast early progress over final quality when tuning on short runs",
+      deps: ["max-train-steps", "schedule-family"],
+      src: "L1255-L1336",
+      kind: "concept",
+      ours: false
     },
     "schedule-extension": {
       name: "extending the schedule for Round 2",
@@ -1018,27 +1011,49 @@
       fluentAt: "PT6"
     },
     "workload-b": {
-      name: "workload B of Toy D",
+      name: "synthetic warmup landscape (setting B)",
       aliases: ["workload B"],
       home: "08-training-instabilities.html#warmup",
-      gloss: "The one setting of Toy D's sharpness dynamics that the site's Toy D figures and the worked case run, in which the sharp direction's curvature relaxes toward its target at a fixed rate (our addition).",
-      phrase: "the one setting of Toy D that the site's figures and worked case run",
+      gloss: "The synthetic relaxation dynamics used in the warmup toy figures and worked example, in which the steepest curvature relaxes smoothly toward its baseline rate (author note).",
+      phrase: "the relaxation setting used in the warmup figures and worked example",
       deps: ["sharpness"],
       src: "",
       kind: "concept",
       ours: true
     },
     "stability-limit": {
-      name: "the stability limit set by sharpness",
+      name: "the stability limit set by curvature",
       aliases: ["stability limit"],
       home: "08-training-instabilities.html#warmup",
-      gloss: "The largest stable learning rate at each step, 2 divided by the current sharpness for gradient descent, which rises as warmup's increasing learning rate drives the sharpness down and has no clear analogue for Adam (our addition, after Cohen et al. and Gilmer et al.).",
-      phrase: "the largest stable learning rate at each step, set by the current sharpness",
+      gloss: "The largest stable step size along the training trajectory: 2 divided by the Hessian sharpness for gradient descent (Cohen et al. 2021), and the preconditioned stability threshold of Adaptive Edge of Stability for Adam-family optimizers (Cohen et al. 2022). Warmup works when early curvature relaxes as the step size ramps up (author note).",
+      phrase: "the largest stable learning rate at each step, set by local curvature and preconditioning",
       deps: ["divergence-bound", "sharpness", "warmup"],
       src: "",
       kind: "concept",
       ours: true,
       fluentAt: "SC-A"
+    },
+    "qk-layernorm": {
+      name: "QK-LayerNorm (QK-Norm)",
+      aliases: ["QK-Norm", "QK-LayerNorm"],
+      home: "08-training-instabilities.html#clipping",
+      gloss: "Normalizing queries and keys right before the dot-product attention softmax, curbing unbounded attention logit growth at high learning rates and large widths.",
+      phrase: "normalizing attention queries and keys before dot-product logits",
+      deps: ["instability"],
+      src: "",
+      kind: "procedure",
+      ours: true
+    },
+    "z-loss": {
+      name: "output softmax z-loss",
+      aliases: ["z-loss"],
+      home: "08-training-instabilities.html#clipping",
+      gloss: "A small auxiliary penalty on log^2(Z), the squared log-partition function of the final output logits, preventing logit magnitude drift and numerical divergence in mixed precision.",
+      phrase: "a penalty on squared log-normalizer magnitude keeping output logits bounded",
+      deps: ["instability"],
+      src: "",
+      kind: "procedure",
+      ours: true
     },
     "clipping": {
       name: "gradient clipping",
@@ -1366,211 +1381,4 @@
       "reading-the-figures": "Reading the figures"
     }
   };
-  TP.pointers = {
-    "01-the-tuning-loop.html#studies": ["axis-plot"]
-  };
-  TP.openings = {
-    "06-adopting-a-change.html": ["02-starting-a-project.html", "01-the-tuning-loop.html"],
-    "09-pipeline-practice.html": ["03-batch-size.html"]
-  };
-  TP.questions = [
-    {
-      outcome: 1,
-      outcomeName: "Start a project",
-      text: "Which decisions do I make once, and which do I keep tuning?",
-      targets: ["02-starting-a-project.html#assumptions"]
-    },
-    {
-      outcome: 1,
-      outcomeName: "Start a project",
-      text: "Why should I not tune the batch size for accuracy, and how do I choose it?",
-      targets: ["03-batch-size.html#controls", "03-batch-size.html#feasible", "03-batch-size.html#training-time"]
-    },
-    {
-      outcome: 1,
-      outcomeName: "Start a project",
-      text: "What does \"simple\" leave out at the start, and why?",
-      targets: ["02-starting-a-project.html#initial"]
-    },
-    {
-      outcome: 1,
-      outcomeName: "Start a project",
-      text: "How long should my first runs be?",
-      targets: ["02-starting-a-project.html#step-budget"]
-    },
-    {
-      outcome: 2,
-      outcomeName: "Run tuning as rounds",
-      text: "What is the next round trying to find out, in one sentence?",
-      targets: ["01-the-tuning-loop.html#round-goal"]
-    },
-    {
-      outcome: 2,
-      outcomeName: "Run tuning as rounds",
-      text: "What is a study, and what does one trial measure?",
-      targets: ["01-the-tuning-loop.html#studies", "01-the-tuning-loop.html#trial-result"]
-    },
-    {
-      outcome: 2,
-      outcomeName: "Run tuning as rounds",
-      text: "Why is insight worth more than a lower validation error this week?",
-      targets: ["01-the-tuning-loop.html#exploration"]
-    },
-    {
-      outcome: 2,
-      outcomeName: "Run tuning as rounds",
-      text: "When does exploration end, and what changes then?",
-      targets: ["06-adopting-a-change.html#after"]
-    },
-    {
-      outcome: 3,
-      outcomeName: "Design and read a study",
-      text: "For this goal, which hyperparameters must be searched over for the comparison to be fair, and which are held fixed at the cost of a caveat?",
-      targets: ["01-the-tuning-loop.html#roles"]
-    },
-    {
-      outcome: 3,
-      outcomeName: "Design and read a study",
-      text: "How many trials, over how wide a space?",
-      targets: ["01-the-tuning-loop.html#budget", "04-searching-the-space.html#trials"]
-    },
-    {
-      outcome: 3,
-      outcomeName: "Design and read a study",
-      text: "Which of Adam's hyperparameters should I tune?",
-      targets: ["01-the-tuning-loop.html#budget"]
-    },
-    {
-      outcome: 3,
-      outcomeName: "Design and read a study",
-      text: "Was the search wide enough and dense enough?",
-      targets: ["05-reading-the-results.html#boundaries", "05-reading-the-results.html#density"]
-    },
-    {
-      outcome: 3,
-      outcomeName: "Design and read a study",
-      text: "Which trials should I not trust?",
-      targets: ["05-reading-the-results.html#checklist", "05-reading-the-results.html#curves"]
-    },
-    {
-      outcome: 3,
-      outcomeName: "Design and read a study",
-      text: "Which value of the hyperparameter I am studying came out best, and what would make that comparison unfair?",
-      targets: ["05-reading-the-results.html#isolation"]
-    },
-    {
-      outcome: 4,
-      outcomeName: "Adopt a change",
-      text: "Is this improvement real, or did the candidate get a lucky seed or a lucky search?",
-      targets: ["06-adopting-a-change.html#variance", "06-adopting-a-change.html#reruns"]
-    },
-    {
-      outcome: 4,
-      outcomeName: "Adopt a change",
-      text: "What do reruns of the best trial tell me, and what can they not tell me?",
-      targets: ["06-adopting-a-change.html#reruns"]
-    },
-    {
-      outcome: 4,
-      outcomeName: "Adopt a change",
-      text: "When do I stop exploring?",
-      targets: ["06-adopting-a-change.html#after"]
-    },
-    {
-      outcome: 4,
-      outcomeName: "Adopt a change",
-      text: "Once I stop exploring, how do I search for the final configuration?",
-      targets: ["06-adopting-a-change.html#after"]
-    },
-    {
-      outcome: 5,
-      outcomeName: "Set the training budget",
-      text: "Is my training limited by how long I can afford to run it, or would a longer run stop helping?",
-      targets: ["07-training-horizon.html#regimes"]
-    },
-    {
-      outcome: 5,
-      outcomeName: "Set the training budget",
-      text: "How long should my trials train, and how do I know when I have it wrong?",
-      targets: ["07-training-horizon.html#regimes", "07-training-horizon.html#sweep", "07-training-horizon.html#refine"]
-    },
-    {
-      outcome: 5,
-      outcomeName: "Set the training budget",
-      text: "When my final run is ten times longer than my tuning runs, which hyperparameters carry over, and how do I stretch the schedule?",
-      targets: ["07-training-horizon.html#bound", "07-training-horizon.html#extend"]
-    },
-    {
-      outcome: 5,
-      outcomeName: "Set the training budget",
-      text: "Which learning-rate schedule should I use?",
-      targets: ["07-training-horizon.html#schedule"]
-    },
-    {
-      outcome: 6,
-      outcomeName: "Recognize instability",
-      text: "Is my model unstable, or just badly tuned?",
-      targets: ["08-training-instabilities.html#what", "08-training-instabilities.html#diagnosis"]
-    },
-    {
-      outcome: 6,
-      outcomeName: "Recognize instability",
-      text: "Which fix fits my instability, and how do I set it?",
-      targets: ["08-training-instabilities.html#fixes", "08-training-instabilities.html#warmup", "08-training-instabilities.html#clipping"]
-    },
-    {
-      outcome: 6,
-      outcomeName: "Recognize instability",
-      text: "How do I know warmup is long enough?",
-      targets: ["08-training-instabilities.html#warmup"]
-    },
-    {
-      outcome: 6,
-      outcomeName: "Recognize instability",
-      text: "When is clipping doing something other than clipping?",
-      targets: ["08-training-instabilities.html#clipping"]
-    }
-  ];
-  TP.symptoms = [
-    {
-      text: "Loss NaN or spiking in the first few hundred steps",
-      targets: ["08-training-instabilities.html#diagnosis"]
-    },
-    {
-      text: "Best trial at the edge of the search space, with no diverged trials beyond it",
-      targets: ["05-reading-the-results.html#boundaries"]
-    },
-    {
-      text: "Best trial just below a learning rate above which every trial diverged",
-      targets: ["08-training-instabilities.html#diagnosis"]
-    },
-    {
-      text: "Validation error rising late in training",
-      targets: ["05-reading-the-results.html#curves"]
-    },
-    {
-      text: "Training loss rising during training",
-      targets: ["05-reading-the-results.html#curves"]
-    },
-    {
-      text: "Training or validation error that jumps from step to step late in training",
-      targets: ["05-reading-the-results.html#curves"]
-    },
-    {
-      text: "A validation metric that oscillates with a fixed period",
-      targets: ["09-pipeline-practice.html#evaluation"]
-    },
-    {
-      text: "Two runs of one configuration that differ",
-      targets: ["06-adopting-a-change.html#variance"]
-    },
-    {
-      text: "Throughput that stops rising as the batch size doubles",
-      targets: ["03-batch-size.html#feasible"]
-    },
-    {
-      text: "Best checkpoints all near the end of the run",
-      targets: ["07-training-horizon.html#refine"]
-    }
-  ];
 })(typeof window !== "undefined" ? window : globalThis);

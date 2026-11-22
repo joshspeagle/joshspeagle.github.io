@@ -253,6 +253,8 @@ def check_all(errors: list[str], warnings: list[str]) -> None:
                 errors.append(f"[{rel}] Missing synchronous data-theme-boot script in <head>")
             if 'data-theme="auto"' in raw:
                 errors.append(f"[{rel}] Hardcoded data-theme=\"auto\" breaks root dark default")
+            if re.search(r'>\s*data-static-figref="', raw):
+                errors.append(f"[{rel}] Malformed figref attribute spilled into link text")
 
             # Strip <pre> and <code> snippets so design-sheet specimen code blocks are ignored.
             dom_raw = re.sub(r"<(?:pre|code)\b[^>]*>[\s\S]*?</(?:pre|code)>", " ", raw)

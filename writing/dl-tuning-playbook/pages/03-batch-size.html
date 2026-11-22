@@ -180,6 +180,7 @@
             The input-limited preset reruns the procedure with a data loader that delivers at most 2,000 examples per second. Throughput stops at 256, far below the accelerator's peak, which points to a bottleneck in the pipeline.
           </div>
         </div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
 
         <p class="fig-caption">
           Throughput against batch size on log axes, with one short benchmark run per point. The dotted line is perfect doubling, and the cross at <span data-num="fig-doubling:default:failed-batch">8,192</span> marks the out-of-memory failure. The selection rule keeps the largest batch size reached by doublings that each raised throughput by at least <span data-num="fig-doubling:model:threshold">10%</span>.
@@ -258,7 +259,7 @@
         </details>
 
         <p>
-          One source of confusion when reading this literature is that different papers attach the phrase "critical batch size" to different points on the same curve, as <a href="#fig-regimes" class="figref"> data-static-figref="1">Figure 5</a> shows. The tolerances below are my own algebra on McCandlish et al.'s curve rather than anything the papers compute:
+          One source of confusion when reading this literature is that different papers attach the phrase "critical batch size" to different points on the same curve, as <a href="#fig-regimes" class="figref" data-static-figref="1">Figure 5</a> shows. The tolerances below are my own algebra on McCandlish et al.'s curve rather than anything the papers compute:
         </p>
         <ul>
           <li><strong>The Playbook</strong> uses the phrase for the end of perfect scaling: "Perfect scaling holds for all batch sizes up to a critical batch size, beyond which one achieves diminishing returns." On a smooth curve, though, that end can only be located with a tolerance. Zhang et al. (2024) <cite data-ref="zhang2024"><span class="cit-num"><a href="#ref-zhang2024">[8]</a></span></cite> choose one, defining the critical batch size as the point where the steps needed exceed perfect scaling by 20%. On McCandlish et al.'s curve that point is $B_{\text{crit}}/5$, because the ratio of $S(B)$ to the perfect-scaling line $S_{\min} B_{\text{crit}}/B$ is $1 + B/B_{\text{crit}}$.</li>
@@ -327,6 +328,7 @@
             Perfect scaling now ends at 64, before the accelerator saturates. The purple curve is nearly flat above 512 while the gold curve rises, so at 4,096 training takes 349% longer than at the minimum near 466.
           </div>
         </div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
 
         <p class="fig-caption">
           Each curve is shown relative to its value at batch size <span data-num="fig-training-time:model:reference-batch">8</span>, on log axes: <span class="tok-third">time per step</span> (gold), <span class="tok-fourth">steps to the result</span> (purple) and their product, <span class="tok-model">training time</span> (blue). At the default, perfect scaling ends at <span data-num="fig-training-time:default:critical">4,096</span> ($B_{\text{crit}} =$ <span data-num="fig-training-time:default:b-crit">20,480</span>). Training time is shortest at $B =$ <span data-num="fig-training-time:default:minimum">1,071</span>, stays within <span data-num="fig-training-time:model:window">5%</span> of that from <span data-num="fig-training-time:default:window-low">650</span> to <span data-num="fig-training-time:default:window-high">2,427</span>, and sits 3% above the minimum at the loaded default of $B = 2{,}048$.
@@ -381,6 +383,7 @@
             At 4,096 the steps are close to the floor (1.08 times the minimum), but the run processes 13.8 times the minimum number of examples.
           </div>
         </div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
 
         <p class="fig-caption">
           Both panels use $B_{\text{crit}} =$ <span data-num="fig-budgets:model:critical">320</span> and a budget of <span data-num="fig-budgets:model:epoch-multiple">2</span> times the minimum (dashed). Under the epoch budget in (a), batch sizes up to <span data-num="fig-budgets:default:epoch-largest">256</span> reach the goal, while under the step budget in (b) only batch sizes from <span data-num="fig-budgets:default:step-smallest">512</span> upward do. At the selected batch size, <span data-num="fig-budgets:default:batch">256</span>, a run needs <span data-num="fig-budgets:default:examples">1.8</span>× the minimum examples and <span data-num="fig-budgets:default:steps">2.25</span>× the minimum steps.
@@ -461,7 +464,7 @@
 
       <section class="prose">
         <p>
-          The Playbook doesn't spell this out, but I think one consequence simplifies matters considerably. On a fixed set of accelerators, usage is measured in device-hours, which are proportional to wall-clock time, so on that hardware the batch size that minimizes training time also minimizes cost and <a href="#fig-training-time" class="figref"> data-static-figref="1">Figure 6</a> answers both questions at once. The two goals only come apart when a larger batch requires more devices or different ones.
+          The Playbook doesn't spell this out, but I think one consequence simplifies matters considerably. On a fixed set of accelerators, usage is measured in device-hours, which are proportional to wall-clock time, so on that hardware the batch size that minimizes training time also minimizes cost and <a href="#fig-training-time" class="figref" data-static-figref="1">Figure 6</a> answers both questions at once. The two goals only come apart when a larger batch requires more devices or different ones.
         </p>
         <p>
           Upfront costs pull in two directions. On one hand, the Playbook suggests it "might be better to defer increasing the batch size until the project has matured", since multi-host pipelines can introduce bugs. On the other, "a large speedup in training time might be very beneficial early in the process when a lot of tuning experiments are needed".
@@ -475,7 +478,7 @@
           Everything so far has assumed that each batch size gets its own tuned hyperparameters, and that assumption has a price. The Playbook is blunt about it: "The optimal values of most hyperparameters are sensitive to the batch size. Therefore, changing the batch size typically requires starting the tuning process all over again." This is why the authors recommend thinking carefully about the batch size at the start of a project, because <dfn data-concept="retuning">retuning</dfn> everything later "might be difficult, time consuming, and expensive".
         </p>
         <p>
-          The learning rate is the clearest illustration. In McCandlish et al.'s model the best SGD learning rate is $\eta^{\star}(B) = \eta_{\max}/(1 + B_{\text{noise}}/B)$ (their Eq. 2.6), which grows in proportion to $B$ well below the noise scale and levels off at $\eta_{\max}$ well above it, as we can see in <a href="#fig-retune" class="figref"> data-static-figref="1">Figure 9</a>. Empirically, though, the right way to scale the learning rate depends on the optimizer:
+          The learning rate is the clearest illustration. In McCandlish et al.'s model the best SGD learning rate is $\eta^{\star}(B) = \eta_{\max}/(1 + B_{\text{noise}}/B)$ (their Eq. 2.6), which grows in proportion to $B$ well below the noise scale and levels off at $\eta_{\max}$ well above it, as we can see in <a href="#fig-retune" class="figref" data-static-figref="1">Figure 9</a>. Empirically, though, the right way to scale the learning rate depends on the optimizer:
         </p>
         <ul>
           <li><strong>Linear scaling for momentum SGD.</strong> Goyal et al.'s rule is "When the minibatch size is multiplied by k, multiply the learning rate by k." They report that it breaks down early in training, which they handle with warmup, and beyond a batch size of about 8k on ImageNet. Zhang et al. (2019) found the optimal learning rate of SGD "scales linearly with batch size before it hits the critical batch size".</li>
@@ -606,7 +609,7 @@
       </section>
 
       <div class="l-wide">
-        <div class="playbook-map" data-active-zone="foundation" data-default-node="d_batch"></div>
+        <div class="playbook-map" data-active-zone="setup" data-default-node="s_batch"></div>
       </div>
 
       <section class="refs" id="references">

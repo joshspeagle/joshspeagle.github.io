@@ -252,6 +252,7 @@
             Running twenty seeds each at the same spread narrows the band to ±<span data-num="fig-gain-noise:noisy-twenty:band">0.19</span> points, and the observed gap of <span data-num="fig-gain-noise:noisy-twenty:gap">0.20</span> points clears it. Noisy workloads need many more reruns for the same gain.
           </div>
         </div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           (a) Each run's validation error for the baseline (open circles) and the candidate (filled circles), with each mean marked by a vertical tick. (b) Gaps that seed noise alone produces between two identical configurations with N runs each, together with the band of ±2 standard errors and the observed gap. The runs are synthetic Gaussian draws around 23% error, following the Playbook's ImageNet example, and "Draw again" draws new seeds.
         </p>
@@ -327,6 +328,7 @@
             When the search is dense enough that its sampling variability hardly matters (spread 0.02 points), the observed gain of <span data-num="fig-reruns:study-smaller:gain">0.16</span> ± <span data-num="fig-reruns:study-smaller:se-diff">0.07</span> points agrees with the true 0.2, and repeated studies fall close to the reruns.
           </div>
         </div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           The top row shows the candidate's reruns with their mean and ±1 standard error, the middle row shows the baseline's five reruns, and the bottom row shows the best trial of each repeated study of the candidate. All values are synthetic, in percentage points of validation error. The default spreads follow my reading of the Playbook's ImageNet example, where the seed spread of 0.1 points treats its ±0.1% retrain variation as a standard deviation, and the search spread of 0.3 points is the 20-trial box's interquartile range in the Playbook's Figure 3 (about 0.4 points) divided by 1.35, which converts an interquartile range to a standard deviation for a normal distribution.
         </p>
@@ -452,7 +454,7 @@
       </section>
 
       <div class="l-wide">
-        <div class="playbook-map" data-active-zone="diagnosis" data-default-node="d_gain"></div>
+        <div class="playbook-map" data-active-zone="decide" data-default-node="d_adopt"></div>
       </div>
 
       <section class="refs" id="references">

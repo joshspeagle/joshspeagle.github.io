@@ -20,7 +20,7 @@
     { id: 's_arch', phase: 'setup', kind: 'action', posts: [2],
       label: ['Start from a proven', 'architecture'],
       title: 'Start from an architecture that already works',
-      what: 'Reuse a well-established model family for your kind of problem, ideally one from a paper that tackles a closely related task. A known architecture gives you a baseline whose behaviour other people have already characterized. You can build a custom model later.',
+      what: 'Reuse a well-established model family for your kind of problem, ideally one from a paper that tackles a closely related task. A known architecture gives you a baseline whose behavior other people have already characterized. You can build a custom model later.',
       pb: { text: 'The Playbook recommends reusing a model that already works when a project starts.', anchor: 'choosing-the-model-architecture' },
       links: [{ post: 2, hash: 'architecture', label: 'Choosing the architecture' }],
       next: [{ target: 's_opt' }] },
@@ -155,14 +155,6 @@
       next: [] }
   ];
 
-  /* v4 ids that pages still carry, mapped to the new steps */
-  var LEGACY_NODES = {
-    start: 's_arch', d_baseline: 's_arch', n_arch: 's_arch', d_batch: 's_batch', n_batch: 's_batch',
-    d_goal: 'p_goal', n_roles: 'p_roles', n_space: 'p_search', d_curves: 'r_curves',
-    n_instab: 'r_instab', n_read: 'r_space', d_gain: 'd_adopt', n_adopt: 'd_yes', n_reject: 'd_no'
-  };
-  var LEGACY_ZONES = { foundation: 'setup', loop: 'plan', diagnosis: 'read', dynamics: 'read', all: '' };
-
   /* ---------- geometry of the wide view (SVG user units; drawn at about 1:1) ---------- */
   var VBW = 1000, VBH = 664;
   var COLS = [124, 314, 504, 694, 884];
@@ -243,8 +235,6 @@
     tip: TIP,
     phases: PHASES,
     steps: STEPS,
-    legacyNodes: LEGACY_NODES,
-    legacyZones: LEGACY_ZONES,
     bands: BANDS,
     pos: POS,
     returns: RETURNS,

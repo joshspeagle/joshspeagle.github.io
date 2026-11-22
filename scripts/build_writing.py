@@ -356,10 +356,42 @@ def _populate_figures(text: str) -> str:
             inner,
             count=1,
         )
+        is_interactive_plot = (
+            "fig" in classes
+            and "schematic" not in classes
+            and "exercise" not in classes
+            and "source" not in classes
+            and "<svg" not in inner
+            and "<img" not in inner
+            and 'class="fig-nojs"' not in inner
+        )
+        if is_interactive_plot:
+            nojs_snippet = '<noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>'
+            if re.search(r'<div\s+class="fig-panels">\s*</div>', inner):
+                inner = re.sub(
+                    r'(<div\s+class="fig-panels">\s*</div>)',
+                    rf'\1\n        {nojs_snippet}',
+                    inner,
+                    count=1,
+                )
+            elif re.search(r'<p\s+class="fig-caption"', inner):
+                inner = re.sub(
+                    r'(\s*<p\s+class="fig-caption")',
+                    rf'\n        {nojs_snippet}\1',
+                    inner,
+                    count=1,
+                )
+            else:
+                inner = inner.rstrip() + f"\n        {nojs_snippet}\n      "
         return f"{tag}{inner}{end}"
 
     main_body = re.sub(
         r'(<figure\b[^>]*>)([\s\S]*?)(</figure>)', _number_fig, main_body
+    )
+    main_body = re.sub(
+        r'(<a\b[^>]*\bclass="[^"]*\bfigref\b[^"]*")>\s*data-static-figref="[^"]*">([\s\S]*?</a>)',
+        r'\1 data-static-figref="1">\2',
+        main_body,
     )
 
     def _fill_figref(m: re.Match) -> str:
@@ -372,19 +404,12 @@ def _populate_figures(text: str) -> str:
             return m.group(0)
         if inner.strip() and 'data-static-figref="1"' not in open_a:
             return m.group(0)
-        attrs = re.sub(r'\s*data-static-figref="[^"]*"', "", open_a)
-        if not attrs.endswith(" "):
-            attrs += " "
-        return f'{attrs[:-1]} data-static-figref="1">{fig_labels[fid]}{close_a}'
+        tag_head = re.sub(r'\s*data-static-figref="[^"]*"', "", open_a[:-1]).rstrip()
+        return f'{tag_head} data-static-figref="1">{fig_labels[fid]}{close_a}'
 
     main_body = re.sub(
         r'(<a\b[^>]*\bclass="[^"]*\bfigref\b[^"]*"[^>]*>)([\s\S]*?)(</a>)',
         _fill_figref,
-        main_body,
-    )
-    main_body = re.sub(
-        r'(<div\s+class="fig-panels">\s*</div>)(?!\s*<noscript\b[^>]*\bclass="fig-nojs")',
-        r'\1\n        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>',
         main_body,
     )
     return text[: main_m.start()] + main_open + main_body + main_close + text[main_m.end() :]

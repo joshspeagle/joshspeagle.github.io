@@ -1,18 +1,16 @@
-/* Shared reference table and page manifest for the v4 Deep Learning Tuning Playbook series.
- * Loaded on every page before site.js. Exposes window.TP.refs and window.TP.pages.
+/* Shared reference table for Notes on the Deep Learning Tuning Playbook.
+ * Loaded after js/data/config.js. Exposes window.TP.refs and URL helpers.
  *
- * Every citation in the prose is a <cite data-ref="key"></cite> element; site.js numbers them in
- * order of first appearance on the page, turns each into a bracketed link to #ref-key with a rich
- * hover tooltip, and populates <ol id="reflist"> at the bottom of the page with only the entries
- * cited on that page.
+ * Every citation in the prose is a <cite data-ref="key"></cite> element; article.js numbers
+ * them in first-appearance order, links each to #ref-key, and populates <ol id="reflist">.
  */
 (function (global) {
   'use strict';
   var TP = global.TP = global.TP || {};
 
-  TP.playbookUrl = 'https://github.com/google-research/tuning_playbook';
-  TP.playbookCommit = '7554a51';
-  TP.playbookRawLineUrl = function (lineStart, lineEnd) {
+  TP.playbookUrl = TP.playbookUrl || 'https://github.com/google-research/tuning_playbook';
+  TP.playbookCommit = TP.playbookCommit || '7554a51db292242213292d1fa939dc87ffc7be59';
+  TP.playbookRawLineUrl = TP.playbookRawLineUrl || function (lineStart, lineEnd) {
     var frag = '#L' + lineStart + (lineEnd && lineEnd !== lineStart ? '-L' + lineEnd : '');
     return TP.playbookUrl + '/blob/' + TP.playbookCommit + '/README.md?plain=1' + frag;
   };
@@ -69,7 +67,7 @@
       url: 'https://arxiv.org/abs/2108.07258'
     },
     he2019: {
-      authors: 'Kaiming He, Ross Girshick, Piotr Dollár',
+      authors: 'Kaiming He, Ross Girshick, Piotr Doll\u00e1r',
       year: '2019',
       title: 'Rethinking ImageNet Pre-training',
       venue: 'IEEE/CVF International Conference on Computer Vision (ICCV 2019)',
@@ -88,6 +86,13 @@
       title: 'Transfusion: Understanding Transfer Learning for Medical Imaging',
       venue: 'Advances in Neural Information Processing Systems (NeurIPS 2019)',
       url: 'https://arxiv.org/abs/1902.07208'
+    },
+    hu2022: {
+      authors: 'Edward J. Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang, Lu Wang, Weizhu Chen',
+      year: '2022',
+      title: 'LoRA: Low-Rank Adaptation of Large Language Models',
+      venue: 'International Conference on Learning Representations (ICLR 2022)',
+      url: 'https://arxiv.org/abs/2106.09685'
     },
     playbook: {
       authors: 'Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado',
@@ -139,6 +144,41 @@
       venue: 'arXiv:1706.03200',
       url: 'https://arxiv.org/abs/1706.03200'
     },
+    owen1998: {
+      authors: 'Art B. Owen',
+      year: '1998',
+      title: "Scrambling Sobol' and Niederreiter-Xing Points",
+      venue: 'Journal of Complexity, 14(4), 466-489',
+      url: 'https://doi.org/10.1006/jcom.1998.0487'
+    },
+    joe2008: {
+      authors: 'Stephen Joe, Frances Y. Kuo',
+      year: '2008',
+      title: 'Constructing Sobol Sequences with Better Two-Dimensional Projections',
+      venue: 'SIAM Journal on Scientific Computing, 30(5), 2635-2654',
+      url: 'https://doi.org/10.1137/070709359'
+    },
+    balandat2020: {
+      authors: 'Maximilian Balandat, Brian Karrer, Daniel R. Jiang, Samuel Daulton, Benjamin Letham, Andrew Gordon Wilson, Eytan Bakshy',
+      year: '2020',
+      title: 'BoTorch: A Framework for Efficient Monte-Carlo Bayesian Optimization',
+      venue: 'Advances in Neural Information Processing Systems 33 (NeurIPS 2020)',
+      url: 'https://arxiv.org/abs/1910.06403'
+    },
+    akiba2019: {
+      authors: 'Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, Masanori Koyama',
+      year: '2019',
+      title: 'Optuna: A Next-generation Hyperparameter Optimization Framework',
+      venue: 'Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining (KDD 2019)',
+      url: 'https://arxiv.org/abs/1907.10902'
+    },
+    li2020: {
+      authors: 'Liam Li, Kevin Jamieson, Afshin Rostamizadeh, Ekaterina Gonina, Jonathan Ben-Tzur, Moritz Hardt, Benjamin Recht, Ameet Talwalkar',
+      year: '2020',
+      title: 'A System for Massively Parallel Hyperparameter Tuning',
+      venue: 'Proceedings of Machine Learning and Systems (MLSys 2020)',
+      url: 'https://arxiv.org/abs/1810.05934'
+    },
     choi2019: {
       authors: 'Dami Choi, Christopher J. Shallue, Zachary Nado, Jaehoon Lee, Chris J. Maddison, George E. Dahl',
       year: '2019',
@@ -146,12 +186,54 @@
       venue: 'arXiv:1910.05446',
       url: 'https://arxiv.org/abs/1910.05446'
     },
-    schmidt2021: {
-      authors: 'Robin M. Schmidt, Frank Schneider, Philipp Hennig',
-      year: '2021',
-      title: 'Descending through a Crowded Valley - Benchmarking Deep Learning Optimizers',
-      venue: 'Proceedings of the 38th International Conference on Machine Learning (PMLR 139:9367-9376)',
-      url: 'https://arxiv.org/abs/2007.01547'
+    jordan2024muon: {
+      authors: 'Keller Jordan',
+      year: '2024',
+      title: 'Muon: An optimizer for hidden layers in neural networks',
+      venue: 'Technical blog post (https://kellerjordan.github.io/posts/muon/)',
+      url: 'https://github.com/KellerJordan/Muon'
+    },
+    liu2025muon: {
+      authors: 'Jingyuan Liu, Jianlin Su, Xingcheng Yao, Zhejun Jiang, Guokun Lai, Yulun Du, Yidao Qin, Weixin Xu, Enzhe Lu, Junjie Yan, Yanru Chen, Huabin Zheng, et al.',
+      year: '2025',
+      title: 'Muon is Scalable for LLM Training',
+      venue: 'arXiv:2502.16982',
+      url: 'https://arxiv.org/abs/2502.16982'
+    },
+    gupta2018: {
+      authors: 'Vineet Gupta, Tomer Koren, Yoram Singer',
+      year: '2018',
+      title: 'Shampoo: Preconditioned Stochastic Tensor Optimization',
+      venue: 'International Conference on Machine Learning (ICML 2018)',
+      url: 'https://arxiv.org/abs/1802.09568'
+    },
+    vyas2024: {
+      authors: 'Nikhil Vyas, Depen Morwani, Rosie Zhao, Mujin Kwun, Itai Shapira, David Brandfonbrener, Lucas Janson, Sham Kakade',
+      year: '2024',
+      title: 'SOAP: Improving and Stabilizing Shampoo using Adam',
+      venue: 'arXiv:2409.11321 (ICLR 2025)',
+      url: 'https://arxiv.org/abs/2409.11321'
+    },
+    defazio2023: {
+      authors: 'Aaron Defazio, Ashok Cutkosky, Harsh Mehta, Konstantin Mishchenko',
+      year: '2023',
+      title: 'When, Why and How Much? Adaptive Learning Rate Scheduling by Refinement',
+      venue: 'arXiv:2310.07831',
+      url: 'https://arxiv.org/abs/2310.07831'
+    },
+    defazio2024: {
+      authors: 'Aaron Defazio, Xingyu Alice Yang, Harsh Mehta, Konstantin Mishchenko, Ahmed Khaled, Ashok Cutkosky',
+      year: '2024',
+      title: 'The Road Less Scheduled',
+      venue: 'arXiv:2405.15682 (NeurIPS 2024)',
+      url: 'https://arxiv.org/abs/2405.15682'
+    },
+    yang2022: {
+      authors: 'Greg Yang, Edward J. Hu, Igor Babuschkin, Szymon Sidor, Xiaodong Liu, David Farhi, Nick Ryder, Jakub Pachocki, Weizhu Chen, Jianfeng Gao',
+      year: '2022',
+      title: 'Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer',
+      venue: 'arXiv:2203.03466',
+      url: 'https://arxiv.org/abs/2203.03466'
     },
     bouthillier2021: {
       authors: 'Xavier Bouthillier, Pierre Delaunay, Mirko Bronzi, Assya Trofimov, Brennan Nichyporuk, Justin Szeto, Nazanin Mohammadi Sepahvand, Edward Raff, Kanika Madan, Voleti Vikram, Samira Ebrahimi Kahou, Vincent Michalski, Tal Arbel, Chris Pal, Gael Varoquaux, Pascal Vincent',
@@ -159,27 +241,6 @@
       title: 'Accounting for Variance in Machine Learning Benchmarks',
       venue: 'Proceedings of Machine Learning and Systems (MLSys 2021)',
       url: 'https://arxiv.org/abs/2103.03098'
-    },
-    picard2021: {
-      authors: 'David Picard',
-      year: '2021',
-      title: 'Torch.manual_seed(3407) is all you need: On the influence of random seeds in deep learning architectures for computer vision',
-      venue: 'arXiv:2109.08203',
-      url: 'https://arxiv.org/abs/2109.08203'
-    },
-    Jordan2023: {
-      authors: 'Keller Jordan',
-      year: '2024',
-      title: '94% on CIFAR-10 in 3.29 Seconds on a Single GPU',
-      venue: 'arXiv:2404.00498',
-      url: 'https://arxiv.org/abs/2404.00498'
-    },
-    dahl2023: {
-      authors: 'George E. Dahl, Frank Schneider, Zachary Nado, Naman Agarwal, Chandramouli Shama Sastry, Philipp Hennig, Sourabh Medapati, Runa Eschenhagen, Priya Kasimbeg, Daniel Suo, Juhan Bae, Justin Gilmer, Abel L. Peirson, Bilal Khan, Rohan Anil, Mike Rabbat, Shankar Krishnan, Daniel Snider, Ehsan Amid, Kongtao Chen, Chris J. Maddison, Rakshith Vasudev, Michal Badura, Ankush Garg, Peter Mattson',
-      year: '2023',
-      title: 'Benchmarking Neural Network Training Algorithms',
-      venue: 'arXiv:2306.07179',
-      url: 'https://arxiv.org/abs/2306.07179'
     },
     gilmer2021: {
       authors: 'Justin Gilmer, Behrooz Ghorbani, Ankush Garg, Sameer Kumar, Ying Xiao, Yanping Huang, Gregory Guresh, David Cardoze, Surya Ganguli, George E. Dahl',
@@ -202,6 +263,13 @@
       venue: 'arXiv:1607.06450',
       url: 'https://arxiv.org/abs/1607.06450'
     },
+    zhang2019rmsnorm: {
+      authors: 'Biao Zhang, Rico Sennrich',
+      year: '2019',
+      title: 'Root Mean Square Layer Normalization',
+      venue: 'Advances in Neural Information Processing Systems (NeurIPS 2019)',
+      url: 'https://arxiv.org/abs/1910.07467'
+    },
     karpathy2019: {
       authors: 'Andrej Karpathy',
       year: '2019',
@@ -222,13 +290,6 @@
       title: 'Adaptive Gradient Methods at the Edge of Stability',
       venue: 'arXiv:2207.14484',
       url: 'https://arxiv.org/abs/2207.14484'
-    },
-    defazio2023: {
-      authors: 'Aaron Defazio, Ashok Cutkosky, Harsh Mehta, Konstantin Mishchenko',
-      year: '2023',
-      title: 'When, Why and How Much? Adaptive Learning Rate Scheduling by Refinement',
-      venue: 'arXiv:2310.07831',
-      url: 'https://arxiv.org/abs/2310.07831'
     },
     pascanu2013: {
       authors: 'Razvan Pascanu, Tomas Mikolov, Yoshua Bengio',
@@ -327,22 +388,20 @@
       title: 'The Reusable Holdout: Preserving Validity in Adaptive Data Analysis',
       venue: 'Science, 349(6248), 636-638',
       url: 'https://doi.org/10.1126/science.aaa9375'
+    },
+    ansel2024: {
+      authors: 'Jason Ansel, Edward Yang, Horace He, Natalia Gimelshein, Animesh Jain, Michael Voznesensky, Bin Bao, et al.',
+      year: '2024',
+      title: 'PyTorch 2: Faster Machine Learning Through Dynamic Python Bytecode Transformation and Graph Compilation',
+      venue: 'Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS 2024), Vol. 2, 929-947',
+      url: 'https://doi.org/10.1145/3620665.3640366'
+    },
+    zhao2023: {
+      authors: 'Yanli Zhao, Andrew Gu, Rohan Varma, Liang Luo, Chien-Chin Huang, Min Xu, Less Wright, Hamid Shojanazeri, Myle Ott, Sam Shleifer, Alban Desmaison, Can Balioglu, et al.',
+      year: '2023',
+      title: 'PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel',
+      venue: 'arXiv:2304.11277',
+      url: 'https://arxiv.org/abs/2304.11277'
     }
   };
-
-  /* Ordered list of pages in the 9-post v4 prerequisite-first arc. */
-  TP.pages = [
-    { num: 0, file: 'index.html', slug: 'index.html', title: 'Notes on the Deep Learning Tuning Playbook', short: 'Overview', group: 'Overview', unnumbered: true },
-    { num: 1, file: 'pages/01-the-tuning-loop.html', slug: 'pages/01-the-tuning-loop.html', title: 'Tuning a network one question at a time', short: '1. One question at a time', act: 1, actName: 'Act I · Experimental method and setup', group: 'Act I · Experimental method and setup' },
-    { num: 2, file: 'pages/02-starting-a-project.html', slug: 'pages/02-starting-a-project.html', title: 'Starting a new project', short: '2. Starting a project', act: 1, actName: 'Act I · Experimental method and setup', group: 'Act I · Experimental method and setup' },
-    { num: 3, file: 'pages/03-batch-size.html', slug: 'pages/03-batch-size.html', title: 'Choosing the batch size', short: '3. Batch size', act: 1, actName: 'Act I · Experimental method and setup', group: 'Act I · Experimental method and setup' },
-    { num: 4, file: 'pages/04-searching-the-space.html', slug: 'pages/04-searching-the-space.html', title: 'Where to put your trials, and how many to run', short: '4. Placing trials', act: 2, actName: 'Act II · Running, reading and deciding', group: 'Act II · Running, reading and deciding' },
-    { num: 5, file: 'pages/05-reading-the-results.html', slug: 'pages/05-reading-the-results.html', title: 'Reading the results of a tuning study', short: '5. Reading results', act: 2, actName: 'Act II · Running, reading and deciding', group: 'Act II · Running, reading and deciding' },
-    { num: 6, file: 'pages/06-adopting-a-change.html', slug: 'pages/06-adopting-a-change.html', title: 'Deciding whether to adopt a change', short: '6. Adopting a change', act: 2, actName: 'Act II · Running, reading and deciding', group: 'Act II · Running, reading and deciding' },
-    { num: 7, file: 'pages/07-training-horizon.html', slug: 'pages/07-training-horizon.html', title: 'How long to train', short: '7. How long to train', act: 3, actName: 'Act III · Dynamics, stability and engineering', group: 'Act III · Dynamics, stability and engineering' },
-    { num: 8, file: 'pages/08-training-instabilities.html', slug: 'pages/08-training-instabilities.html', title: 'Finding and fixing training instabilities', short: '8. Instabilities', act: 3, actName: 'Act III · Dynamics, stability and engineering', group: 'Act III · Dynamics, stability and engineering' },
-    { num: 9, file: 'pages/09-pipeline-practice.html', slug: 'pages/09-pipeline-practice.html', title: 'Input pipelines, evaluation, checkpoints and multi-host training', short: '9. Pipeline practice', act: 3, actName: 'Act III · Dynamics, stability and engineering', group: 'Act III · Dynamics, stability and engineering' },
-    { num: 10, file: 'pages/reference.html', slug: 'pages/reference.html', title: 'Rules, glossary and notation', short: 'Reference', group: 'Reference', unnumbered: true }
-  ];
-  TP.playbookCommit = '7554a51db292242213292d1fa939dc87ffc7be59';
 })(typeof window !== 'undefined' ? window : globalThis);

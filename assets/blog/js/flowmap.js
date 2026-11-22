@@ -16,7 +16,7 @@
   var SVGNS = 'http://www.w3.org/2000/svg';
 
   function cfg() { return global.BLOG_FLOWMAP || TP.flowmapData || {}; }
-  var DATA, PB, SRC_LINK_LABEL, STORE_KEY, PHASES, STEPS, LEGACY_NODES, LEGACY_ZONES, VBW, VBH, NW, NH, TIP, BANDS, POS, RETURNS, EDGES, BY_ID;
+  var DATA, PB, SRC_LINK_LABEL, STORE_KEY, PHASES, STEPS, VBW, VBH, NW, NH, TIP, BANDS, POS, RETURNS, EDGES, BY_ID;
   function loadSpec() {
     DATA = cfg();
     PB = DATA.sourceBaseUrl || '';
@@ -24,8 +24,6 @@
     STORE_KEY = DATA.storeKey || 'blog-posts-opened';
     PHASES = DATA.phases || [];
     STEPS = DATA.steps || [];
-    LEGACY_NODES = DATA.legacyNodes || {};
-    LEGACY_ZONES = DATA.legacyZones || {};
     VBW = DATA.vbW || 1000; VBH = DATA.vbH || 664; NW = DATA.nw || 166; NH = DATA.nh || 56; TIP = DATA.tip || 13;
     BANDS = DATA.bands || {};
     POS = DATA.pos || {};
@@ -92,10 +90,10 @@
   function build(mapEl, info, opened) {
     var rawNode = mapEl.getAttribute('data-default-node') || '';
     var rawZone = mapEl.getAttribute('data-active-zone') || '';
-    var zone = phaseOf(rawZone) ? rawZone : (LEGACY_ZONES[rawZone] || '');
+    var zone = phaseOf(rawZone) ? rawZone : '';
     var here = info.post;
     var hereSteps = STEPS.filter(function (st) { return here && st.posts.indexOf(here) >= 0; });
-    var wanted = BY_ID[rawNode] ? rawNode : (LEGACY_NODES[rawNode] || '');
+    var wanted = BY_ID[rawNode] ? rawNode : '';
     var initial = wanted;
     if (here && hereSteps.length && (!wanted || BY_ID[wanted].posts.indexOf(here) < 0)) initial = hereSteps[0].id;
     if (!initial) initial = STEPS[0].id;

@@ -43,7 +43,7 @@
         <h2>Smoke tests before the first sweep</h2>
         <p class="p09-ours-tag"><span>My addition</span> This section goes beyond the Playbook, whose pipeline guidance does not cover it.</p>
         <p>
-          The Playbook's list begins with input performance, but I'd first ask whether the pipeline is wired correctly at all. Speed only matters once the answer is yes, because a wiring bug silently wastes every trial that runs on top of it. The three checks I use, shown in <a href="#fig-verification-ladder" class="figref"> data-static-figref="1">Figure 1</a>, come from Andrej Karpathy's 2019 blog post <em>A Recipe for Training Neural Networks</em> <cite data-ref="karpathy2019"><span class="cit-num"><a href="#ref-karpathy2019">[7]</a></span></cite>, and each needs only a short run with no tuning.
+          The Playbook's list begins with input performance, but I'd first ask whether the pipeline is wired correctly at all. Speed only matters once the answer is yes, because a wiring bug silently wastes every trial that runs on top of it. The three checks I use, shown in <a href="#fig-verification-ladder" class="figref" data-static-figref="1">Figure 1</a>, come from Andrej Karpathy's 2019 blog post <em>A Recipe for Training Neural Networks</em> <cite data-ref="karpathy2019"><span class="cit-num"><a href="#ref-karpathy2019">[7]</a></span></cite>, and each needs only a short run with no tuning.
         </p>
       </section>
 
@@ -115,7 +115,7 @@
           <p>The causes and interventions of input-bound pipelines are highly task-dependent; use a profiler and look out for common issues.</p>
         </blockquote>
         <p data-src="1375-1381">
-          A profiler answers the question directly by recording a timeline of what the host and the accelerator are each doing. The Playbook points to <a href="https://jax.readthedocs.io/en/latest/profiling.html" target="_blank" rel="noopener">Perfetto</a> for JAX and to the <a href="https://www.tensorflow.org/guide/profiler" target="_blank" rel="noopener">TensorFlow profiler</a>, and PyTorch users have <code>torch.profiler</code>. To build intuition for what such a trace shows, I made the simplified timeline in <a href="#fig-input-timeline" class="figref"> data-static-figref="1">Figure 2</a>, where one input worker on the host reads and preprocesses each batch and the accelerator then runs the training step on it.
+          A profiler answers the question directly by recording a timeline of what the host and the accelerator are each doing. The Playbook points to <a href="https://jax.readthedocs.io/en/latest/profiling.html" target="_blank" rel="noopener">Perfetto</a> for JAX and to the <a href="https://www.tensorflow.org/guide/profiler" target="_blank" rel="noopener">TensorFlow profiler</a>, and PyTorch users have <code>torch.profiler</code>. To build intuition for what such a trace shows, I made the simplified timeline in <a href="#fig-input-timeline" class="figref" data-static-figref="1">Figure 2</a>, where one input worker on the host reads and preprocesses each batch and the accelerator then runs the training step on it.
         </p>
       </section>
 
@@ -152,6 +152,7 @@
           <p>Without prefetching, the worker starts batch $i+1$ when step $i$ ends. With prefetching, each worker starts its next batch as soon as it is free, as long as at most two finished batches per worker wait in the buffer. With two workers, batches alternate between them. A synchronization barrier makes the host wait for step $i$ to end before any worker starts batch $i+1$. Whether a real barrier blocks the input pipeline depends on whether that pipeline runs on the blocked thread, so the toy shows the case the Playbook warns about.</p>
           <p>The readout reports the share of time the accelerator spends computing over the first 40 steps and the resulting steps per second. The timeline shows the first 1,200&nbsp;ms.</p>
         </details>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           A simplified profiler trace with arbitrary constants. The top lanes are host input workers (read time in ochre, preprocessing in purple), and the bottom lane is the accelerator (training steps in blue, waiting time hatched). The accelerator waits whenever the next batch is not ready as a step ends. Prefetching removes that wait as long as the host produces batches faster than the accelerator consumes them, while a slow source or a synchronization barrier brings it back.
         </p>
@@ -159,7 +160,7 @@
 
       <section class="prose" id="pipeline-causes">
         <p data-src="1382-1390">
-          What the toy makes clear is that every stall comes down to one comparison, between how long the host takes to produce a batch and how long the accelerator takes to consume it. The three common causes the Playbook lists each tip that balance in a different way, and each appears as a setting in <a href="#fig-input-timeline" class="figref"> data-static-figref="1">Figure 2</a>.
+          What the toy makes clear is that every stall comes down to one comparison, between how long the host takes to produce a batch and how long the accelerator takes to consume it. The three common causes the Playbook lists each tip that balance in a different way, and each appears as a setting in <a href="#fig-input-timeline" class="figref" data-static-figref="1">Figure 2</a>.
         </p>
         <ul class="p09-list" data-src="1382-1390">
           <li><strong>Data far from the training process.</strong> Reading training data over a network adds I/O latency to every batch. In the toy this is the network-storage setting, where the read segment dominates.</li>
@@ -177,7 +178,7 @@
       <section class="prose" id="evaluation">
         <h2>Evaluating during training</h2>
         <p data-src="1405-1431">
-          Once batches arrive on time, we can turn to what the pipeline actually measures while it trains. It helps to separate three settings for evaluating a model, which the Playbook distinguishes and <a href="#fig-eval-settings" class="figref"> data-static-figref="1">Figure 3</a> sketches. <strong>Online evaluation</strong> measures the model while it serves predictions in production. <strong>Offline evaluation</strong> runs it on held-out training, validation and test sets that represent the production environment. <strong>Periodic evaluation</strong> computes metrics during training as a proxy for the offline evaluation, often on a subset of its data. Tuning lives almost entirely in the third setting, so that is where most of the pitfalls are.
+          Once batches arrive on time, we can turn to what the pipeline actually measures while it trains. It helps to separate three settings for evaluating a model, which the Playbook distinguishes and <a href="#fig-eval-settings" class="figref" data-static-figref="1">Figure 3</a> sketches. <strong>Online evaluation</strong> measures the model while it serves predictions in production. <strong>Offline evaluation</strong> runs it on held-out training, validation and test sets that represent the production environment. <strong>Periodic evaluation</strong> computes metrics during training as a proxy for the offline evaluation, often on a subset of its data. Tuning lives almost entirely in the third setting, so that is where most of the pitfalls are.
         </p>
       </section>
 
@@ -229,7 +230,7 @@
           <p>Periodic evaluations should be done at regular step intervals, not time intervals. Evaluating based on time intervals can make it harder to interpret the training curves, especially when training may suffer from preemptions of the training jobs, network latency issues, etc.</p>
         </blockquote>
         <p>
-          To see why the choice matters, I built <a href="#fig-clocks" class="figref"> data-static-figref="1">Figure 4</a>, which replays one simulated run under both schedules. The job trains at <span data-num="fig-clocks:model:rate">10</span> steps per second, slows to <span data-num="fig-clocks:model:slow-rate">3</span> steps per second for <span data-num="fig-clocks:default:slow-seconds">600</span>&nbsp;s of network contention, and is later preempted and restarted from its last checkpoint.
+          To see why the choice matters, I built <a href="#fig-clocks" class="figref" data-static-figref="1">Figure 4</a>, which replays one simulated run under both schedules. The job trains at <span data-num="fig-clocks:model:rate">10</span> steps per second, slows to <span data-num="fig-clocks:model:slow-rate">3</span> steps per second for <span data-num="fig-clocks:default:slow-seconds">600</span>&nbsp;s of network contention, and is later preempted and restarted from its last checkpoint.
         </p>
       </section>
 
@@ -266,6 +267,7 @@
           <p>with $z$ a standard normal draw for each model state. The noise-free part falls to a minimum near step <span data-num="fig-clocks:model:min-step">6,640</span> and then rises slowly, a mild form of overfitting. Steps trained again after the restart are new model states and get new draws. The timer evaluates every 25&nbsp;s while the job is up, reading the model at the last completed step. The step schedule evaluates every 250 steps.</p>
           <p>The run uses seed <span data-num="fig-clocks:seed:chosen">8</span>, picked because the two schedules choose different best checkpoints in it. Over seeds 1 to 1,000 of the same toy, the timer's best checkpoint fell inside the slowdown's steps in <span data-num="fig-clocks:seed:timer-in-slow">17%</span> of runs and the step schedule's in <span data-num="fig-clocks:seed:step-in-slow">6%</span>.</p>
         </details>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           A simulated run with arbitrary constants. (a) Step against wall-clock time, with a tick on each axis per evaluation. (b) Validation error of each evaluation from step 4,000, joined in run order, with the noise-free curve in gray and the best checkpoint ringed. (c) Evaluations per 1,000 steps. On the timer, <span data-num="fig-clocks:default:evals-slowdown">24</span> of the <span data-num="fig-clocks:default:evals-total">101</span> evaluations fall in the slowdown. On the step schedule, <span data-num="fig-clocks:step:evals-slowdown">8</span> of <span data-num="fig-clocks:step:evals-total">84</span> do.
         </p>
@@ -286,7 +288,7 @@
 
         <h3 id="padding">Partial batches and saved predictions</h3>
         <p data-src="1461-1470">
-          A smaller detail can bias the evaluation itself. When the size of the evaluation set is not divisible by the batch size, the final batch is partial, and implementations usually pad it to full size. The Playbook asks that the padded examples be weighted correctly so they do not bias the loss, and notes that they can often simply be given a weight of zero (<a href="#fig-padding" class="figref"> data-static-figref="1">Figure 5</a>).
+          A smaller detail can bias the evaluation itself. When the size of the evaluation set is not divisible by the batch size, the final batch is partial, and implementations usually pad it to full size. The Playbook asks that the padded examples be weighted correctly so they do not bias the loss, and notes that they can often simply be given a weight of zero (<a href="#fig-padding" class="figref" data-static-figref="1">Figure 5</a>).
         </p>
       </section>
 
@@ -329,7 +331,7 @@
           <li><strong>Imbalanced classes.</strong> Performance on rare classes will often be noisy, so for a class with few examples the Playbook suggests logging the number of examples predicted correctly.</li>
         </ul>
         <p data-src="1500-1504">
-          The authors illustrate the last point by asking, ".05 sensitivity improvement sounds exciting, but was it just one more example correct?" With 20 validation examples in a class, the answer is yes (<a href="#fig-rare-class" class="figref"> data-static-figref="1">Figure 6</a>).
+          The authors illustrate the last point by asking, ".05 sensitivity improvement sounds exciting, but was it just one more example correct?" With 20 validation examples in a class, the answer is yes (<a href="#fig-rare-class" class="figref" data-static-figref="1">Figure 6</a>).
         </p>
       </section>
 
@@ -391,11 +393,11 @@
 
       <section class="prose" id="checkpoints-count">
         <p>
-          Retrospective selection is also where the lesson of <a href="#fig-clocks" class="figref"> data-static-figref="1">Figure 4</a> comes back. A trial's result is a minimum over noisy evaluations, so it depends on how many evaluations the trial received, which is the same effect as taking the best of many trials in <a href="04-searching-the-space.html#trials">Part 4</a>. We can't remove that bias, but a fixed step interval at least gives every trial in a study the same number of evaluations at the same steps, so the bias is roughly equal across trials and largely drops out of the comparison.
+          Retrospective selection is also where the lesson of <a href="#fig-clocks" class="figref" data-static-figref="1">Figure 4</a> comes back. A trial's result is a minimum over noisy evaluations, so it depends on how many evaluations the trial received, which is the same effect as taking the best of many trials in <a href="04-searching-the-space.html#trials">Part 4</a>. We can't remove that bias, but a fixed step interval at least gives every trial in a study the same number of evaluations at the same steps, so the bias is roughly equal across trials and largely drops out of the comparison.
         </p>
         <details class="math-aside">
           <summary>How much lower does the minimum of more evaluations fall?</summary>
-          <p>This calculation is my addition rather than the Playbook's. If a stretch of training has a level validation error $\bar V$ and each evaluation adds independent noise with standard deviation $\sigma$, the minimum of $M$ evaluations falls below $\bar V$ by an amount that grows with $M$. For large $M$ the expected shortfall approaches $\sigma\sqrt{2\ln M}$, and for $M$ between 5 and 25 it is about $1.2\sigma$ to $2.0\sigma$ (the factors $m_K$ in the selection-bias aside of <a href="06-adopting-a-change.html#variance">Part 6</a>). In <a href="#fig-clocks" class="figref"> data-static-figref="1">Figure 4</a> the slowdown holds 24 timer evaluations against 8 step-scheduled ones, enough to move the selected checkpoint.</p>
+          <p>This calculation is my addition rather than the Playbook's. If a stretch of training has a level validation error $\bar V$ and each evaluation adds independent noise with standard deviation $\sigma$, the minimum of $M$ evaluations falls below $\bar V$ by an amount that grows with $M$. For large $M$ the expected shortfall approaches $\sigma\sqrt{2\ln M}$, and for $M$ between 5 and 25 it is about $1.2\sigma$ to $2.0\sigma$ (the factors $m_K$ in the selection-bias aside of <a href="06-adopting-a-change.html#variance">Part 6</a>). In <a href="#fig-clocks" class="figref" data-static-figref="1">Figure 4</a> the slowdown holds 24 timer evaluations against 8 step-scheduled ones, enough to move the selected checkpoint.</p>
         </details>
       </section>
 
@@ -406,7 +408,7 @@
           <p>When tracking different experiments, make sure to note a number of essentials like the best performance of a checkpoint in the study, and a short description of the study.</p>
         </blockquote>
         <p data-src="1535-1547">
-          Everything so far concerns a single trial, but over weeks of tuning the results that matter end up spread across dozens of studies, and a careful evaluation is of little use if nobody can find it later. The Playbook's authors keep their <dfn data-concept="experiment-tracking">experiment tracking</dfn> results in a spreadsheet with the six columns in <a href="#fig-tracking-sheet" class="figref"> data-static-figref="1">Figure 8</a>. They are not attached to the tool, asking only for a system that captures at least this information and is convenient for the people using it, and they close with a blunt warning: "Untracked experiments might as well not exist."
+          Everything so far concerns a single trial, but over weeks of tuning the results that matter end up spread across dozens of studies, and a careful evaluation is of little use if nobody can find it later. The Playbook's authors keep their <dfn data-concept="experiment-tracking">experiment tracking</dfn> results in a spreadsheet with the six columns in <a href="#fig-tracking-sheet" class="figref" data-static-figref="1">Figure 8</a>. They are not attached to the tool, asking only for a system that captures at least this information and is convenient for the people using it, and they close with a blunt warning: "Untracked experiments might as well not exist."
         </p>
       </section>
 
@@ -496,7 +498,7 @@
           where $s^2$ is the variance over the same $n$ examples and $\epsilon$ is a small constant. At test time the layer instead uses exponential moving averages (EMAs) of these statistics collected during training. The subtlety the Playbook raises first is that with several devices, each holding part of the batch, the statistics differ from device to device unless they are explicitly synchronized. Without synchronization, $n$ equals the per-device batch size, $B/D$ for a global batch size $B$ split over $D$ devices, which means that changing either the batch size or the device count also changes $n$.
         </p>
         <p>
-          Why should we care about $n$? Because it changes the objective itself. <cite data-ref="goyal2017">Goyal et al. (2017) <span class="cit-num"><a href="#ref-goyal2017">[4]</a></span></cite> make this explicit: "if the per-worker minibatch sample size $n$ is changed, it changes the underlying loss function $L$ that is optimized", because the statistics "computed by BN with different $n$ exhibit different levels of random variation". For that reason they kept $n = 32$ per worker throughout their large-batch ImageNet runs. <a href="#fig-norm-multihost" class="figref"> data-static-figref="1">Figure 9</a> compares what each normalization scheme averages over.
+          Why should we care about $n$? Because it changes the objective itself. <cite data-ref="goyal2017">Goyal et al. (2017) <span class="cit-num"><a href="#ref-goyal2017">[4]</a></span></cite> make this explicit: "if the per-worker minibatch sample size $n$ is changed, it changes the underlying loss function $L$ that is optimized", because the statistics "computed by BN with different $n$ exhibit different levels of random variation". For that reason they kept $n = 32$ per worker throughout their large-batch ImageNet runs. <a href="#fig-norm-multihost" class="figref" data-static-figref="1">Figure 9</a> compares what each normalization scheme averages over.
         </p>
       </section>
 
@@ -542,7 +544,7 @@
           <p>For logging, evals, RNGs, checkpointing, and data sharding, multi-host training can make it very easy to introduce bugs!</p>
         </blockquote>
         <p data-src="1578-1585">
-          A <dfn data-concept="multi-host">multi-host pipeline</dfn> runs one training job across several machines, each driving its own accelerators. In the usual setup every host runs the same program, and that symmetry is the source of the trouble, since anything that should happen only once or differ between hosts has to be arranged explicitly. I find it easiest to read the Playbook's four rules as a statement of what should be shared across hosts and what should differ, which is how <a href="#fig-multihost" class="figref"> data-static-figref="1">Figure 10</a> lays them out.
+          A <dfn data-concept="multi-host">multi-host pipeline</dfn> runs one training job across several machines, each driving its own accelerators. In the usual setup every host runs the same program, and that symmetry is the source of the trouble, since anything that should happen only once or differ between hosts has to be arranged explicitly. I find it easiest to read the Playbook's four rules as a statement of what should be shared across hosts and what should differ, which is how <a href="#fig-multihost" class="figref" data-static-figref="1">Figure 10</a> lays them out.
         </p>
       </section>
 
@@ -651,7 +653,7 @@
       </section>
 
       <div class="l-wide">
-        <div class="playbook-map" data-active-zone="foundation" data-default-node="d_baseline"></div>
+        <div class="playbook-map" data-active-zone="setup" data-default-node="s_pipe"></div>
       </div>
 
       <section class="refs" id="references">
