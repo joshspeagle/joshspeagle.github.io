@@ -312,7 +312,7 @@ def render_nav(current, root):
                 arrow = ' <span aria-hidden="true">↗</span>' if ext else ""
                 links += f'<a href="{href}"{ext}{cur}>{label}{arrow}</a>'
             out.append('      <div class="nav-group">')
-            out.append(f'        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">'
+            out.append(f'        <button type="button" class="nav-trigger" aria-haspopup="true" aria-expanded="false">'
                        f'{entry["label"]} <span aria-hidden="true">▾</span></button>')
             out.append(f'        <div class="menu">{links}</div>')
             out.append('      </div>')
@@ -323,7 +323,7 @@ def render_nav(current, root):
     out.append('    </div>')
     out.append('    <div class="nav-right">')
     out.append(f'      <a class="cv" href="{root}{CV_FILE}">Curriculum Vitae</a>')
-    out.append('      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode">☾</button>')
+    out.append('      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">☾</button>')
     out.append('      <button class="theme-toggle hamburger" id="hamburger" type="button" aria-label="Open menu" '
                'aria-expanded="false" aria-controls="nav-links">☰</button>')
     out.append('    </div>')
@@ -1431,7 +1431,7 @@ def _n(v):
 def _tip(text):
     """A focusable, hoverable hit target's shared attributes."""
     t = esc(text).replace('"', "&quot;")
-    return f'tabindex="0" aria-label="{t}" data-tip="{t}"'
+    return f'role="img" tabindex="0" aria-label="{t}" data-tip="{t}"'
 
 
 def _pf_grid(ticks, yp):

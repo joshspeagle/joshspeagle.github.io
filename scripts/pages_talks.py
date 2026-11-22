@@ -377,7 +377,7 @@ def _world_globe_section(categories):
         '<div class="gcd-head">'
         '<div>'
         '<div class="gcd-kicker"><span class="gcd-reg-dot reg-na"></span>North America · 43.7°N, 79.4°W</div>'
-        f'<h4 class="gcd-city">{esc(first["label"])}</h4>'
+        f'<h2 class="gcd-city">{esc(first["label"])}</h2>'
         '</div>'
         f'<div class="gcd-badge">{first["count"]} talks</div>'
         '</div>'
@@ -546,7 +546,7 @@ def _talks_by_topic_svg(categories):
         parts = ", ".join(f"{col[gk]} {glab.lower()}" for gk, glab, _ in _YEAR_CAT_GROUPS if col.get(gk))
         tip = esc(f"{tlabel}: {tot} talks — {parts}").replace('"', "&quot;")
         rows.append(
-            f'<div class="talks-theme-row" tabindex="0" aria-label="{tip}" data-tip="{tip}">'
+            f'<div class="talks-theme-row" role="img" tabindex="0" aria-label="{tip}" data-tip="{tip}">'
             '<div class="ttr-head">'
             f'<span class="ttr-name">{esc(tlabel)}</span>'
             f'<span class="ttr-cnt">{tot}</span>'

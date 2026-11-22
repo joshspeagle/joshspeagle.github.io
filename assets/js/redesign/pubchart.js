@@ -40,5 +40,8 @@
   document.addEventListener('focusout', function (e) {
     if (e.target.closest && e.target.closest('[data-tip]')) hide();
   });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') hide();
+  });
   window.addEventListener('scroll', hide, { passive: true });
 })();

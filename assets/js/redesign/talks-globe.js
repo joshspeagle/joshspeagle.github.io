@@ -106,6 +106,7 @@
     var tooltipEl = fig.querySelector(".talks-globe-tip");
     var chipContainer = fig.querySelector("[data-globe-chips]");
     var detailContainer = fig.querySelector("[data-globe-detail]");
+    var reduceMotion = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
     function getThemePalette() {
       var isLight = document.documentElement.getAttribute("data-theme") === "light";
@@ -451,7 +452,7 @@
 
         if (isSel || isHov) {
           var lbl = c.label.split("/")[0].split(",")[0].trim();
-          ctx.font = "600 11px 'IBM Plex Mono', monospace";
+          ctx.font = "600 11px 'JetBrains Mono', monospace";
           var tw = ctx.measureText(lbl).width;
           var lx = pt.x + pinR + 8;
           var ly = pt.y + (isHov && !isSel ? -6 : 4);
@@ -461,7 +462,7 @@
           ctx.strokeStyle = rcol.core;
           ctx.lineWidth = 0.8;
           ctx.strokeRect(lx - 4, ly - 10, tw + 8, 14);
-          ctx.fillStyle = rcol.core;
+          ctx.fillStyle = pal.text;
           ctx.fillText(lbl, lx, ly);
         }
 
@@ -525,11 +526,21 @@
     }
 
     function flyTo(lon, lat, zoom) {
+      var nextLat = clamp(lat, -70, 75);
+      var nextZoom = typeof zoom === "number" ? clamp(zoom, 0.85, 3.2) : state.zoom;
       state.targetLon = lon;
-      state.targetLat = clamp(lat, -70, 75);
-      if (typeof zoom === "number") state.targetZoom = clamp(zoom, 0.85, 3.2);
+      state.targetLat = nextLat;
+      state.targetZoom = nextZoom;
       state.velLon = 0;
       state.velLat = 0;
+      if (reduceMotion) {
+        state.lon = lon;
+        state.lat = nextLat;
+        state.zoom = nextZoom;
+        state.animating = false;
+        render();
+        return;
+      }
       state.animating = true;
       scheduleTick();
     }
@@ -791,7 +802,7 @@
         if (searchInput) {
           searchInput.value = q;
           searchInput.dispatchEvent(new Event("input", { bubbles: true }));
-          searchInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          searchInput.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
         }
       }
     });
