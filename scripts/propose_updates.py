@@ -150,14 +150,13 @@ def check_rollovers_and_caches(content, pub_data, sw_data, today):
             if org.get("hidden"):
                 continue
             for pos in org.get("positions", []) or []:
-                periods = pos.get("periods", [])
-                if periods:
-                    end_ym = _period_end_year_month(periods[0])
+                for period in (pos.get("periods", []) or []):
+                    end_ym = _period_end_year_month(period)
                     if end_ym and (today.year - 1) <= end_ym[0] <= today.year and (end_ym[0], end_ym[1]) <= (today.year, today.month):
                         findings["service_rollovers"].append({
                             "organization": _strip_tags(org.get("name", "")),
                             "role": _strip_tags(pos.get("title") or pos.get("role", "")),
-                            "period": periods[0],
+                            "period": period,
                         })
 
     # 4. Publications missing categoryProbabilities or candidate recent papers for News

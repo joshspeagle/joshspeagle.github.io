@@ -16,7 +16,7 @@
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#06080f">
 
-  <script>(function () { var t = localStorage.getItem('preferred-theme') || 'dark'; document.documentElement.setAttribute('data-theme', t); })();</script>
+  <script>(function () { var r = document.documentElement; r.classList.add('js'); try { var t = localStorage.getItem('preferred-theme') || 'dark'; r.setAttribute('data-theme', t === 'light' ? 'light' : 'dark'); } catch (e) { r.setAttribute('data-theme', 'dark'); } })();</script>
 
   <link rel="alternate" type="application/rss+xml" title="Joshua S. Speagle · News" href="/feed.xml">
 

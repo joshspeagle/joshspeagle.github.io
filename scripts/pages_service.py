@@ -1,24 +1,30 @@
-"""Redesigned content generator for the Service page (#service-content).
+"""Content generator for the Service page (#service-content).
 
 Renders:
-  1. Topline Stat Tiles (Leadership & Committee Roles, Professional Societies,
+  1. Topline Stat Tiles (Committees & Leadership Roles, Professional Societies,
      Conferences & Workshops, Journals Refereed)
   2. Community Leadership, Governance & EDI intro box with direct links to
-     SSC Data Science & Analytics, MScAC Data Science, SURP, and STATSTRO
-  3. Visual Leadership & Governance Timeline by Academic Year (2020–21 to 2026–27)
-     with role-delineating underbraces, stacked conference bars, and expandable
-     multi-role rows
-  4. Interactive Listview grouped into 3 clearly headed sections:
+     U of T Astronomy & Astrophysics SURP, SSC Data Science & Analytics,
+     MScAC Data Science, and STATSTRO
+  3. Programmatic Leadership & Governance Timeline (derived from content.json)
+  4. Interactive Listview grouped into categories plus the Manuscript Referee Service block:
      - Professional Societies (SSC, AAS, ASA, LSST ISSC, CASCA)
-     - University of Toronto Governance (Statistical Sciences & Astronomy & Astrophysics)
+     - University of Toronto Governance (David A. Dunlap Astronomy & Astrophysics
+       and Statistical Sciences)
      - Workshops & Conferences (STATSTRO, CASCA AGM, Globular Clusters)
 """
+import re
+
 from pages_shared import (accent_class, attr_esc, card_meta, chip, date_range,
                           esc, listview_status, period_end_year, slug as _slug,
                           strip_tags as _strip_tags, url_attr, warn)
 
 
 _ACADEMIC_YEARS = ["2020–21", "2021–22", "2022–23", "2023–24", "2024–25", "2025–26", "2026–27"]
+_AY_START = 2020
+_AY_LAST = len(_ACADEMIC_YEARS) - 1
+_RANGE_RE = re.compile(r"(\d{4})(?:[–-](\d{2,4}|Present))?")
+_LEAD_WORDS = ("chair", "president", "director", "founder", "organizer", "soc", "loc")
 
 
 def _period_text(pos):
@@ -36,14 +42,57 @@ def _organizations(category):
     return orgs if isinstance(orgs, list) else []
 
 
-def _render_track(acc, spans, stacks=None):
-    """Render a 7-column academic-year grid track with Row 1 year cells/stacks and Row 2 underbraces.
+def _is_lead_role(label):
+    low = (label or "").lower()
+    return any(k in low for k in _LEAD_WORDS) and "past" not in low and "elect" not in low
 
-    Args:
-      acc: Accent key ('sla', 'ii', 'du').
-      spans: List of (c_start, c_end, brace_label, is_lead, tooltip) with 0-based indices into _ACADEMIC_YEARS.
-      stacks: Optional dict mapping col_index -> list of (bar_label, is_lead, tooltip) for stacked bars.
-    """
+
+def _parse_span(spec):
+    """Map 'YYYY–YY', 'YYYY–Present', or 'YYYY' onto clamped indices in _ACADEMIC_YEARS."""
+    m = _RANGE_RE.search(str(spec or ""))
+    if not m:
+        return None
+    y0 = int(m.group(1))
+    end_tok = m.group(2)
+    if end_tok is None:
+        idx = max(0, min(_AY_LAST, y0 - (_AY_START + 1)))
+        return idx, idx
+    c0 = max(0, min(_AY_LAST, y0 - _AY_START))
+    if end_tok.lower() == "present":
+        c1 = _AY_LAST
+    else:
+        y1 = int(end_tok)
+        if y1 < 100:
+            y1 += (y0 // 100) * 100
+        c1 = max(c0, min(_AY_LAST, y1 - (_AY_START + 1)))
+    return c0, c1
+
+
+def _spans_from_pos(org_label, pos):
+    """Build timeline span tuples from a content.json position dict."""
+    tags = pos.get("tags") or []
+    spans = []
+    for tag in tags:
+        txt = str(tag).strip()
+        if ":" in txt:
+            when, lbl = (p.strip() for p in txt.split(":", 1))
+        else:
+            when, lbl = _period_text(pos), txt
+        span = _parse_span(when)
+        if span:
+            c0, c1 = span
+            spans.append((c0, c1, lbl, _is_lead_role(lbl), f"{org_label}: {lbl} ({when})"))
+    if not spans:
+        when = _period_text(pos)
+        span = _parse_span(when)
+        if span:
+            lbl = (pos.get("role") or pos.get("title") or "Member").strip()
+            spans.append((span[0], span[1], lbl, _is_lead_role(lbl), f"{org_label}: {lbl} ({when})"))
+    return spans
+
+
+def _render_track(acc, spans, stacks=None):
+    """Render a 7-column academic-year grid track with Row 1 year cells/stacks and Row 2 underbraces."""
     stacks = stacks or {}
     col_info = {}
     for c0, c1, lbl, is_lead, tip in spans:
@@ -51,7 +100,7 @@ def _render_track(acc, spans, stacks=None):
             col_info[c] = (is_lead, tip or f"{lbl} ({_ACADEMIC_YEARS[c]})")
 
     cells_html = []
-    for c, ay in enumerate(_ACADEMIC_YEARS):
+    for c in range(len(_ACADEMIC_YEARS)):
         gcol = c + 1
         if c in stacks:
             bars = []
@@ -118,199 +167,116 @@ def _render_row(org, sub, badge_txt, acc, spans, stacks=None, expand_id=None, pa
     )
 
 
-def _service_timeline():
-    """Visual academic-year governance timeline (2020–21 to 2026–27) with underbraces and stacked event bars."""
-    groups = [
-        (
-            "Professional Societies",
-            "sla",
-            [
-                _render_row(
-                    "SSC Data Science & Analytics",
-                    "Statistical Society of Canada",
-                    "Executive",
-                    "sla",
-                    [
-                        (4, 4, "Pres.-Elect", False, "SSC Data Science & Analytics: President-Elect (2024–25)"),
-                        (5, 5, "President", True, "SSC Data Science & Analytics: President (2025–26)"),
-                        (6, 6, "Past Pres.", False, "SSC Data Science & Analytics: Past President (2026–27)"),
-                    ],
-                ),
-                _render_row(
-                    "AAS Working Group (WGAA)",
-                    "Astroinformatics & Astrostatistics",
-                    "2 Terms",
-                    "sla",
-                    [
-                        (0, 2, "Steering Committee · Term 1", False, "AAS WGAA: Steering Committee (3-year Term 1, 2020–23)"),
-                        (3, 5, "Steering Committee · Term 2", False, "AAS WGAA: Steering Committee (3-year Term 2, 2023–26)"),
-                    ],
-                ),
-                _render_row(
-                    "ASA Astrostatistics (AIG)",
-                    "American Statistical Association",
-                    "Officer",
-                    "sla",
-                    [
-                        (0, 2, "Web Director", False, "ASA AIG: Web Director (2020–23)"),
-                        (3, 3, "Interim Chair", True, "ASA AIG: Program Chair (Interim, 2023–24)"),
-                    ],
-                ),
-                _render_row(
-                    "CASCA & LSST ISSC",
-                    "Postdoc & Publication Committees",
-                    "2 roles",
-                    "sla",
-                    [
-                        (0, 2, "CASCA Postdoc Comm.", False, "CASCA: Postdoc Committee Member (2020–23)"),
-                        (3, 3, "LSST Pub. Chair", True, "LSST ISSC: Publication Committee Chair (2023–24)"),
-                    ],
-                    expand_id="soc-comm",
-                ),
-                _render_row(
-                    "CASCA Postdoc Committee",
-                    "Canadian Astronomical Society",
-                    "Member",
-                    "sla",
-                    [(0, 2, "Committee Member", False, "CASCA Postdoc Committee (2020–23)")],
-                    parent_id="soc-comm",
-                ),
-                _render_row(
-                    "LSST ISSC Publication Committee",
-                    "Rubin / LSST Science Collaboration",
-                    "Chair",
-                    "sla",
-                    [(3, 3, "Committee Chair", True, "LSST ISSC Publication Committee Chair (2023–24)")],
-                    parent_id="soc-comm",
-                ),
-            ],
-        ),
-        (
-            "University of Toronto Governance",
-            "ii",
-            [
-                _render_row(
-                    "U of T MScAC Data Science",
-                    "Statistical Sciences & Computer Science",
-                    "Director",
-                    "ii",
-                    [(6, 6, "Interim Director", True, "U of T MScAC Data Science Concentration: Interim Director (2026–27)")],
-                ),
-                _render_row(
-                    "U of T Astronomy SURP",
-                    "Summer Undergraduate Research Program",
-                    "Chair & Member",
-                    "ii",
-                    [
-                        (1, 1, "Member", False, "Astronomy & Astrophysics SURP Committee: Member (2021–22)"),
-                        (2, 3, "Committee Chair", True, "Astronomy & Astrophysics SURP Committee: Chair (2022–24)"),
-                        (5, 6, "Member", False, "Astronomy & Astrophysics SURP Committee: Member (2025–27)"),
-                    ],
-                ),
-                _render_row(
-                    "U of T Statistical Sciences",
-                    "Department of Statistical Sciences",
-                    "Admissions",
-                    "ii",
-                    [(2, 6, "Graduate Admissions Committee", False, "Statistical Sciences: Graduate Admissions Committee (2022–27)")],
-                ),
-                _render_row(
-                    "U of T Astronomy Committees",
-                    "Curriculum, Mentoring & Admissions",
-                    "3 roles",
-                    "ii",
-                    [
-                        (0, 0, "Grad Adm.", False, "Astronomy & Astrophysics: Graduate Admissions Committee (2020–21)"),
-                        (1, 2, "Training & Mentoring Co-Chair", True, "Astronomy & Astrophysics: Training & Mentoring Co-Chair (2021–23)"),
-                        (3, 3, "UG Curric.", False, "Astronomy & Astrophysics: Undergraduate Curriculum Committee (2023–24)"),
-                        (5, 6, "UG Curriculum", False, "Astronomy & Astrophysics: Undergraduate Curriculum Committee (2025–27)"),
-                    ],
-                    expand_id="ut-astro",
-                ),
-                _render_row(
-                    "Training & Mentoring Committee",
-                    "Department of Astronomy & Astrophysics",
-                    "Co-Chair",
-                    "ii",
-                    [(1, 2, "Committee Co-Chair", True, "Training & Mentoring Committee Co-Chair (2021–23)")],
-                    parent_id="ut-astro",
-                ),
-                _render_row(
-                    "Undergraduate Curriculum Committee",
-                    "Department of Astronomy & Astrophysics",
-                    "Member",
-                    "ii",
-                    [
-                        (3, 3, "Member", False, "Undergraduate Curriculum Committee (2023–24)"),
-                        (5, 6, "Member", False, "Undergraduate Curriculum Committee (2025–27)"),
-                    ],
-                    parent_id="ut-astro",
-                ),
-                _render_row(
-                    "Graduate Admissions Committee",
-                    "Department of Astronomy & Astrophysics",
-                    "Member",
-                    "ii",
-                    [(0, 0, "Committee Member", False, "Graduate Admissions Committee (2020–21)")],
-                    parent_id="ut-astro",
-                ),
-            ],
-        ),
-        (
-            "Workshops & Conferences",
-            "du",
-            [
-                _render_row(
-                    "STATSTRO Workshop",
-                    "Annual U of T Astrostatistics Workshop",
-                    "Annual",
-                    "du",
-                    [
-                        (1, 3, "Stellar Stats · Co-Founder", True, "Stellar Stats Workshop: Co-Founder & Co-Organizer (2021–24)"),
-                        (4, 6, "STATSTRO · Co-Organizer", True, "STATSTRO Workshop: Co-Founder & Co-Organizer (2024–27)"),
-                    ],
-                ),
-                _render_row(
-                    "Conferences & Symposia",
-                    "Scientific & Local Organizing Committees",
-                    "2 conf.",
-                    "du",
-                    [(3, 3, "2× SOC / LOC Co-Chair", True, "2023–24: CASCA AGM & Globular Clusters (SOC/LOC Co-Chair)")],
-                    stacks={
-                        3: [
-                            ("CASCA AGM", True, "CASCA Annual General Meeting (2024): SOC Co-Chair & LOC Member"),
-                            ("Clusters", True, "Globular Clusters & Their Tidal Tails (2024): SOC Co-Chair & LOC Co-Chair"),
-                        ]
-                    },
-                    expand_id="conf-org",
-                ),
-                _render_row(
-                    "CASCA Annual General Meeting",
-                    "Canadian Astronomical Society (2024)",
-                    "SOC / LOC",
-                    "du",
-                    [(3, 3, "SOC Co-Chair · LOC", True, "CASCA Annual General Meeting (2024): SOC Co-Chair & LOC Member")],
-                    parent_id="conf-org",
-                ),
-                _render_row(
-                    "Globular Clusters & Their Tidal Tails",
-                    "International Symposium (2024)",
-                    "SOC / LOC",
-                    "du",
-                    [(3, 3, "SOC & LOC Co-Chair", True, "Globular Clusters & Their Tidal Tails (2024): SOC & LOC Co-Chair")],
-                    parent_id="conf-org",
-                ),
-            ],
-        ),
+def _short_org(name):
+    return re.sub(r"\s*\([^)]+\)\s*$", "", str(name or "")).strip()
+
+
+def _service_timeline(categories):
+    """Derive academic-year governance timeline rows directly from content.json."""
+    groups = []
+
+    for cat in categories:
+        if cat.get("hidden") or "referee" in (cat.get("title") or "").lower():
+            continue
+        ctitle = cat.get("title", "")
+        acc = accent_class(cat.get("accent") or "mute", f"service timeline {ctitle!r}")
+        orgs = [o for o in _organizations(cat) if not (isinstance(o, dict) and o.get("hidden"))]
+        extra = [it for it in (cat.get("items") or []) if not (isinstance(it, dict) and it.get("hidden"))]
+        rows = []
+
+        if "societ" in ctitle.lower():
+            single_term = []
+            for org in orgs:
+                oname = org.get("name", "")
+                for pos in (org.get("positions") or []):
+                    spans = _spans_from_pos(_short_org(oname), pos)
+                    if len(spans) > 1 or any(k in oname for k in ("SSC", "AAS", "ASA")):
+                        rows.append(_render_row(pos.get("title") or _short_org(oname), _short_org(oname),
+                                                f"{len(spans)} Terms" if "AAS" in oname else "Executive" if "SSC" in oname else "Officer",
+                                                acc, spans))
+                    else:
+                        single_term.append((oname, pos, spans))
+            if len(single_term) >= 2:
+                summary_spans = [s for _, _, sp in single_term for s in sp]
+                rows.append(_render_row("Society Committees", "CASCA · Rubin LSST ISSC",
+                                        f"{len(single_term)} roles", acc, summary_spans, expand_id="soc-comm"))
+                for oname, pos, sp in single_term:
+                    rows.append(_render_row(f"{_short_org(oname)} {pos.get('title', '')}".strip(),
+                                            _short_org(oname), pos.get("role", "Member"), acc, sp, parent_id="soc-comm"))
+            else:
+                for oname, pos, sp in single_term:
+                    rows.append(_render_row(pos.get("title") or _short_org(oname), _short_org(oname),
+                                            pos.get("role", "Member"), acc, sp))
+            groups.append((ctitle, acc, rows))
+
+        elif "toronto" in ctitle.lower():
+            for org in orgs:
+                oname = org.get("name", "")
+                positions = org.get("positions") or []
+                is_astro = "astronomy" in oname.lower()
+                grouped_astro = []
+                for pos in positions:
+                    ptitle = pos.get("title") or oname
+                    spans = _spans_from_pos(_short_org(oname), pos)
+                    if is_astro and "surp" not in ptitle.lower():
+                        grouped_astro.append((pos, spans))
+                        continue
+                    badge = pos.get("role", "Member")
+                    if "director" in badge.lower():
+                        badge = "Director"
+                    elif "chair" in badge.lower():
+                        badge = "Chair & Member"
+                    elif "admissions" in ptitle.lower():
+                        badge = "Admissions"
+                    rows.append(_render_row(
+                        "U of T Astronomy SURP" if "surp" in ptitle.lower() else ptitle,
+                        _short_org(oname), badge, acc, spans,
+                    ))
+                if grouped_astro:
+                    summary_spans = sorted((s for _, sp in grouped_astro for s in sp), key=lambda x: x[0])
+                    rows.append(_render_row(
+                        "DADDAA Governance Committees", "Curriculum, Mentoring & Admissions",
+                        f"{len(grouped_astro)} roles", acc, summary_spans, expand_id="ut-astro",
+                    ))
+                    for pos, sp in grouped_astro:
+                        rows.append(_render_row(pos.get("title") or "", _short_org(oname),
+                                                pos.get("role", "Member"), acc, sp, parent_id="ut-astro"))
+            groups.append(("University of Toronto Governance", acc, rows))
+
+        else:
+            for org in orgs:
+                for pos in (org.get("positions") or []):
+                    spans = _spans_from_pos(pos.get("title") or _short_org(org.get("name", "")), pos)
+                    rows.append(_render_row(pos.get("title") or _short_org(org.get("name", "")),
+                                            pos.get("note") or _short_org(org.get("name", "")),
+                                            "Annual", acc, spans))
+            if extra:
+                stacks = {}
+                sum_spans = []
+                sub_rows = []
+                for it in extra:
+                    spans = _spans_from_pos(it.get("organization", ""), it)
+                    if spans:
+                        c0 = spans[0][0]
+                        stacks.setdefault(c0, []).append((it.get("organization", "").split()[0], True,
+                                                         f"{it.get('organization', '')}: {it.get('role', '')}"))
+                        sum_spans.extend(spans)
+                    sub_rows.append(_render_row(it.get("organization", ""), it.get("role", "").split(" · ")[-1],
+                                                "SOC / LOC", acc, spans, parent_id="conf-org"))
+                if sum_spans:
+                    c0 = min(s[0] for s in sum_spans)
+                    c1 = max(s[1] for s in sum_spans)
+                    merged_span = [(c0, c1, f"{len(extra)}× SOC / LOC Co-Chair", True,
+                                    "; ".join(it.get("organization", "") for it in extra))]
+                    rows.append(_render_row("Conferences & Symposia", "Scientific & Local Organizing Committees",
+                                            f"{len(extra)} conf.", acc, merged_span, stacks=stacks, expand_id="conf-org"))
+                    rows.extend(sub_rows)
+            groups.append((ctitle, acc, rows))
+
+    group_blocks = [
+        f'<div class="srv-group-hd"><span class="dot d-{gacc}"></span><span>{esc(gtitle)}</span></div>{"".join(grows)}'
+        for gtitle, gacc, grows in groups
     ]
-
-    group_blocks = []
-    for gtitle, gacc, grows in groups:
-        group_blocks.append(
-            f'<div class="srv-group-hd"><span class="dot d-{gacc}"></span><span>{esc(gtitle)}</span></div>'
-            + "".join(grows)
-        )
-
     head_cells = "".join(f'<span class="tm-yr">{ay}</span>' for ay in _ACADEMIC_YEARS)
     legend = (
         '<div class="pf-leg">'
@@ -323,7 +289,7 @@ def _service_timeline():
     return (
         '<figure class="pub-fig wide teach-matrix-fig srv-matrix-fig">'
         '<figcaption class="pub-fig-head"><span class="t">Leadership &amp; governance timeline by academic year (2020–21 to 2026–27)</span>'
-        '<span class="m">role transitions, multi-year terms &amp; stacked conference organization (click ▾ badges to expand)</span></figcaption>'
+        '<span class="m">role transitions, multi-year terms &amp; conference organization (click ▾ badges to expand)</span></figcaption>'
         '<div class="tm-table srv-table">'
         f'<div class="tm-head"><span class="tm-course-hd">Organization &amp; Scope</span><div class="tm-cells srv-head-cells">{head_cells}</div></div>'
         f'{"".join(group_blocks)}'
@@ -338,6 +304,7 @@ def generate_content(data):
     categories = section.get("categories", []) or []
 
     grouped_sections = []
+    referee_section = ""
     chips_html = []
     total = 0
     n_societies = 0
@@ -346,24 +313,41 @@ def generate_content(data):
 
     for category in categories:
         if category.get("hidden"):
-            if "referee" in (category.get("title") or "").lower():
-                n_referee = len(category.get("items") or [])
             continue
         cat_title = category.get("title", "") or ""
         cat_slug = _slug(cat_title)
-        accent = category.get("accent")
-        if not accent:
-            warn(f"service category {cat_title!r} has no declared accent; "
-                 f"using a neutral stripe")
-            accent = "mute"
-        accent = accent_class(accent, f"service category {cat_title!r}")
+        accent = accent_class(category.get("accent") or "mute", f"service category {cat_title!r}")
+
+        if "referee" in cat_title.lower():
+            ritems = [it for it in (category.get("items") or []) if not (isinstance(it, dict) and it.get("hidden"))]
+            n_referee = len(ritems)
+            if ritems:
+                rcards = "".join(
+                    f'<article class="item accent-{accent}">'
+                    f'{card_meta(date_range(it.get("period") or ""), ("Peer Review", True))}'
+                    f'<div class="item-head"><h3 class="item-title">{esc(it.get("organization", ""))}</h3></div>'
+                    f'<p class="item-meta"><strong>{esc(it.get("role", "Referee"))}</strong></p>'
+                    '</article>'
+                    for it in ritems
+                )
+                referee_section = (
+                    '<section class="mentor-block service-section referee-section">'
+                    '<div class="mentor-sec-header">'
+                    f'<h2 class="item-section-title"><span class="dot d-{accent}"></span>{esc(cat_title)} '
+                    f'<span class="mentor-sec-count">{len(ritems)}</span></h2>'
+                    '</div>'
+                    f'<div class="mentee-grid">{rcards}</div>'
+                    '</section>'
+                )
+            continue
+
         orgs = [o for o in _organizations(category) if not (isinstance(o, dict) and o.get("hidden"))]
         extra = [it for it in (category.get("items") or []) if not (isinstance(it, dict) and it.get("hidden"))]
 
         if "societ" in cat_title.lower():
             n_societies = len(orgs)
 
-        cards = []   # (title, byline, period, note, url, tags)
+        cards = []
         for org in orgs:
             org_name = (org.get("name", "") or "").strip()
             for pos in (org.get("positions") or []):
@@ -449,7 +433,7 @@ def generate_content(data):
         f'<div class="pub-stat role-tile-total"><span class="n">{total}</span><span class="l">Committees &amp; leadership roles</span></div>'
         f'<div class="pub-stat role-tile-postdoc"><span class="n">{n_societies}</span><span class="l">Professional societies</span></div>'
         f'<div class="pub-stat role-tile-primary"><span class="n">{n_conferences}</span><span class="l">Conferences &amp; workshops</span></div>'
-        f'<div class="pub-stat role-tile-student"><span class="n">{n_referee or 8}</span><span class="l">Journals refereed</span></div>'
+        f'<div class="pub-stat role-tile-student"><span class="n">{n_referee}</span><span class="l">Journals refereed</span></div>'
         '</div>'
     )
 
@@ -461,18 +445,19 @@ def generate_content(data):
         '<a class="reslink" href="https://statstro.com/" target="_blank" rel="noopener">STATSTRO Workshop ↗</a>'
         '</div></div>'
         '<p>Much of my academic service focuses on building cross-disciplinary bridges between astronomy, '
-        'statistics, and data science, including serving as President of the '
-        '<a href="https://ssc.ca/en/about/sections-regions/data-science-and-analytics" target="_blank" rel="noopener">'
-        'SSC Data Science &amp; Analytics Section</a> (2025–2026), Interim Director of the '
-        '<a href="https://mscac.utoronto.ca/concentrations/ds/" target="_blank" rel="noopener">'
-        'U of T MScAC Data Science Concentration</a> (2026–2027), Chair and committee member of the '
+        'statistics, and data science, including serving as Chair and committee member of the '
         '<a href="https://www.astro.utoronto.ca/academics/undergraduate-studies/surp-2/" target="_blank" rel="noopener">'
-        'Astronomy &amp; Astrophysics SURP</a>, and co-organizing the annual '
+        'David A. Dunlap Department of Astronomy &amp; Astrophysics SURP</a>, Interim Director of the '
+        '<a href="https://mscac.utoronto.ca/concentrations/ds/" target="_blank" rel="noopener">'
+        'Department of Statistical Sciences MScAC Data Science Concentration</a> (2026–2027), Past President (2026–2027) '
+        'and former President (2025–2026) of the '
+        '<a href="https://ssc.ca/en/about/sections-regions/data-science-and-analytics" target="_blank" rel="noopener">'
+        'SSC Data Science &amp; Analytics Section</a>, and co-organizer of the annual '
         '<a href="https://statstro.com/" target="_blank" rel="noopener">STATSTRO Workshop</a>.</p>'
         '</aside>'
     )
 
-    timeline_html = _service_timeline()
+    timeline_html = _service_timeline(categories)
 
     return (
         '<div class="container">'
@@ -489,5 +474,6 @@ def generate_content(data):
         '<p class="pub-empty" data-lv-empty hidden>No service roles match your search or filters. '
         '<button type="button" class="linkbtn" data-lv-reset>Show all</button></p>'
         '</div>'
+        f'{referee_section}'
         '</div>'
     )

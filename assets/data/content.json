@@ -628,7 +628,7 @@
               ],
               "project": "Galaxy formation and evolution using globular cluster populations with Bayesian hierarchical modeling",
               "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
-              "currentStatus": "PhD candidate",
+              "currentStatus": "PhD (completed)",
               "outcome": "<a href=\"https://www.nsf.gov/funding/opportunities/aapf-nsf-astronomy-astrophysics-postdoctoral-fellowships\">NSF Astronomy and Astrophysics Postdoctoral Fellow</a> at <a href=\"https://www.umass.edu\">UMass Amherst</a> working with <a href=\"https://www.astrowhit.com/\">Kate Whitaker</a>",
               "awards": [
                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
@@ -643,7 +643,7 @@
               ],
               "project": "Galactic chemical evolution using metal-poor stars and dwarf galaxies with hierarchical modeling",
               "myCareerStage": "Assistant Professor",
-              "currentStatus": "PhD candidate",
+              "currentStatus": "PhD (completed)",
               "outcome": "Joint <a href=\"https://astronomy.as.virginia.edu/\">GECO</a> and <a href=\"https://cosmicai.org/\">CosmicAI</a> Postdoctoral Fellow at the University of Virginia",
               "awards": [
                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
@@ -674,7 +674,7 @@
               ],
               "project": "Evolution of massive stars in groups including post-common envelope binaries and dynamical interactions",
               "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
-              "currentStatus": "PhD candidate",
+              "currentStatus": "PhD (completed)",
               "outcome": "<a href=\"https://nserc-crsng.canada.ca/en/funding-opportunity/canada-postdoctoral-research-award-program\">NSERC Postdoctoral Fellow</a> at <a href=\"https://ucsd.edu\">UC San Diego</a> working with <a href=\"https://www.broekgaarden.nl/floor/wordpress/\">Floor Broekgaarden</a> and <a href=\"https://www.kylekremer.com/\">Kyle Kremer</a>",
               "awards": [
                 "<a href=\"https://nserc-crsng.canada.ca/en/funding-opportunity/canada-graduate-research-scholarship-doctoral-program\">NSERC PGS-D</a>"
@@ -701,7 +701,7 @@
               ],
               "project": "Deep learning applications to stellar spectra and foundation models for astronomical data",
               "myCareerStage": "Assistant Professor",
-              "currentStatus": "PhD candidate",
+              "currentStatus": "PhD (completed)",
               "outcome": "Senior AI Scientist at CIBC",
               "awards": [
                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
@@ -718,7 +718,7 @@
               ],
               "project": "Data-driven mathematical models of the Milky Way Galaxy using asteroseismology with multitaper methods",
               "myCareerStage": "Postdoctoral Fellow and Assistant Professor",
-              "currentStatus": "PhD candidate",
+              "currentStatus": "PhD (completed)",
               "outcome": "<a href=\"https://lsstdiscoveryalliance.org/programs/catalyst-fellowship/\">LSST Discovery Alliance Catalyst Postdoctoral Fellow</a> at <a href=\"https://www.mpia.de\">Max Planck Institute for Astronomy</a>; Incoming Assistant Professor at <a href=\"https://www.psu.edu\">Penn State University</a>",
               "awards": [
                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
@@ -3059,6 +3059,59 @@
           "url": "https://dash.harvard.edu/handle/1/37365889",
           "urlLabel": "Harvard DASH Thesis"
         }
+      ],
+      "fellowships": [
+        {
+          "year": "2020–2022",
+          "title": "Banting Postdoctoral Fellowship",
+          "organization": "Natural Sciences and Engineering Research Council of Canada (NSERC)",
+          "description": "Two-year national postdoctoral fellowship supporting research in astrostatistics and Galactic astronomy at the University of Toronto.",
+          "category": "Postdoctoral Fellowship",
+          "url": "https://banting.fellowships-bourses.gc.ca/en/2019-2020-eng.html",
+          "urlLabel": "Banting Program",
+          "accent": "sla"
+        },
+        {
+          "year": "2020–2022",
+          "title": "Dunlap Postdoctoral Fellowship",
+          "organization": "Dunlap Institute for Astronomy & Astrophysics, University of Toronto",
+          "description": "Postdoctoral fellowship supporting statistical and survey astronomy research at the Dunlap Institute.",
+          "category": "Postdoctoral Fellowship",
+          "url": "https://www.dunlap.utoronto.ca/dunlap-fellowship/",
+          "urlLabel": "Dunlap Fellowship",
+          "accent": "ic"
+        },
+        {
+          "year": "2019",
+          "title": "PASJ Excellent Paper Award",
+          "organization": "Astronomical Society of Japan (ASJ)",
+          "description": "Co-author recognition for Hikage et al. ({{cite}}) on cosmology from cosmic shear power spectra with first-year Subaru Hyper Suprime-Cam data.",
+          "paperBibcode": "2019PASJ...71...43H",
+          "category": "Collaboration Paper Prize",
+          "url": "https://ui.adsabs.harvard.edu/abs/2019PASJ...71...43H",
+          "urlLabel": "ADS / Paper",
+          "accent": "ii"
+        },
+        {
+          "year": "2014",
+          "title": "AAS Chambliss Astronomy Achievement Student Award (Honorable Mention)",
+          "organization": "American Astronomical Society (223rd AAS Meeting)",
+          "description": "Undergraduate student research poster recognition for Parallel Galaxy Main Sequence and Quasar Evolution from z=0–6.",
+          "category": "Undergraduate Honor",
+          "url": "https://aas.org/posts/news/2014/01/chambliss-student-poster-awards-aas-223",
+          "urlLabel": "AAS Chambliss",
+          "accent": "du"
+        },
+        {
+          "year": "2012",
+          "title": "AAS Chambliss Astronomy Achievement Student Award",
+          "organization": "American Astronomical Society (219th AAS Meeting)",
+          "description": "Undergraduate student research poster award for The X-ray Counterpart of the High-B Pulsar J0726-2612.",
+          "category": "Undergraduate Honor",
+          "url": "https://aas.org/grants-and-prizes/chambliss-astronomy-achievement-student-awards",
+          "urlLabel": "AAS Chambliss",
+          "accent": "du"
+        }
       ]
     },
     "service": {
@@ -3072,7 +3125,7 @@
               "positions": [
                 {
                   "title": "Data Science and Analytics Section",
-                  "role": "President (2025–26) · President-Elect (2024–25) · Past President (2026–27)",
+                  "role": "President-Elect (2024–25) · President (2025–26) · Past President (2026–27)",
                   "periods": [
                     "2024-2027"
                   ],
@@ -3157,33 +3210,7 @@
           "accent": "ii",
           "organizations": [
             {
-              "name": "Department of Statistical Sciences",
-              "positions": [
-                {
-                  "title": "MScAC Data Science Concentration",
-                  "role": "Interim Director",
-                  "periods": [
-                    "2026-2027"
-                  ],
-                  "tags": [
-                    "2026–27: Interim Director"
-                  ],
-                  "url": "https://mscac.utoronto.ca/concentrations/ds/"
-                },
-                {
-                  "title": "Graduate Admissions Committee",
-                  "role": "Committee Member",
-                  "periods": [
-                    "2022-Present"
-                  ],
-                  "tags": [
-                    "2022–Present: Committee Member"
-                  ]
-                }
-              ]
-            },
-            {
-              "name": "Department of Astronomy & Astrophysics",
+              "name": "David A. Dunlap Department of Astronomy & Astrophysics",
               "positions": [
                 {
                   "title": "Summer Undergraduate Research Program (SURP) Committee",
@@ -3228,6 +3255,32 @@
                   ],
                   "tags": [
                     "2020–21: Committee Member"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "Department of Statistical Sciences",
+              "positions": [
+                {
+                  "title": "MScAC Data Science Concentration",
+                  "role": "Interim Director",
+                  "periods": [
+                    "2026-2027"
+                  ],
+                  "tags": [
+                    "2026–27: Interim Director"
+                  ],
+                  "url": "https://mscac.utoronto.ca/concentrations/ds/"
+                },
+                {
+                  "title": "Graduate Admissions Committee",
+                  "role": "Committee Member",
+                  "periods": [
+                    "2022-Present"
+                  ],
+                  "tags": [
+                    "2022–Present: Committee Member"
                   ]
                 }
               ]
@@ -3294,7 +3347,6 @@
         },
         {
           "title": "Manuscript Referee Service",
-          "hidden": true,
           "items": [
             {
               "role": "Referee",
@@ -3541,7 +3593,7 @@
         },
         "nestle": {
           "group": "inference",
-          "docs": "http://kbarbary.github.io/nestle/",
+          "docs": "https://kbarbary.github.io/nestle/",
           "blurb": "Pure Python, MIT-licensed implementation of nested sampling algorithms for evaluating Bayesian evidence"
         }
       }
@@ -3552,10 +3604,10 @@
           "date": "Oct 2026",
           "year": 2026,
           "type": "paper",
+          "paperBibcode": "2026arXiv261039332D",
           "title": "Tabular foundation models outperform bespoke photometric redshift estimators",
           "blurb": "Co-authored with postdoctoral fellow <a href=\"https://biprateep.de/\">Biprateep Dey</a> and accepted for a Spotlight Talk at the NeurIPS 2026 <a href=\"https://ml4physicalsciences.github.io/\">Machine Learning and the Physical Sciences (ML4PS)</a> workshop, our new study shows that pretrained tabular foundation models match or outperform tuned bespoke photo-<em>z</em> estimators with 40x fewer training galaxies and mitigate spectroscopic selection bias via in-context calibration using our open-source <a href=\"https://github.com/biprateep/lazy-tfm\"><code>lazy-tfm</code></a> package.",
           "outlet": "arXiv / NeurIPS ML4PS Spotlight",
-          "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv261039332D",
           "linkLabel": "ADS / Preprint"
         },
         {
@@ -3572,10 +3624,10 @@
           "date": "Sep 2026",
           "year": 2026,
           "type": "paper",
+          "paperBibcode": "2026arXiv260904334K",
           "title": "Model predictive scoring shows specific BAO observations drive the evolving dark energy tension",
           "blurb": "Led by postdoctoral fellow <a href=\"https://tanveerkarim.com/\">Tanveer Karim</a> (with <a href=\"https://www.dunlap.utoronto.ca/directory/prof-renee-hlozek/\">Renée Hložek</a>), our new study introduces leave-one-out Bayesian model predictive scoring to isolate which individual observations drive the preference for evolving dark energy, showing that specific DESI BAO redshift bins rather than Type Ia supernovae drive the tension with ΛCDM.",
           "outlet": "arXiv e-prints",
-          "link": "https://ui.adsabs.harvard.edu/abs/2026arXiv260904334K",
           "linkLabel": "ADS / Preprint"
         },
         {
@@ -3601,20 +3653,20 @@
           "date": "Feb 2026",
           "year": 2026,
           "type": "paper",
+          "paperBibcode": "2026ApJ..1007..139H",
           "title": "Constraining supernova yields and delay times from dwarf spheroidal galaxies",
-          "blurb": "Led by PhD student Mairead Heiger (with <a href=\"https://sites.physics.utoronto.ca/tingli\">Ting Li</a> and collaborators; <em>ApJ</em>, 1007, 139), our new study uses Bayesian chemical evolution modeling of Milky Way dwarf spheroidal galaxies to constrain Type Ia and core-collapse supernova nucleosynthetic yields and delay-time distributions.",
+          "blurb": "Led by PhD student Mairead Heiger (with <a href=\"https://sites.physics.utoronto.ca/tingli\">Ting Li</a> and collaborators; {{cite}}), our new study uses Bayesian chemical evolution modeling of Milky Way dwarf spheroidal galaxies to constrain Type Ia and core-collapse supernova nucleosynthetic yields and delay-time distributions.",
           "outlet": "The Astrophysical Journal",
-          "link": "https://ui.adsabs.harvard.edu/abs/2026ApJ..1007..139H",
           "linkLabel": "ADS / Paper"
         },
         {
           "date": "Oct 2025",
           "year": 2025,
           "type": "paper",
+          "paperBibcode": "2025ApJ...992...39Z",
           "title": "A deep 3-D dust map of the southern Galactic plane from DECaPS2",
-          "blurb": "Co-led with <a href=\"https://www.cfa.harvard.edu/people/catherine-zucker\">Catherine Zucker</a> and <a href=\"https://andrewsaydjari.github.io/\">Andrew Saydjari</a> (<em>ApJ</em>, 992, 39), we inferred distances and extinctions for over 550 million stars in the DECaPS2 survey using <a href=\"https://joshspeagle.com/brutus/\"><code>brutus</code></a> to construct the deepest 3-D dust map of the southern Milky Way plane.",
+          "blurb": "Co-led with <a href=\"https://www.cfa.harvard.edu/people/catherine-zucker\">Catherine Zucker</a> and <a href=\"https://andrewsaydjari.github.io/\">Andrew Saydjari</a> ({{cite}}), we inferred distances and extinctions for over 550 million stars in the DECaPS2 survey using <a href=\"https://joshspeagle.com/brutus/\"><code>brutus</code></a> to construct the deepest 3-D dust map of the southern Milky Way plane.",
           "outlet": "The Astrophysical Journal",
-          "link": "https://ui.adsabs.harvard.edu/abs/2025ApJ...992...39Z",
           "linkLabel": "ADS / Paper"
         },
         {
@@ -3650,41 +3702,41 @@
           "date": "Jul 2025",
           "year": 2025,
           "type": "press",
+          "paperBibcode": "2025ApJ...986...59V",
           "title": "ChronoFlow: an AI model for the ages of stars",
-          "blurb": "Led by PhD student Phil Van-Lane (co-supervised with <a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a>; <em>ApJ</em>, 987, 152), ChronoFlow uses conditional normalizing flows calibrated on open star clusters to infer stellar rotation-age posteriors across the Milky Way, with press coverage in U of T News and Phys.org.",
+          "blurb": "Led by PhD student Phil Van-Lane (co-supervised with <a href=\"https://www.astro.utoronto.ca/~eadie/intro.html\">Gwen Eadie</a>; {{cite}}), ChronoFlow uses conditional normalizing flows calibrated on open star clusters to infer stellar rotation-age posteriors across the Milky Way, with press coverage in U of T News and Phys.org.",
           "outlet": "U of T News",
-          "link": "https://www.utoronto.ca/news/u-t-astronomers-develop-ai-model-determine-stars-ages",
-          "paperLink": "https://ui.adsabs.harvard.edu/abs/2025ApJ...987..152V"
+          "link": "https://www.utoronto.ca/news/u-t-astronomers-develop-ai-model-determine-stars-ages"
         },
         {
           "date": "Nov 2024",
           "year": 2024,
           "type": "press",
+          "paperBibcode": "2024ApJ...976..102G",
           "title": "First white dwarf–main-sequence binary candidates in open star clusters",
-          "blurb": "Led by PhD student <a href=\"https://www.astro.utoronto.ca/~steffani.grondin/\">Steffani Grondin</a> (<em>ApJ</em>, 976, 207), our team combined Gaia DR3, GALEX ultraviolet photometry, and machine learning to identify 52 post-common-envelope white dwarf–main-sequence binary candidates across 38 open star clusters, covered by U of T Arts &amp; Science, Phys.org, and SciTechDaily.",
+          "blurb": "Led by PhD student <a href=\"https://www.astro.utoronto.ca/~steffani.grondin/\">Steffani Grondin</a> ({{cite}}), our team combined Gaia DR3, GALEX ultraviolet photometry, and machine learning to identify 52 post-common-envelope white dwarf–main-sequence binary candidates across 38 open star clusters, covered by U of T Arts &amp; Science, Phys.org, and SciTechDaily.",
           "outlet": "U of T Arts & Science",
-          "link": "https://www.artsci.utoronto.ca/news/u-t-astronomers-discover-first-white-dwarf-main-sequence-binary-candidates-open-star-clusters",
-          "paperLink": "https://ui.adsabs.harvard.edu/abs/2024ApJ...976..207G"
+          "link": "https://www.artsci.utoronto.ca/news/u-t-astronomers-discover-first-white-dwarf-main-sequence-binary-candidates-open-star-clusters"
         },
         {
           "date": "Sep 2024",
           "year": 2024,
           "type": "group",
+          "paperBibcode": "2023ApJ...955...22B",
           "title": "Sam Berek and Shivan Khullar win the 2024 Jui Lin (Allen) Yen Award",
-          "blurb": "<a href=\"https://samberek.github.io/samberek/index.html\">Sam Berek</a> and <a href=\"https://shivankhullar.github.io/\">Shivan Khullar</a> received the department’s Jui Lin (Allen) Yen Award. Sam was honored for her paper introducing zero-inflated Bayesian hierarchical count models (<code>HERBAL</code>) to model galaxy–globular cluster scaling relations.",
+          "blurb": "<a href=\"https://samberek.github.io/samberek/index.html\">Sam Berek</a> and <a href=\"https://shivankhullar.github.io/\">Shivan Khullar</a> received the department’s Jui Lin (Allen) Yen Award. Sam was honored for her paper ({{cite}}) introducing zero-inflated Bayesian hierarchical count models (<code>HERBAL</code>) to model galaxy–globular cluster scaling relations.",
           "outlet": "U of T Astronomy & Astrophysics",
-          "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/",
-          "paperLink": "https://ui.adsabs.harvard.edu/abs/2023ApJ...955..112B"
+          "link": "https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/"
         },
         {
           "date": "Aug 2024",
           "year": 2024,
           "type": "press",
+          "paperBibcode": "2024ApJ...970..121S",
           "title": "A 5-D map of the Milky Way: AAS Nova featured image",
-          "blurb": "Our lead-author study (Speagle et al. 2024, <em>ApJ</em>, 971, 136) mapping distances, extinctions, and stellar properties for 170 million stars across the Milky Way using <a href=\"https://joshspeagle.com/brutus/\"><code>brutus</code></a> was highlighted as an AAS Nova Featured Image.",
+          "blurb": "Our lead-author study (Speagle et al. 2024, {{cite}}) mapping distances, extinctions, and stellar properties for 170 million stars across the Milky Way using <a href=\"https://joshspeagle.com/brutus/\"><code>brutus</code></a> was highlighted as an AAS Nova Featured Image.",
           "outlet": "AAS Nova",
-          "link": "https://aasnova.org/2024/08/12/featured-image-a-5d-map-of-the-milky-way/",
-          "paperLink": "https://ui.adsabs.harvard.edu/abs/2024ApJ...971..136S"
+          "link": "https://aasnova.org/2024/08/12/featured-image-a-5d-map-of-the-milky-way/"
         },
         {
           "date": "Aug 2024",
@@ -3709,11 +3761,11 @@
           "date": "Jan 2023",
           "year": 2023,
           "type": "press",
+          "paperBibcode": "2023ApJS..264...28S",
           "title": "DECaPS2: a survey of 3.3 billion objects in the Milky Way's plane",
-          "blurb": "The second data release of the Dark Energy Camera Plane Survey (Saydjari et al. 2023, <em>ApJS</em>, 264, 28) catalogued 3.32 billion objects across 6.5% of the night sky in the southern Galactic plane, with press coverage in NSF NOIRLab, Space.com, PBS NewsHour, and Salon.",
+          "blurb": "The second data release of the Dark Energy Camera Plane Survey (Saydjari et al. 2023, {{cite}}) catalogued 3.32 billion objects across 6.5% of the night sky in the southern Galactic plane, with press coverage in NSF NOIRLab, Space.com, PBS NewsHour, and Salon.",
           "outlet": "NSF NOIRLab",
-          "link": "https://noirlab.edu/public/news/noirlab2301/",
-          "paperLink": "https://ui.adsabs.harvard.edu/abs/2023ApJS..264...28S"
+          "link": "https://noirlab.edu/public/news/noirlab2301/"
         },
         {
           "date": "Jan 2023",
@@ -3728,11 +3780,11 @@
           "date": "Jan 2022",
           "year": 2022,
           "type": "press",
+          "paperBibcode": "2022Natur.601..334Z",
           "title": "The Local Bubble: the Sun sits in a 1,000-light-year void that forms stars",
           "blurb": "Using 3-D dust maps and Gaia space astrometry, our <em>Nature</em> study (Zucker et al. 2022) showed that virtually all nearby young star-forming complexes lie on the expanding surface of the Local Bubble, covered by CfA, the Harvard Gazette, STScI, and Smithsonian Magazine.",
           "outlet": "Center for Astrophysics | Harvard & Smithsonian",
-          "link": "https://www.cfa.harvard.edu/news/1000-light-year-wide-bubble-surrounding-earth-source-all-nearby-young-stars",
-          "paperLink": "https://ui.adsabs.harvard.edu/abs/2022Natur.601..334Z"
+          "link": "https://www.cfa.harvard.edu/news/1000-light-year-wide-bubble-surrounding-earth-source-all-nearby-young-stars"
         },
         {
           "date": "Jul 2021",
@@ -3747,21 +3799,21 @@
           "date": "Feb 2020",
           "year": 2020,
           "type": "software",
+          "paperBibcode": "2020MNRAS.493.3132S",
           "title": "dynesty published in Monthly Notices of the Royal Astronomical Society",
-          "blurb": "The release paper for <a href=\"https://dynesty.readthedocs.io/\"><code>dynesty</code></a>, our open-source Python package for dynamic nested sampling and Bayesian posterior and evidence estimation, appeared in <em>MNRAS</em> (493, 3132) and has now been cited over 2,200 times.",
+          "blurb": "The release paper for <a href=\"https://dynesty.readthedocs.io/\"><code>dynesty</code></a>, our open-source Python package for dynamic nested sampling and Bayesian posterior and evidence estimation, appeared in {{cite}} and has now been cited {{citations_floor}} times.",
           "outlet": "MNRAS",
-          "link": "https://ui.adsabs.harvard.edu/abs/2020MNRAS.493.3132S",
           "linkLabel": "ADS / Paper"
         },
         {
           "date": "Jan 2020",
           "year": 2020,
           "type": "press",
+          "paperBibcode": "2020Natur.578..237A",
           "title": "The Radcliffe Wave: the largest gaseous structure in the galaxy",
           "blurb": "Co-authored the <em>Nature</em> discovery (Alves et al. 2020) of a coherent 9,000-light-year undulation of interconnected star-forming clouds in the solar neighborhood using 3-D dust mapping with <a href=\"https://joshspeagle.com/brutus/\"><code>brutus</code></a>, featured by CfA and the Harvard Gazette.",
           "outlet": "Center for Astrophysics | Harvard & Smithsonian",
-          "link": "https://www.cfa.harvard.edu/news/radcliffe-wave",
-          "paperLink": "https://ui.adsabs.harvard.edu/abs/2020Natur.578..237A"
+          "link": "https://www.cfa.harvard.edu/news/radcliffe-wave"
         }
       ],
       "types": {

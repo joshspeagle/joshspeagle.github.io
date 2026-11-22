@@ -30,6 +30,9 @@
 (function () {
   function initRoot(root) {
     const groupEls = Array.from(root.querySelectorAll('[data-lv-group]'));
+    groupEls.forEach(g => {
+      if (g.tagName === 'DETAILS') g.dataset.defaultOpen = g.open ? '1' : '0';
+    });
     const sectionEls = Array.from(root.querySelectorAll('[data-lv-section]'));
     const grouped = groupEls.length > 0;
     const list = root.querySelector('[data-lv-list]');
@@ -86,10 +89,15 @@
       const visible = new Set(matched.slice(0, limit));
       origin.forEach(el => el.classList.toggle('is-hidden', !visible.has(el)));
 
+      const active = filtering();
+
       if (grouped) {
         groupEls.forEach(g => {
           const n = visibleIn(g);
           g.classList.toggle('is-hidden', n === 0);
+          if (g.tagName === 'DETAILS') {
+            g.open = active ? n > 0 : g.dataset.defaultOpen === '1';
+          }
           const c = g.querySelector('[data-lv-count]');
           if (c) c.textContent = n;
         });
@@ -101,7 +109,6 @@
         });
       }
 
-      const active = filtering();
       pinnedEls.forEach(el => el.classList.toggle('is-hidden', active));
       if (emptyEl) emptyEl.hidden = matched.length > 0;
       if (moreEl) moreEl.hidden = !batch || state.shown >= matched.length || matched.length === 0;

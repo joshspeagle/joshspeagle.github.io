@@ -63,24 +63,34 @@ def _cosupervisors(rec):
     return out
 
 
+_SUMMER_FELLOWSHIP_KWS = ("surp", "suds", "surf", "sura", "usra", "utea", "mitacs")
+
+
+def _has_tag_kw(rec, field, kws):
+    txt = " ".join(_strip_tags(v).lower() for v in (rec.get(field) or []))
+    return any(k in txt for k in kws)
+
+
+def _is_summer_fellow(rec):
+    return _has_tag_kw(rec, "programs", _SUMMER_FELLOWSHIP_KWS) or _has_tag_kw(rec, "awards", _SUMMER_FELLOWSHIP_KWS)
+
+
 def _classify_ug_pathway(rec):
     """Classify an undergraduate record into one of three primary groups based strictly on content.json tags:
     - 'thesis': Senior Thesis, Junior Thesis, or Research Course
-    - 'summer': Summer Research Fellowships (A&A SURP, DSI SUDS, CITA SURF)
+    - 'summer': Summer & Competitive Research Fellowships (SURP, SUDS, SURF, SURA, USRA, UTEA, MITACS)
     - 'rop': A&S ROP, Co-op Program, or Independent / Visiting Research
     """
-    courses_txt = " ".join(_strip_tags(c).lower() for c in (rec.get("courses") or []))
-    progs_txt = " ".join(_strip_tags(p).lower() for p in (rec.get("programs") or []))
-    if any(k in courses_txt for k in ("thesis", "research course")):
+    if _has_tag_kw(rec, "courses", ("thesis", "research course")):
         return "thesis"
-    if any(k in progs_txt for k in ("surp", "suds", "surf")):
+    if _is_summer_fellow(rec):
         return "summer"
     return "rop"
 
 
 _UG_PATHWAYS = [
     ("thesis", "Theses & Research Courses (Senior Thesis · Junior Thesis · Research Course)", "st-doctoral"),
-    ("summer", "Summer Research Fellowships (A&A SURP · DSI SUDS · CITA SURF)", "st-bachelors"),
+    ("summer", "Summer & Research Fellowships (SURP · SUDS · SURF · SURA · USRA · UTEA · MITACS)", "st-bachelors"),
     ("rop",    "A&S ROP, Co-op & Independent Research", "st-masters"),
 ]
 
@@ -199,23 +209,27 @@ def _mentorship_dashboard(mbs, completed):
     all_ugs = list(mbs.get("bachelors") or []) + list(completed.get("bachelors") or [])
 
     def _has_course(u, kw):
-        return any(kw in _strip_tags(c).lower() for c in (u.get("courses") or []))
+        return _has_tag_kw(u, "courses", (kw,))
 
     def _has_prog(u, kws):
-        txt = " ".join(_strip_tags(p).lower() for p in (u.get("programs") or []))
-        return any(k in txt for k in kws)
+        return _has_tag_kw(u, "programs", kws)
 
-    n_summer = sum(1 for u in all_ugs if _has_prog(u, ("surp", "suds", "surf")))
+    n_summer = sum(1 for u in all_ugs if _is_summer_fellow(u))
     n_senior = sum(1 for u in all_ugs if _has_course(u, "senior thesis"))
     n_rc     = sum(1 for u in all_ugs if _has_course(u, "research course"))
     n_junior = sum(1 for u in all_ugs if _has_course(u, "junior thesis"))
     n_other  = sum(
         1 for u in all_ugs
-        if _has_prog(u, ("rop", "co-op")) or (not u.get("courses") and not u.get("programs"))
+        if _has_prog(u, ("rop", "co-op")) or (not u.get("courses") and not u.get("programs") and not _is_summer_fellow(u))
+    )
+    n_both = sum(
+        1 for u in all_ugs
+        if (_is_summer_fellow(u) or _has_prog(u, ("rop", "co-op")))
+        and _has_tag_kw(u, "courses", ("senior thesis", "research course", "junior thesis"))
     )
 
     ug_items = [
-        ("SURP · SUDS · CITA SURF",                n_summer, "st-bachelors"),
+        ("SURP · SUDS · SURF · SURA · USRA",         n_summer, "st-bachelors"),
         ("Senior Thesis",                           n_senior, "st-doctoral"),
         ("Research Course",                         n_rc,     "st-masters"),
         ("Junior Thesis",                           n_junior, "st-postdoc"),
@@ -236,7 +250,7 @@ def _mentorship_dashboard(mbs, completed):
         )
     ug_legend = (
         '<div class="pf-leg" aria-hidden="true">'
-        f'<span class="pf-key">{len(all_ugs)} researchers (10 completed both a fellowship &amp; thesis/course)</span>'
+        f'<span class="pf-key">{len(all_ugs)} researchers ({n_both} completed both a fellowship &amp; thesis/course)</span>'
         '</div>'
     )
     panel2 = (
@@ -272,9 +286,8 @@ def _stage_groups(source, completed_flag):
                 if not precs:
                     continue
                 cards = "".join(_card(rec, cat, label, color, completed=True) for rec in precs)
-                open_attr = " open" if idx == 0 else ""
                 sub_blocks.append(
-                    f'<details class="ug-pathway-details" data-lv-group{open_attr}>'
+                    f'<details class="ug-pathway-details" data-lv-group>'
                     f'<summary class="ug-pathway-summary">'
                     f'<span class="ug-pathway-title"><span class="dot d-{pcolor}"></span>{esc(plabel)}</span>'
                     f'<span class="mentor-count" data-lv-count>{len(precs)}</span>'
