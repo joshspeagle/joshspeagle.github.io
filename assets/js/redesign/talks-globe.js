@@ -638,7 +638,7 @@
         '<div>' +
         '<div class="gcd-kicker"><span class="gcd-reg-dot reg-' + sel.region + '"></span>' +
         rInfo.label + ' \u00b7 ' + coordStr + '</div>' +
-        '<h4 class="gcd-city">' + sel.label + '</h4>' +
+        '<h2 class="gcd-city">' + sel.label + '</h2>' +
         '</div>' +
         '<div class="gcd-badge">' + sel.count + ' talk' + (sel.count === 1 ? "" : "s") + '</div>' +
         '</div>' +

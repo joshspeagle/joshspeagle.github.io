@@ -90,17 +90,32 @@ BIBCODE_VENUE_SHORT = {
 }
 
 
+_PUBS_BY_BIB_CACHE = {}
+
+
+def ads_abs_url(bibcode):
+    """Canonical NASA ADS abstract URL for a bibcode ('' when empty)."""
+    bib = (bibcode or "").strip()
+    return f"https://ui.adsabs.harvard.edu/abs/{bib}" if bib else ""
+
+
 def load_publications_by_bibcode():
-    """Return {bibcode: pub_dict} from publications_data.json."""
+    """Return {bibcode: pub_dict} from publications_data.json, cached by stat metadata."""
     path = get_data_path("publications_data.json")
     if not path.exists():
         return {}
+    st = path.stat()
+    key = (str(path), st.st_mtime_ns, st.st_size)
+    if key in _PUBS_BY_BIB_CACHE:
+        return _PUBS_BY_BIB_CACHE[key]
     data = json.loads(path.read_text(encoding="utf-8"))
     out = {}
     for p in data.get("publications", []) or []:
         bib = (p.get("bibcode") or p.get("id") or "").strip()
         if bib:
             out[bib] = p
+    _PUBS_BY_BIB_CACHE.clear()
+    _PUBS_BY_BIB_CACHE[key] = out
     return out
 
 

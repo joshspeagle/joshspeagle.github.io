@@ -36,7 +36,7 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
-from check_writing import check_all as check_writing
+from check_writing import PUBLIC_BOUNDARY_PATTERNS, check_all as check_writing
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -333,8 +333,9 @@ def _walk_values_for_key(obj, key):
             yield from _walk_values_for_key(item, key)
 
 
-def check_citations(docs):
-    content = json.loads((PROJECT_ROOT / "assets" / "data" / "content.json").read_text(encoding="utf-8"))
+def check_citations(docs, content=None):
+    if content is None:
+        content = json.loads((PROJECT_ROOT / "assets" / "data" / "content.json").read_text(encoding="utf-8"))
     pub_data = json.loads((PROJECT_ROOT / "assets" / "data" / "publications_data.json").read_text(encoding="utf-8"))
     pubs = pub_data.get("publications", [])
     metrics = pub_data.get("metrics", {})
@@ -382,8 +383,9 @@ def _assert_order(text, first, second, context):
         fail(f"{context}: {first!r} must precede {second!r}")
 
 
-def check_affiliations(docs):
-    content = json.loads((PROJECT_ROOT / "assets" / "data" / "content.json").read_text(encoding="utf-8"))
+def check_affiliations(docs, content=None):
+    if content is None:
+        content = json.loads((PROJECT_ROOT / "assets" / "data" / "content.json").read_text(encoding="utf-8"))
     depts = [d.get("name", "") for d in content.get("site", {}).get("departments", [])]
     _assert_order(" | ".join(depts), "Astronomy", "Statistical Sciences", "content.json site.departments")
 
@@ -444,17 +446,6 @@ _BOUNDARY_SKIP_PREFIXES = (
 )
 _BOUNDARY_EXTS = {".html", ".css", ".js", ".py", ".md", ".txt", ".xml", ".json"}
 _BOUNDARY_EXEMPT_REGEX = {"scripts/check_build.py", "scripts/check_writing.py"}
-_BOUNDARY_PATTERNS = (
-    ("machine /mnt/ path", re.compile(r"(?:^|[\s\"'(=`])/mnt/[a-z]/")),
-    ("machine home path", re.compile(r"(?:^|[\s\"'(=`])/(?:home|Users)/[a-zA-Z0-9_-]+(?:/|[\s\"'`),;]|$)")),
-    ("local Windows path", re.compile(r"(?:D:\\+Dropbox|C:\\+Users\\)")),
-    ("local virtualenv path", re.compile(r"\.venvs/")),
-    ("file URI", re.compile(r"file:///")),
-    ("internal notes path", re.compile(r"notes/(?:revamp|specs|review|refs|discrepancy)")),
-    ("design notes reference", re.compile(r"design notes\.md")),
-    ("internal audit code", re.compile(r"(?:D3/E10|\bD20\b|\bDesign [A-Z]\b)")),
-    ("internal review reference", re.compile(r"(?:earlier review R\d+|synthesis ruling R\d+|Work order:|§6\.\d+)")),
-)
 
 
 def _iter_boundary_files():
@@ -497,13 +488,15 @@ def _iter_boundary_files():
 
 def check_public_boundary():
     for rel_posix, path in _iter_boundary_files():
+        if rel_posix.startswith(("assets/blog/", "writing/")) and path.suffix.lower() in {".html", ".css", ".js", ".json"}:
+            continue
         raw = path.read_bytes()
         if b"\r\n" in raw:
             fail(f"{rel_posix}: contains CRLF line endings")
         if rel_posix in _BOUNDARY_EXEMPT_REGEX:
             continue
         text = raw.decode("utf-8", errors="replace")
-        for label, pat in _BOUNDARY_PATTERNS:
+        for label, pat in PUBLIC_BOUNDARY_PATTERNS:
             m = pat.search(text)
             if m:
                 fail(f"{rel_posix}: public boundary violation ({label}: {m.group(0).strip()!r})")
@@ -511,11 +504,12 @@ def check_public_boundary():
 
 def main():
     docs = check_documents()
+    content = json.loads((PROJECT_ROOT / "assets" / "data" / "content.json").read_text(encoding="utf-8"))
     check_tokens()
     check_palette()
     check_links(docs)
-    check_citations(docs)
-    check_affiliations(docs)
+    check_citations(docs, content)
+    check_affiliations(docs, content)
     check_writing(errors, warnings)
     check_public_boundary()
 

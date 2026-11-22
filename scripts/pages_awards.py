@@ -4,8 +4,9 @@ Renders:
   1. Research Prizes & Academic Awards (from sections.awards.awards)
   2. Fellowships & Additional Honors (from sections.awards.fellowships)
 """
-from pages_shared import (accent_class, card_meta, esc, expand_item_citations,
-                          load_publications_by_bibcode, url_attr)
+from pages_shared import (accent_class, ads_abs_url, card_meta, esc,
+                          expand_item_citations, load_publications_by_bibcode,
+                          url_attr)
 
 
 def _render_cards(entries, default_accents, pubs_by_bib):
@@ -17,7 +18,7 @@ def _render_cards(entries, default_accents, pubs_by_bib):
         description = expand_item_citations(entry.get("description", ""), bib, pubs_by_bib)
         year = str(entry.get("year") or "")
         cat = entry.get("category") or "Research Prize"
-        url = (entry.get("url") or "").strip() or (f"https://ui.adsabs.harvard.edu/abs/{bib}" if bib else "")
+        url = (entry.get("url") or "").strip() or ads_abs_url(bib)
         url_lbl = entry.get("urlLabel") or ("ADS / Paper" if bib else "Program")
         acc = accent_class(entry.get("accent") or default_accents[i % len(default_accents)], f"award {title!r}")
         title_html = (

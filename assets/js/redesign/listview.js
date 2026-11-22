@@ -162,6 +162,22 @@
     });
   }
 
+  const printOpened = [];
+  window.addEventListener('beforeprint', function () {
+    printOpened.length = 0;
+    document.querySelectorAll('details[data-lv-group]').forEach(function (d) {
+      if (!d.open) {
+        d.open = true;
+        printOpened.push(d);
+      }
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    while (printOpened.length) {
+      printOpened.pop().open = false;
+    }
+  });
+
   function init() {
     document.querySelectorAll('[data-listview]').forEach(initRoot);
     initTimelineExpand();

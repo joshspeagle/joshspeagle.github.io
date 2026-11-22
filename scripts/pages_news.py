@@ -7,7 +7,7 @@ Renders:
 """
 from collections import Counter
 
-from pages_shared import (accent_class, attr_esc, card_meta, esc,
+from pages_shared import (accent_class, ads_abs_url, attr_esc, card_meta, esc,
                           expand_item_citations, load_publications_by_bibcode,
                           scaffold, slug, strip_tags, term_month, url_attr, warn)
 
@@ -45,8 +45,7 @@ def _linked_title(title_raw, link):
 
 
 def _resolved_links(n):
-    bib = (n.get("paperBibcode") or "").strip()
-    ads_url = f"https://ui.adsabs.harvard.edu/abs/{bib}" if bib else ""
+    ads_url = ads_abs_url(n.get("paperBibcode"))
     link = (n.get("link") or "").strip()
     paper_link = (n.get("paperLink") or "").strip()
     if not link and n.get("type") in ("paper", "software") and ads_url:
@@ -56,9 +55,8 @@ def _resolved_links(n):
     return link, paper_link
 
 
-def _links_html(n):
+def _links_html(n, link, paper_link):
     out = []
-    link, paper_link = _resolved_links(n)
     outlet = (n.get("outlet") or "").strip()
     link_label = (n.get("linkLabel") or "").strip()
     if link:
@@ -77,49 +75,40 @@ def _links_html(n):
     return "".join(out)
 
 
-def _featured_press_card(n, meta_by_type, pubs_by_bib):
-    typ = n.get("type", "press")
-    meta = meta_by_type.get(typ, _FALLBACK)
+def _render_card(n, meta_by_type, pubs_by_bib, featured=False):
+    default_typ = "press" if featured else "note"
+    typ = n.get("type", default_typ)
+    meta = meta_by_type.get(typ, _FALLBACK) if featured else meta_by_type[typ]
     label = meta.get("label", typ)
     accent = accent_class(meta.get("accent", _FALLBACK["accent"]), f"news type {typ!r}")
-    link, _ = _resolved_links(n)
+    link, paper_link = _resolved_links(n)
     outlet = n.get("outlet", "")
     blurb = expand_item_citations(n.get("blurb", ""), (n.get("paperBibcode") or "").strip(), pubs_by_bib)
     tags_html = f'<span class="badge b-{accent}">{esc(label)}</span>'
     if outlet:
         tags_html += f'<span class="tag tag-institution">{esc(outlet)}</span>'
-    return (
-        f'<article class="item feat-card accent-{accent}">'
-        f'{card_meta(n.get("date", ""), (outlet or label, True))}'
-        f'<h3 class="item-title">{_linked_title(n.get("title", ""), link)}</h3>'
-        f'<p class="item-meta">{esc(blurb)}</p>'
-        f'<div class="paper-badges"><div class="paper-tag-group">{tags_html}</div>'
-        f'<div class="paper-links">{_links_html(n)}</div></div>'
-        f'</article>'
-    )
-
-
-def _news_card(n, meta_by_type, pubs_by_bib):
-    typ = n.get("type", "note")
-    meta = meta_by_type[typ]
-    label = meta.get("label", typ)
-    accent = accent_class(meta.get("accent", _FALLBACK["accent"]), f"news type {typ!r}")
+    links = _links_html(n, link, paper_link)
+    title_html = _linked_title(n.get("title", ""), link)
+    if featured:
+        return (
+            f'<article class="item feat-card accent-{accent}">'
+            f'{card_meta(n.get("date", ""), (outlet or label, True))}'
+            f'<h3 class="item-title">{title_html}</h3>'
+            f'<p class="item-meta">{esc(blurb)}</p>'
+            f'<div class="paper-badges"><div class="paper-tag-group">{tags_html}</div>'
+            f'<div class="paper-links">{links}</div></div>'
+            f'</article>'
+        )
     year = n.get("year", 0)
-    link, _ = _resolved_links(n)
-    outlet = n.get("outlet", "")
-    blurb = expand_item_citations(n.get("blurb", ""), (n.get("paperBibcode") or "").strip(), pubs_by_bib)
-    tags_html = f'<span class="badge b-{accent}">{esc(label)}</span>'
-    if outlet:
-        tags_html += f'<span class="tag tag-institution">{esc(outlet)}</span>'
-    search = attr_esc(f'{strip_tags(n.get("title",""))} {strip_tags(blurb)} {outlet} {label}')
+    search = attr_esc(f'{strip_tags(n.get("title", ""))} {strip_tags(blurb)} {outlet} {label}')
     return (
         f'<article class="item accent-{accent}" data-lv-item data-cat="{slug(typ)}" data-search="{search}" '
-        f'data-year="{year}" data-num="{_sort_num(n)}" data-title="{attr_esc(n.get("title",""))}">'
+        f'data-year="{year}" data-num="{_sort_num(n)}" data-title="{attr_esc(n.get("title", ""))}">'
         f'{card_meta(n.get("date", ""), (label, True))}'
-        f'<div class="item-head"><h3 class="item-title">{_linked_title(n.get("title",""), link)}</h3></div>'
+        f'<div class="item-head"><h3 class="item-title">{title_html}</h3></div>'
         f'<p class="item-meta">{esc(blurb)}</p>'
         f'<div class="paper-badges"><div class="paper-tag-group">{tags_html}</div>'
-        f'<div class="paper-links">{_links_html(n)}</div></div>'
+        f'<div class="paper-links">{links}</div></div>'
         f'</article>'
     )
 
@@ -149,11 +138,11 @@ def generate_content(data):
     featured_html = (
         '<section class="pub-featured" data-lv-pinned aria-labelledby="news-featured-heading">\n'
         '<h2 id="news-featured-heading" class="pub-featured-head">Featured Press &amp; Research Highlights</h2>\n'
-        f'<div class="featured-grid">{"".join(_featured_press_card(n, meta_by_type, pubs_by_bib) for n in featured_items)}</div>\n'
+        f'<div class="featured-grid">{"".join(_render_card(n, meta_by_type, pubs_by_bib, featured=True) for n in featured_items)}</div>\n'
         '</section>\n'
     ) if featured_items else ""
 
-    items = "".join(_news_card(n, meta_by_type, pubs_by_bib) for n in items_data)
+    items = "".join(_render_card(n, meta_by_type, pubs_by_bib) for n in items_data)
     filters = [(k, meta_by_type[k].get("label", k),
                 counts[k], meta_by_type[k].get("accent", _FALLBACK["accent"]))
                for k in counts]

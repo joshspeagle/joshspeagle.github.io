@@ -281,7 +281,7 @@ def _stage_groups(source, completed_flag):
             for r in recs:
                 by_path[_classify_ug_pathway(r)].append(r)
             sub_blocks = []
-            for idx, (pkey, plabel, pcolor) in enumerate(_UG_PATHWAYS):
+            for pkey, plabel, pcolor in _UG_PATHWAYS:
                 precs = by_path[pkey]
                 if not precs:
                     continue
@@ -296,9 +296,9 @@ def _stage_groups(source, completed_flag):
                     f'</details>'
                 )
             groups.append(
-                '<div class="mentor-group mentor-group-ug">'
+                '<div class="mentor-group mentor-group-ug" data-lv-group>'
                 f'<h3 class="mentor-group-head"><span class="dot d-{color}"></span>'
-                f'{esc(_CHIP_LABEL[cat])} <span class="mentor-count">{len(recs)}</span>'
+                f'{esc(_CHIP_LABEL[cat])} <span class="mentor-count" data-lv-count>{len(recs)}</span>'
                 '<span class="ug-hint">Organized by program pathway · click any category to expand/collapse</span></h3>'
                 f'{"".join(sub_blocks)}'
                 '</div>'

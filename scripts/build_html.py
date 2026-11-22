@@ -30,8 +30,8 @@ FEED_XML = PROJECT_ROOT / FEED_FILE
 
 # Redesign per-page content generators (scripts/ on path so they import cleanly)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from pages_shared import (SPRITE, attr_esc, card_meta, clean_text, date_range,  # noqa: E402
-                          esc, esc_text, expand_item_citations,
+from pages_shared import (SPRITE, ads_abs_url, attr_esc, card_meta, clean_text,  # noqa: E402
+                          date_range, esc, esc_text, expand_item_citations,
                           listview_status, load_publications_by_bibcode,
                           percent_shares, slug, strip_tags, term_month,
                           url_attr, warn)
@@ -738,7 +738,7 @@ def write_feed(data):
         if raw_link and not raw_link.startswith(("http://", "https://")):
             link_url = f'{SITE_URL}/{raw_link.lstrip("/")}'
         elif not raw_link and bib:
-            link_url = f'https://ui.adsabs.harvard.edu/abs/{bib}'
+            link_url = ads_abs_url(bib)
         else:
             link_url = raw_link or news_url
         rows.append('    <item>\n'
@@ -1706,10 +1706,9 @@ _ADS_LIBRARY_TILES = [
 
 def generate_publications_redesign(data):
     """Generate the inner HTML for #publications-content (redesign)."""
-    try:
-        pub_data = json.loads(PUBLICATIONS_JSON.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as err:
-        raise BuildError(f"cannot read {PUBLICATIONS_JSON.name}: {err}") from err
+    pub_data = load_data_file("publications")
+    if not pub_data:
+        raise BuildError(f"cannot read {PUBLICATIONS_JSON.name}")
     metrics = pub_data.get("metrics", {})
     pubs = pub_data.get("publications", [])
 
