@@ -3,8 +3,8 @@
 
 Compares the website data (`assets/data/content.json` and
 `assets/data/publications_data.json`) against Joshua S. Speagle's 2-page CV
-(`/mnt/d/Dropbox/CV/CV_speagle.docx`, `/mnt/d/Dropbox/CV/CV_speagle.pdf`,
-`CV_speagle.pdf`, and `docs/CV_speagle.pdf`).
+(`CV_speagle.pdf`, `docs/CV_speagle.pdf`, and an optional external CV directory
+via `--cv-dir` or `$CV_DIR` containing `CV_speagle.docx` and `CV_speagle.pdf`).
 
 What it checks & synchronizes:
   1. Supervision & Mentorship Summary Counts:
@@ -23,15 +23,15 @@ What it checks & synchronizes:
      - Compares service entries in `content.json` against the CV's
        `SELECTED PROFESSIONAL ACTIVITIES & SERVICE` section.
   4. PDF File Sync (`--sync-pdf`) & DOCX Update (`--update-docx`):
-     - Keeps `CV_speagle.pdf` and `docs/CV_speagle.pdf` identical to
-       `/mnt/d/Dropbox/CV/CV_speagle.pdf`, and updates the summary numbers in
-       `/mnt/d/Dropbox/CV/CV_speagle.docx` directly (automatically omitting or
-       restoring the MSc bullet based on whether `masters == 0` or `> 0`).
+     - Keeps `CV_speagle.pdf` and `docs/CV_speagle.pdf` identical to the newest
+       matching PDF across `--cv-dir` / `$CV_DIR` and the repo, and updates the summary
+       numbers in `CV_speagle.docx` directly (automatically omitting or restoring the
+       MSc bullet based on whether `masters == 0` or `> 0`).
 
 Usage:
-  python3 scripts/sync_cv.py
-  python3 scripts/sync_cv.py --sync-pdf
-  python3 scripts/sync_cv.py --update-docx
+  python3 scripts/sync_cv.py [--cv-dir PATH]
+  python3 scripts/sync_cv.py [--cv-dir PATH] --sync-pdf
+  python3 scripts/sync_cv.py [--cv-dir PATH] --update-docx
 """
 
 import argparse
@@ -39,6 +39,7 @@ from collections import Counter
 import datetime as dt
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -52,9 +53,13 @@ CONTENT_JSON = PROJECT_ROOT / "assets" / "data" / "content.json"
 PUBLICATIONS_JSON = PROJECT_ROOT / "assets" / "data" / "publications_data.json"
 REPO_CV_PDF = PROJECT_ROOT / "CV_speagle.pdf"
 DOCS_CV_PDF = PROJECT_ROOT / "docs" / "CV_speagle.pdf"
-DROPBOX_CV_DIR = Path("/mnt/d/Dropbox/CV")
-DROPBOX_CV_DOCX = DROPBOX_CV_DIR / "CV_speagle.docx"
-DROPBOX_CV_PDF = DROPBOX_CV_DIR / "CV_speagle.pdf"
+
+
+def _resolve_cv_dir(cv_dir: Optional[object] = None) -> Optional[Path]:
+    raw = cv_dir if cv_dir is not None else os.environ.get("CV_DIR")
+    if not raw:
+        return None
+    return Path(raw).expanduser()
 
 
 def _strip_tags(text: str) -> str:
@@ -190,13 +195,16 @@ def parse_cv_summary(cv_text: str) -> Dict:
     }
 
 
-def audit_cv_sync(content: Dict, pub_data: Dict) -> Dict:
+def audit_cv_sync(content: Dict, pub_data: Dict, cv_dir: Optional[object] = None) -> Dict:
     repo_hash = _sha256(REPO_CV_PDF)
     docs_hash = _sha256(DOCS_CV_PDF)
-    dropbox_hash = _sha256(DROPBOX_CV_PDF)
+    cv_base = _resolve_cv_dir(cv_dir)
+    ext_docx = (cv_base / "CV_speagle.docx") if cv_base else None
+    ext_pdf = (cv_base / "CV_speagle.pdf") if cv_base else None
+    source_hash = _sha256(ext_pdf) if ext_pdf else None
 
-    cv_text = _extract_docx_text(DROPBOX_CV_DOCX)
-    cv_source = str(DROPBOX_CV_DOCX) if cv_text else ""
+    cv_text = _extract_docx_text(ext_docx) if ext_docx else ""
+    cv_source = str(ext_docx) if cv_text and ext_docx else ""
     if not cv_text:
         cv_text = _extract_pdf_text(REPO_CV_PDF) or _extract_pdf_text(DOCS_CV_PDF)
         cv_source = str(REPO_CV_PDF if REPO_CV_PDF.exists() else DOCS_CV_PDF)
@@ -274,7 +282,7 @@ def audit_cv_sync(content: Dict, pub_data: Dict) -> Dict:
         "cv_updated_header": cv_summary["updated_header"],
         "pdf_sync": {
             "repo_matches_docs": repo_hash == docs_hash and repo_hash is not None,
-            "repo_matches_dropbox": (repo_hash == dropbox_hash) if dropbox_hash else None,
+            "repo_matches_source": (repo_hash == source_hash) if source_hash else None,
         },
         "site_summary": site_summary,
         "cv_summary": cv_summary,
@@ -283,9 +291,12 @@ def audit_cv_sync(content: Dict, pub_data: Dict) -> Dict:
     }
 
 
-def sync_pdf_files() -> List[str]:
+def sync_pdf_files(cv_dir: Optional[object] = None) -> List[str]:
     actions = []
-    candidates = [p for p in (DROPBOX_CV_PDF, REPO_CV_PDF, DOCS_CV_PDF) if p.exists()]
+    cv_base = _resolve_cv_dir(cv_dir)
+    ext_pdf = (cv_base / "CV_speagle.pdf") if cv_base else None
+    pool = [p for p in (ext_pdf, REPO_CV_PDF, DOCS_CV_PDF) if p is not None]
+    candidates = [p for p in pool if p.exists()]
     if not candidates:
         return ["No CV_speagle.pdf found to sync."]
     newest = max(candidates, key=lambda p: p.stat().st_mtime)
@@ -463,35 +474,47 @@ def update_docx_in_place(docx_path: Path, site_summary: Dict) -> List[str]:
     return applied or ["No matching summary strings changed in CV_speagle.docx."]
 
 
-def export_docx_to_pdf() -> List[str]:
-    """Export D:\\Dropbox\\CV\\CV_speagle.docx to D:\\Dropbox\\CV\\CV_speagle.pdf via Word COM."""
-    ps_exe = Path("/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe")
-    if not ps_exe.exists() or not DROPBOX_CV_DOCX.exists():
+def _to_windows_path(path: Path) -> str:
+    wslpath = shutil.which("wslpath")
+    if wslpath:
+        proc = subprocess.run([wslpath, "-w", str(path)], capture_output=True, text=True, check=False)
+        if proc.returncode == 0 and proc.stdout.strip():
+            return proc.stdout.strip()
+    return str(path)
+
+
+def export_docx_to_pdf(cv_docx: Path, cv_pdf: Path) -> List[str]:
+    """Export a CV .docx file to PDF via Word COM when PowerShell + Word are available."""
+    ps_exe = shutil.which("powershell.exe")
+    if not ps_exe or not cv_docx.exists():
         return ["Word COM export unavailable in this environment."]
+    win_docx = _to_windows_path(cv_docx).replace("'", "''")
+    win_pdf = _to_windows_path(cv_pdf).replace("'", "''")
     ps_script = (
         '$ErrorActionPreference = "Stop"; '
         "$word = New-Object -ComObject Word.Application; "
         "$word.Visible = $false; $word.DisplayAlerts = 0; "
         "try { "
-        '$doc = $word.Documents.Open("D:\\Dropbox\\CV\\CV_speagle.docx", $false, $true); '
-        '$doc.ExportAsFixedFormat("D:\\Dropbox\\CV\\CV_speagle.pdf", 17); '
+        f"$doc = $word.Documents.Open('{win_docx}', $false, $true); "
+        f"$doc.ExportAsFixedFormat('{win_pdf}', 17); "
         "$pages = $doc.ComputeStatistics(2); "
         'Write-Output "PAGES=$pages"; '
         "$doc.Close($false) "
         "} finally { $word.Quit() }"
     )
+    cwd = str(cv_docx.parent) if cv_docx.parent.exists() else None
     proc = subprocess.run(
-        [str(ps_exe), "-NoProfile", "-NonInteractive", "-Command", ps_script],
+        [ps_exe, "-NoProfile", "-NonInteractive", "-Command", ps_script],
         stdin=subprocess.DEVNULL,
         capture_output=True,
         text=True,
         timeout=30,
-        cwd="/mnt/c",
+        cwd=cwd,
         check=False,
     )
     if proc.returncode != 0:
         return [f"Word COM export failed: {proc.stderr.strip()}"]
-    return [f"Exported {DROPBOX_CV_PDF} ({proc.stdout.strip()})"]
+    return [f"Exported {cv_pdf} ({proc.stdout.strip()})"]
 
 
 def format_report_markdown(report: Dict) -> str:
@@ -554,30 +577,39 @@ def format_report_markdown(report: Dict) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description="Bidirectional CV <-> Website sync and audit tool.")
+    parser.add_argument("--cv-dir", type=str, default=os.environ.get("CV_DIR"),
+                        help="Optional external directory containing CV_speagle.docx and CV_speagle.pdf (defaults to $CV_DIR)")
     parser.add_argument("--sync-pdf", action="store_true", help="Sync CV_speagle.pdf and docs/CV_speagle.pdf with newest PDF copy")
-    parser.add_argument("--update-docx", action="store_true", help="Update summary counts in /mnt/d/Dropbox/CV/CV_speagle.docx")
-    parser.add_argument("--export-pdf", action="store_true", help="Export /mnt/d/Dropbox/CV/CV_speagle.docx to PDF via Word COM")
+    parser.add_argument("--update-docx", action="store_true", help="Update summary counts in <cv-dir>/CV_speagle.docx")
+    parser.add_argument("--export-pdf", action="store_true", help="Export <cv-dir>/CV_speagle.docx to PDF via Word COM")
     parser.add_argument("--export-patch", type=str, default=None, help="Write Markdown CV sync report to file")
     parser.add_argument("--json", type=str, default=None, help="Write JSON report to file")
     args = parser.parse_args()
 
+    cv_base = _resolve_cv_dir(args.cv_dir)
     content = json.loads(CONTENT_JSON.read_text(encoding="utf-8"))
     pub_data = json.loads(PUBLICATIONS_JSON.read_text(encoding="utf-8"))
-    report = audit_cv_sync(content, pub_data)
+    report = audit_cv_sync(content, pub_data, cv_dir=cv_base)
 
     if args.update_docx:
-        for msg in update_docx_in_place(DROPBOX_CV_DOCX, report["site_summary"]):
-            print(msg)
-        report = audit_cv_sync(content, pub_data)
+        if not cv_base:
+            print("Skipping --update-docx: pass --cv-dir or set CV_DIR.")
+        else:
+            for msg in update_docx_in_place(cv_base / "CV_speagle.docx", report["site_summary"]):
+                print(msg)
+            report = audit_cv_sync(content, pub_data, cv_dir=cv_base)
 
     if args.export_pdf:
-        for msg in export_docx_to_pdf():
-            print(msg)
+        if not cv_base:
+            print("Skipping --export-pdf: pass --cv-dir or set CV_DIR.")
+        else:
+            for msg in export_docx_to_pdf(cv_base / "CV_speagle.docx", cv_base / "CV_speagle.pdf"):
+                print(msg)
 
     if args.sync_pdf or args.export_pdf:
-        for msg in sync_pdf_files():
+        for msg in sync_pdf_files(cv_dir=cv_base):
             print(msg)
-        report = audit_cv_sync(content, pub_data)
+        report = audit_cv_sync(content, pub_data, cv_dir=cv_base)
 
     md = format_report_markdown(report)
     print(md)

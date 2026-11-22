@@ -38,7 +38,7 @@ Steps 2a–2d and 5b are pure functions on the data — `normalize_text`, `dedup
 
 - **`researchArea`** is always `argmax(categoryProbabilities)`, recomputed for every paper on every run. To move a paper, edit its probabilities (or re-run the LLM categorization), never the area. The page files each paper under exactly that one area — accent stripe, `data-cat` and filter chip all read it (`_pub_cat_key` in build_html.py), so the four chips partition the corpus — while badges advertise every area ≥ 0.20 (`_pub_badge_keys`), which is a superset.
 - **`journal`** is backfilled from the bibcode's journal code via `BIBCODE_JOURNALS` (`ApJ..` → The Astrophysical Journal, `JCAP.` → …); a paper with an arXiv id and no bibcode gets `arXiv e-prints`. Anything that resolves to neither is logged as a WARNING for a hand-written venue — add the code to `BIBCODE_JOURNALS` if it is a real journal.
-- **`metrics.totalPapers`**, `citationsByPublicationYear`, `metrics.notes` and `metrics.roleReconciliation` are all recomputed. `metrics.lastUpdated` is the *fetch* timestamp; corrections made without a refetch belong in the top-level `manualEdits` list.
+- **`metrics.totalPapers`**, `citationsByPublicationYear`, `metrics.notes` and `metrics.roleReconciliation` are all recomputed. `metrics.lastUpdated` is the *fetch* timestamp; manual bibliographic fixes live directly in `assets/data/publications_data.json` and persist across updates via `_carry_forward_existing_fields` (matching identifier first, title second).
 
 ### De-duplication
 

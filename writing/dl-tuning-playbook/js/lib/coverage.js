@@ -2,10 +2,8 @@
  * coverage.js: grid, uniform random and quasi-random trials in d hyperparameters, and how they
  * cover one hyperparameter (TP.coverage), for F5.1.
  *
- * Ported from version 1's p5-coverage.js (TP.models.coverage), which drew the three methods in two
- * dimensions; version 2 draws them in d dimensions (R7) and drops version 1's test function g(x).
- * Points lie in the unit cube, coordinate 0 standing for the learning rate and coordinate 1 for
- * the weight decay:
+ * Evaluates all three search methods in d dimensions over the unit cube, with coordinate 0
+ * standing for the learning rate and coordinate 1 for the weight decay:
  *
  *   grid    the largest full grid within n trials, k points per axis with k^d <= n, at
  *           ((i + 1/2) / k) on each axis, coordinate 0 varying fastest; no seed. grid(n, d) gives

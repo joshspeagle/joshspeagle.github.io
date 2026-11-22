@@ -190,7 +190,7 @@ def check_rollovers_and_caches(content, pub_data, sw_data, today):
     return findings
 
 
-def check_local_cv_and_siblings(content):
+def check_local_cv_and_siblings(content, sibling_repos=None):
     """Compare CV_speagle.pdf and any sibling repos against content.json."""
     info = {
         "cv_found": CV_PDF.exists(),
@@ -222,9 +222,17 @@ def check_local_cv_and_siblings(content):
             pass
 
     parent = PROJECT_ROOT.parent
-    for sib in ("bio-cv", "astrostatuoft.github.io"):
-        sib_path = parent / sib
-        if sib_path.exists():
+    candidates = [parent / sib for sib in ("bio-cv", "astrostatuoft.github.io")]
+    extra_raw = sibling_repos if sibling_repos is not None else os.environ.get("SIBLING_REPOS", "")
+    if isinstance(extra_raw, str):
+        candidates.extend(Path(p.strip()).expanduser() for p in extra_raw.split(",") if p.strip())
+    else:
+        candidates.extend(Path(p).expanduser() for p in extra_raw if str(p).strip())
+    seen_paths = set()
+    for sib_path in candidates:
+        resolved = sib_path.resolve() if sib_path.exists() else sib_path
+        if sib_path.exists() and str(resolved) not in seen_paths:
+            seen_paths.add(str(resolved))
             info["sibling_repos"].append(str(sib_path))
 
     return info
@@ -507,6 +515,10 @@ def main():
                     help="Query GitHub API, OpenAlex API, and department/group web pages")
     ap.add_argument("--ics", default=os.environ.get("CALENDAR_ICS"),
                     help="Path or URL to an iCalendar (.ics) feed to scan for talks and events")
+    ap.add_argument("--cv-dir", default=os.environ.get("CV_DIR"),
+                    help="Optional external directory containing CV_speagle.docx and CV_speagle.pdf")
+    ap.add_argument("--sibling-repos", default=os.environ.get("SIBLING_REPOS", ""),
+                    help="Optional comma-separated sibling repository paths to inspect")
     ap.add_argument("--as-of", default=None,
                     help="Override today's date (YYYY-MM-DD) for rollover checks")
     ap.add_argument("--output", default=None,
@@ -521,7 +533,7 @@ def main():
     sw_data = json.loads(SOFTWARE_JSON.read_text(encoding="utf-8")) if SOFTWARE_JSON.exists() else {}
 
     rollovers = check_rollovers_and_caches(content, pub_data, sw_data, today)
-    cv_info = check_local_cv_and_siblings(content)
+    cv_info = check_local_cv_and_siblings(content, sibling_repos=args.sibling_repos)
     online_info = check_online_sources(content, pub_data) if args.online else None
     ics_events = parse_ics_events(args.ics, today) if args.ics else []
 
@@ -529,7 +541,7 @@ def main():
     ads_curation_report = None
     try:
         from sync_cv import audit_cv_sync
-        cv_sync_report = audit_cv_sync(content, pub_data)
+        cv_sync_report = audit_cv_sync(content, pub_data, cv_dir=args.cv_dir)
     except Exception:
         pass
     try:

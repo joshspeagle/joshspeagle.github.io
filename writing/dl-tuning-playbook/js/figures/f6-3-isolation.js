@@ -750,7 +750,7 @@
     });
   }
 
-  /* ============================== the recap (§6.24, R6) ============================== */
+  /* ============================== recap registration ============================== */
 
   document.addEventListener('tp:ready', function () {
     var el = document.getElementById(ID);

@@ -2,25 +2,24 @@
  * boundary.js: a Toy S study inside a learning-rate window and the site's edge zones (TP.boundary),
  * for F6.1 and the worked case's edge count.
  *
- * Ported from version 1's p6-boundary.js (TP.models.boundaryRules and boundaryCheck, here RULES and
- * check), with its numbers unchanged. Version 2 reads the study through the parts R9 names:
+ * Exposes RULES and check() for step-by-step boundary analysis across the study fields:
  *
  *   study({lo, hi, n, seed})  n Toy S trials with u = log10 learning rate in the window [lo, hi]
  *                             and v = log10 weight decay over Toy S's range (TP.toyS.sampleStudy).
  *                             Trial k sits at Halton point k, whose base-2 coordinate h_k maps to
  *                             u_k = lo + h_k (hi - lo), and its noise is normal k of the seed's
  *                             noise stream, so a move of either bound moves every trial
- *                             continuously and changes no trial's weight decay or noise (R9).
+ *                             continuously and changes no trial's weight decay or noise.
  *   best3(trials)             the three lowest feasible trials, best first, marked as a set.
  *   edgeCounts(best3, lo, hi) how many of them lie in the upper and the lower edge zone. Each zone
- *                             is the outer EDGE = 10% of the window, the site's: u > hi - 0.1 w or
- *                             u < lo + 0.1 w with w = hi - lo (version 1's near-edge zone).
+ *                             is the outer EDGE = 10% of the window: u > hi - 0.1 w or
+ *                             u < lo + 0.1 w with w = hi - lo (the near-edge zone).
  *   envelope(u)               the lowest noise-free error over weight decay at learning rate u,
  *                             drawn by F6.1's "show the whole curve" preset.
  *
- * check(trials, lo, hi) is version 1's full rule: the near-edge verdict, its caveats, and the
- * instability rule of README L873-L879 in the site's operational reading. F6.1's readout reports
- * the edge counts alone (R9), and check stays for the worked case and the tests. Needs prng.js,
+ * check(trials, lo, hi) gives the full rule: the near-edge verdict, its caveats, and the
+ * instability rule of README L873-L879. F6.1's readout reports the edge counts alone,
+ * and check() supports the worked case and validation tests. Needs prng.js,
  * halton.js and toyS.js, looked up when called.
  */
 (function (global) {

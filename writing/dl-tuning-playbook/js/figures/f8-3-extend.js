@@ -1,10 +1,7 @@
 /*
  * f8-3-extend.js: figure F8.3, extending a schedule (fig-extend).
  *
- * Work order: design notes.md §6.18, with §6.0. Entry:
- * design notes.md F8.3, and earlier review R11. Design: design notes.md
- * §3.4, §3.5, §4, §5 and §9. Revised in the November 2026 review (post07): a fixed figure
- * (fig l-wide) with one slider, the Round 2 length k from 1.5 to 8 Round 1 lengths, a readout, and
+ * Fixed figure (fig l-wide) with one slider, the Round 2 length k from 1.5 to 8 Round 1 lengths, a readout, and
  * the schedules computed from TP.schedules at the current k. CAL keeps the default state (k = 4)
  * and the caption's quantities. It draws the playbook's Round 2 advice (README L1346-L1352) and the pitfall
  * the playbook names (L1287-L1288) as closed-form shapes.

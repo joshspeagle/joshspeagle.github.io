@@ -37,12 +37,12 @@
  *   repeat(state, rng)  draws a new study offset and appends the best trial of the repeated study:
  *                       the candidate's mean over studies plus the new offset plus fresh trial
  *                       noise.
- * rng is the generator the runtime hands advance for the step (TP.prng.deriveSeed(seed, t),
- * design notes §7.5). Each run carries a jitter in [0, 1), the fixed vertical offset of its
+ * rng is the generator the runtime hands advance for the step (TP.prng.deriveSeed(seed, t)).
+ * Each run carries a jitter in [0, 1), the fixed vertical offset of its
  * marker within its row, drawn with it. init draws standard normals from forks of the seed and
  * scales them by the preset, so one seed gives the same draws under every preset.
- * PRESETS, TRUE_DIFFERENCE and INCUMBENT_RERUNS are calibrated in (implementation plan
- * §5.7, C7); the playbook preset's trial spread is the playbook's +/-0.1% (L1795-L1796) read as a
+ * PRESETS, TRUE_DIFFERENCE and INCUMBENT_RERUNS set the noise scales;
+ * the playbook preset's trial spread is +/-0.1% (L1795-L1796) read as a
  * standard deviation of 0.1 points (ours), and its study spread, 0.3 points, is the site's reading
  * of Playbook Figure 3 (the interquartile range of the best of 20 trials, about 0.004, as a standard
  * deviation of about 0.3 points once the trial spread is removed). study-larger doubles it to 0.6.

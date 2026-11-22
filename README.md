@@ -16,11 +16,12 @@ adds interactivity (theme toggle, hero, search/filter/sort lists).
 ## Structure
 
 ```text
-*.html                         # 11 pre-rendered pages (incl. 404.html) — build output
+*.html                         # 12 pre-rendered pages (including 404.html and writing.html) — build output
 sitemap.xml, feed.xml          # generated: sitemap + RSS feed of the News page
 assets/
   css/                         # fonts.css, tokens.css, redesign.css (the only stylesheets)
-  js/redesign/                 # site.js (nav + theme), listview.js, hero.js, pubchart.js
+  js/redesign/                 # site.js (nav + theme), board.js, hero.js, listview.js, pubchart.js, talks-globe.js
+  blog/                        # shared styles and interactive modules for long-form writing series
   fonts/                       # self-hosted woff2 (vendored from @fontsource)
   data/
     content.json               # all site content (source of truth for pages)
@@ -29,7 +30,8 @@ assets/
     software_data.json         # GitHub/PyPI stats (pipeline output)
     publications.bib           # BibTeX export (scripts/export_bib.py)
   images/
-scripts/                       # build (build_html/build_tokens/setup_fonts),
+writing/                       # pre-rendered long-form interactive essays and series
+scripts/                       # build (build_html/build_tokens/build_writing/setup_fonts),
                                # per-page generators (pages_*.py), and the
                                # publication pipeline (fetch_*/merge_data/postprocessing)
 ```

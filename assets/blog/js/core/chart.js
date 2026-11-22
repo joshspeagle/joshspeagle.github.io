@@ -1,11 +1,10 @@
 /*
  * chart.js: the chart helpers of version 2 (TP.chart).
  *
- * It carries out series series conventions series style with series conventions (marks), §5 (labels and
- * annotations), §6.2 (handles), §8 (linking, reading, tooltips, dismissal) and §9 (motion), as
- * series series conventions specifies. The label placer's geometry lives in
- * site/js/lib/placer.js (TP.placer), which this file feeds and renders. Colours come from the role
- * classes and mark classes of site/css/site.css (design system rule 7), so a theme change needs no redraw.
+ * Implements geometric marks, labels and annotations, interactive handles, cross-linking,
+ * tooltips, Escape dismissal, and motion helpers. The label placer's geometry lives in
+ * lib/placer.js (TP.placer), which this file feeds and renders. Colours come from the role
+ * and mark classes in the blog stylesheet so a theme change needs no redraw.
  * Classic script. The pure helpers (snapping, stepping, keys, ticks, interpolation, the ramp) load
  * in Node for node --test. The DOM helpers need a document and D3 v7.
  *

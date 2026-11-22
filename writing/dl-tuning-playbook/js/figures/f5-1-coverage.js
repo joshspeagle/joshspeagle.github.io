@@ -1,8 +1,7 @@
 /*
  * f5-1-coverage.js: figure F5.1, coverage as points arrive (#fig-coverage), on page 5 #quasi-random.
  *
- * Design: design notes.md (FP) F5.1 and design notes.md
- * (§6.9), on the figure contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
+ * Built on the figure contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
  *
  * The model is TP.coverage (site/js/lib/coverage.js): grid, uniform random and quasi-random
  * (scrambled, shifted Halton) trials in d hyperparameters on the unit cube, coordinate 0 standing
@@ -14,7 +13,7 @@
  * calibration checks.calibrate.js, so the figure's quantities equal the ledger's rows.
  * The model draws no number from the runtime's generators: the seed acts through TP.coverage.
  *
- * One runtime step adds one trial to each method, so step t shows t + 1 trials (R7). The run stops
+ * One runtime step adds one trial to each method, so step t shows t + 1 trials. The run stops
  * at step CAL.defaults.t (16 trials) and computes up to the end of panel (d)'s axis (100 trials).
  *
  * The panels. (a) grid, (b) random, (c) quasi-random: weight decay against learning rate

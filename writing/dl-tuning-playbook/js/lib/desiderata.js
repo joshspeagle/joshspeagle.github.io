@@ -1,8 +1,7 @@
 /*
  * desiderata.js: the toy for spreading a fixed number of trials (TP.desiderata), for F4.2.
  *
- * Version 1's p4-desiderata.js (TP.models.desiderata), rebuilt by (implementation series conventions,
- * C6, and ) to the conditions of synthesis ruling R3. The stated form is kept: one quadratic
+ * Implements the multi-value trial-allocation toy model (TP.desiderata), using one quadratic
  * valley per scientific value in the nuisance learning rate. The constants are arbitrary and were
  * chosen by measurement:
  *   - the scientific values are a fixed list, VALUES, and a design with S values uses the first S of

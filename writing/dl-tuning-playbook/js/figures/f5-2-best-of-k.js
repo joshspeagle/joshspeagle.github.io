@@ -1,14 +1,12 @@
 /*
  * f5-2-best-of-k.js: figure F5.2, the best of K trials (#fig-best-of-k), on page 5 #trials.
  *
- * Design: design notes.md (FP) F5.2 and design notes.md
- * (§6.10), with earlier review R8 and R12, on the figure contract of site.js (TP.fig) and the
- * runtime of runtime.js (TP.run).
+ * Built on the figure contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
  *
- * The model is TP.bestOfK (site/js/lib/bestofk.js): the pool of 100 Toy S trials over the ranges
- * that calibration C2 fitted to Playbook Figure 3, and drawStep(pool, rng), which draws one study
+ * The model is TP.bestOfK (site/js/lib/bestofk.js): the pool of 100 Toy S trials over the calibrated
+ * parameter ranges, and drawStep(pool, rng), which draws one study
  * of K trials with replacement for each K of 6, 10, 20 and 50 and returns each study's best. One
- * runtime step is one draw of the four studies (R12), with the runtime's generator for
+ * runtime step is one draw of the four studies, with the runtime's generator for
  * TP.prng.deriveSeed(seed, t), which TP.bestOfK.bests uses too, so the calibration script
  * measures the draws this figure shows. `shown`
  * chooses which of the four distributions are drawn and changes nothing in the run (change

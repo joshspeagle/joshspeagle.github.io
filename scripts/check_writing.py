@@ -113,10 +113,13 @@ def _check_css_tokens(errors: list[str]) -> None:
 
 def _check_leak_and_crlf(errors: list[str]) -> None:
     forbidden = (
-        re.compile(r"/mnt/[a-z]/"),
-        re.compile(r"/home/[a-zA-Z0-9_-]+"),
-        re.compile(r"file://"),
-        re.compile(r"notes/(?:revamp|specs|review)"),
+        re.compile(r"(?:^|[\s\"'(=`])/mnt/[a-z]/"),
+        re.compile(r"(?:^|[\s\"'(=`])/(?:home|Users)/[a-zA-Z0-9_-]+(?:/|[\s\"'`),;]|$)"),
+        re.compile(r"(?:D:\\+Dropbox|C:\\+Users\\)"),
+        re.compile(r"\.venvs/"),
+        re.compile(r"file:///"),
+        re.compile(r"notes/(?:revamp|specs|review|refs|discrepancy)"),
+        re.compile(r"design notes\.md"),
         re.compile(r"tests/(?:calibration|lib)"),
         re.compile(r"review/synthesis"),
         re.compile(r"implementation-plan\.md"),
@@ -126,6 +129,7 @@ def _check_leak_and_crlf(errors: list[str]) -> None:
         re.compile(r"\bBatch\s+\d"),
         re.compile(r"\bWO-[A-Za-z0-9.]+\b"),
         re.compile(r"\(?DS\)?\s*§"),
+        re.compile(r"(?:D3/E10|\bD20\b|\bDesign [A-Z]\b|earlier review R\d+|synthesis ruling R\d+|Work order:|§6\.\d+)"),
     )
     roots = [REPO_ROOT / "assets/blog", REPO_ROOT / "writing"]
     for base in roots:

@@ -1,10 +1,7 @@
 /*
  * f8-1-sweep.js: figure F8.1, the sweep window (fig-sweep), on page 8 #sweep.
  *
- * Work order: design notes.md §6.16, with §6.0. Entry:
- * design notes.md F8.1 and earlier review R9 and R14. Design:
- * design notes.md §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with a
- * draggable window and no dock.
+ * Fixed-frame figure with a draggable window and no dock.
  *
  * The model is Toy D with early instability off (h0 = hInf), each constant learning rate run for
  * 200,000 steps, and TP.toyD.stepsToThreshold at the site's fit threshold of 10^-3. No run is

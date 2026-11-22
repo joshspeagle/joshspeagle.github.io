@@ -1,10 +1,8 @@
 /*
  * schedules.js: closed-form learning-rate schedules for extending a round (TP.schedules), the model of
- * figure F8.3 and of self-check SC5.5 (design notes.md F8.3; design notes
- * series notes, and §6.23).
+ * figure F8.3 and of self-check SC5.5.
  *
- * Ported from version 1's p7-schedule.js, figure
- * `round-schedule-extension` of design notes.md, with every number unchanged. The base rate is
+ * Models round-schedule extension across inverse square root, linear, and cosine decays. The base rate is
  * 1, Round 1 has length N = 1 and Round 2 length k:
  *   inverse square root  eta(t) = sqrt(t0 / (t0 + t)), t0 = 0.1 N in both rounds;
  *   linear               constant 1 until L - D, then linear to 0 at L; Round 1 has D = (1 - c) N;

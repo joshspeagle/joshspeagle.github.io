@@ -1,9 +1,7 @@
 /*
  * f9-3-clipping.js: figure F9.3, the clipping threshold (fig-clipping), on page 9 #clipping.
  *
- * Work order: design notes.md §6.21, with §6.0. Entry:
- * design notes.md F9.3 and earlier review R11. Design: design notes.md
- * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with one handle and no dock.
+ * Fixed-frame figure with one handle and no dock.
  *
  * The model is TP.clipping (site/js/lib/clipping.js): version 1's synthetic series of 5,000 logged,
  * unclipped gradient norms, with the spike rate fixed at TP.clipping.SPIKE_RATE. For a threshold

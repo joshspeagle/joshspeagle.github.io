@@ -260,7 +260,7 @@
   function drawA(p) {
     var C = TP.chart, v = view;
     var P = M().PROVISIONAL_BUDGET;
-    /* the provisional budget: a tick named on the step axis at every state (RM §7 item 15) */
+    /* the provisional budget: a tick named on the step axis at every state */
     var names = [];
     if (!v) {
       var n0 = C.level(p, 'x', P, { role: 'ref', text: p.phone ? 'provisional' : 'provisional budget', series: 'provisional' });
@@ -485,7 +485,7 @@
     });
   }
 
-  /* ============================== the recap (§6.24, R7) ============================== */
+  /* ============================== recap registration ============================== */
 
   document.addEventListener('tp:ready', function () {
     var el = document.getElementById(ID);

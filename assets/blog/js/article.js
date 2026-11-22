@@ -1,13 +1,12 @@
 /*
- * site.js: the behaviour every page shares, and TP.fig, the figure contract every figure script
- * hands its figure to.
+ * article.js: shared page navigation, theme sync, math/concept helpers, and TP.fig,
+ * the figure contract every figure script hands its figure to.
  *
- * Design: series series conventions series style, §9, §11.1, §11.2, §11.4, §11.7 and §13, and
- * series series conventions and. A classic script on window.TP
+ * Implements the shared page runtime and interactive figure shell. A classic script on window.TP
  * with no dependencies. Every page loads it after lib/format.js, refs.js and concepts.js, and
  * before chart.js and runtime.js, so nothing here reads TP.chart or TP.run while it loads. The
  * parts of section 1 of the code need no DOM (the parameter schema, the URL text, presets and
- * the interpolation of transitions), and Node loads them for calibration checks.test.js.
+ * the interpolation of transitions), and Node loads them cleanly for validation.
  *
  * This comment is the reference for figure builders and page writers:
  *   A. The page's life cycle and events
@@ -1484,7 +1483,7 @@
   }
 
   /* ======================================================================================
-     3. TP.ui: the controls (design system to §6.6), the data table and text blocks
+     3. TP.ui: controls, data tables, and text blocks
      ====================================================================================== */
 
   TP.ui = TP.ui || {};

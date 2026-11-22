@@ -1,10 +1,8 @@
 /*
  * f6-4-baseline.js: figure F6.4, the fair and the unfair baseline (fig-baseline).
  *
- * Work order: design notes.md §6.14, with §6.0. Entry:
- * design notes.md F6.4, and earlier review R2. Design: design notes.md
- * §3.4, §3.5, §4, §5 and §9. A static figure (fig static l-wide) with no controls, no readout and
- * no recap. The claim it draws is the playbook's (README L1024-L1027); the shapes are the site's.
+ * Static figure (fig static l-wide) with no controls, no readout and no recap.
+ * The claim it draws is the playbook's (README L1024-L1027); the shapes match calibration.
  *
  * The model. TP.baseline (site/js/lib/baseline.js), shapes only: two parabolas of validation error
  * in u = log10(learning rate), one for the best weight decay ('wd') and one for no weight decay

@@ -33,7 +33,7 @@ Check the cache dates reported by `propose_updates.py`. If `publications_data.js
 
 - **Publications (`assets/data/publications_data.json` & `assets/data/publications.bib`):**
   ```bash
-  cd scripts && ~/.venvs/default/bin/python update_publications_unified.py
+  cd scripts && python update_publications_unified.py
   python scripts/export_bib.py
   ```
   If any newly fetched papers lack `categoryProbabilities`, classify them using `scripts/llm_categorization_rubric.md`, write the probabilities back to `publications_data.json`, and re-run `update_publications_unified.py --skip-fetch` so `researchArea` is derived.
@@ -44,15 +44,15 @@ Check the cache dates reported by `propose_updates.py`. If `publications_data.js
   ```
   If `fetch_software.py` reports unclassified non-fork repositories on GitHub, draft their `sections.software.curation` entries (suggested `group`, 1-sentence `blurb`, and `pypi` package name if published on PyPI) to include in the proposal digest.
 
-### 3. Bidirectional Sync with `/mnt/d/Dropbox/CV/` (`scripts/sync_cv.py`)
-- Run the bidirectional CV synchronization check (and update/export when approved):
+### 3. Bidirectional Sync with `<CV_DIR>` (`scripts/sync_cv.py`)
+- Run the bidirectional CV synchronization check (and update/export when approved; set `$CV_DIR` or pass `--cv-dir <path>` to target an external CV folder):
   ```bash
-  python scripts/sync_cv.py
-  python scripts/sync_cv.py --update-docx --export-pdf --sync-pdf
+  python scripts/sync_cv.py --cv-dir <path>
+  python scripts/sync_cv.py --cv-dir <path> --update-docx --export-pdf --sync-pdf
   ```
-- Compares `/mnt/d/Dropbox/CV/CV_speagle.docx`, `/mnt/d/Dropbox/CV/CV_speagle.pdf`, `CV_speagle.pdf`, and `docs/CV_speagle.pdf` against `assets/data/content.json` and `assets/data/publications_data.json`:
-  - Ensures `CV_speagle.pdf` and `docs/CV_speagle.pdf` are identical to the newest PDF in `/mnt/d/Dropbox/CV/`.
-  - Audits the strict 2-page CV summary counts (active and cumulative mentees by stage, total papers, citation floor, h-index, and non-overlapping authorship role counts), updates `/mnt/d/Dropbox/CV/CV_speagle.docx` (`--update-docx`), exports `/mnt/d/Dropbox/CV/CV_speagle.pdf` via headless Word COM while verifying `PAGES=2` (`--export-pdf`), and syncs `CV_speagle.pdf` and `docs/CV_speagle.pdf` (`--sync-pdf`).
+- Compares `<CV_DIR>/CV_speagle.docx`, `<CV_DIR>/CV_speagle.pdf`, `CV_speagle.pdf`, and `docs/CV_speagle.pdf` against `assets/data/content.json` and `assets/data/publications_data.json`:
+  - Ensures `CV_speagle.pdf` and `docs/CV_speagle.pdf` are identical to the newest PDF across the repository and `$CV_DIR`.
+  - Audits the strict 2-page CV summary counts (active and cumulative mentees by stage, total papers, citation floor, h-index, and non-overlapping authorship role counts), updates `<CV_DIR>/CV_speagle.docx` (`--update-docx`), exports `<CV_DIR>/CV_speagle.pdf` via headless Word COM while verifying `PAGES=2` (`--export-pdf`), and syncs `CV_speagle.pdf` and `docs/CV_speagle.pdf` (`--sync-pdf`).
   - **2-Page CV Standing Rules:**
     - **MSc Mentorship Line:** When active `mastersProjects` count is `0`, omit the `MSc students/projects` bullet on Page 1 to save a line; when `mastersProjects > 0`, `sync_cv.py --update-docx` automatically restores `N MSc students/projects` right after `doctoral students`.
     - **Non-Overlapping Publication Categories:** Keep the `PUBLICATIONS` topline to 1 line (`This includes:`) and note `(non-overlapping categories)` on the second bullet (`N other papers with significant contributions (non-overlapping categories)`) alongside `primary/co-first author`, `papers led by postdocs`, and `papers led by students`.

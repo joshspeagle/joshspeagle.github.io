@@ -2,9 +2,7 @@
  * f2-1-update-rules.js: figure F2.1, the update rules (#fig-update-rules), on page 2 #optimizer,
  * and its recap TP.recaps['F2.1:summary'].
  *
- * Work order: design notes.md §6.3, with §6.0. Entry:
- * design notes.md F2.1, with earlier review R6 and R54. Design:
- * design notes.md §3.4, §3.5, §4 to §9. A running figure on TP.fig and TP.run.
+ * Running figure built on TP.fig and TP.run.
  *
  * The model is TP.optimizers (site/js/lib/optimizers.js): the six update rules as README
  * L2034-L2086 write them, on the quadratic with loss scale c, condition number 20, rotation 0 and start (-4, 3.5) in the loss's
