@@ -7,10 +7,10 @@
  * runtime (R8, R12).
  *
  *   pool(seed)          POOL_SIZE trials of TP.toyS.sampleStudy({n: 100, seed, uRange: U_RANGE,
- *                       vRange: V_RANGE}), each with its 1-based index i. Batch 1 (C2) calibrated
+ * vRange: V_RANGE}), each with its 1-based index i. (C2) calibrated
  *                       U_RANGE = [-5, -1.25] and V_RANGE = [-5, -3] so that the interquartile ranges
  *                       of the best of 6 and of 20 match Playbook Figure 3's read values, 0.020 and
- *                       0.0039, within 25% (tests/calibration/fig-best-of-k.calibrate.js). At Toy S's
+ * 0.0039, within 25%. At Toy S's
  *                       default ranges, [-5, -0.5] and [-7, -1], the pool was version 1's.
  *   drawStep(pool, rng) one study for each K of KS, drawn in that order: K pool indices uniformly
  *                       with replacement (rng.int), the playbook's bootstrap (L1782-L1784). A
@@ -18,13 +18,13 @@
  *                       none is feasible (version 1's rule).
  *   bests(pool, seed, steps)
  *                       the bests of the first `steps` draws of a run. For step t the runtime hands
- *                       advance a generator for TP.prng.deriveSeed(seed, t) (design-system.md §7.5),
+ * advance a generator for TP.prng.deriveSeed(seed, t),
  *                       and this function uses the same generators, so a calibration script gets
  *                       the draws the figure shows.
  *
  * BRACKET is the retrain spread, the playbook's +/-0.1% (L1795-L1796) read as +/-0.001 on the toy's
  * error axis, which is also Toy S's trial noise. "Inside the retrain bracket" means an
- * interquartile range of at most 2 BRACKET (implementation plan §5.7, C2). Needs prng.js,
+ * interquartile range of at most 2 BRACKET. Needs prng.js,
  * halton.js and toyS.js, looked up when called.
  */
 (function (global) {

@@ -1,7 +1,7 @@
 /*
  * f11-1-clocks.js: one training run evaluated on a timer and on a step schedule (fig-clocks).
  *
- * Revised 2026-11 (post09 review). The figure is now a fixed figure with one control, the
+ * Revised 2026-11. The figure is now a fixed figure with one control, the
  * evaluation schedule ("every 25 s" or "every 250 steps"), and a hidden focus parameter that the
  * guided tour sets. It makes the Playbook's claim (README "Setting up periodic evaluations":
  * evaluate at regular step intervals, not time intervals) visible as three linked panels:
@@ -88,9 +88,9 @@
   var ID = 'fig-clocks';
   var RUG = 9, LANE_GAP = 3;
   var BIN = 1000;
-  var MARGIN = { desktop: { t: 8, r: 26, b: 44, l: 76 }, phone: { t: 6, r: 18, b: 40, l: 62 } };
+  var MARGIN = { desktop: { t: 8, r: 30, b: 44, l: 76 }, phone: { t: 6, r: 24, b: 48, l: 62 } };
   /* (b) shares its step axis with (c) below it, so (c) carries the shared step tick labels */
-  var MARGIN_B = { desktop: { t: 8, r: 26, b: 12, l: 76 }, phone: { t: 6, r: 18, b: 10, l: 62 } };
+  var MARGIN_B = { desktop: { t: 8, r: 30, b: 12, l: 76 }, phone: { t: 6, r: 24, b: 10, l: 62 } };
   /* plot-area heights in px: (a), (b), (c), desktop and phone */
   var PLOT_H = { a: [94, 90], b: [142, 132], c: [42, 42] };
 
@@ -130,7 +130,7 @@
     return { timer: inT / n, step: inS / n };
   };
 
-  /** The derived state for the values. Every array's rows carry a key (DS §9). */
+  /** The derived state for the values. Every array's rows carry a key. */
   function apply(values) {
     var clk = clock(), d = clk.derived, c = clk.clock;
     var schedule = values.schedule || 'time';
@@ -231,10 +231,20 @@
     return o;
   }
 
+  function thinRugVals(vals, minGapPx, scale) {
+    var out = [], last = -Infinity;
+    vals.slice().sort(function (a, b) { return a - b; }).forEach(function (v) {
+      var pos = scale(v);
+      if (Math.abs(pos - last) >= minGapPx) { out.push(v); last = pos; }
+    });
+    return out;
+  }
+
   /** Ticks inward from the y axis (axis 'y') or the x axis (axis 'x') at the given values. */
   function laneRug(p, axis, vals, o) {
     var d = '', flat = [];
-    vals.forEach(function (v) {
+    var filtered = o && o.minPx ? thinRugVals(vals, o.minPx, axis === 'y' ? p.y : p.x) : vals;
+    filtered.forEach(function (v) {
       if (axis === 'y') {
         var Y = p.y(v);
         if (!(Y >= -0.5 && Y <= p.height + 0.5)) return;
@@ -263,13 +273,16 @@
     C.window(p, s.slowFrom, s.slowTo, { kind: 'highlight', id: 'slowdown', name: 'slowdown', phone: { text: 'slow' } });
     C.window(p, s.preemptAt, s.restart, { kind: 'highlight', id: 'down', name: p.phone ? 'down' : 'job down' });
     /* the time rug: every evaluation of the selected schedule, inward from the time axis */
-    C.rug(p, s.evals.map(function (e) { return e.time; }), { y0: p.y.invert(p.height), y1: p.y.invert(p.height - RUG), key: 'rug-time' });
+    C.rug(p, thinRugVals(s.evals.map(function (e) { return e.time; }), p.phone ? 3 : 2, p.x),
+      { y0: p.y.invert(p.height), y1: p.y.invert(p.height - RUG), key: 'rug-time' });
     p.layers.marks.select('path[data-key="rug-time"]').attr('data-rug', 'time');
     /* the step rug: steps trained once in the first lane, steps trained again in the second */
-    laneRug(p, 'y', s.evals.filter(function (e) { return !e.again; }).map(function (e) { return e.step; }), { x0: 0, x1: RUG, key: 'rug-step', rug: 'step' });
+    laneRug(p, 'y', s.evals.filter(function (e) { return !e.again; }).map(function (e) { return e.step; }),
+      { x0: 0, x1: RUG, key: 'rug-step', rug: 'step', minPx: 2.2 });
     var again = s.evals.filter(function (e) { return e.again; });
     var L0 = RUG + LANE_GAP, L1 = L0 + RUG;
-    laneRug(p, 'y', again.map(function (e) { return e.step; }), { x0: L0, x1: L1, role: 'third', series: 'again', key: 'rug-again', rug: 'again' });
+    laneRug(p, 'y', again.map(function (e) { return e.step; }),
+      { x0: L0, x1: L1, role: 'third', series: 'again', key: 'rug-again', rug: 'again', minPx: 2.2 });
     C.line(p, s.clock, function (q) { return q.t; }, function (q) { return q.s; }, { role: 'model', series: 'clock', key: 'clock' });
     var items = [];
     if (!p.phone) {
@@ -349,13 +362,21 @@
 
   function readout(state) {
     if (!state) return '';
-    var where = state.best.step >= state.atSlowFrom && state.best.step <= state.atSlowTo ? 'inside the slowdown' : 'outside the slowdown';
-    if (state.schedule === 'step') {
-      return 'Every ' + int(state.E) + ' steps: ' + int(state.evals.length) + ' evaluations, ' + int(state.inSlow) +
-        ' of them during the slowdown. Best checkpoint: step ' + int(state.best.step) + ' (validation error ' + state.best.value.toFixed(4) + '), ' + where + '.';
+    var cad = state.schedule === 'step' ? 'Every ' + int(state.E) + ' steps' : 'Every ' + int(state.T) + ' s';
+    var bestWhere = state.best.step >= state.atSlowFrom && state.best.step <= state.atSlowTo ? 'inside the slowdown' : 'outside the slowdown';
+    if (state.focus === 'slow') {
+      var rateNote = state.schedule === 'time' && state.slowSpacing != null && state.normalSpacing != null
+        ? ' (spacing tightens from ' + int(state.normalSpacing) + ' to ' + int(state.slowSpacing) + ' steps).'
+        : ' (spacing stays constant at ' + int(state.E) + ' steps).';
+      return cad + ': ' + int(state.inSlow) + ' of ' + int(state.evals.length) +
+        ' evaluations cluster inside the slowdown (steps ' + int(state.atSlowFrom) + '–' + int(state.atSlowTo) + ')' + rateNote;
     }
-    return 'Every ' + int(state.T) + ' s: ' + int(state.evals.length) + ' evaluations, ' + int(state.inSlow) +
-      ' of them during the slowdown. Best checkpoint: step ' + int(state.best.step) + ' (validation error ' + state.best.value.toFixed(4) + '), ' + where + '.';
+    if (state.focus === 'repeat') {
+      return cad + ': after the ' + int(state.down) + ' s preemption gap, training restores step ' + int(state.restore) +
+        ' and repeats ' + int(state.repeated) + ' evaluations across steps ' + int(state.restore) + '–' + int(state.atPreempt) + '.';
+    }
+    return cad + ': ' + int(state.evals.length) + ' evaluations, ' + int(state.inSlow) +
+      ' of them during the slowdown. Best checkpoint: step ' + int(state.best.step) + ' (validation error ' + state.best.value.toFixed(4) + '), ' + bestWhere + '.';
   }
 
   function table(state) {

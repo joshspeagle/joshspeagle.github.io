@@ -1,14 +1,14 @@
 /*
  * f8-1-sweep.js: figure F8.1, the sweep window (fig-sweep), on page 8 #sweep.
  *
- * Work order: notes/revamp/implementation-plan.md §6.16 (WO-F8.1), with §6.0. Entry:
- * notes/revamp/figure-plan.md F8.1 and review/synthesis.md R9 and R14. Design:
- * notes/revamp/design-system.md §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with a
+ * Work order: design notes.md §6.16, with §6.0. Entry:
+ * design notes.md F8.1 and earlier review R9 and R14. Design:
+ * design notes.md §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with a
  * draggable window and no dock.
  *
  * The model is Toy D with early instability off (h0 = hInf), each constant learning rate run for
  * 200,000 steps, and TP.toyD.stepsToThreshold at the site's fit threshold of 10^-3. No run is
- * computed in the page (WO-F8.1): tests/calibration/fig-sweep.calibrate.js writes every number
+ * computed in the page: calibration checks.calibrate.js writes every number
  * into CAL, which npm run generate copies below. Every rate is the printed rate, CAL.lrScale
  * (TP.toyD.LR_SCALE, one half) times the model rate (toyD.js, "Learning-rate scale"). The figure
  * works in the model's decades u, the rate being CAL.lrScale 10^u: CAL.tables.curve holds the
@@ -23,7 +23,7 @@
  * window (no fill) whose two edges stand on the lowest and the highest grid rate, each named on
  * the x axis in the reader token and carrying a handle; a drag on either handle moves the whole
  * window, which always holds seven rates. A rate that fits is a filled model-blue circle, a rate
- * that does not fit within 200,000 steps an open circle at the top edge (the gate of DS §4.3), a
+ * that does not fit within 200,000 steps an open circle at the top edge, a
  * rate that diverges a cross at the top edge. The fastest rate is ringed. The callout "fastest
  * rate at the grid's edge" stands, with its leader, exactly when the ringed rate is the lowest or
  * the highest in the window. With `landscape`, the steps to fit at every rate of CAL.tables.curve
@@ -47,7 +47,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-sweep.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-sweep.
   var CAL = {
     "defaults": {"center": -2, "landscape": false},
     "presets": {"centered": {"center": -1}, "landscape": {"landscape": true}},
@@ -336,7 +336,7 @@
   var fmt = {
     lr: function (u) { return sig3(rate(u)); },
     /* a handle's text: the grid rate nearest u, so that a handle read during a transition, whose
-       value then lies between two grid rates, names a rate the grid draws (the page 8 reads,
+       value then lies between two grid rates, names a rate the grid draws (the review notes,
        finding 7: 0.0564 read at 10^-1.249 while the window moved) */
     gridLr: function (u) { return sig3(rate(round2(Math.round(u / STEP) * STEP))); },
     steps: function (v) { return sig3(v); },
@@ -392,7 +392,7 @@
   }
   var DEFAULT_WINDOW = windowAt(CAL.defaults.center);
 
-  /** The derived state. Every array of rows carries a key (DS §9); rows are keyed by rate, so a rate
+  /** The derived state. Every array of rows carries a key; rows are keyed by rate, so a rate
       that stays in the grid across a move keeps its place, and the window's edges and the ring glide. */
   function apply(values) {
     var W = windowAt(values.center);
@@ -500,7 +500,7 @@
 
     /* the grid: a reader window with no fill, its edges on the lowest and the highest rate, each
        named on the x axis in the reader token */
-    /* The window's edges are structure for the placer, which a label may cross (DS §5.2 item 3),
+    /* The window's edges are structure for the placer, which a label may cross,
        and the label of the open circles would then cross the lower edge at the default. With
        `rival` the edges are also rivals of series 'grid', the grid's own series, so the callout on
        the ringed rate may still stand beside its edge while the other labels keep 1 h clear of
@@ -599,10 +599,10 @@
     cur = state;
     curCtx = ctx || { hold: false };
     /* The callout's form is chosen from scratch at every settle, so that it depends on the settled
-       state alone (DS §5.2); a held draw keeps it. Where the callout's text has no position in the
+       state alone; a held draw keeps it. Where the callout's text has no position in the
        frame, full or short, even with a leader (the ringed rate near the frame's floor with the
        whole curve drawn), it takes its header form, so the callout stands whenever the fastest
-       rate is at an edge (DS §5.6, §5.10 rule 4). */
+       rate is at an edge. */
     if (!curCtx.hold) calloutHeader = false;
     pa.update();
     if (!curCtx.hold && state && formOf(pa, 'annotation:edge') === 'dropped') { calloutHeader = true; pa.update(); }
@@ -617,10 +617,18 @@
 
   function readout(state) {
     var thr = 'a loss of ' + fmt.exp(THRESHOLD);
-    if (state.bestJ === '') return 'No rate in the grid fits the training set to ' + thr + ' within ' + fmt.int(LIMIT) + ' steps.';
-    var j = +state.bestJ, c = CAL.tables.curve[j];
-    var where = state.edge === 'upper' ? 'at the grid’s upper edge' : state.edge === 'lower' ? 'at the grid’s lower edge' : 'inside the grid';
-    return 'The fastest rate in the grid, ' + fmt.lr(uOfIndex(j)) + ', fits the training set to ' + thr + ' in ' + fmt.steps(c.steps) + ' steps, ' + where + '.';
+    var lead;
+    if (state.bestJ === '') lead = 'No rate in the grid fits the training set to ' + thr + ' within ' + fmt.int(LIMIT) + ' steps.';
+    else {
+      var j = +state.bestJ, c = CAL.tables.curve[j];
+      var where = state.edge === 'upper' ? 'at the grid’s upper edge' : state.edge === 'lower' ? 'at the grid’s lower edge' : 'inside the grid';
+      lead = 'The fastest rate in the grid, ' + fmt.lr(uOfIndex(j)) + ', fits the training set to ' + thr + ' in ' + fmt.steps(c.steps) + ' steps, ' + where + '.';
+    }
+    if (state.curve && state.curve.length) {
+      var minPt = state.curve.reduce(function (m, pt) { return pt.ly < m.ly ? pt : m; });
+      lead += ' Across the whole curve, training fits fastest near ' + fmt.lr(minPt.u) + ' (' + fmt.steps(Math.pow(10, minPt.ly)) + ' steps).';
+    }
+    return lead;
   }
 
   function table(state) {

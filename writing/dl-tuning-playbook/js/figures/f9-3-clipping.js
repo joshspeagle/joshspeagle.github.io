@@ -1,8 +1,8 @@
 /*
  * f9-3-clipping.js: figure F9.3, the clipping threshold (fig-clipping), on page 9 #clipping.
  *
- * Work order: notes/revamp/implementation-plan.md §6.21 (WO-F9.3), with §6.0. Entry:
- * notes/revamp/figure-plan.md F9.3 and review/synthesis.md R11. Design: notes/revamp/design-system.md
+ * Work order: design notes.md §6.21, with §6.0. Entry:
+ * design notes.md F9.3 and earlier review R11. Design: design notes.md
  * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with one handle and no dock.
  *
  * The model is TP.clipping (site/js/lib/clipping.js): version 1's synthetic series of 5,000 logged,
@@ -10,30 +10,25 @@
  * lambda, TP.clipping.stats gives its percentile, the fraction of updates clipped (the share of norms
  * above lambda) and the mean multiplier on the gradient, the mean of min(1, lambda / ||g||). The
  * readout, the curves, the table and the quantities all come from stats, the computation of
- * tests/calibration/fig-clipping.calibrate.js, so the quantities equal the ledger's rows at the
+ * calibration checks.calibrate.js, so the quantities equal the ledger's rows at the
  * default and at the preset "half the updates clipped".
  *
  * Two stacked panels share the x axis, the norm or threshold on a log axis over CAL.domains.a.x:
- * (a) steps against unclipped gradient norm: the histogram at TP.clipping.BINS_PER_DECADE bins per
- *     decade in model blue; the 90th percentile of the norms a model-blue dash-dot level named on
- *     the x axis; the threshold a reader line named on the x axis by its value, with its handle on
- *     the axis and a press band along the line. Where the two lines stand within 2 px, as at the
- *     default, the level is drawn above the reader's line so both show.
- * (b) fraction of updates against threshold: the fraction clipped (model blue, filled markers) and
- *     the mean multiplier (third gold, open circles), sampled PER_DECADE times per decade with the
- *     current threshold added as a sample, markers thinned to 24 px and kept at the threshold (DS
- *     §4.2); half the updates a dashed limit named on the y axis; the threshold's reader line
- *     continued. The header carries the current fraction clipped (DS §5.7).
+ * (a) logged unclipped gradient norms against step (log y), with the clipping threshold as a
+ *     horizontal reader line, its handle on the y axis, and the clipped region tinted above it.
+ * (b) histogram of the unclipped gradient norms (log x), with the threshold a vertical reader line
+ *     and the 90th percentile a model-blue dash-dot level, both named on the x axis. The panel
+ *     header reports the mean multiplier on the gradient.
  *
  * The parameters: threshold (the handle, continuous on a log axis, cut, no ghost) and the seed
  * ("Draw again", cut). The threshold is held to four significant figures whenever it is set
  * (constrain), and its URL text is those four figures, so a URL restores it exactly (the plan's
  * decision on the encoding). The default is CAL's, the default seed's 90th percentile, unrounded.
- * The handle's keys follow WO-F9.3: the arrows move 0.01 decade and Page Up and Page Down 0.1
+ * The handle's keys follow the arrows move 0.01 decade and Page Up and Page Down 0.1
  * decade (C.handle's step and page options), and Home and End go to the ends.
  * Presets "90th percentile" (key p90), "half the updates clipped" (key half) and "nearly all updates
  * clipped" (key nearly-all) are functions of the seed that set the threshold at the current seed's
- * 90th percentile, median or 1st percentile (CAL.quantities['nearly-all'].quantile) (WO-I5.4). No
+ * 90th percentile, median or 1st percentile (CAL.quantities['nearly-all'].quantile). No
  * dock: the presets, "Draw again" and Reset sit in more.
  */
 (function () {
@@ -41,7 +36,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-clipping.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-clipping.
   var CAL = {
     "defaults": {"threshold": 1.7139445884180566, "seed": 226},
     "presets": {
@@ -109,7 +104,7 @@
 
   var ID = 'fig-clipping';
   var PER_DECADE = CAL.quantities.model['samples-per-decade'];   /* samples of the curves in (b) per decade of threshold (100) */
-  var KEY_STEP = 0.01, PAGE_STEP = 0.1;   /* the handle's keys, in decades (WO-F9.3) */
+  var KEY_STEP = 0.01, PAGE_STEP = 0.1;   /* the handle's keys, in decades */
   var LEVEL_TEXT = '90th percentile';
   var HALF_TEXT = ['half the updates'], HALF_PHONE = 'half';
 
@@ -157,7 +152,7 @@
     return S;
   }
 
-  /* the presets, functions of the seed (WO-I5.4) */
+  /* the presets, functions of the seed */
   function p90Preset(seed) { return { threshold: seriesOf(seed).p90 }; }
   p90Preset.key = 'p90';
   function halfPreset(seed) { return { threshold: seriesOf(seed).median }; }
@@ -169,7 +164,7 @@
   function nearlyAllPreset(seed) { return { threshold: seriesOf(seed).p01 }; }
   nearlyAllPreset.key = 'nearly-all';
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var S = seriesOf(values.seed), lam = values.threshold, st = CL().stats(S.ser, lam);
     /* the current threshold is a sample of both curves, so that the lines pass through the
@@ -196,7 +191,7 @@
          handle on the y axis, and the band above it tinted as the clipped region.
      (b) the histogram of the norms (log x), the threshold a vertical reader line named by its
          value, and the 90th percentile a model-blue dash-dot level named on the x axis. */
-  function margin(w, phone) { return phone ? { t: 8, r: 14, b: 38, l: 48 } : { t: 10, r: 20, b: 42, l: 64 }; }
+  function margin(w, phone) { return phone ? { t: 8, r: 22, b: 40, l: 48 } : { t: 10, r: 26, b: 42, l: 64 }; }
   var traceCache = { seed: null, rows: null };
   function traceRows(S) {
     if (traceCache.seed === S.seed) return traceCache.rows;
@@ -224,7 +219,7 @@
       xLog: 10, yLog: false, xDomain: X.slice(), yDomain: CAL.domains.a.y.slice(),
       xLabel: 'unclipped gradient norm', yLabel: 'steps',
       xTicks: 'pow10', xFormat: fmt.tick,
-      yTicks: function (dom, px) { return px < 120 ? [0, 450, 900] : [0, 300, 600, 900]; }, yFormat: fmt.int,
+      yTicks: function (dom, px) { return px < 120 ? [450, 900] : [300, 600, 900]; }, yFormat: fmt.int,
       grid: 'y',
       aspect: function (w, phone) { return (phone ? 170 : 190) / Math.max(w, 1); },
       margin: margin

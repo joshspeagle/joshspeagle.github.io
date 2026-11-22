@@ -93,7 +93,7 @@
       svgEl('line', { x1: m.l, x2: m.l + pw, y1: m.t + ph, y2: m.t + ph, 'class': 'p09-sch-axis' }, svg);
       text(svg, m.l + pw / 2, H - 4, 'step', 'p09-sch-axisname', 'middle');
       var yl = text(svg, 0, 0, 'validation error', 'p09-sch-axisname', 'middle');
-      yl.setAttribute('transform', 'translate(' + 11 + ',' + (m.t + ph / 2) + ') rotate(-90)');
+      yl.setAttribute('transform', 'translate(' + 18 + ',' + (m.t + ph / 2) + ') rotate(-90)');
       var d = CKPT.map(function (r, i) { return (i ? 'L' : 'M') + X(r.step).toFixed(1) + ',' + Y(r.value).toFixed(1); }).join('');
       svgEl('path', { d: d, 'class': 'p09-ckpt-line' }, svg);
       CKPT.forEach(function (r) {

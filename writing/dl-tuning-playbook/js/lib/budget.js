@@ -1,10 +1,10 @@
 /*
  * budget.js: where the best steps of a study's trials fall within a training budget (TP.budget), the
- * model of figure F8.2 (notes/revamp/figure-plan.md F8.2; notes/revamp/implementation-plan.md WO-I8 and
- * WO-F8.2) and the provisional budget that page 2 states.
+ * model of figure F8.2 (design notes.md F8.2; design notes.md and
+ * ) and the provisional budget that page 2 states.
  *
- * Ported from version 1's p7-best-step.js (notes/revamp/v1-archive/site/js/figures/), figure
- * `best-step-reader` of notes/specs/pages-7-9.md. Version 1 evaluated 50 trials 100 times within each
+ * Ported from version 1's p7-best-step.js, figure
+ * `best-step-reader` of design notes.md. Version 1 evaluated 50 trials 100 times within each
  * budget, so every budget had its own evaluation steps. Version 2 evaluates 12 trials every INTERVAL
  * steps to AXIS_END, so that moving the budget truncates the same evaluations: the curves do not depend
  * on the budget, which holds for a constant learning rate. The curves are version 1's, from
@@ -20,9 +20,9 @@
  * fraction of at most 0.1, and the last quarter a fraction above 0.75.
  *
  * PROVISIONAL_BUDGET and INTERVAL keep version 1's default budget and its evaluation interval at that
- * budget (20,000 and 200 steps), which Batch 1's calibration kept (C3). AXIS_END is Batch 1's: version 1's
+ * budget (20,000 and 200 steps), which calibration kept (C3). AXIS_END is : version 1's
  * longest budget, 300,000 steps, left 42 of seeds 1 to 300 with no budget on the axis at which all twelve
- * best steps fall in the first tenth, and 500,000 leaves 3 (notes/revamp/calibration/c3-curves.md).
+ * best steps fall in the first tenth, and 500,000 leaves 3.
  * Needs prng.js and curves.js, looked up when trials() is called. No DOM.
  *
  * API: TP.budget.{PROVISIONAL_BUDGET, INTERVAL, AXIS_END, N_TRIALS, FIRST_TENTH, LAST_QUARTER,
@@ -95,7 +95,7 @@
   }
 
   /**
-   * budgets(): the budgets the figure's handle snaps to (WO-F8.2): the multiples of INTERVAL nearest to
+   * budgets: the budgets the figure's handle snaps to: the multiples of INTERVAL nearest to
    * 40 log-spaced values per decade from 10 INTERVAL to AXIS_END, with PROVISIONAL_BUDGET and AXIS_END,
    * ascending and without repeats.
    */

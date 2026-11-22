@@ -1,7 +1,7 @@
 /*
  * f6-2-gallery.js: the training-curve symptom chart (figure.schematic#fig-gallery) on page 5 #curves.
  *
- * Revised 2026-11 (post05 review). The earlier version drew an eight-panel interactive gallery and a
+ * Revised 2026-11. The earlier version drew an eight-panel interactive gallery and a
  * six-item exercise (fig-curve-check). Both are retired. The figure is now a static set of small
  * multiples: one card per question the Playbook asks of training curves (README, "Examining the
  * training curves"), plus one card for loss spikes, which the Playbook's checklist routes to its

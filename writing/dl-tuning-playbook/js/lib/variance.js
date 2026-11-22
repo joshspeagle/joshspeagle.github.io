@@ -12,11 +12,11 @@
  * mu_c is the error of c's best trial averaged over repeated studies. The offset u_c is the luck of
  * one study's selection and belongs to the configuration that study selected, so its reruns gather
  * around mu_c + u_c, the selected configuration's own error, and only a repeated study draws a new
- * offset (build log Batch 5, rulings on the reads, page 7).
- * SC4.2's cases (tests/calibration/cases-c7.calibrate.js) use init(), rerun() and stats() alone,
+ * offset.
+ * SC4.2's cases use init, rerun and stats alone,
  * and read each case's gain against the site's adoption yardstick, the standard error of the
  * difference of the two rerun means, sqrt(s_A^2/N_A + s_B^2/N_B), with no threshold (the site's
- * reading of L1101-L1109, build log Batch 7); F7.1's readout reads the same quantity.
+ * reading of L1101-L1109); F7.1's readout reads the same quantity.
  * Version 1's figure compared two adoption rules, and its functions stay for the tests alone; their
  * thresholded rerun rule is not the site's yardstick. The single comparison adopts B when
  * y_B < y_A, and the rerun rule adopts B when
@@ -26,9 +26,9 @@
  * and the rerun rule's rate is simulated by pool() and poolCounts() over the comparisons of seeds 1
  * to 100; pReruns() is the rule's closed form with s_trial in place of the sample standard
  * deviations. With s_study = 0 and Delta = 0 the rule's statistic is t with 2(N - 1) degrees of
- * freedom, so it adopts 9.2% at N = 2 where the closed form gives 2.3% (tests/lib/variance.test.js).
+ * freedom, so it adopts 9.2% at N = 2 where the closed form gives 2.3%.
  *
- * Version 2 adds the action form of F7.1 (WO-F7.1, R8, R56). No decision rule is drawn, because
+ * Version 2 adds the action form of F7.1. No decision rule is drawn, because
  * the playbook gives no threshold.
  *   init(preset, seed)  the state at step 0: the candidate's study offset, and the incumbent's
  *                       offset and its INCUMBENT_RERUNS reruns. The candidate has no runs yet.
@@ -38,10 +38,10 @@
  *                       the candidate's mean over studies plus the new offset plus fresh trial
  *                       noise.
  * rng is the generator the runtime hands advance for the step (TP.prng.deriveSeed(seed, t),
- * design-system.md §7.5). Each run carries a jitter in [0, 1), the fixed vertical offset of its
+ * design notes §7.5). Each run carries a jitter in [0, 1), the fixed vertical offset of its
  * marker within its row, drawn with it. init draws standard normals from forks of the seed and
  * scales them by the preset, so one seed gives the same draws under every preset.
- * PRESETS, TRUE_DIFFERENCE and INCUMBENT_RERUNS are calibrated in Batch 1 (implementation plan
+ * PRESETS, TRUE_DIFFERENCE and INCUMBENT_RERUNS are calibrated in (implementation plan
  * §5.7, C7); the playbook preset's trial spread is the playbook's +/-0.1% (L1795-L1796) read as a
  * standard deviation of 0.1 points (ours), and its study spread, 0.3 points, is the site's reading
  * of Playbook Figure 3 (the interquartile range of the best of 20 trials, about 0.004, as a standard
@@ -308,7 +308,7 @@
    * over k reruns, and the range of the m repeated studies' best trials; lo and hi are null while m
    * is 0). difference.value is the candidate's mean minus the incumbent's (null before the first
    * rerun), and difference.se the standard error of that difference, sqrt(s_c^2 / n_c + s_i^2 / n_i),
-   * the adoption yardstick of the lead's Batch 7 ruling, the site's reading of "taking into account
+   * the adoption yardstick of the lead's, the site's reading of "taking into account
    * the retrain variance of both" (L1101-L1109); null until both means have a standard error.
    */
   function summary(state) {

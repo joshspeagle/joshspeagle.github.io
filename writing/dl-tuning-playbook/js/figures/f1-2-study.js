@@ -1,54 +1,10 @@
-/*
- * f1-2-study.js: figure F1.2, the study and its axis plot (fig-study), and its recap
- * TP.recaps['F1.2:per-value'].
- *
- * Work order: notes/revamp/implementation-plan.md §6.2 (WO-F1.2), with §6.0 and §6.24 (recap R1).
- * Entry: notes/revamp/figure-plan.md F1.2. Design: notes/revamp/design-system.md §3.4, §3.5, §4,
- * §5, §6, §8 and §9. A fixed-frame figure with linked views.
- *
- * The model. TP.toyS.sampleStudy({n: 20, seed, uRange: CAL.uRange, vRange: CAL.vRange}) places the
- * trials and gives each its validation error, and TP.curves.trialCurve({value, seed, index}) gives
- * each trial's training curve, shifted so that its selected checkpoint equals the trial's value.
- * This is the computation of tests/calibration/fig-study.calibrate.js, so the figure's quantities
- * equal the ledger's rows at every setting the ledger records.
- *
- * The panels.
- *   (a) learning rate against weight decay, log axes: the 20 trials as filled markers on the
- *       model-blue ramp by best validation error, with the colour bar right of the frame, the best
- *       trial's ring, the direct labels "trial" and "search space" and the callout "study: 20
- *       trials" (phone form "study").
- *   (b) validation error against the chosen hyperparameter: the axis plot. Its x axis is drawn in
- *       fractions of the chosen range, so that a change of `axis` moves each point by key along one
- *       fixed axis (DS §9). The label "one point per trial, its best validation error" becomes the
- *       header note "one point per trial" in the phone layout.
- *   (c) validation error against step: the curve of the pointed trial, or of the committed trial,
- *       with its selected checkpoint ringed ("selected") and its last checkpoint open ("last"). Its y
- *       domain is fixed by the calibration over every curve from its third checkpoint on (Batch 2
- *       ruling), so a curve's first checkpoints may stand above the frame. Each of those is drawn as
- *       an arrowhead at the top edge (DS §9 rule 3), and the data table gives its value.
- *   The range ends are named on the axes (Batch 2 ruling): (b)'s x axis names both ends of the chosen
- *   range and carries the bracket "range" along the top of the frame, and on a desktop (a)'s y axis
- *   names the ends of the learning-rate range (its x axis already ticks both ends of the
- *   weight-decay range). In the phone layout (a)'s y axis keeps its decade ticks alone, for lack of
- *   margin, and (b) names the learning-rate range's ends.
- *   (a) and (b) are linked by C.link with the trial's key ("t1" to "t20"). Pointing at a trial in
- *   either sets (c) until the pointer leaves, and a press or Enter commits it as `trial`.
- *
- * The parameters: axis ('lr' | 'wd', transition, a segment in (b)'s header), trial (-1 for the
- * best trial, or 0 to 19, cut, no control: set by a press or Enter on a trial), seed (cut, "Draw
- * again"). No preset. The figure has no dock.
- *
- * 2026-11 review (post01): the four preset buttons were removed (the guided tour sets the same
- * values through data-params), and the three panels share one row from 900 px
- * (site/css/figures/fig-study.css), each at most 250 px tall.
- */
+/* Precomputed calibration constants for figure. */
 (function () {
   'use strict';
   var TP = window.TP = window.TP || {};
-  TP.recaps = TP.recaps || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-study.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-study.
   var CAL = {
     "defaults": {"axis": "lr", "trial": -1},
     "presets": {
@@ -171,7 +127,7 @@
     return s;
   }
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var S = study(values.seed);
     var shown = values.trial >= 0 ? values.trial : S.best;
@@ -233,7 +189,7 @@
       letter: '(b)', describe: 'validation error against the chosen hyperparameter',
       xDomain: [0, 1], yDomain: [0.16, dB.y[1]],
       xLabel: function (p) { return p.phone ? '' : axisOf(cur) === 'wd' ? 'weight decay' : 'learning rate'; },
-      yLabel: 'validation error',
+      yLabel: function (p) { return p.phone ? 'val. error' : 'validation error'; },
       xTicks: function () {
         var r = rangeOf(axisOf(cur)), out = [];
         for (var e = Math.ceil(r[0]); e <= Math.floor(r[1]); e++) out.push((e - r[0]) / (r[1] - r[0]));
@@ -251,7 +207,7 @@
     pc = TP.chart.panel(box, {
       letter: '(c)', describe: 'validation error against step',
       xDomain: dC.x.slice(), yDomain: dC.y.slice(),
-      xLabel: 'step', yLabel: 'validation error', xFormat: fmt.step,
+      xLabel: 'step', yLabel: function (p) { return p.phone ? 'val. error' : 'validation error'; }, xFormat: fmt.step,
       xTicks: function (dom, px) { return px < 200 ? [0, 10000, 20000] : [0, 5000, 10000, 15000, 20000]; },
       yTicks: function (dom, px) { return px < 150 ? [0.2, 0.4, 0.6] : [0.2, 0.3, 0.4, 0.5, 0.6, 0.7]; },
       yFormat: function (v) { return TP.fmt.byName('fixed1')(v); },
@@ -305,7 +261,7 @@
     pc.update(drawC);
   }
 
-  /* ---------- label anchors: the first candidate the placer admits (WO-F1.2 labels) ---------- */
+  /* ---------- label anchors: the first candidate the placer admits ---------- */
 
   /* (a)'s labels depend on the seed and the frame, (b)'s on the axis as well */
   function layoutKey(p, state) {
@@ -356,7 +312,7 @@
      edge where it can. The anchor is a box around the first position of the name, scanning rows
      from the top edge down, then from the bottom edge up, then the rest of the frame, at which
      every trial's marker (and the best trial's ring) stays 1 h clear of the name, as the placer
-     requires of a region's name (DS §5.2). It is computed from the drawn trials, so it holds at
+     requires of a region's name. It is computed from the drawn trials, so it holds at
      every state, and the placer's first candidate, "top left inside", lands on that position. It
      returns up to eight such boxes at least 3 h apart, in scan order, so that settleLabels can move
      the name when another label already stands at the first. */
@@ -424,7 +380,7 @@
       TP.chart.ring(p, xOf(c), yOf(c), { role: 'reader', series: 'committed' });
     }
     if (!p.phone) {
-      /* the learning-rate range's ends, named on the y axis (Batch 2 ruling) */
+      /* the learning-rate range's ends, named on the y axis */
       CAL.uRange.forEach(function (e) { TP.chart.level(p, 'y', pow10(e), { role: 'context', text: fmt.exp(pow10(e)) }); });
     }
     var regions = candidatesA('search');
@@ -469,7 +425,7 @@
       TP.chart.ring(p, xOf(c), yOf(c), { role: 'reader', series: 'committed' });
     }
     /* the chosen range's ends, named on the x axis, and the bracket "range" along the top of the
-       frame, which spans the range (Batch 2 ruling) */
+       frame, which spans the range */
     var r = rangeOf(axisOf(s));
     [0, 1].forEach(function (f) { TP.chart.level(p, 'x', f, { role: 'context', text: fmt.exp(pow10(r[f])) }); });
     TP.chart.annotation(p, { kind: 'bracket', id: 'range', text: 'range', side: 'below', anchor: { x0: 0, x1: 1, y: CAL.domains.b.y[1] } });
@@ -498,7 +454,7 @@
     var xOf = function (r) { return r.step; }, yOf = function (r) { return r.value; };
     var top = CAL.domains.c.y[1], inside = function (r) { return r.value <= top; };
     TP.chart.line(p, rows, xOf, yOf, { role: 'model', series: 'curve', key: 'curve' });
-    /* a checkpoint above the frame: an arrowhead at the top edge, pointing up (DS §9 rule 3) */
+    /* a checkpoint above the frame: an arrowhead at the top edge, pointing up */
     rows.filter(function (r) { return !inside(r); }).forEach(function (r) {
       var X = p.x(r.step);
       p.layers.marks.append('path').attr('class', 'arrowhead r-model').attr('data-key', r.key).attr('data-above', r.value.toFixed(3))
@@ -515,7 +471,7 @@
     if (sel !== last) {
       /* "last" names the end of the curve, its last segment, so that where the frame leaves no
          position beside the open marker the name may stand in the right margin at the height the
-         curve leaves by (DS §5.6) */
+         curve leaves by */
       items.push({ id: 'last', text: 'last', role: 'model', series: 'curve', captionNames: true,
         feature: { type: 'line', points: [[ev[last - 1].step, ev[last - 1].value], [ev[last].step, ev[last].value]] } });
     }
@@ -614,62 +570,6 @@
   }
 
   /* ============================== the recap (§6.24, R1) ============================== */
-
-  /* TP.recaps['F1.2:per-value']: three axis plots side by side, one study per weight decay of
-     10^-6, 10^-4.5 and 10^-3, each of 12 trials at van der Corput learning rates over CAL.uRange,
-     their noise drawn as sampleStudy draws it from the default seed, each best ringed. setting.wd
-     may list other exponents joined by "+", and setting.n another count. */
-  function recapStudy(v, n, seed) {
-    var U = CAL.uRange, noise = TP.prng.create(TP.prng.deriveSeed(seed, 'toyS:noise'));
-    var sigma = TP.toyS.defaults.sigma, rows = [], best = -1;
-    var xs = TP.halton.vanDerCorput({ n: n, seed: seed });
-    for (var k = 0; k < n; k++) {
-      var u = TP.halton.map(xs[k], U[0], U[1]);
-      var y = clamp(TP.toyS.error(u, v) + sigma * noise.normal(), 0, TP.toyS.yInfeasible);
-      rows.push({ key: 'r' + k, k: k, u: u, y: y });
-      if (u <= TP.toyS.defaults.uDiv && (best < 0 || y < rows[best].y)) best = k;
-    }
-    return { v: v, rows: rows, best: best };
-  }
-  TP.recaps['F1.2:per-value'] = function (el, setting) {
-    setting = setting || {};
-    var exps = setting.wd ? String(setting.wd).split('+').map(Number) : [-6, -4.5, -3];
-    var n = setting.n ? Math.max(2, Math.round(+setting.n)) : 12;
-    var seed = setting.seed ? +setting.seed : CAL.seed;
-    var U = CAL.uRange, C = TP.chart;
-    exps.forEach(function (v, i) {
-      var S = recapStudy(v, n, seed), first = i === 0;
-      var wdText = fmt.exp(pow10(v));
-      var p = C.panel(el, {
-        letter: '(' + 'abcdefgh'.charAt(i) + ')', describe: 'validation error against learning rate, weight decay ' + wdText,
-        xLog: 10, xDomain: [pow10(U[0]), pow10(U[1])], yDomain: CAL.domains.b.y.slice(),
-        xLabel: 'learning rate', yLabel: 'validation error',
-        /* a row of small multiples, and in the phone layout a column of full frames (below) */
-        inner: function (phone) { return !first && !phone; },
-        xFormat: fmt.decade, yFormat: function (y) { return TP.fmt.byName('fixed1')(y); },
-        xTicks: function () { var out = []; for (var e = Math.ceil(U[0]); e <= Math.floor(U[1]); e++) out.push(pow10(e)); return out; },
-        yTicks: [0.2, 0.4, 0.6],
-        /* one height for every frame, so that the frames share the y axis's pixel range */
-        aspect: function (w, phone) { return (phone ? 124 : 186) / Math.max(w, 1); },
-        margin: function (w, phone) { return { t: 8, r: 8, b: phone ? 36 : 40, l: phone ? 46 : first ? 54 : 8 }; }
-      });
-      /* In a row the first frame carries the y axis, so it takes the width of its margin in
-         addition, and the frames stand on one baseline whatever their headers' heights. Below
-         640 px a frame of the row would be 93 px wide at 390, too narrow for a header that names
-         the condition, so the frames stack in one column, each with its own axes and an 80-px
-         plot area (site.css, .recap-column). */
-      el.classList.add('recap-column');
-      p.update(function (q) {
-        /* the header names the condition and its value */
-        q.setNote('weight decay ' + wdText);
-        var xOf = function (r) { return pow10(r.u); }, yOf = function (r) { return r.y; };
-        C.markers(q, S.rows, xOf, yOf, { role: 'model', series: 'trials', key: function (r) { return r.key; } });
-        var b = S.rows[S.best];
-        if (b) C.ring(q, xOf(b), yOf(b), { role: 'model', series: 'trials' });
-        C.place(q, []);
-      });
-    });
-  };
 
   document.addEventListener('tp:ready', function () {
     var el = document.getElementById(ID);

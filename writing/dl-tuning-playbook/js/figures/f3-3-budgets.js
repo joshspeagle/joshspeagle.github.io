@@ -1,8 +1,8 @@
 /*
  * f3-3-budgets.js: figure F3.3, epoch budget against step budget (fig-budgets).
  *
- * Work order: notes/revamp/implementation-plan.md §6.6 (WO-F3.3), with §6.0. Entry:
- * notes/revamp/figure-plan.md F3.3, and review/synthesis.md R10. Design: notes/revamp/design-system.md
+ * Work order: design notes.md §6.6, with §6.0. Entry:
+ * design notes.md F3.3, and earlier review R10. Design: design notes.md
  * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure read by pointing, with no recap.
  *
  * The model. TP.scaling.examples(B, B_crit) = 1 + B / B_crit, the examples needed to reach the goal
@@ -11,23 +11,23 @@
  * al. (2018) Eq. 2.11 at a fixed batch size. TP.scaling.budgetPass decides the gate: under an epoch
  * budget of m S_min B_crit examples a batch size reaches the goal when B <= (m - 1) B_crit, and
  * under a step budget of n S_min steps when B >= B_crit / (n - 1). B_crit, m and n come from CAL,
- * which tests/calibration/fig-budgets.calibrate.js wrote, so the figure's quantities equal the
+ * which calibration checks.calibrate.js wrote, so the figure's quantities equal the
  * ledger's rows.
  *
  * The panels share the batch-size axis, log base 2 over CAL.domains.a.x, and each y axis is log
  * base 10 over its CAL domain, as a multiple of the minimum.
  *   (a) examples needed against batch size: the examples curve in model blue, one marker per power
  *       of two from 8 to 16,384, filled where the batch size reaches the goal under the epoch budget
- *       and open where it does not (the gate of DS §4.3), and the epoch budget as a dashed limit
- *       named "epoch budget" on the y axis (DS §4.7, §5.5).
+ * and open where it does not, and the epoch budget as a dashed limit
+ * named "epoch budget" on the y axis.
  *   (b) steps needed against batch size: the same for the steps and the step budget, named
  *       "step budget".
  *   The pointed batch size, the parameter `batch`, is a reader line through both frames with its
- *   value named on the x axis in the reader token (DS §4.10, "a value read at"). Each panel reads
+ * value named on the x axis in the reader token. Each panel reads
  *   by point through div.reader (C.pointHover), and the two are linked by C.link with the key
  *   "b<batch size>". Pointing highlights a batch size in both panels and shows its examples and
  *   steps in the tooltip. A press, Enter or Space commits it as `batch`, and so does each arrow,
- *   Page, Home or End key on a reading element (WO-F3.3). A key under the panels names the two
+ * Page, Home or End key on a reading element. A key under the panels names the two
  *   fills, because no axis carries the gate.
  *
  * v4 review (post03, 2026-11): the key of filled and open circles moved above the panels
@@ -41,7 +41,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-budgets.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-budgets.
   var CAL = {
     "defaults": {"batch": 256},
     "presets": {"small": {"batch": 32}, "epoch-pass": {"batch": 256}, "step-pass": {"batch": 512}, "large": {"batch": 4096}},
@@ -76,7 +76,7 @@
 
   /* ============================== the model ============================== */
 
-  /** The derived state: the pointed batch size and one row per batch size, each with a key (DS §9). */
+  /** The derived state: the pointed batch size and one row per batch size, each with a key. */
   function apply(values) {
     return {
       batch: values.batch,
@@ -192,7 +192,7 @@
   function drawPanel(p, letter) {
     var C = TP.chart, s = cur, bud = BUDGETS[letter];
     if (letter === 'a' && figEl) drawKey(figEl, p.phone);
-    /* the budget: a dashed limit the text states, named on the y axis (DS §4.7, §5.5). */
+    /* the budget: a dashed limit the text states, named on the y axis. */
     C.level(p, 'y', bud.level, { role: 'ref', text: bud.name, line: true });
     if (!s) return;
     var yOf = function (b) { return valueOf(letter, b); };

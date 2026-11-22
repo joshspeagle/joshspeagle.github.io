@@ -131,30 +131,11 @@ ol.p04-flow .p04-flow-text { font-size: 0.88rem; color: var(--ink-2); line-heigh
   ol.p04-flow .p04-flow-title { min-height: 0; padding-left: 0; }
 }
 
-/* ---------- In practice ---------- */
-section.p04-practice { margin-top: 3rem; }
-ol.p04-steps { list-style: none; padding: 0; margin: 1rem auto 1.2rem; counter-reset: p04step; display: grid; gap: 12px; }
-ol.p04-steps > li {
-  counter-increment: p04step; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 2px 14px;
-  border: 1px solid var(--grid); border-radius: 8px; padding: 14px 16px; background: var(--surface); margin: 0;
-}
-ol.p04-steps .p04-step-ico {
-  grid-row: 1 / span 3; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--model); color: #fff; position: relative;
-}
-ol.p04-steps .p04-step-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-ol.p04-steps .p04-step-ico::after {
-  content: counter(p04step); position: absolute; right: -4px; bottom: -4px; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--surface); color: var(--ink); border: 1.5px solid var(--model); font: 700 0.72rem/17px var(--font); text-align: center;
-}
-ol.p04-steps h3 { font-family: var(--font); font-size: 1.02rem; font-weight: 700; margin: 2px 0 0; line-height: 1.35; }
-ol.p04-steps p { margin: 4px 0 0; font-size: 0.97rem; line-height: 1.55; }
 .p04-src {
-  justify-self: start; font-size: 0.74rem; font-weight: 650; border-radius: 999px; padding: 1px 9px; margin-top: 6px;
-  border: 1px solid var(--grid); color: var(--ink-2); background: var(--surface-2);
+  display: inline-block; margin-left: 4px; font-size: 0.74rem; font-weight: 650; border-radius: 999px; padding: 1px 9px;
+  border: 1px solid var(--grid); color: var(--ink-2); background: var(--surface-2); vertical-align: 1px;
 }
 .p04-src.is-ours { border-style: dashed; }
-ol.p04-steps .p04-src { grid-column: 2; }
 
 /* ---------- Compact docks for the two interactive figures (desktop) ----------
    The shared dock stacks its controls and the run strip as two rows. On this page each figure

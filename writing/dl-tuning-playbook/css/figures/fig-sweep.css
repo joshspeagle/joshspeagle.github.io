@@ -1,9 +1,9 @@
-/* fig-sweep, F8.1: the sweep window (implementation-plan.md WO-F8.1).
+/* fig-sweep, F8.1: the sweep window.
    From 640 px, panel (b), the inset of one run's loss curve, is a column 180 px wide beside panel
    (a). In the phone layout (a) is the first row and (b) the second, each at most 180 px tall with
-   its header (design-system.md §3.5 item 4). The two handles of the grid's window sit on (a)'s x
+   its header. The two handles of the grid's window sit on (a)'s x
    axis at the window's edges, and each stands above the reading element, so a press on a dot moves
-   the window and a press elsewhere on (a) points at a grid rate (design-system.md §6.2, §8.3). */
+   the window and a press elsewhere on (a) points at a grid rate. */
 #fig-sweep .fig-panels {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 180px;

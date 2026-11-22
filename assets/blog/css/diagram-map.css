@@ -32,7 +32,7 @@
   font-size: 0.72rem; font-weight: 700; font-family: var(--font);
   border: 1.5px solid var(--ink-3); color: var(--ink-2); background: var(--surface);
 }
-.pmap-key-badge.is-here { background: var(--energy); border-color: var(--energy); color: #1a1205; }
+.pmap-key-badge.is-here { background: var(--energy); border-color: var(--energy); color: var(--energy-ink, #0b0704); }
 .pmap-key-badge.is-opened { background: var(--ink-3); border-color: var(--ink-3); color: var(--surface); }
 
 /* ---------- view switch ---------- */
@@ -73,13 +73,14 @@
 .pmap-ring { fill: none; stroke: none; stroke-width: 2.5; transform-box: fill-box; transform-origin: center; transform: scale(1.06, 1.16); }
 .pmap-badge { fill: var(--surface); stroke: var(--ink-3); stroke-width: 1.5; }
 .pmap-badge-text { font-size: 12px; font-weight: 700; fill: var(--ink-2); pointer-events: none; }
+.pmap-check-bg { fill: var(--surface); stroke: var(--border-2); stroke-width: 1; }
 .pmap-check { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
 .pmap-node.is-opened .pmap-badge { fill: var(--ink-3); stroke: var(--ink-3); }
 .pmap-node.is-opened .pmap-badge-text { fill: var(--surface); }
 .pmap-node.is-here .pmap-shape { stroke: var(--energy); stroke-width: 2.6; fill: color-mix(in srgb, var(--energy) 9%, var(--surface)); }
 .pmap-node.is-here .pmap-badge { fill: var(--energy); stroke: var(--energy); }
-.pmap-node.is-here .pmap-badge-text { fill: #1a1205; }
+.pmap-node.is-here .pmap-badge-text { fill: var(--energy-ink, #0b0704); }
 .pmap-node.is-zone .pmap-shape { stroke: var(--ink-2); }
 
 .pmap-node:hover .pmap-shape { stroke: var(--reader); }

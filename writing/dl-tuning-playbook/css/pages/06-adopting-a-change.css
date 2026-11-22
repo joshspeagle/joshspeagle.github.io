@@ -74,22 +74,11 @@
   .p06-then { grid-template-columns: 1fr; }
 }
 
-/* ---------- In practice ---------- */
-ol.p06-steps { list-style: none; padding: 0; margin: 1rem auto 1.4rem; counter-reset: p06; display: grid; gap: 10px; }
-ol.p06-steps > li {
-  counter-increment: p06; display: grid; grid-template-columns: 40px 1fr; gap: 4px 12px; align-items: start;
-  border: 1px solid var(--border-2); border-radius: 6px; padding: 11px 14px; background: var(--surface);
+.practice-step-src {
+  display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 999px;
+  font-size: 0.75rem; font-weight: 600; color: var(--ink-2); background: var(--surface-2);
+  border: 1px solid var(--border-2);
 }
-ol.p06-steps > li::before {
-  content: counter(p06); grid-row: 1 / span 2; width: 34px; height: 34px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  background: var(--model-tint); color: var(--model-label); font-weight: 700; font-size: 1rem;
-  border: 1.5px solid color-mix(in srgb, var(--model) 50%, transparent);
-}
-ol.p06-steps > li.is-later::before { background: color-mix(in srgb, var(--fourth) 14%, var(--surface)); color: var(--fourth-label); border-color: color-mix(in srgb, var(--fourth) 50%, transparent); }
-ol.p06-steps .p06-step-head { font-weight: 650; color: var(--ink); line-height: 1.35; }
-ol.p06-steps .p06-step-body { font-size: 0.93rem; line-height: 1.5; color: var(--ink-2); margin: 0; }
-ol.p06-steps .p06-step-src { font-size: 0.8rem; font-weight: 600; color: var(--ink-3); }
 
 /* Figure 3's scenarios run from the guided tour and the links in the text; their buttons would
    crowd the controls, so they are not shown */

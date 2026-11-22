@@ -6,17 +6,20 @@
   <meta name="robots" content="noindex, nofollow, noarchive">
   <title>How long to train · Notes on the Deep Learning Tuning Playbook</title>
   <meta name="description" content="Notes on the Tuning Playbook's advice for choosing max_train_steps: compute-bound versus not compute-bound workloads, a learning-rate sweep for the first budget, reading where the best checkpoints fall, learning-rate schedules, and tuning in rounds of increasing length.">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232563eb'/%3E%3Cpath d='M7 22 C12 22 14 10 19 10 C22 10 23 15 25 15' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='10' r='2.6' fill='%23d97706'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="../js/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="../css/site.css">
-  <link rel="stylesheet" href="../css/components/playbook-map.css">
+  <link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+  <script data-theme-boot>(function(){try{var t=localStorage.getItem('preferred-theme')||'dark';document.documentElement.setAttribute('data-theme',t==='light'?'light':'dark');}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <link rel="stylesheet" href="../../../assets/css/fonts.css">
+  <link rel="stylesheet" href="../../../assets/css/tokens.css">
+  <link rel="stylesheet" href="../../../assets/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/editorial.css">
+  <link rel="stylesheet" href="../../../assets/blog/css/diagram-map.css">
   <link rel="stylesheet" href="../css/figures/fig-sweep.css">
   <link rel="stylesheet" href="../css/figures/fig-budget-line.css">
   <link rel="stylesheet" href="../css/figures/fig-extend.css">
   <link rel="stylesheet" href="../css/pages/07-training-horizon.css">
 </head>
 <body data-page="pages/07-training-horizon.html" data-root="../">
-  <header class="site-header"></header>
+  <header class="site-header"><a class="skip" href="#main">Skip to content</a><div class="header-brand-group"><a class="brand-crumb brand-home" href="../../../index.html">Josh Speagle</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand-crumb brand-writing" href="../../../writing.html">Writing</a><span class="brand-sep" aria-hidden="true">/</span><a class="brand" href="../index.html"><span class="brand-series">DL Tuning Playbook</span></a><span class="where">Part 7 of 9</span></div><nav aria-label="Series navigation" id="site-nav" class="site-nav"><a class="btn small" href="../index.html">Contents</a><a class="btn small" href="../pages/reference.html">Reference</a></nav></header>
 
   <main id="main" class="page">
     <header class="post-header">
@@ -24,13 +27,24 @@
       <h1>How long to train</h1>
       <div class="post-meta">
         <span>Josh Speagle</span>
+        <span class="sep"></span>
         <span><a href="https://github.com/google-research/tuning_playbook#determining-the-number-of-steps-for-each-training-run" target="_blank" rel="noopener">Notes on the Playbook's section on the number of training steps ↗</a></span>
       </div>
     </header>
 
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
-    <p class="lede">Before a study can start we have to decide how many steps each trial will train for, and that single number shapes every comparison the study makes. If it is too small, we end up comparing configurations that never finished learning; if it is too large, a study of fifty trials spends most of its compute on runs that stopped improving long before the end. The Playbook's advice hinges on whether the model would keep getting better if we could afford to train much longer. I'll start from that question, then work through how to pick and refine a fixed step budget when the answer is no, why the learning-rate schedule is tangled up with that budget, and how to tune in rounds of increasing length when the answer is yes.</p>
+    <p class="lede">Before launching a study, you must choose how many steps each trial trains for, and that choice shapes every comparison. Stop too early and models stay undertrained; train too long and dozens of trials waste compute on flat curves. The Playbook anchors that decision on whether extra compute would keep lowering validation loss. Below I separate those two regimes, derive the fixed-budget rules, examine learning-rate schedules including constant-then-decay cooldowns, and lay out tuning in rounds of increasing length.</p>
+
+    <aside class="in-brief" aria-labelledby="in-brief-heading">
+      <div class="in-brief-head" id="in-brief-heading">In brief</div>
+      <ul>
+        <li><strong>Separate compute-bound from saturated workloads:</strong> Ask first whether curves are still improving at the end of a run (<a href="#regimes">Two kinds of workload</a>).</li>
+        <li><strong>Fix <code>max_train_steps</code> inside every study:</strong> Calibrate an initial budget with a fast constant-rate sweep, then move it from best-checkpoint steps (<a href="#not-bound">One budget per study</a>).</li>
+        <li><strong>Match decay schedules to the horizon:</strong> Non-constant schedules boost late convergence, while trapezoidal cooldowns save pre-decay checkpoints (<a href="#schedules">Learning-rate schedules</a>).</li>
+        <li><strong>Scale length in rounds when compute-bound:</strong> Run cheap Round-1 exploration, pair width transfer with horizon checks, and stretch high-rate steps in Round 2 (<a href="#bound">Tuning in rounds</a>).</li>
+      </ul>
+    </aside>
 
     <article class="post-body">
 
@@ -38,14 +52,14 @@
       <section class="prose" id="regimes">
         <h2>Two kinds of workload</h2>
 
-        <p data-src="1149-1166">Before saying anything about step counts, the Playbook sorts workloads into two kinds. Training is <dfn data-concept="compute-bound">compute-bound</dfn> when what limits it is how long we are willing to wait, rather than how much training data $N_{\text{train}}$ we have or some other factor. In that regime, training longer or more efficiently should keep lowering the training loss and, with proper tuning, the validation loss as well. Training is <em>not</em> compute-bound when we can afford to train as long as we like, but at some point training longer stops helping much (or starts to overfit).</p>
+        <p data-src="1149-1166">Before choosing a step count, the Playbook sorts workloads into two regimes. Training is <dfn data-concept="compute-bound">compute-bound</dfn> when progress is limited by runtime or budget rather than dataset size $N_{\text{train}}$ or regularization. In that regime, more compute keeps lowering training loss and, when well tuned, validation loss too. Training is <em>not</em> compute-bound when you can afford longer runs, yet improvement stops or flips to overfitting well before the budget ends.</p>
 
-        <p data-src="977-988">Usually we can tell which regime we are in from training curves we already have. The Playbook's diagnostic is to ask whether the trials are still improving at the end of training. If they are, the workload is compute-bound and might benefit from more steps or a different learning-rate schedule. The complementary question is whether performance on the training and validation sets saturated long before the final step, in which case the workload is not compute-bound and we may be able to train for fewer steps.</p>
+        <p data-src="977-988">Existing training curves from early baselines usually classify the regime (<a href="#fig-regimes" class="figref" data-static-figref="1">Figure 1</a>). Ask whether candidate runs are still improving right at their final steps. If so, treat the job as compute-bound, where more steps or an adjusted schedule can pay off. If validation and training scores flatten long before the final step, the run is not compute-bound and a shorter step budget suffices.</p>
       </section>
 
       <figure class="schematic" id="fig-regimes" role="group" aria-labelledby="fig-regimes-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 1</span>
           <span class="fig-title" id="fig-regimes-title">Two ways a run can end</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -90,58 +104,58 @@
       </figure>
 
       <section class="prose" id="regimes-more">
-        <p data-src="1159-1163">I find one consequence of the compute-bound case clarifying. If training is limited by time, then making training faster is the same thing as making it better, and the "optimal" training time is simply as long as we can afford. That does not mean longer or faster training is the only route to better results, a point the Playbook is careful to add.</p>
+        <p data-src="1159-1163">I find one implication of the compute-bound case clarifying. When time bounds optimization, speeding up step throughput or convergence produces the exact same outcome as extra runtime, making the effective target as long a run as you can afford. That does not mean raw runtime is the sole lever, a point the Playbook underscores.</p>
 
-        <p data-src="1177-1184">One effect cuts across both regimes. Changes that increase the variance of the gradients from batch to batch usually slow training down, which means they can raise the number of steps needed to reach a given validation loss. The Playbook's examples of such changes are:</p>
+        <p data-src="1177-1184">One force crosses both regimes cleanly. Pipeline changes that increase gradient variance from step to step slow optimization progress and force larger step counts for equal validation error. The Playbook names three common culprits:</p>
         <ul data-src="1182-1184">
           <li>a smaller batch size,</li>
           <li>adding data augmentation,</li>
-          <li>adding some types of regularization, such as dropout.</li>
+          <li>adding stochastic regularization such as dropout.</li>
         </ul>
-        <p>The two regimes pose different problems. When training is not compute-bound, we need a step budget that is long enough without being wasteful; when it is compute-bound, the budget is fixed by what we can afford, and the problem becomes how to tune well inside it. Following the Playbook, we'll take them one at a time, starting with the first.</p>
+        <p>The two regimes pose distinct engineering problems. Without a compute bottleneck, you want enough steps for convergence without wasted flops; when compute-bound, runtime is capped, so you tune inside fixed step budgets. Following the Playbook, I work through saturated horizons first before turning to rounds for compute-bound runs.</p>
       </section>
 
       <!-- ============================== One budget per study ============================== -->
       <section class="prose" id="not-bound">
         <h2>Why every trial in a study gets the same budget</h2>
 
-        <p data-src="1186-1193">When training is not compute-bound, the goal is to train long enough for the model to reach the best result it can, without wasting steps. When in doubt, the Playbook tells us to err on the side of training longer, because as long as we save checkpoints often enough and score each run by its best one (<a href="01-the-tuning-loop.html#checkpoint">retrospective checkpoint selection</a>), a longer run should never score worse, since the best checkpoint of the shorter run is still among its candidates.</p>
+        <p data-src="1186-1193">When training is not compute-bound, the target is enough steps for every reasonable configuration to peak without waste. When uncertain, the Playbook recommends erring slightly high. Under frequent checkpoints and <a href="01-the-tuning-loop.html#trial-result">retrospective checkpoint selection</a>, adding steps preserves every earlier checkpoint candidate so the peak cannot worsen.</p>
 
         <blockquote class="playbook" data-src="1194-1197">
           <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#deciding-how-long-to-train-when-training-is-not-compute-bound" target="_blank" rel="noopener">on training that is not compute-bound ↗</a></span>
           <p>Never tune the <code>max_train_steps</code> number in a study. Pick a value and use it for all trials. From these trials, plot the training step that retrospective checkpoint selection finds in order to refine the choice of <code>max_train_steps</code>.</p>
         </blockquote>
 
-        <p>The rule comes without a derivation, but I think the reason becomes clear once we look at how decay schedules work. Most schedules set the learning rate at step $t$ from the fraction of the run that has elapsed:</p>
+        <p>The rule arrives without derivation, yet its logic follows directly from how decay schedules index progress. Standard schedules scale step size by elapsed fraction:</p>
         $$\eta_t = \eta \, s\!\left(\frac{t}{S_{\max}}\right),$$
-        <p>where $\eta$ is the base learning rate, $S_{\max}$ is <dfn data-concept="max-train-steps"><code>max_train_steps</code></dfn>, and $s$ is a shape that starts at 1 and falls toward 0 (<a href="#fig-schedule-families">Figure 4</a> draws the common shapes). Two trials with the same $\eta$ but different $S_{\max}$ therefore use different learning rates at every step, and the longer one gets more updates on top of that. If a study sampled $S_{\max}$ alongside the other hyperparameters, their effects would be confounded with the effect of extra compute. Holding $S_{\max}$ fixed keeps the comparison about the hyperparameters we actually care about, while the best steps the study records become our evidence for changing $S_{\max}$ before the next one.</p>
+        <p>where $\eta$ is the base learning rate, $S_{\max}$ is <dfn data-concept="max-train-steps"><code>max_train_steps</code></dfn>, and $s$ falls from 1 toward 0 (<a href="#fig-schedule-families" class="figref" data-static-figref="1">Figure 4</a> draws four common forms). Varying $S_{\max}$ inside a study gives two runs with identical $\eta$ different learning rates at every step plus different update totals. Holding $S_{\max}$ fixed isolates your scientific variables cleanly while still logging each trial's best step to adjust $S_{\max}$ in the next round.</p>
       </section>
 
       <!-- ============================== A first value from a sweep ============================== -->
       <section class="prose" id="sweep">
         <h2>A first value from a learning-rate sweep</h2>
 
-        <p data-src="1205-1217">This leaves a chicken-and-egg problem for the very first study, before any best steps exist. The Playbook's starting point is the number of steps needed to "perfectly fit" the training set with a constant learning rate. The authors are explicit that "perfectly fit" is informal and just means a very low training loss. With a log loss and no regularization, for example, the training loss can keep creeping down until it hits floating-point limits as the weights grow, so they would call the training set fit around the time the training misclassification error reaches zero.</p>
+        <p data-src="1205-1217">That leaves a bootstrap problem for the opening study before any best checkpoints exist. The Playbook estimates initial steps from a constant-rate sweep trained until the model "perfectly fits" the training set. Here "perfect fit" is deliberately pragmatic, such as training misclassification reaching zero when cross-entropy keeps drifting down in unregularized logit growth.</p>
 
-        <p data-src="1228-1251">The procedure itself is tucked into a collapsed block titled <a href="https://github.com/google-research/tuning_playbook#algorithm-for-picking-an-initial-candidate-for-max_train_steps-using-a-learning-rate-sweep" target="_blank" rel="noopener">"Algorithm for picking an initial candidate for max_train_steps using a learning rate sweep" ↗</a>, and it assumes we can fit the training set perfectly, and with a constant learning rate.</p>
+        <p data-src="1228-1251">The Playbook places this routine inside a collapsible box titled <a href="https://github.com/google-research/tuning_playbook#algorithm-for-picking-an-initial-candidate-for-max_train_steps-using-a-learning-rate-sweep" target="_blank" rel="noopener">"Algorithm for picking an initial candidate for max_train_steps using a learning rate sweep" ↗</a>, assuming the training split can be memorized at constant rate:</p>
 
         <ol class="p07-steps" data-src="1236-1251">
           <li><span class="p07-step-head">Find any configuration that fits the training set.</span> Its <code>max_train_steps</code> becomes a generous ceiling, $N$.</li>
           <li><span class="p07-step-head">Run a constant learning-rate sweep.</span> Grid-search the learning rate with no data augmentation and no regularization, and train every trial for $N$ steps.</li>
           <li><span class="p07-step-head">Take the fastest trial's step count.</span> The number of steps the fastest trial needs to reach perfect training performance is the initial guess for <code>max_train_steps</code>.</li>
-          <li class="is-check"><span class="p07-step-head">Check the edges of the grid.</span> If every learning rate in the sweep is too small, we might conclude that a very large <code>max_train_steps</code> is needed. At a minimum, check that the best learning rate is not at the boundary of the search space.</li>
+          <li class="is-check"><span class="p07-step-head">Check the edges of the grid.</span> If every rate tested is too slow, the estimated <code>max_train_steps</code> inflates sharply. Always verify the winning learning rate does not press against an edge of the sweep.</li>
         </ol>
 
-        <p>Why switch off augmentation and regularization? The Playbook doesn't say, but my reading is that both either add gradient noise or work against fitting the training set, so leaving them on would fold their slowdown into what is meant to be a measurement of the optimizer's speed. That slowdown is handled separately, by raising the budget when noise is added (see <a href="#revisit">when to revisit the budget</a>).</p>
+        <p>Why disable augmentation and regularization here? The Playbook does not spell out the reason, though in my reading both add step-to-step variance or cap memorization and would fold generalization drag into an optimizer speed test. Once you turn noise back on, you scale <code>max_train_steps</code> upward separately (see <a href="#revisit">when to revisit the budget</a>).</p>
 
-        <p>The last step deserves more attention than its brevity suggests, because the failure it guards against looks like a perfectly reasonable result. To see this, <a href="#fig-sweep">Figure 2</a> runs the sweep on a small simulated problem, with "fit" defined as a training loss below <span data-num="fig-sweep:model:threshold">10⁻³</span>.</p>
+        <p>The boundary check matters more than it first appears because an edge-clipped sweep returns deceptive numbers that look healthy on loss curves. <a href="#fig-sweep" class="figref" data-static-figref="1">Figure 2</a> runs that failure mode in a small simulated problem with memorization set at training loss below <span data-num="fig-sweep:model:threshold">10⁻³</span>.</p>
       </section>
 
       <figure class="fig" id="fig-sweep" role="group" aria-labelledby="fig-sweep-title"
               data-playbook-quote="Run a constant learning rate sweep (i.e. grid search the learning rate) without data augmentation and without regularization where each trial trains for N steps. The number of steps required for the fastest trial in the sweep to reach perfect training performance is our initial guess for max_train_steps. ... At a minimum, we should check that the optimal learning rate in the study is not at the boundary of the search space."
               data-playbook-src="1228-1251">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 2</span>
           <span class="fig-title" id="fig-sweep-title">A learning-rate sweep sets the first step budget</span>
           <span class="chip toy">Interactive toy model</span>
         </figcaption>
@@ -151,35 +165,36 @@
           <div class="fig-tut-step-data" data-label="The whole curve" data-params='{"center":-1,"landscape":true}'>The gray line adds the steps to fit at every learning rate. It falls as the rate grows, reaches its minimum near 0.15, and stops where higher rates no longer fit. A grid can locate that minimum only if it brackets it.</div>
         </div>
         <p class="fig-task">Drag either edge of the grid in (a) along the learning-rate axis until the fastest rate is no longer at an edge.</p>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">(a) Seven constant learning rates a <span data-num="fig-sweep:model:grid-spacing">quarter decade</span> apart, each trained for up to <span data-num="fig-sweep:model:steps-limit">200,000</span> steps. Filled dots give the steps each rate needs to fit, open circles mark rates that never fit, and the ring marks the fastest. (b) The training loss of the ringed rate, or of the highlighted rate. In the default grid the fastest rate, <span data-num="fig-sweep:default:fastest-lr">0.0281</span>, sits at the <span data-num="fig-sweep:default:edge">upper</span> edge and needs <span data-num="fig-sweep:default:steps">45,200</span> steps. A grid a decade higher finds <span data-num="fig-sweep:centered:fastest-lr">0.158</span> inside the grid at <span data-num="fig-sweep:centered:steps">11,700</span> steps, so the first grid overstated the budget <span data-num="fig-sweep:centered:overstatement">3.9</span>-fold.</p>
-        <details class="fig-model"><summary>Model and assumptions</summary>
+        <details class="fig-model"><summary>How this toy works</summary>
           <p>The runs come from a small training-dynamics model, which tracks the expected training loss of SGD with noisy gradients on a quadratic with several directions of different curvature. Each run uses a constant learning rate, with the toy's early-instability feature switched off. A run "fits" when its training loss first drops below <span data-num="fig-sweep:model:threshold">10⁻³</span>, a threshold chosen for this figure. Rates above about 0.17 settle at a loss above the threshold, and rates above about 0.4 diverge. Every number is computed ahead of time and stored with the figure. The step counts describe this toy and carry no information about any real network.</p>
         </details>
       </figure>
 
       <section class="prose" id="sweep-after">
-        <p>The first grid in <a href="#fig-sweep">Figure 2</a> gives an answer of 45,200 steps, and nothing about the runs that fit looks wrong. The only warning sign is that the winner is the highest rate we tried. Once we move the grid up a decade, it brackets the fastest rate and the estimate drops to 11,700 steps. This boundary check comes up in every search the Playbook describes (<a href="05-reading-the-results.html">Part 5</a> covers search-space boundaries in general), but it matters especially here, because the number it protects is the one every later study starts from.</p>
+        <p>At first glance the default window in <a href="#fig-sweep" class="figref" data-static-figref="1">Figure 2</a> reports 45,200 steps with clean training curves. Its only red flag is that the fastest trial hugs the upper grid boundary. Shifting the grid up one decade brackets the true minimum and cuts the initial budget nearly fourfold to 11,700 steps. Boundary checks apply across every sweep (<a href="05-reading-the-results.html">Part 5</a>), yet matter most here because every later study inherits this starting budget.</p>
       </section>
 
       <!-- ============================== Reading the best steps ============================== -->
       <section class="prose" id="refine">
         <h2>Reading where the best checkpoints fall</h2>
 
-        <p data-src="1194-1202">Once a study has run at a fixed budget, we have more than a score for each trial, since we also have its best step $t_i^\star$, the step whose checkpoint retrospective selection kept. These steps are the diagnostic the Playbook asks us to plot, and it is convenient to put every trial on the same scale by dividing by the budget:</p>
+        <p data-src="1194-1202">Once a fixed-budget study completes, inspect each trial's winning step $t_i^\star$ chosen by retrospective selection. Plotting them as normalized fractions of the budget keeps studies on one scale:</p>
         $$\rho_i = \frac{t_i^\star}{S_{\max}}, \qquad 0 \le \rho_i \le 1,$$
-        <p>where $\rho_i$ is the fraction of the run that trial $i$ had completed at its best checkpoint. The Playbook gives two rules for reading them:</p>
+        <p>where $\rho_i$ marks when trial $i$ peaked (<a href="#fig-budget-line" class="figref" data-static-figref="1">Figure 3</a>). The Playbook gives two diagnostics:</p>
         <ul class="p07-rules" data-src="1198-1202">
           <li><strong>Always in the first 10% ($\rho_i \le 0.1$ for every trial).</strong> "If the best step is always during the first 10% of training, then the maximum number of steps is way too high."</li>
           <li><strong>Consistently in the last 25% ($\rho_i &gt; 0.75$).</strong> "If the best step is consistently in the last 25% of training we might benefit from training longer and re-tuning the decay schedule."</li>
         </ul>
-        <p>Notice that the two rules are not symmetric, and I think the wording tells us why. If every trial's best step falls in the first tenth, then 90% of every run was spent on steps that did not help, which is unambiguous waste. A late best step is much weaker evidence, because with a decay schedule the loss often drops during the final decay whether or not the budget is adequate, so we should expect late best steps either way. That is presumably why the second rule only says "might benefit" and pairs training longer with re-tuning the decay schedule.</p>
+        <p>Those two thresholds are asymmetric for good reason. Peaking across every trial in the opening tenth leaves 90% of compute unused, proving clear over-budgeting. Late checkpoints carry weaker certainty because learning-rate decay drives error down near the finish even under adequate budgets, so the second rule pairs longer runs with re-tuning the schedule.</p>
       </section>
 
       <figure class="fig" id="fig-budget-line" role="group" aria-labelledby="fig-budget-line-title"
               data-playbook-quote="Never tune the max_train_steps number in a study. Pick a value and use it for all trials. From these trials, plot the training step that retrospective checkpoint selection finds in order to refine the choice of max_train_steps. For example, if the best step is always during the first 10% of training, then the maximum number of steps is way too high. Alternatively, if the best step is consistently in the last 25% of training we might benefit from training longer and re-tuning the decay schedule."
               data-playbook-src="1194-1202">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 3</span>
           <span class="fig-title" id="fig-budget-line-title">Where the best checkpoints fall at different budgets</span>
           <span class="chip toy">Interactive toy model</span>
         </figcaption>
@@ -189,8 +204,9 @@
           <div class="fig-tut-step-data" data-label="Too short" data-params='{"budget":2200}'>At 2,200 steps every best step falls in the last quarter, because every curve is still falling when the run stops. The second rule fires, and a longer budget is the next thing to try.</div>
         </div>
         <p class="fig-task">Drag the budget line in (a) and watch the best steps in (b) move between the first tenth and the last quarter of the run.</p>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">(a) Validation error of <span data-num="fig-budget-line:model:trials">12</span> simulated trials, evaluated every <span data-num="fig-budget-line:model:interval">200</span> steps. The vertical line is the study's budget, and each dot is a trial's best evaluation at or before it. (b) The same best steps as a fraction of the budget, with the first tenth and the last quarter shaded. At the provisional budget of <span data-num="fig-budget-line:model:provisional-budget">20,000</span> steps, <span data-num="fig-budget-line:default:first-tenth">1</span> best step falls in the first tenth and <span data-num="fig-budget-line:default:last-quarter">0</span> in the last quarter. At <span data-num="fig-budget-line:all-first-tenth:budget">150,000</span> steps all twelve fall in the first tenth, and at <span data-num="fig-budget-line:all-last-quarter:budget">2,200</span> steps all twelve fall in the last quarter.</p>
-        <details class="fig-model"><summary>Model and assumptions</summary>
+        <details class="fig-model"><summary>How this toy works</summary>
           <p>Each trial is a synthetic validation curve, with a shape chosen for illustration. It falls with its own time constant, flattens, rises slowly, and carries evaluation noise. The twelve time constants are drawn at random (seed <span data-num="fig-budget-line:seed:chosen">52</span>, a typical draw among <span data-num="fig-budget-line:seed:n">300</span> by the median of its best steps, <span data-num="fig-budget-line:seed:median">7,900</span> steps). "Draw again" samples a new study.</p>
           <p>The curves do not depend on the budget, as they would not for a constant learning rate, so moving the budget truncates the same runs. With a decay schedule, each budget would be a different run, and its last steps would usually improve during the decay. The toy therefore shows the first-tenth rule cleanly and understates how often best steps fall late in practice.</p>
         </details>
@@ -198,26 +214,26 @@
 
       <section class="prose" id="revisit">
         <h3>When to revisit the budget</h3>
-        <p data-src="1203-1204 1218-1226">A budget calibrated this way is a property of the whole pipeline rather than a constant, and the ideal number of steps can shift when the architecture or the data changes. The Playbook's more specific guidance points in both directions:</p>
+        <p data-src="1203-1204 1218-1226">A calibrated budget reflects the full training recipe rather than the model alone. Revisit <code>max_train_steps</code> whenever the pipeline changes in either direction:</p>
         <ul data-src="1218-1226">
-          <li><strong>More gradient noise, more steps.</strong> The starting value may need to grow when the training procedure gets noisier, for example when we add data augmentation or a regularizer such as dropout.</li>
-          <li><strong>Better training, fewer steps.</strong> It may be possible to shrink <code>max_train_steps</code> when training improves, for example with a better-tuned optimizer or learning-rate schedule.</li>
+          <li><strong>More gradient noise, more steps.</strong> Raise the budget when steps grow noisier, for instance after adding data augmentation or dropout.</li>
+          <li><strong>Better training, fewer steps.</strong> Lower <code>max_train_steps</code> when better optimizers or tuned schedules speed up convergence.</li>
         </ul>
-        <p>Batch size falls under the first case, as halving it raises the gradient noise and usually raises the number of steps needed, which is the regime <a href="03-batch-size.html">Part 3</a> studies in detail. Whatever the change, the way to check the budget is the same plot of best steps after the next study.</p>
+        <p>Batch size belongs in the first group because smaller batches raise gradient noise and step requirements, the scaling curve examined in <a href="03-batch-size.html">Part 3</a>. Check the normalized checkpoint fraction $\rho_i$ after any structural edit.</p>
       </section>
 
       <!-- ============================== Learning-rate schedules ============================== -->
       <section class="prose" id="schedules">
         <h2 id="schedule">Learning-rate schedules</h2>
 
-        <p data-src="404-405 1170-1176">We have already seen twice that the budget and the learning-rate schedule are hard to separate, so it is worth looking at schedules directly. The Playbook suggests starting a project with a constant learning rate and adding a decay schedule later, while warning that schedules interact particularly strongly with the training budget. A generous budget makes tuning easier, whereas a very stingy one "might require a learning rate decay schedule tuned to perfection in order to achieve a good error rate."</p>
+        <p data-src="404-405 1170-1176">Step budgets and learning-rate schedules interact tightly, so you have to design them together. The Playbook recommends opening a project with a constant learning rate and adding decay once the baseline runs cleanly. Generous step budgets cushion tuning errors, whereas tight budgets require a carefully tuned decay schedule to reach strong validation scores.</p>
 
-        <p data-src="1589-1611">Which schedule should we use? Godbole et al. admit in their <a href="https://github.com/google-research/tuning_playbook#faqs" target="_blank" rel="noopener">FAQ ↗</a> that the best decay family is an open problem, largely because it is not clear how to design rigorous experiments that would settle it. What they are confident about is that having some non-constant schedule matters, and that tuning it matters, because different learning rates work best at different stages of training. Their default preference is linear or cosine decay, though they expect many other families to work well too.</p>
+        <p data-src="1589-1611">Which family should you choose? In their <a href="https://github.com/google-research/tuning_playbook#faqs" target="_blank" rel="noopener">FAQ ↗</a>, Godbole et al. treat the optimal schedule family as an open question because isolating schedule geometry across different horizon lengths is notoriously difficult to benchmark cleanly. What holds reliably is that adding decay outperforms keeping a constant rate, and tuning its parameters matters. As defaults, the authors pick linear decay or cosine annealing <cite data-ref="loshchilov2016"><span class="cit-num"><a href="#ref-loshchilov2016">[5]</a></span></cite>, drawn alongside constant and inverse-square-root schedules in <a href="#fig-schedule-families" class="figref" data-static-figref="1">Figure 4</a>.</p>
       </section>
 
       <figure class="schematic" id="fig-schedule-families" role="group" aria-labelledby="fig-schedule-families-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 4</span>
           <span class="fig-title" id="fig-schedule-families-title">Four common learning-rate schedules</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -242,8 +258,8 @@
               <rect class="warm" x="30" y="10" width="13" height="86"/>
               <line class="half" x1="30" y1="55" x2="192" y2="55"/>
               <path class="axis" d="M30,10 V96 H192"/>
-              <rect class="above" x="43" y="100" width="68" height="5" rx="1"/>
-              <path class="val" d="M30,96 L43,20.6 L192,96"/>
+              <rect class="above" x="43" y="100" width="74.5" height="5" rx="1"/>
+              <path class="val" d="M30,96 L43,14 L192,96"/>
               <text x="24" y="18" text-anchor="end">η</text>
               <text x="24" y="59" text-anchor="end">η/2</text>
             </svg>
@@ -256,8 +272,8 @@
               <rect class="warm" x="30" y="10" width="13" height="86"/>
               <line class="half" x1="30" y1="55" x2="192" y2="55"/>
               <path class="axis" d="M30,10 V96 H192"/>
-              <rect class="above" x="43" y="100" width="68" height="5" rx="1"/>
-              <path class="val" d="M30,96 L43,15.3 L49.2,16.8 L55.4,18.9 L61.6,21.5 L67.8,24.5 L74,28 L80.2,32 L86.4,36.2 L92.6,40.7 L98.9,45.4 L105.1,50.3 L111.3,55.2 L117.5,60.1 L123.7,65 L129.9,69.7 L136.1,74.2 L142.3,78.4 L148.5,82.3 L154.7,85.8 L160.9,88.8 L167.2,91.3 L173.4,93.4 L179.6,94.8 L185.8,95.7 L192,96"/>
+              <rect class="above" x="43" y="100" width="74.5" height="5" rx="1"/>
+              <path class="val" d="M30,96 L43,14 L49.2,14.4 L55.4,15.4 L61.6,17.1 L67.8,19.5 L74,22.5 L80.2,26 L86.5,30 L92.7,34.5 L98.9,39.3 L105.1,44.4 L111.3,49.6 L117.5,55 L123.7,60.4 L129.9,65.6 L136.1,70.7 L142.3,75.5 L148.5,80 L154.8,84 L161,87.5 L167.2,90.5 L173.4,92.9 L179.6,94.6 L185.8,95.6 L192,96"/>
               <text x="24" y="18" text-anchor="end">η</text>
               <text x="24" y="59" text-anchor="end">η/2</text>
             </svg>
@@ -270,8 +286,8 @@
               <rect class="warm" x="30" y="10" width="13" height="86"/>
               <line class="half" x1="30" y1="55" x2="192" y2="55"/>
               <path class="axis" d="M30,10 V96 H192"/>
-              <rect class="above" x="43" y="100" width="35.6" height="5" rx="1"/>
-              <path class="val" d="M30,96 L43,34.9 L49.2,40.5 L55.4,44.8 L61.6,48.3 L67.8,51.1 L74,53.5 L80.2,55.5 L86.4,57.3 L92.6,58.8 L98.9,60.2 L105.1,61.5 L111.3,62.6 L117.5,63.6 L123.7,64.5 L129.9,65.4 L136.1,66.2 L142.3,66.9 L148.5,67.6 L154.7,68.2 L160.9,68.8 L167.2,69.3 L173.4,69.9 L179.6,70.4 L185.8,70.8 L192,71.3"/>
+              <rect class="above" x="43" y="100" width="44.7" height="5" rx="1"/>
+              <path class="val" d="M30,96 L43,14 L49.2,27.1 L55.4,35.4 L61.6,41.3 L67.8,45.8 L74,49.3 L80.2,52.2 L86.5,54.6 L92.7,56.6 L98.9,58.4 L105.1,59.9 L111.3,61.3 L117.5,62.5 L123.7,63.6 L129.9,64.6 L136.1,65.5 L142.3,66.4 L148.5,67.2 L154.8,67.9 L161,68.5 L167.2,69.2 L173.4,69.7 L179.6,70.3 L185.8,70.8 L192,71.3"/>
               <text x="24" y="18" text-anchor="end">η</text>
               <text x="24" y="59" text-anchor="end">η/2</text>
             </svg>
@@ -280,31 +296,33 @@
           </div>
         </div>
         <div class="p07-sched-key"><span><i class="warm"></i>warmup, a short ramp from zero (<a href="08-training-instabilities.html">Part 8</a>)</span><span><i class="above"></i>steps at or above half the base rate</span></div>
-        <p class="fig-caption">Each panel runs from step 0 to $S_{\max}$. Linear and cosine decay both spend half the run at or above half the base rate, although cosine stays high longer at the start and lingers near zero at the end. The inverse square root sets its decay with a time constant $\tau$ measured in steps, so its shape does not stretch when $S_{\max}$ grows. The percentages ignore the warmup and use a measure I chose, the fraction of steps at or above $\eta/2$, as a rough summary of how much of a run happens at a high rate.</p>
+        <p class="fig-caption">Each panel reaches peak rate $\eta$ after warmup (with $t$ counting post-warmup steps across $S_{\max}$). Both linear and cosine spend half the post-warmup run above $\eta/2$, though cosine plateaus higher early and flattens softly near zero. Inverse square root sets decay via step constant $\tau$, so extending $S_{\max}$ preserves shape in absolute steps. The $\eta/2$ cutoff is a rule-of-thumb summary of high-rate duration added in these notes, not a substitute for inspecting cooldown slope or validation curves.</p>
       </figure>
 
       <section class="prose" id="schedules-more">
-        <p>Warmup, the short ramp at the start of each panel in <a href="#fig-schedule-families">Figure 4</a>, addresses a different problem (instability in the first few steps), so the Playbook groups it with training instabilities and I'll leave it to <a href="08-training-instabilities.html">Part 8</a>.</p>
+        <p>Warmup, shown by the gray strip opening each panel of <a href="#fig-schedule-families" class="figref" data-static-figref="1">Figure 4</a>, guards against early training divergence rather than convergence rate, so I leave it for <a href="08-training-instabilities.html">Part 8</a>.</p>
 
-        <p data-src="1615-1643">The FAQ also offers a plausible origin story for the elaborate piecewise schedules that sometimes appear in papers. Many of them come from tuning by hand against the validation set: someone starts a run with a simple schedule, waits until performance stagnates, pauses, resumes with a steeper decay or a smaller rate, and repeats until the deadline. Copying such a schedule is a bad idea, the authors argue, because the best schedule depends on many other hyperparameters. It would be better to copy the <em>algorithm</em> that produced it, but that is rarely possible when the algorithm was human judgment. Schedules that respond to validation error are fine when they are fully automated, whereas human-in-the-loop versions are brittle and hard to reproduce, so the Playbook recommends avoiding them.</p>
+        <p data-src="1615-1643">The Playbook's FAQ also diagnoses where jagged hand-drawn schedules in papers come from. Often practitioners run a simple curve until validation accuracy plateaus, drop the step size manually, and repeat before a deadline. Copying that finished trajectory fails because its corners reflect specific model and batch settings; automated validation-reactive schedules are fine, whereas brittle manual restarts are best avoided.</p>
+
+        <p>Since the Playbook, horizon-free training has matured along two paths. <cite data-ref="defazio2024">Defazio et al. (2024) <span class="cit-num"><a href="#ref-defazio2024">[1]</a></span></cite> show that Schedule-Free optimization replaces an explicit end-time $S_{\max}$ with continuous iterate averaging, matching tuned cosine schedules without freezing step budgets up front. Even better established in large pretraining is replacing end-to-end cosine decay with warmup-stable-decay cooldowns, examined alongside Round 2 extension below.</p>
       </section>
 
       <!-- ============================== Tuning in rounds ============================== -->
       <section class="prose" id="bound">
         <h2 id="rounds">Tuning in rounds when training is compute-bound</h2>
 
-        <p data-src="1255-1270">Now we turn to the other regime. In a compute-bound workload the training loss keeps improving, and the only limits are our patience and our compute. Should every tuning trial then train for as long as we can afford? The Playbook's answer is "not necessarily," and the reason is a familiar trade-off between relevance and sample size. Shorter experiments let us run more of them and save the production-length runs for the models we hope to launch. As trials approach the patience limit they become more relevant to the final model, but we can complete fewer of them. The authors expect that many questions can be answered with runs about 10% of the production length, while acknowledging the risk that conclusions at that length will not hold at 20%, let alone 100%.</p>
+        <p data-src="1255-1270">Now consider the compute-bound regime. Loss keeps falling toward zero, so runtime and compute supply the only ceiling. Should every sweep run at full production length? The Playbook answers "not necessarily," trading relevance against search breadth (<a href="#fig-rounds" class="figref" data-static-figref="1">Figure 5</a>). Shorter trials buy far more experiments early on while saving full-length compute for final candidates, though insights won at 10% length do not automatically survive scaling to 20% or 100%.</p>
 
-        <p data-src="1271-1284">Their way of balancing the two is to <dfn data-concept="rounds-increasing">tune in rounds of increasing length</dfn>. In principle we can run as many rounds as we like, though one to three are usually the most practical. The idea is to learn as much as possible from trials with a quick turnaround, then lengthen the runs and keep tuning, double-checking earlier conclusions as needed. As a starting point the Playbook recommends two rounds:</p>
+        <p data-src="1271-1284">To balance both, the Playbook recommends <dfn data-concept="rounds-increasing">tuning in rounds of increasing length</dfn>. One to three rounds cover most projects cleanly; two rounds make an effective default:</p>
         <ul data-src="1281-1284">
-          <li><strong>Round 1:</strong> shorter runs to find good model and optimizer hyperparameters.</li>
-          <li><strong>Round 2:</strong> very few long runs on good hyperparameter points to get the final model.</li>
+          <li><strong>Round 1:</strong> short runs screening model architectures and optimizer settings.</li>
+          <li><strong>Round 2:</strong> a few full-length runs refining winning settings into the final model.</li>
         </ul>
       </section>
 
       <figure class="schematic" id="fig-rounds" role="group" aria-labelledby="fig-rounds-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 5</span>
           <span class="fig-title" id="fig-rounds-title">Many short trials, then a few long ones</span>
           <span class="chip">Schematic</span>
         </figcaption>
@@ -342,12 +360,12 @@
       </figure>
 
       <section class="prose" id="transfer">
-        <p data-src="1294-1300">The whole scheme rests on the assumption that a hyperparameter which wins in a short run still wins in a long one. The Playbook is candid that there is no guarantee. For some kinds of hyperparameters the two are often correlated enough for Round 1 to be useful, and the authors rank their suspicions by how likely each kind is to transfer, while noting that "we need more research."</p>
+        <p data-src="1294-1300">Multi-round tuning bets that configurations winning early also win at full length. The Playbook emphasizes there is no theorem behind this, ranking hyperparameter classes strictly as educated suspicions (<a href="#fig-transfer" class="figref" data-static-figref="1">Figure 6</a>) while noting "we need more research."</p>
       </section>
 
       <figure class="schematic" id="fig-transfer" role="group" aria-labelledby="fig-transfer-title">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 6</span>
           <span class="fig-title" id="fig-transfer-title">What a short run can decide for a long one</span>
           <span class="chip">The Playbook's ranking</span>
         </figcaption>
@@ -363,113 +381,130 @@
       </figure>
 
       <section class="prose" id="short-horizon">
-        <p data-src="1323-1335">The schedule sits at the bottom of the ranking, and here the Playbook points to <cite data-ref="wu2018">Wu et al. (2018)</cite> on "the dangers of trying to pick learning rates myopically." Wu et al. called this effect <em>short-horizon bias</em>, showing that when the learning rate or its decay is chosen by how well a run does after a small number of steps, the choice is biased toward step sizes that are too small. They show that the bias requires two ingredients, noisy gradients and a loss surface whose curvature differs a lot between directions, and most network training has both. The size of the effect can be large. In one of their experiments, a two-layer network on MNIST, the decay exponent tuned for a 100-step horizon and the one tuned for a 20,000-step horizon differed by more than two orders of magnitude.</p>
+        <p data-src="1323-1335">The schedule sits last for good reason. Citing <cite data-ref="wu2018">Wu et al. (2018) <span class="cit-num"><a href="#ref-wu2018">[6]</a></span></cite>, the Playbook warns against choosing rates myopically over truncated horizons. Short runs inject <em>short-horizon bias</em> when gradient noise coexists with ill-conditioned curvature: tuning on small step counts favors overly timid learning rates. On a two-layer MNIST model, decay exponents tuned at 100 steps versus 20,000 steps diverged by over two orders of magnitude.</p>
 
         <details class="math-aside">
           <summary>Why short runs favor small learning rates, in one dimension</summary>
           <p>Take one direction of the loss with curvature $\mu$, so $L(\theta) = \tfrac{\mu}{2}\theta^2$, and give each gradient independent noise $z_t$ with variance $\sigma_g^2$. One step of gradient descent with learning rate $\eta$ is</p>
           $$\theta_{t+1} = (1 - \eta\mu)\,\theta_t - \eta\, z_t.$$
-          <p>The mean of $\theta$ shrinks by the factor $(1 - \eta\mu)$ each step, so this direction needs on the order of $1/(\eta\mu)$ steps to make progress. The spread settles where the shrinkage balances the injected noise:</p>
+          <p>The mean of $\theta$ shrinks by $(1 - \eta\mu)$ per step, so progress spans roughly $1/(\eta\mu)$ steps. Spread settles where shrinkage balances injected noise:</p>
           $$\mathbb{E}\!\left[\theta^2\right]_\infty = \frac{\eta\,\sigma_g^2}{\mu\,(2 - \eta\mu)},$$
-          <p>which gives an excess loss of about $\eta\sigma_g^2/4$ when $\eta\mu$ is small. Lowering $\eta$ therefore lowers this noise floor, and a high-curvature direction reaches its new, lower floor within a few steps. In a low-curvature direction, though, the same change slows the approach, since $1/(\eta\mu)$ grows. A short run sees the quick gain and stops before the slow cost appears, which is exactly the bias. Wu et al. analyze a many-dimensional version of this noisy quadratic and show that without noise, or with equal curvature in every direction, the greedy choice is optimal.</p>
+          <p>giving excess loss near $\eta\sigma_g^2/4$ for small $\eta\mu$. Lowering $\eta$ cuts this noise floor immediately along steep directions within a few steps, while slowing flat directions whose timescale $1/(\eta\mu)$ grows. Short runs capture the immediate drop before long flat tails register, biasing greedy tuning toward small $\eta$.</p>
         </details>
 
-        <p>We should be careful about how far to carry this. Wu et al. study gradient-based tuning of the learning rate on small networks, which is quite different from the random searches the Playbook uses, so their results tell us the direction of the bias and its mechanism but not how large it would be in a Round 1 study. One of their figures does suggest a practical precaution, since runs compared at a constant rate partway through favored small learning rates, while the same runs compared after a short decay favored larger ones. My reading is that Round 1 trials are best compared after each has finished its own decay, which the fixed-budget rule from earlier in this post already ensures.</p>
+        <p>Keep Wu et al.'s scope clear: they analyze online meta-gradient updates rather than fixed random sweeps, so exact bias magnitudes differ. Still, their comparisons show constant-rate intermediate checkpoints favoring smaller rates than runs that finish a short cooldown. Comparing Round-1 trials after each completes its decay prevents truncating mid-run noise floors.</p>
+
+        <h3 id="width-and-horizon">Separating width scaling from step horizon</h3>
+        <p>Short-run rounds compress duration while keeping full model width fixed, whereas modern large-model pipelines often pair that axis with width scaling. Under Maximal Update Parametrization (<strong>$\mu$P</strong>) <cite data-ref="yang2022"><span class="cit-num"><a href="#ref-yang2022">[7]</a></span></cite>, tuning base learning rates and initialization scales on narrow proxy widths transfers cleanly at fixed token horizon, separating model size tuning from Round-2 duration scaling.</p>
       </section>
 
       <!-- ============================== Extending the schedule ============================== -->
       <section class="prose" id="extend">
         <h2>Extending the schedule for Round 2</h2>
 
-        <p data-src="1285-1288">If the schedule is the least likely thing to transfer, then the biggest question in moving from one round to the next is what to do with it, and the Playbook names one common pitfall: "using all the extra training steps with too small of a learning rate." This happens whenever Round 2 keeps Round 1's schedule in absolute steps. A schedule with a time constant measured in steps, such as the inverse square root in <a href="#fig-schedule-families">Figure 4</a>, falls into it by construction, and so does resuming Round 1's final checkpoint and continuing at its final learning rate.</p>
+        <p data-src="1285-1288">Because schedules rarely carry over intact, moving from Round 1 to Round 2 requires reshaping how step size spends its budget. The Playbook warns against spending added steps at tiny rates, which happens automatically if you stretch absolute-step schedules like inverse square root (<a href="#fig-schedule-families" class="figref" data-static-figref="1">Figure 4</a>) or resume an already decayed checkpoint.</p>
 
         <blockquote class="playbook" data-src="1345-1352">
           <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#round-2" target="_blank" rel="noopener">on Round 2, marked as speculation ↗</a></span>
           <p>Run the best hyperparameter configuration from Round 1. (Speculation) Use the extra steps to extend the period of training at a high learning rate. E.g. if linear schedule then keep the length of the decay fixed from Round 1 and extend the period of constant lr in the beginning. For cosine decay, just keep the base lr from Round 1 and extend <code>max_train_steps</code> as in Chinchilla paper.</p>
         </blockquote>
 
-        <p>So <dfn data-concept="schedule-extension">extending the schedule</dfn> means different things for the two default families. For a linear schedule it means a constant phase at the base rate followed by a decay of fixed length, while for cosine decay it means stretching the whole cosine over the longer run. To see how much this matters, <a href="#fig-extend">Figure 7</a> compares both against the pitfall (Round 1's schedule continued at its final rate) and measures each by the fraction of Round 2 spent below half the base rate.</p>
+        <p>Notice that <dfn data-concept="schedule-extension">extending the schedule</dfn> diverges by shape: linear decay freezes its final decay length while elongating the flat plateau, whereas cosine stretches across the entire run. <a href="#fig-extend" class="figref" data-static-figref="1">Figure 7</a> contrasts both rules against the pitfall of resuming a finished run at rate zero.</p>
       </section>
 
       <figure class="fig l-wide" id="fig-extend" role="group" aria-labelledby="fig-extend-title"
               data-playbook-quote="One common pitfall when adjusting learning rate schedules between rounds is using all the extra training steps with too small of a learning rate. ... (Speculation) Use the extra steps to extend the period of training at a high learning rate. E.g. if linear schedule then keep the length of the decay fixed from Round 1 and extend the period of constant lr in the beginning. For cosine decay, just keep the base lr from Round 1 and extend max_train_steps as in Chinchilla paper."
               data-playbook-src="1285-1352">
         <figcaption class="fig-head">
-          <span class="fig-num"></span>
+          <span class="fig-num" data-static-fignum="1">Figure 7</span>
           <span class="fig-title" id="fig-extend-title">Where Round 2 spends its extra steps</span>
           <span class="chip">Interactive, closed-form schedules</span>
         </figcaption>
         <p class="fig-task">Drag the Round 2 length and compare how much of each Round 2 schedule runs below half the base rate.</p>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">Learning rate as a fraction of the base rate, against the step as a multiple of Round 1's length. Round 1 is gray, the Playbook's extension blue, and the pitfall (Round 1's schedule continued at its final rate) gold. The bars under each panel mark where each Round 2 schedule runs below half the base rate, with that fraction of Round 2 printed at the right. (a) Round 1 holds the base rate for <span data-num="fig-extend:model:constant-fraction">80%</span> of its length and then decays linearly. At the default Round 2 length of <span data-num="fig-extend:model:factor">4</span> times Round 1, the extension spends <span data-num="fig-extend:model:linear-extension-below">2.5%</span> of Round 2 below half the base rate and the pitfall <span data-num="fig-extend:model:linear-pitfall-below">77.5%</span>. (b) With cosine decay, the stretched cosine spends <span data-num="fig-extend:model:cosine-extension-below">50%</span> below half at any length, and the pitfall <span data-num="fig-extend:model:cosine-pitfall-below">87.5%</span>.</p>
-        <details class="fig-model"><summary>How the schedules are drawn</summary>
-          <p>Every curve is a closed-form schedule with base rate 1, Round 1 of length $T_1 = 1$, and Round 2 of length $T_2 = r\,T_1$ (written in multiples $k = r$ of Round 1). The linear Round 1 is constant until 0.8 and falls in a straight line to 0 at 1. Its extension to length $k$ keeps the decay length of 0.2 and holds the base rate until $k - 0.2$. The cosine schedules are $\tfrac12(1 + \cos(\pi t / L))$, with $L = 1$ for Round 1 and $L = k$ for the extension. The pitfall follows Round 1 to step 1 and stays at its final rate, 0, until $k$. Using half the base rate as the cutoff for a low learning rate is my convention for comparing the curves.</p>
+        <details class="fig-model"><summary>How this toy works</summary>
+          <p>Every curve is a closed-form schedule with base rate 1, Round 1 of length $T_1 = 1$, and Round 2 of length $T_2 = r\,T_1$ over multiplier $r$. Linear Round 1 holds 1 until 0.8 and decays linearly to 0 at 1; its extension keeps the decay span 0.2 and holds the base rate until $r - 0.2$. Cosine schedules follow $\tfrac{1}{2}(1 + \cos(\pi t / T))$, using $T = 1$ for Round 1 and $T = r$ for extension. The pitfall stops at Round 1's end and continues at zero through $r$. Counting time below $\eta/2$ is a diagnostic summary chosen in these notes rather than a Playbook rule, and it ignores how the final cooldown slope shapes validation error.</p>
         </details>
       </figure>
 
       <section class="prose" id="extend-more">
-        <p>As we drag Round 2 longer, the pitfall's share climbs toward 100%, because every added step runs at Round 1's final rate. The linear extension moves the other way, since its decay keeps a fixed length while the run grows around it. The stretched cosine sits in between and always spends half of Round 2 below half the base rate, because stretching preserves its shape.</p>
+        <p>Dragging Round 2 longer pushes the pitfall's low-rate tail toward 100%, because every added step runs after decay finishes. Linear extension shrinks its low-rate fraction while holding decay span fixed, whereas stretched cosine stays fixed at 50%. Notice, however, that share below $\eta/2$ only flags stalled tails and must be weighed against cooldown slope and shape (<a href="#fig-extend" class="figref" data-static-figref="1">Figure 7</a>).</p>
 
-        <p data-src="1325-1352">The cosine advice leans on the Chinchilla paper <cite data-ref="hoffmann2022"></cite>, which the Playbook elsewhere also reads as suggesting that even decay schedules transfer, a claim the authors doubt. What Hoffmann et al. actually did was match each cosine cycle to the length of its run, and they found that cycles more than about 25% longer than the run clearly hurt. That supports matching the cosine length to the run length. They did not, however, tune a schedule at one length and test it at another, so the Playbook's doubt about transfer still stands.</p>
+        <p data-src="1325-1352">The Playbook cites Chinchilla <cite data-ref="hoffmann2022"><span class="cit-num"><a href="#ref-hoffmann2022">[3]</a></span></cite> here and notes doubt over whether schedules transfer across run lengths. Instead of re-testing tuned Round-1 decay parameters on new lengths, Hoffmann et al. matched cosine duration strictly to each target run, confirming that overly long cycles degrade performance. That finding supports tuning cycle horizon per budget rather than copying schedules across horizons.</p>
 
-        <aside class="callout insight">
-          <div class="callout-head">Since the Playbook</div>
-          <p>More recent work on language-model pretraining has tested this constant-then-decay shape directly. <cite data-ref="hagele2024">Hägele et al. (2024)</cite> found that a constant rate followed by a cooldown over the final 10 to 20% of steps performed about as well as a well-tuned cosine schedule, and that a longer run could resume from a checkpoint saved before the cooldown instead of starting over. That supports the direction of the Playbook's speculation, although the two disagree on the length of the decay, with the Playbook keeping Round 1's decay length in steps while Hägele et al. keep the cooldown a fixed fraction of the run. For long runs they found that a smaller fraction can work, as long as the cooldown still spans enough steps. They also found the best constant rate to be about half the best cosine peak, which means a base rate tuned for one family does not carry over to another. Their experiments used decoder-only language models from 33M to 8B parameters.</p>
-        </aside>
+        <h3 id="wsd">Trapezoidal schedules and reusable checkpoints</h3>
+        <p>Post-2023 language-model pretraining tested the Playbook's constant-then-decay hypothesis directly and offered a practical solution to its Round-2 dilemma. <cite data-ref="hagele2024">Hägele et al. (2024) <span class="cit-num"><a href="#ref-hagele2024">[4]</a></span></cite> show across decoder models from 33M to 8B parameters that holding a constant rate followed by a short final cooldown matches tuned cosine decay, especially with a $1 - \sqrt{u}$ decay shape over the last 10–20% of steps.</p>
+        <p>Under that warmup-stable-decay structure, you no longer restart from step zero when extending compute: save checkpoints just before cooldown begins and launch longer continuations directly off the stable plateau. Two caveats separate their results from the Playbook's speculation. First, effective cooldowns scale loosely with total length (down to 10–20% or a sufficient step count) rather than keeping Round-1's decay length strictly constant. Second, constant-phase rates sit near half the optimal cosine peak, so changing schedule family requires re-tuning the base learning rate.</p>
 
-        <p data-src="1353-1362">Finally, nothing limits us to two rounds. More can make sense for teams with mature pipelines and very expensive production runs, though the Playbook notes they will often be overkill. In the limit where analysis time did not matter and compute efficiency were the overriding concern, the authors' ideal would be to increase run length exponentially over many rounds, with each round checking that earlier choices still hold and each new idea passing through progressively longer, de-risking experiments.</p>
+        <p data-src="1353-1362">Finally, you are not locked into two rounds. Mature pipelines with huge production runs sometimes sequence exponentially growing horizons across three or more rounds, using each step scale to prune risky ideas cheaply, though two rounds suffice for most applied tuning.</p>
       </section>
 
       <!-- ============================== In practice ============================== -->
-      <section class="prose" id="in-practice">
+      <section class="prose in-practice" id="in-practice">
         <h2>In practice</h2>
+        <p>Choose your horizon workflow by whether extra compute keeps lowering validation loss, distinguishing Playbook steps from post-2023 practice.</p>
+        <ol class="practice-steps">
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V5M4 20h16"/><path d="M7 16l3-5 3 2 4-7"/></svg></span>
+            <div>
+              <h3>Classify the workload from existing curves</h3>
+              <p>If validation error flattens well before step limits, treat training as not compute-bound; if curves still fall cleanly at the end, budget tuning in rounds (<a href="#regimes">Two kinds of workload</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 12h8"/></svg></span>
+            <div>
+              <h3>Hold one <code>max_train_steps</code> fixed inside every study</h3>
+              <p>Never tune step budget alongside other hyperparameters inside a sweep; pick one horizon for all trials, erring high when uncertain (<a href="#not-bound">Why budgets stay fixed</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg></span>
+            <div>
+              <h3>Seed the first budget from a constant-rate sweep</h3>
+              <p>Turn off augmentation and regularization, record steps for the fastest rate to fit training data, and shift the grid if that rate hits an edge (<a href="#sweep">Learning-rate sweep</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 17h4l3-8 4 10 3-5h4"/></svg></span>
+            <div>
+              <h3>Track best-checkpoint fractions across rounds</h3>
+              <p>If winning checkpoints always appear inside the first 10%, cut steps; if they cluster in the final 25%, raise steps and re-tune the decay, revisiting budgets when noise rises (<a href="#refine">Best checkpoint fractions</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg></span>
+            <div>
+              <h3>Use short Round-1 sweeps when compute-bound</h3>
+              <p>Run 10% length for architecture and optimizer checks (or narrow $\mu$P proxies for width transfer), comparing trials after each finishes a short cooldown (<a href="#bound">Tuning in rounds</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 17l6-10h5l5 10"/><path d="M4 20h16"/></svg></span>
+            <div>
+              <h3>Spend Round-2 growth at full learning rate</h3>
+              <p>Extend cosine horizons with the run, stretch trapezoidal plateaus while branching from pre-cooldown checkpoints (or consider Schedule-Free when horizon is open-ended), and never resume decayed tails at near-zero step size (<a href="#extend">Extending Round 2</a>).</p>
+            </div>
+          </li>
+        </ol>
       </section>
-
-      <div class="p07-fork l-wide" role="region" aria-label="Checklist for choosing the number of training steps">
-        <div class="p07-fork-cols">
-          <div class="p07-fork-col is-free">
-            <div class="p07-fork-head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V5M4 20h16"/><path d="M7 16l3-5 3 2 4-7"/></svg>Before the first study</div>
-            <span class="p07-fork-sub">Pick one budget and hold it fixed.</span>
-            <ol class="p07-check">
-              <li><strong>Fix one <code>max_train_steps</code> per study.</strong> Never tune it inside a study. When unsure, err on the side of training longer. <a class="p07-more" href="#not-bound">Why ↓</a></li>
-              <li><strong>Set the first value from a constant learning-rate sweep.</strong> Turn off augmentation and regularization, take the steps the fastest rate needs to fit the training set, and move the grid if that rate is at an edge. <a class="p07-more" href="#sweep">Procedure ↓</a></li>
-            </ol>
-          </div>
-          <div class="p07-fork-col is-after">
-            <div class="p07-fork-head"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg>After each study</div>
-            <span class="p07-fork-sub">Read the best steps, then adjust.</span>
-            <ol class="p07-check">
-              <li><strong>Plot each trial's best step.</strong> Always in the first 10% means the budget is far too long. Consistently in the last 25% suggests training longer and re-tuning the decay. <a class="p07-more" href="#refine">Rules ↓</a></li>
-              <li><strong>Revisit the budget when the pipeline changes.</strong> More gradient noise (a smaller batch, augmentation, dropout) may need more steps, and better-tuned training may need fewer. <a class="p07-more" href="#revisit">Details ↓</a></li>
-            </ol>
-          </div>
-          <div class="p07-fork-col is-bound">
-            <div class="p07-fork-head"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>When compute-bound</div>
-            <span class="p07-fork-sub">Trials are still improving when the budget runs out.</span>
-            <ol class="p07-check">
-              <li><strong>Tune in rounds of increasing length.</strong> Round 1 uses short runs, around 10% of production length, for model and optimizer hyperparameters. Round 2 runs very few configurations at full length. <a class="p07-more" href="#bound">Rounds ↓</a></li>
-              <li><strong>Spend Round 2's extra steps at a high learning rate.</strong> For linear decay, keep the decay length and extend the constant phase. For cosine, keep the base rate and stretch the schedule. <a class="p07-more" href="#extend">Extension ↓</a></li>
-            </ol>
-          </div>
-        </div>
-      </div>
 
       <!-- ============================== Where this fits ============================== -->
-      <section class="prose" id="where-this-fits">
+      <section class="prose" id="where">
         <h2>Where this fits</h2>
-        <p>Choosing the number of steps belongs to the part of the Playbook's workflow that reads training curves and adjusts the schedule, which is highlighted in the series map below.</p>
+        <p>Choosing the number of steps belongs to the part of the Playbook's workflow that reads training curves and adjusts the schedule, highlighted in the series map below.</p>
       </section>
 
-      <div class="l-wide">
-        <div class="playbook-map" data-active-zone="dynamics" data-default-node="d_curves"></div>
-      </div>
+      <div class="playbook-map" data-active-zone="decide" data-default-node="d_final"></div>
 
       <section class="refs" id="references">
         <h2>References</h2>
-        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023)</cite>.</p>
-        <ol id="reflist"></ol>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023) <span class="cit-num"><a href="#ref-playbook">[2]</a></span></cite>.</p>
+        <ol id="reflist"><li id="ref-defazio2024">Aaron Defazio, Xingyu Alice Yang, Harsh Mehta, Konstantin Mishchenko, Ahmed Khaled, Ashok Cutkosky (2024). <a href="https://arxiv.org/abs/2405.15682" target="_blank" rel="noopener">The Road Less Scheduled</a>. arXiv:2405.15682 (NeurIPS 2024).</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li><li id="ref-hoffmann2022">Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza Rutherford, et al. (2022). <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener">Training Compute-Optimal Large Language Models</a>. Advances in Neural Information Processing Systems 35 (NeurIPS 2022).</li><li id="ref-hagele2024">Alexander Hägele, Elie Bakouch, Atli Kosson, Loubna Ben Allal, Leandro Von Werra, Martin Jaggi (2024). <a href="https://arxiv.org/abs/2405.18392" target="_blank" rel="noopener">Scaling Laws and Compute-Optimal Training Beyond Fixed Training Durations</a>. Advances in Neural Information Processing Systems 37 (NeurIPS 2024).</li><li id="ref-loshchilov2016">Ilya Loshchilov, Frank Hutter (2017). <a href="https://arxiv.org/abs/1608.03983" target="_blank" rel="noopener">SGDR: Stochastic Gradient Descent with Warm Restarts</a>. International Conference on Learning Representations (ICLR 2017).</li><li id="ref-wu2018">Yuhuai Wu, Mengye Ren, Renjie Liao, Roger B. Grosse (2018). <a href="https://arxiv.org/abs/1803.02021" target="_blank" rel="noopener">Understanding Short-Horizon Bias in Stochastic Meta-Optimization</a>. International Conference on Learning Representations (ICLR 2018).</li><li id="ref-yang2022">Greg Yang, Edward J. Hu, Igor Babuschkin, Szymon Sidor, Xiaodong Liu, David Farhi, Nick Ryder, Jakub Pachocki, Weizhu Chen, Jianfeng Gao (2022). <a href="https://arxiv.org/abs/2203.03466" target="_blank" rel="noopener">Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer</a>. arXiv:2203.03466.</li></ol>
       </section>
 
-      <nav class="pager" aria-label="Post navigation"></nav>
+      <nav class="pager" aria-label="Post navigation"><a class="prev" href="../pages/06-adopting-a-change.html"><small>&larr; Previous Post</small>Deciding whether to adopt a change</a><a class="next" href="../pages/08-training-instabilities.html"><small>Next Post &rarr;</small>Finding and fixing training instabilities</a></nav>
     </article>
   </main>
 
@@ -477,23 +512,24 @@
     By <a href="https://joshspeagle.com">Josh Speagle</a> &middot; <a href="https://joshspeagle.com/writing.html">Writing</a> &middot; Notes on the <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook ↗</a> by Godbole, Dahl, Gilmer, Shallue and Nado (<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>).
   </footer>
 
-  <script src="../js/vendor/d3.v7.min.js"></script>
-  <script src="../js/vendor/katex/katex.min.js"></script>
-  <script src="../js/vendor/katex/auto-render.min.js"></script>
-  <script src="../js/lib/format.js"></script>
-  <script src="../js/lib/prng.js"></script>
+  <script src="../../../assets/vendor/d3.v7.min.js"></script>
+  <script src="../../../assets/vendor/katex/katex.min.js"></script>
+  <script src="../../../assets/vendor/katex/auto-render.min.js"></script>
+  <script src="../../../assets/blog/js/core/format.js"></script>
+  <script src="../../../assets/blog/js/core/prng.js"></script>
   <script src="../js/lib/curves.js"></script>
-  <script src="../js/lib/toyS.js"></script>
   <script src="../js/lib/toyD.js"></script>
   <script src="../js/lib/schedules.js"></script>
   <script src="../js/lib/budget.js"></script>
-  <script src="../js/lib/placer.js"></script>
+  <script src="../../../assets/blog/js/core/placer.js"></script>
+  <script src="../js/data/config.js"></script>
   <script src="../js/refs.js"></script>
   <script src="../js/concepts.js"></script>
-  <script src="../js/site.js"></script>
-  <script src="../js/components/playbook-map.js"></script>
-  <script src="../js/chart.js"></script>
-  <script src="../js/runtime.js"></script>
+  <script src="../../../assets/blog/js/article.js"></script>
+  <script src="../js/data/flowmap-data.js"></script>
+  <script src="../../../assets/blog/js/flowmap.js"></script>
+  <script src="../../../assets/blog/js/core/chart.js"></script>
+  <script src="../../../assets/blog/js/core/runtime.js"></script>
   <script src="../js/figures/f8-1-sweep.js"></script>
   <script src="../js/figures/f8-2-budget-line.js"></script>
   <script src="../js/figures/f8-3-extend.js"></script>

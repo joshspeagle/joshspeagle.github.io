@@ -1,8 +1,8 @@
 /*
  * optimizers.js: the six update rules of the playbook's FAQ (README L2034-2086) on a
- * two-dimensional quadratic (TP.optimizers), for figure F2.1 of version 2 (notes/revamp/figure-plan.md)
- * and, before it, version 1's `p10-optimizer-explorer` (notes/specs/promotion.md, section A;
- * notes/specs/pages-1-3.md, `p1-optimizer-update-rules`).
+ * two-dimensional quadratic (TP.optimizers), for figure F2.1 of version 2
+ * and, before it, version 1's `p10-optimizer-explorer` (design notes.md, section A;
+ * design notes.md, `p1-optimizer-update-rules`).
  *
  * The loss, with the loss scale c, the condition number kappa and the rotation phi (degrees):
  *
@@ -48,7 +48,7 @@
  *   divergenceBound(rule, c, kappa, gamma) -> eta or null
  *   nesterovRadius(x, gamma), spectralRadius2(a, b, c, d)
  *
- * The summary curves of figure F2.1 (notes/revamp/implementation-plan.md WO-I8 and WO-F2.1):
+ * The summary curves of figure F2.1:
  *   TARGET (0.01), NO_PROGRESS (200), CONVERGED (1e-6), DIVERGE (1e3), AXIS_END (10,000), RATES,
  *   SCALES ([1, 10, 100]), targetFor(c) (TARGET c)
  *   stepsToTarget(rule, hp, o) -> {crossing, divergedAt, noProgressSince, end}
@@ -58,9 +58,9 @@
  * with o = {c, kappa, phi, start, startEigen, target, limit}. Here o.limit is the last step computed
  * (the step axis's end), not run()'s coordinate bound, which is DIVERGE. The target defaults to
  * targetFor(c), TARGET times the loss scale, so that it stays the same fraction of the starting loss
- * at every scale (Batch 7).
+ * at every scale.
  *
- * The loss scale (Batch 7, the lead's ruling on the practitioner's finding 5, F2.1's control
+ * The loss scale (the lead's ruling on the practitioner's finding 5, F2.1's control
  * c = 1, 10, 100). SGD, momentum and Nesterov multiply the gradient by the learning rate, so a run at
  * scale c and rate eta takes the same steps as a run at scale 1 and rate c eta, and their fastest rates
  * and bounds fall by the factor c. RMSProp, Adam and NAdam divide by the root of the gradients' second
@@ -79,7 +79,7 @@
  * steps. It is null otherwise. noProgressSince is the step of the last new minimum of a stalled run,
  * and null otherwise.
  *
- * The plan (WO-I8) judges the crossing at o.limit and ends a run at the first step below 1e-6 of its
+ * The plan judges the crossing at o.limit and ends a run at the first step below 1e-6 of its
  * start. Both are changed here, because of what the rules do on the figure's quadratic at default
  * hyperparameters. Adam and NAdam converge and then leave the minimum again once their second moment
  * has decayed (Adam at 0.2 is below 1e-300 by step 7,000 and back above 0.01 at step 8,629; at 1.0,
@@ -113,7 +113,7 @@
     nadam: { name: 'NAdam', lrSymbol: 'alpha', hp: ['lr', 'beta1', 'beta2', 'eps'], lines: '2076-2086' }
   };
 
-  /** Default hyperparameters (notes/specs/pages-1-3.md): 0.02 for the SGD family and RMSProp, 0.1 for Adam and NAdam. */
+  /** Default hyperparameters: 0.02 for the SGD family and RMSProp, 0.1 for Adam and NAdam. */
   O.defaults = {
     sgd: { lr: 0.02 },
     momentum: { lr: 0.02, gamma: 0.9 },
@@ -288,7 +288,7 @@
 
   /* ---------- the summary curves of F2.1 ---------- */
 
-  /** The target loss of F2.1 (WO-F2.1). */
+  /** The target loss of F2.1. */
   O.TARGET = 0.01;
   /** A run that makes no new minimum for this many steps has stalled; a converged run has stayed converged this long. */
   O.NO_PROGRESS = 200;
@@ -296,13 +296,13 @@
   O.CONVERGED = 1e-6;
   /** A run diverges when a coordinate passes this in absolute value, run()'s default limit. */
   O.DIVERGE = 1e3;
-  /** The step axis's end of F2.1, and the last step computed when o.limit is not given. Calibrated in Batch 1
-      (tests/calibration/fig-update-rules.calibrate.js): at default hyperparameters every rule's crossing over the
+  /** The step axis's end of F2.1, and the last step computed when o.limit is not given. Calibrated in
+: at default hyperparameters every rule's crossing over the
       rates from 0.001 was at most 6,745 steps (Adam and NAdam at 0.001), so the axis ends at the next decade.
-      Batch 7's rates reach 0.0001, and the runs that need more steps than the axis holds are slow. */
+       rates reach 0.0001, and the runs that need more steps than the axis holds are slow. */
   O.AXIS_END = 10000;
 
-  /** The learning rates of F2.1's slider (Batch 7): the E24 series, 24 values per decade (1.0, 1.1, 1.2,
+  /** The learning rates of F2.1's slider: the E24 series, 24 values per decade (1.0, 1.1, 1.2,
       1.3, 1.5, ..., 8.2, 9.1), from 0.0001 to 1, 97 in all. The list reaches 0.0001 so that SGD's rates at
       loss scale 100 lie on it (its bound there is 0.001). The two-significant-figure list over the same four
       decades, 361 rates, took 25 ms for Adam's summary, over the 12-ms budget; the E24 list takes about 8. */
@@ -314,7 +314,7 @@
     return Object.freeze(out);
   })();
 
-  /** The loss scales of F2.1's control (Batch 7). */
+  /** The loss scales of F2.1's control. */
   O.SCALES = Object.freeze([1, 10, 100]);
   /** The target loss at loss scale c: TARGET c, the same fraction of the starting loss at every scale. */
   O.targetFor = function (c) { return O.TARGET * (c != null ? c : 1); };

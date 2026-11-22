@@ -1,0 +1,137 @@
+/* Series configuration for Notes on the Deep Learning Tuning Playbook.
+ * Sets window.BLOG_CONFIG for /assets/blog/js/article.js and maintains window.TP aliases.
+ */
+(function (global) {
+  'use strict';
+  var Blog = global.Blog = global.TP = global.Blog || global.TP || {};
+  var cfg = global.BLOG_CONFIG = {
+    id: "dl-tuning-playbook",
+    title: "Notes on the Deep Learning Tuning Playbook",
+    shortTitle: "DL Tuning Playbook",
+    author: "Josh Speagle",
+    ownerName: "Josh Speagle",
+    homeUrl: "https://joshspeagle.com",
+    writingUrl: "https://joshspeagle.com/writing.html",
+    writingLabel: "Writing",
+    pagesPrefix: "pages/",
+    referencePage: "pages/reference.html",
+    designSheetPage: "design-sheet.html",
+    sourceUrl: "https://github.com/google-research/tuning_playbook",
+    sourceCommit: "7554a51db292242213292d1fa939dc87ffc7be59",
+    sourceAttribution: "From Godbole et al. (2023), Deep Learning Tuning Playbook, CC BY 4.0.",
+    sourceLinkLabel: "Playbook source ↗",
+    pages: [
+      {
+            "num": 0,
+            "file": "index.html",
+            "slug": "index.html",
+            "title": "Notes on the Deep Learning Tuning Playbook",
+            "short": "Overview",
+            "group": "Overview",
+            "unnumbered": true
+      },
+      {
+            "num": 1,
+            "file": "pages/01-the-tuning-loop.html",
+            "slug": "pages/01-the-tuning-loop.html",
+            "title": "Tuning a network one question at a time",
+            "short": "1. One question at a time",
+            "act": 1,
+            "actName": "Act I · Experimental method and setup",
+            "group": "Act I · Experimental method and setup"
+      },
+      {
+            "num": 2,
+            "file": "pages/02-starting-a-project.html",
+            "slug": "pages/02-starting-a-project.html",
+            "title": "Starting a new project",
+            "short": "2. Starting a project",
+            "act": 1,
+            "actName": "Act I · Experimental method and setup",
+            "group": "Act I · Experimental method and setup"
+      },
+      {
+            "num": 3,
+            "file": "pages/03-batch-size.html",
+            "slug": "pages/03-batch-size.html",
+            "title": "Choosing the batch size",
+            "short": "3. Batch size",
+            "act": 1,
+            "actName": "Act I · Experimental method and setup",
+            "group": "Act I · Experimental method and setup"
+      },
+      {
+            "num": 4,
+            "file": "pages/04-searching-the-space.html",
+            "slug": "pages/04-searching-the-space.html",
+            "title": "Where to put your trials, and how many to run",
+            "short": "4. Placing trials",
+            "act": 2,
+            "actName": "Act II · Running, reading and deciding",
+            "group": "Act II · Running, reading and deciding"
+      },
+      {
+            "num": 5,
+            "file": "pages/05-reading-the-results.html",
+            "slug": "pages/05-reading-the-results.html",
+            "title": "Reading the results of a tuning study",
+            "short": "5. Reading results",
+            "act": 2,
+            "actName": "Act II · Running, reading and deciding",
+            "group": "Act II · Running, reading and deciding"
+      },
+      {
+            "num": 6,
+            "file": "pages/06-adopting-a-change.html",
+            "slug": "pages/06-adopting-a-change.html",
+            "title": "Deciding whether to adopt a change",
+            "short": "6. Adopting a change",
+            "act": 2,
+            "actName": "Act II · Running, reading and deciding",
+            "group": "Act II · Running, reading and deciding"
+      },
+      {
+            "num": 7,
+            "file": "pages/07-training-horizon.html",
+            "slug": "pages/07-training-horizon.html",
+            "title": "How long to train",
+            "short": "7. How long to train",
+            "act": 3,
+            "actName": "Act III · Dynamics, stability and engineering",
+            "group": "Act III · Dynamics, stability and engineering"
+      },
+      {
+            "num": 8,
+            "file": "pages/08-training-instabilities.html",
+            "slug": "pages/08-training-instabilities.html",
+            "title": "Finding and fixing training instabilities",
+            "short": "8. Instabilities",
+            "act": 3,
+            "actName": "Act III · Dynamics, stability and engineering",
+            "group": "Act III · Dynamics, stability and engineering"
+      },
+      {
+            "num": 9,
+            "file": "pages/09-pipeline-practice.html",
+            "slug": "pages/09-pipeline-practice.html",
+            "title": "Input pipelines, evaluation, checkpoints and multi-host training",
+            "short": "9. Pipeline practice",
+            "act": 3,
+            "actName": "Act III · Dynamics, stability and engineering",
+            "group": "Act III · Dynamics, stability and engineering"
+      },
+      {
+            "num": 10,
+            "file": "pages/reference.html",
+            "slug": "pages/reference.html",
+            "title": "Rules, glossary and notation",
+            "short": "Reference",
+            "group": "Reference",
+            "unnumbered": true
+      }
+]
+  };
+  Blog.pages = cfg.pages;
+  Blog.playbookUrl = cfg.sourceUrl;
+  Blog.playbookCommit = cfg.sourceCommit;
+})(typeof window !== 'undefined' ? window : globalThis);

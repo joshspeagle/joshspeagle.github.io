@@ -1,18 +1,18 @@
 /*
  * f6-1-range.js: figure F6.1, the range window (fig-range), on page 6 #boundaries.
  *
- * Work order: notes/revamp/implementation-plan.md §6.11 (WO-F6.1), with §6.0. Entry:
- * notes/revamp/figure-plan.md F6.1 and review/synthesis.md R9. Design: notes/revamp/design-system.md
+ * Work order: design notes.md §6.11, with §6.0. Entry:
+ * design notes.md F6.1 and earlier review R9. Design: design notes.md
  * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with a draggable window and no dock.
  *
  * The model is TP.boundary (site/js/lib/boundary.js) on Toy S: study({lo, hi, n, seed, uDiv}) places
  * the trials in the learning-rate window, best3 picks the three lowest feasible trials, edgeCounts
  * counts them in the site's edge zones (the outer CAL.edge of the window at each end), and check
  * gives the infeasible count and the gap from the best trial to the first cross. This is the
- * computation of tests/calibration/fig-range.calibrate.js, so the quantities equal the ledger's rows
+ * computation of calibration checks.calibrate.js, so the quantities equal the ledger's rows
  * at the default and at the preset "the instability variant". Trial k sits at Halton point k in
  * every window, with its noise tied to k, so a move of either bound moves every trial continuously
- * (R9, DS §9 rule 6).
+ *.
  *
  * The panel: x log10 learning rate over CAL.domains.a.x, drawn as a linear axis in decades with
  * ticks named 10^k; y validation error over CAL.domains.a.y. The search range is a reader window
@@ -34,7 +34,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-range.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-range.
   var CAL = {
     "defaults": {"lo": -5, "hi": -3.3, "trials": 50, "landscape": false},
     "presets": {"whole-curve": {"landscape": true}, "instability": {"lo": -5, "hi": -2, "uDiv": -3.25}},
@@ -176,8 +176,8 @@
   /* END GENERATED table-cal */
 
   var ID = 'fig-range';
-  var SNAP = 0.05;          /* the handles' snap, in decades (WO-F6.1) */
-  var MIN_WIDTH = 0.5;      /* the narrowest window, in decades (WO-F6.1) */
+  var SNAP = 0.05;          /* the handles' snap, in decades */
+  var MIN_WIDTH = 0.5;      /* the narrowest window, in decades */
   var TRIALS = [10, 25, 50];
   var TICK = 16;
   var BRACKET_GAP = 8;      /* px from the lowest best trial's centre to the bracket, clear of its marker */            /* the edge-zone ticks' length in px */
@@ -230,7 +230,7 @@
     return { lo: values.lo, hi: values.hi, trials: values.trials, uDiv: values['u-div'], seed: values.seed };
   }
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var o = settingOf(values), S = studyOf(o);
     var rank = {};
@@ -272,7 +272,10 @@
       describe: 'validation error against learning rate',
       xDomain: dA.x.slice(), yDomain: dA.y.slice(),
       xLabel: 'learning rate', yLabel: 'validation error',
-      xTicks: function () { var out = []; for (var e = Math.ceil(dA.x[0]); e <= Math.floor(dA.x[1]); e++) out.push(e); return out; },
+      xTicks: function (dom, px) {
+        if (px < 300) return [-5, -3, -1];
+        var out = []; for (var e = Math.ceil(dA.x[0]); e <= Math.floor(dA.x[1]); e++) out.push(e); return out;
+      },
       xFormat: fmt.lr,
       /* no tick label at the frame's floor, where the lower bound's handle stands at the default */
       yTicks: function (dom, px) { return px < 160 ? [0.4, 0.6, 0.8] : [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]; },
@@ -280,7 +283,7 @@
       grid: 'y',
       aspect: function (w, phone) { return phone ? 0.84 : 0.56; },
       maxHeight: function (w, phone) { return phone ? 300 : 380; },
-      margin: function (w, phone) { return phone ? { t: 10, r: 16, b: 44, l: 46 } : { t: 12, r: 24, b: 48, l: 56 }; }
+      margin: function (w, phone) { return phone ? { t: 10, r: 20, b: 48, l: 50 } : { t: 12, r: 24, b: 48, l: 56 }; }
     });
     pa.update(drawA);
   }
@@ -313,7 +316,7 @@
     var nCross = C.cross(p, cross, xOf, function () { return undefined; }, { role: 'model', series: 'crosses', edge: 'top', key: function (r) { return r.key; } });
     p.setNote(nCross ? fmt.int(nCross) + ' of ' + fmt.int(s.rows.length) + ' diverged' : '');
 
-    /* the bracket "3 best" over the three best trials' span along x (R9, DS §5.10), named by its
+    /* the bracket "3 best" over the three best trials' span along x, named by its
        text. It stands where the placer admits its text, chosen on settle (settleLabels): just below
        the lowest of the three with its ticks turned up toward them, just above the highest with its
        ticks turned down, or on the x axis. On the axis alone, every position for the text lies
@@ -362,7 +365,7 @@
   }
 
   /* Two choices are made from scratch at every settle, so that they depend on the settled state
-     alone (DS §5.2); a held draw keeps them. The bracket takes the first stand of STANDS at which the
+     alone; a held draw keeps them. The bracket takes the first stand of STANDS at which the
      placer sets "3 best" in its full form, then the edge-zone label the first tick, lower then upper,
      at which the placer sets it in its full form (or its phone form in the phone layout). Where no
      choice succeeds, the first at which the label is drawn at all is kept. */

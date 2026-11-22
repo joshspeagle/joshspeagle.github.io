@@ -1,74 +1,10 @@
-/*
- * f9-2-warmup.js: figure F9.2, warmup under the toy's limit (#fig-warmup), on page 9 #warmup.
- *
- * Work order: notes/revamp/implementation-plan.md §6.20 (WO-F9.2), with §6.0. Entry:
- * notes/revamp/figure-plan.md F9.2, with review/synthesis.md R1, R12, R13 and R14. Design:
- * notes/revamp/design-system.md §3.4, §3.5, §4 to §9. A running figure on TP.fig and TP.run.
- *
- * The model is Toy D (site/js/lib/toyD.js) on workload B (tauC 0.7, the default) with early
- * instability on, as tests/calibration/fig-warmup.calibrate.js runs it. The unstable base rate is
- * CAL.unstableLr (0.0316 = 10^-1.5). Every rate is the printed rate, CAL.lrScale (TP.toyD.LR_SCALE,
- * one half) times the model rate (toyD.js, "Learning-rate scale"). The trace's h_s is in the model's
- * units, so the limit on the printed axis is TP.toyD.limitRate(h_s) = 2 LR_SCALE / h_s, which is
- * 2/h_s with h_s in the printed rate's units, and eta h_s is the printed rate over LR_SCALE times
- * the trace's h_s (etaH below). A ramp of W steps is {type: 'warmup', base, warmupSteps: W,
- * postWarmupSteps: 2W}; "hold, then jump" is {type: 'constant-warmup', low: CAL.holdRate, base,
- * warmupSteps: W, postWarmupSteps: 2W}; base is 10 or 3 times the unstable rate. Each run lasts
- * max(3W, 2,000) steps.
- *   - compute(params, seed, from, to) slices TP.toyD.trace of the whole run, evaluated every step
- *     and cached per parameters (six runs kept), with keyframes every 64 steps. advance steps
- *     TP.toyD.stepState, and runtime check 23 compares the two.
- *   - A diverged state is not stepped again (stepState's rule), so after the divergence step the
- *     record repeats the divergence step's sharpness and loss, and `until` holds.
- *   - The state is initState()'s {t, m, hs, L, L0, diverged}, with `key` (the run's parameters,
- *     which record reads to give the learning rate of step t) and `n` (the runtime's step, which
- *     keeps counting after a divergence, when stepState no longer advances t).
- *   - The readout, the quantities and the strip read the whole run's outcome from
- *     CAL.tables.strip, whatever the cursor (WO-F9.2).
- *
- * The runtime: pace 'log', duration 6,000 ms, steps and limit max(3W, 2,000), every
- * ceil(steps / 50,000), recordPanel 'a', reset 'show'. end, base and kind are restart
- * parameters with ghost: true. kind has no control and only the presets set it.
- *
- * Panels:
- *   (a) learning rate against step, log-log on the fixed domain CAL.domains.a: the schedule as the
- *       reader's 3-px line with the handle at the ramp's end, the ramp's end named on the step axis
- *       in the reader token, the current run's stability limit 2/h_s(t) up to the cursor as the
- *       model's dash-dot level, the previous run's limit dashed as the ghost, the cursor, and the
- *       annotations "first above the limit" and "diverged" on the step axis once the cursor has
- *       passed their steps. It is the record panel.
- *   (b) warmup lengths tried: one row per schedule and base rate (CAL.domains.b.rows), with the
- *       x axis of (a), so that each length stands under its step on (a) (the list itself is
- *       CAL.domains.b.x). Each committed attempt is a filled circle (the loss never rose above its
- *       start), an open circle (it rose and recovered) or a cross (it diverged), in model blue;
- *       the current cell takes the reader's 20-px ring; the cap at 10% of max_train_steps is a
- *       dashed limit named on the axis. The row names stand left of the list, in the decade the
- *       list leaves empty. A press on a mark sets the figure to that attempt.
- *
- * The strip is figure state outside params (snapshot, restore and clear of the contract). Each
- * settle commits the current cell's mark, looked up in CAL.tables.strip, and replaces an earlier
- * mark of that cell; a frame of a drag or of play commits nothing. The readout and the data table,
- * which TP.fig builds on the settle before its listeners run, read the strip with the current
- * cell's mark included, which is the strip the settle leaves.
- *
- * Presets: "ramp" sets the schedule alone; "hold, then jump" sets the calibration's whole state
- * hold (a 1,000-step hold, then a jump to 10 times the unstable rate), and "100 steps" and "300
- * steps" the whole states w100 and w300 (a ramp of that length to 10 times the unstable rate), so
- * that each of the three reproduces the paragraph after the figure that names it from any state
- * (build log Batch 7). `docked` names "ramp" and "hold, then
- * jump" one by one ('preset:ramp', 'preset:hold'), so site.js puts the other two in
- * div.fig-controls-more before Reset.
- *
- * Test hook: TP.models.warmupFigure.slowMs (0 by default). The figure's check sets it through the
- * harness's `slow` option, and compute then waits that many milliseconds per step it returns, so
- * that a restart runs in chunks for runtime check 19. Neither the figure nor its page sets it.
- */
+/* Precomputed calibration constants for figure. */
 (function (global) {
   'use strict';
   var TP = global.TP = global.TP || {};
 
 /* BEGIN GENERATED table-cal */
-// From tests/calibration/out/fig-warmup.json by npm run generate (tests/lib/write-generated.js).
+// Precomputed calibration constants for fig-warmup.
 var CAL = {
   "defaults": {"end": 1000, "base": "10x", "kind": "ramp"},
   "presets": {"ramp": {"kind": "ramp"}, "hold": {"kind": "hold"}},
@@ -476,7 +412,7 @@ var CAL = {
   var D = TP.toyD;
   var LIST = CAL.ends;                              // the half-decade list of ramp ends
   var ROWS = CAL.domains.b.rows;                    // ramp-10x, ramp-3x, hold-10x, hold-3x
-  /* 2026-11 review (post08): the page follows the Playbook's default target, 10 times the
+  /* 2026-11 review: the page follows the Playbook's default target, 10 times the
      unstable base rate, so the strip shows the two 10x rows and the base rate has no control. */
   var SHOWN = ['ramp-10x', 'hold-10x'];
   var U = CAL.unstableLr, LOW = CAL.holdRate;
@@ -523,7 +459,7 @@ var CAL = {
     etaCache[k] = f;
     return f;
   }
-  /** The calibration's outcome of a cell: {W, mark, firstAbove, stepsAbove, peakEtaH, divergedAt, ...}. */
+  /** The calibration's outcome of a cell: {W, mark, firstAbove, stepsAbove, peakEtaH, divergedAt,...}. */
   function cellOf(v) {
     var row = CAL.tables.strip[rowKey(v)], i = LIST.indexOf(v.end);
     return row && i >= 0 ? row[i] : null;
@@ -612,7 +548,7 @@ var CAL = {
     var c = cellOf(p);
     return c && c.divergedAt != null ? c.divergedAt : runLength(p.end);
   }
-  /** The runtime's compute (DS §7.2): rows, keyframes and the state for steps from + 1 to to. */
+  /** The runtime's compute: rows, keyframes and the state for steps from + 1 to to. */
   function compute(p, seed, from, to) {
     var c = traceOf(p, to), rows = [], kf = {}, u = c.tr.divergedAt != null ? c.tr.divergedAt : runLength(p.end);
     for (var t = from + 1; t <= to; t++) rows.push(rowOf(c, t));
@@ -651,13 +587,13 @@ var CAL = {
     return v.kind === 'hold' ? 'A ' + W + '-step hold then jump to ' + B : 'A ' + W + '-step ramp to ' + B;
   }
   /** Does any length of v's row pass, by the calibration's table (CAL.tables.strip), whatever
-      marks the reader has tried (build log Batch 5, rulings on the reads, page 9). */
+      marks the reader has tried. */
   function rowPasses(v) {
     var row = CAL.tables.strip[rowKey(v)] || [];
     return row.some(function (cell) { return passes(cell.mark); });
   }
   /**
-   * The readout (FP F9.2, WO-F9.2) of the whole run of v, whatever the cursor. A diverging run on a
+   * The readout of the whole run of v, whatever the cursor. A diverging run on a
    * row where no length of the list passes, by CAL.tables.strip, reports that no length on its row
    * passes; the marks the reader has tried do not decide it. With the cursor t before the run's
    * last step (the divergence step, or the run's length), the sentence opens "At step t, ", so that
@@ -677,7 +613,7 @@ var CAL = {
     var end = c.divergedAt != null ? ' and diverges at step ' + fmt.int(c.divergedAt) + '.' : ' and reaches the base rate.';
     return head + above + peak + end;
   }
-  /** The named quantities (plan WO-I5.1): the whole run's outcome and the model's constants. */
+  /** The named quantities: the whole run's outcome and the model's constants. */
   function quantitiesOf(v, strip) {
     var c = cellOf(v) || {}, q = {};
     q.end = v.end; q.base = v.base; q.kind = v.kind;
@@ -730,7 +666,7 @@ var CAL = {
   function panelAOpts() {
     return {
       letter: '(a)', describe: 'learning rate against step',
-      /* 2026-11 review (post08): the rate axis starts at 10^-4, where the default ramp starts, so
+      /* 2026-11 review: the rate axis starts at 10^-4, where the default ramp starts, so
          the stability limit and the ramp's top fill the panel; the longest ramps enter from below */
       xLog: 10, yLog: 10, xDomain: XA, yDomain: [1e-4, 1],
       xLabel: 'step', yLabel: 'learning rate',
@@ -744,7 +680,7 @@ var CAL = {
   }
   function panelBOpts() {
     return {
-      letter: '(b)', describe: 'warmup lengths tried', note: 'warmup_steps tried',
+      letter: '(b)', describe: 'warmup lengths tried', note: 'Warmup steps tried',
       xLog: 10, xDomain: XA, yDomain: [SHOWN.length - 0.5, -0.5],
       xLabel: '', yLabel: '',
       xTicks: function (d, px) { return px < 500 ? [10, 100, 1000, 10000] : LIST.slice(); },
@@ -781,7 +717,7 @@ var CAL = {
     }
     return rows[lo];
   }
-  /** The limit 2/h_s from step 1 to step tEnd, sampled from the record: [[t, limit], ...]. */
+  /** The limit 2/h_s from step 1 to step tEnd, sampled from the record: [[t, limit],...]. */
   function limitPoints(rows, tEnd, width) {
     var out = [], S = sampleSteps(width), last = -1;
     for (var j = 0; j < S.length && S[j] <= tEnd; j++) {
@@ -822,7 +758,7 @@ var CAL = {
     function drawA(p, state, ctx) {
       var v = currentValues(ctx), t = ctx.t || 0, rows = ctx.rows, W = v.end, items = [];
       var c = cellOf(v), dA = c ? c.divergedAt : null;
-      /* the previous run's limit, dashed (DS §4.8) */
+      /* the previous run's limit, dashed */
       if (ctx.ghostRows && ctx.ghostRows.length > 1) {
         var gEnd = ctx.ghostRows[ctx.ghostRows.length - 1].t, g = ctx.ghostRows, gd = null;
         for (var i = 0; i < g.length; i++) if (!(g[i].loss <= 100)) { gd = g[i].t; break; }
@@ -833,7 +769,7 @@ var CAL = {
          runs part, the current limit lies on the ghost's, so it is drawn in the ghost layer, above
          the ghost, over a --surface casing 4 px wider: where the two coincide the dash-dot reads
          alone, and the dashed ghost shows only where the previous run's limit departs from it or
-         outlasts it (page 9's reader finding 14, DS §4.8). The reader's schedule stays above both. */
+         outlasts it. The reader's schedule stays above both. */
       var tEnd = Math.min(t, dA != null ? dA : Infinity);
       var lp = tEnd >= 1 ? limitPoints(rows, tEnd, p.width) : [];
       if (lp.length >= 2) {
@@ -857,7 +793,7 @@ var CAL = {
         items.push({ id: 'limit', text: 'stability limit (2 / sharpness)', role: 'model', series: 'limit',
           feature: feat, phone: { text: 'limit' }, captionNames: true, keySentence: true });
       }
-      /* the schedule, the reader's shape (DS §4.10) */
+      /* the schedule, the reader's shape */
       C().line(p, schedulePoints(v), X0, X1, { role: 'reader', series: 'schedule', key: 'schedule' });
       /* the events on the step axis, each once the cursor has passed it */
       if (c && c.firstAbove != null && t >= c.firstAbove) {
@@ -874,10 +810,10 @@ var CAL = {
       }
       /* the ramp's end named on the step axis, and the cursor with its step unless the two names
          would overlap (the counter in the header gives the step) */
-      var endName = fmt.int(W);
+      var endName = stepTick(W);
       C().level(p, 'x', W, { role: 'reader', text: endName, series: 'end' });
       if (t >= 1) {
-        var tName = fmt.int(t), apart = true;
+        var tName = stepTick(t), apart = true;
         if (C().measureText) {
           var w1 = C().measureText([endName], 'tick', p).w, w2 = C().measureText([tName], 'tick', p).w;
           apart = Math.abs(p.x(t) - p.x(W)) >= (w1 + w2) / 2 + 6;
@@ -898,8 +834,8 @@ var CAL = {
     var bPoints = [];
     function drawB(p, v, shownStrip, ctx) {
       var phone = p.phone;
-      /* the cap at 10% of max_train_steps, a dashed limit named on the axis (DS §4.7) */
-      C().level(p, 'x', CAP, { role: 'ref', text: phone ? '10% cap' : '10% of max_train_steps', line: true, series: 'cap' });
+      /* the cap at 10% of the step budget, a dashed limit named on the axis */
+      C().level(p, 'x', CAP, { role: 'ref', text: phone ? '10% cap' : '10% of step budget', line: true, series: 'cap' });
       /* the row names, left of the list, in the decade it leaves empty */
       var names = p.layers.names || p.layers.labels;
       SHOWN.forEach(function (rk, i) {
@@ -938,7 +874,7 @@ var CAL = {
       lastB = null;
     }
 
-    /* ---- the strip: commit on each settle (DS §7.6) ---- */
+    /* ---- the strip: commit on each settle ---- */
     function commit() {
       if (suppress || !run) return;
       var v = run.params ? run.params() : fig.values(), c = cellOf(v);
@@ -949,18 +885,13 @@ var CAL = {
       strip[rk][v.end] = c.mark;
       redrawB({ values: v });
     }
-    function clearStrip() {
-      strip = {};
-      suppress = true;
-      try { redrawB(); if (fig) fig.redraw({ settle: true }); } finally { suppress = false; }
-    }
 
     fig = TP.fig(element, {
       kind: 'running',
       params: {
         end: {
           type: 'number', default: CAL.defaults.end, domain: [LIST[0], LIST[LIST.length - 1]], snap: LIST.slice(), scale: 'log',
-          change: 'restart', ghost: true, showEnd: true, control: 'handle', handle: 'a', label: 'End of the warmup ramp, warmup_steps',
+          change: 'restart', ghost: true, showEnd: true, control: 'handle', handle: 'a', label: 'End of the warmup ramp',
           format: function (x) { return fmt.int(x) + ' steps'; }
         },
         base: {
@@ -974,7 +905,7 @@ var CAL = {
         }
       },
       /* "100 steps", "300 steps" and "hold, then jump" set the calibration's whole states w100, w300
-         and hold, which the paragraphs after the figure describe (PW §2.3) */
+         and hold, which the paragraphs after the figure describe */
       presets: {
         'ramp': { key: 'ramp', kind: CAL.presets.ramp.kind },
         'hold, then jump': Object.assign({ key: 'hold' }, CAL.states.hold)
@@ -985,7 +916,7 @@ var CAL = {
       states: CAL.states,
       /* the two presets the task line names sit in the dock with the run strip, and "100 steps" and
          "300 steps" stand in div.fig-controls-more before Reset, so that the phone dock stays within
-         two rows of 44-px targets (DS §3.5 item 4) */
+         two rows of 44-px targets */
       docked: ['preset:ramp', 'preset:hold', 'reset'],
       snapshot: function () { return JSON.parse(JSON.stringify(strip)); },
       restore: function (s) { strip = s ? JSON.parse(JSON.stringify(s)) : {}; redrawB(); },

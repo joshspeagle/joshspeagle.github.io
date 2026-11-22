@@ -105,36 +105,11 @@
     b.appendChild(sb);
   }
 
-  /* ---------------- 2. a second Playbook image ---------------- */
-
-  function addSecondImages() {
-    var root = (document.body && document.body.getAttribute('data-root')) || '';
-    Array.prototype.forEach.call(document.querySelectorAll('figure[data-playbook-img2]'), function (f) {
-      var pane = f.querySelector('.fig-pb');
-      if (!pane || pane.querySelector('img.fig-pb-img2')) return;
-      var first = pane.querySelector('img');
-      var img = document.createElement('img');
-      img.className = 'fig-pb-img2';
-      img.src = root + f.getAttribute('data-playbook-img2');
-      img.alt = f.getAttribute('data-playbook-alt2') || 'Second panel of the Playbook figure';
-      img.loading = 'lazy';
-      var pair = document.createElement('div');
-      pair.className = 'fig-pb-pair';
-      if (first) {
-        if (f.getAttribute('data-playbook-alt1')) first.alt = f.getAttribute('data-playbook-alt1');
-        first.parentNode.insertBefore(pair, first);
-        pair.appendChild(first);
-      } else pane.insertBefore(pair, pane.firstChild);
-      pair.appendChild(img);
-    });
-  }
-
   function init() {
     var f = document.getElementById('fig-iso-steps');
     if (f) drawIsoSteps(f);
-    addSecondImages();
   }
-  document.addEventListener('tp:ready', function () { init(); setTimeout(addSecondImages, 0); });
+  document.addEventListener('tp:ready', function () { init(); });
   if (document.readyState !== 'loading') setTimeout(init, 0);
   else document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 0); });
 })();

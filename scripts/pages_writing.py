@@ -41,14 +41,19 @@ def _render_series(series):
 
     summary = "".join(f"<p>{clean_text(p)}</p>" for p in series.get("summary", []))
 
-    links = [f'<a class="btn" href="{start}">Start with Part 1</a>',
-             f'<a class="btn-ghost" href="{landing}">Introduction &amp; overview</a>']
+    cta_label = series.get("ctaLabel") or "Start with Part 1"
+    overview_label = series.get("overviewLabel") or "Introduction & overview"
+    ref_label = series.get("referenceLabel") or "Rules, glossary & references"
+    source_label = series.get("sourceLabel") or "The original Playbook on GitHub ↗"
+
+    links = [f'<a class="btn" href="{start}">{esc_text(cta_label)}</a>',
+             f'<a class="btn-ghost" href="{landing}">{esc_text(overview_label)}</a>']
     minor = []
     if series.get("referenceUrl"):
-        minor.append(f'<a href="{url_attr(series["referenceUrl"])}">Rules, glossary &amp; references</a>')
+        minor.append(f'<a href="{url_attr(series["referenceUrl"])}">{esc_text(ref_label)}</a>')
     if series.get("sourceUrl"):
         minor.append(f'<a href="{url_attr(series["sourceUrl"])}" target="_blank" '
-                     f'rel="noopener noreferrer">The original Playbook on GitHub ↗</a>')
+                     f'rel="noopener noreferrer">{esc_text(source_label)}</a>')
     minor_html = f'<p class="wr-series-minor">{" · ".join(minor)}</p>' if minor else ""
 
     act_blocks = []

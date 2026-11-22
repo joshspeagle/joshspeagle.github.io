@@ -1,10 +1,10 @@
 /*
  * prng.js: seeded random numbers for every simulated figure (TP.prng).
  *
- * Implements the PRNG convention of notes/specs/pages-4-6.md ("Shared conventions")
- * and notes/phase3-design.md section 1: mulberry32 seeded with a 32-bit integer, and
+ * Implements the PRNG convention of series series conventions ("Shared conventions")
+ * and series series conventions section 1: mulberry32 seeded with a 32-bit integer, and
  * Gaussian draws by Box-Muller from two consecutive uniforms. studentT follows the
- * clipping-threshold spec in notes/specs/pages-7-9.md (a normal divided by
+ * clipping-threshold spec in series series conventions (a normal divided by
  * sqrt(chi-square_df / df), with the chi-square built from df squared normals).
  *
  * Usage: var g = TP.prng.create(1); g.uniform(); g.normal(); g.fork('noise');
@@ -12,7 +12,7 @@
  */
 (function (global) {
   'use strict';
-  var TP = global.TP = global.TP || {};
+  var TP = global.Blog = global.TP = global.Blog || global.TP || {};
 
   // MurmurHash3's 32-bit finalizer. A bijection on 32-bit integers with good avalanche:
   // flipping one input bit flips about half of the output bits.

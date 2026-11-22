@@ -1,10 +1,10 @@
-/* fig-coverage.css: the layout of F5.1, coverage as points arrive (implementation-plan.md WO-F5.1).
+/* fig-coverage.css: the layout of F5.1, coverage as points arrive.
    The panels are a grid. Its first column holds (a)'s y axis, and (a) spans it and the first
    strategy column, so that the three frames (a), (b) and (c) have one width; the script reads
    --cov-yaxis and --cov-gap to set (a)'s left margin. From 640 px each strategy's learning-rate
    strip sits under its frame and (d) spans the row under them. Below 640 px the frames stay one row
    of small multiples, the three learning-rate strips become full-width rows and (d) follows
-   (design-system.md §3.5 item 8). The DOM order is (a), its strip, (b), its strip, (c), its strip,
+. The DOM order is (a), its strip, (b), its strip, (c), its strip,
    (d). */
 #fig-coverage .fig-panels {
   --cov-yaxis: 46px;
@@ -60,7 +60,7 @@
     flex-wrap: wrap; white-space: normal; align-content: flex-start; min-height: calc(2.8em + 4px);
   }
 }
-/* Print (design-system.md §6.7): html.tp-print is laid out as a 680-px viewport, the paper's
+/* Print: html.tp-print is laid out as a 680-px viewport, the paper's
    column, so the headers wrap as below 800 px. */
 #fig-coverage:is(html.tp-print *) .panel[data-panel="a"] .panel-head,
 #fig-coverage:is(html.tp-print *) .panel[data-panel="b"] .panel-head,

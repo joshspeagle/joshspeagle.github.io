@@ -1,4 +1,4 @@
-/* fig-best-of-k.css: the layout of F5.2, the best of K trials (implementation-plan.md WO-F5.2).
+/* fig-best-of-k.css: the layout of F5.2, the best of K trials.
    From 640 px, panels (a) and (b) sit side by side at equal widths. In the phone layout (a) is the
    first row and (b) the second (site.css stacks the panels), and the docked toggles set their
    label inline, on the row of their four buttons, so that the dock holds the toggles and the run

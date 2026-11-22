@@ -1,56 +1,10 @@
-/*
- * f9-1-signature.js: figure F9.1, the signature (fig-signature), on page 9 #diagnosis, and its recap
- * TP.recaps['F9.1:sweep'] (plan §6.24, R8 on page 10 #round), whose header carries no count.
- *
- * Work order: notes/revamp/implementation-plan.md §6.19 (WO-F9.1), with §6.0. Entry:
- * notes/revamp/figure-plan.md F9.1 and review/synthesis.md R5. Design: notes/revamp/design-system.md
- * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with one handle, a pin and three presets.
- *
- * The model is Toy D (site/js/lib/toyD.js) with early instability on, each constant rate run for
- * CAL.steps steps. Every rate is the printed rate, TP.toyD.LR_SCALE (one half) times the model rate
- * (toyD.js, "Learning-rate scale"): the 13 grid rates run from 0.0005 to 0.5. CAL.tables.sweep holds each rate's best loss over training (minLoss), its
- * divergence step and its early peak, from tests/calibration/fig-signature.calibrate.js. The
- * selected rate's curve comes from TP.toyD.trace({schedule: rate, every: 1}), cached per rate; the
- * default rate's curve comes from CAL.tables.default, so the first render computes no run. The
- * curve's expected loss over its starting loss is kept at the calibration's display steps (every
- * step to 200, every 10 steps to 2,000, then every 100 steps, and the last step), which are finer
- * than a pixel on the log step axis and hold every multiple of 100. The drawn values carry the
- * observation noise: the value at step t is multiplied by exp(sigma z_t), where z_t is the t-th
- * draw of TP.prng.create(CAL.noise.seed).normal(), the same sequence for every rate, so the two
- * evaluation schedules show the same value at the steps they share. The readout, the quantities
- * and the table read the expected loss beneath the noise.
- *
- * Panels.
- *   (a) best loss over training against learning rate, log-log over CAL.domains.a: each feasible
- *       grid trial a filled model-blue marker, each diverged one a cross on the top edge, "k of 13
- *       diverged" in the header (DS §4.5), the best trial ringed, the bracket "unstable base
- *       learning rate" (phone header form "unstable rate (bracket)") over the best rate and the next grid rate on the x
- *       axis, and the selected rate as a reader line named on the axis with its handle. The panel
- *       reads the trials by pointing (C.pointHover), and a press on a trial selects its rate.
- *   (b) loss relative to its starting value against step, log-log: the every-step curve in model
- *       blue labelled "every step", the evaluations every 100 steps as model-blue markers (thinned
- *       to 24 px) joined by a 2-px trail-tone line labelled "every 100 steps" (in the phone layout
- *       its header form, beside the note "lr" and the rate), the pinned curve dashed and labelled by its rate, the callout
- *       "spike" at the peak of an early spike that recovers (phone header form "spike at step N"), and a cross on the top edge at the divergence step of a run
- *       that diverges. Step 0 stands at the left edge, beyond an axis break (exception 1).
- *
- * The parameter: rate (the 15 rates of CAL.rates, log, cut, no ghost), a handle on (a)'s x axis.
- * The pin is TP.fig's (contract pin: true), docked. The presets "2 times the best rate" (2x),
- * "5 times the best rate" (5x) and "10 times the best rate" (10x) and Reset sit in more.
- *
- * Work-order exceptions:
- *   1. (b)'s x domain is CAL.domains.b.x, [0.5, 20,000], with step 0 drawn at 0.5 beyond an axis
- *      break between 0.5 and step 1, and its tick named "0". Every schedule evaluates at step 0, and without that
- *      evaluation the line joining the evaluations every 100 steps lies on the every-step curve
- *      from step 100 on, where no label can name it apart from the curve (DS §5.2). The calibration
- *      writes the domain.
- */
+/* Precomputed calibration constants for figure. */
 (function () {
   'use strict';
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-signature.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-signature.
   var CAL = {
     "defaults": {"rate": 0.028117066259517452},
     "presets": {
@@ -269,7 +223,7 @@
   function keepStep(t, last) { return t <= 200 || (t <= 2000 && t % 10 === 0) || t % 100 === 0 || t === last; }
 
   var zCache = null;
-  /** z_t, t = 0 .. STEPS: the observation noise's draws, the same for every rate. */
+  /** z_t, t = 0.. STEPS: the observation noise's draws, the same for every rate. */
   function noise() {
     if (!zCache) {
       var g = TP.prng.create(CAL.noise.seed), z = new Float64Array(STEPS + 1);
@@ -349,7 +303,7 @@
     return finish(c);
   }
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var c = curveOf(values.rate), z = noise();
     var rows = c.t.map(function (t, i) { return { key: 's' + t, t: t, y: c.rel[i] * Math.exp(SIGMA * z[t]), rel: c.rel[i] }; });
@@ -405,8 +359,8 @@
       c.annotation(p, {
         kind: 'bracket', id: 'unstable', captionNames: true, keySentence: true,
         /* in the phone layout the ring stands within 1.5 times the name's distance of the bracket,
-           so the name goes to the panel header when no position in the frame admits it (DS §5.6),
-           where "(bracket)" ties it to its mark (page 9's reader finding 10) */
+           so the name goes to the panel header when no position in the frame admits it,
+           where "(bracket)" ties it to its mark */
         text: p.phone ? 'unstable rate (bracket)' : ['unstable base', 'learning rate'],
         phone: p.phone ? { header: true } : { text: 'unstable rate' },
         /* the bracket stands just above the axis with its ticks turned down to the axis, so that
@@ -418,15 +372,10 @@
     /* p.setNote clears the panel's measured origin (chart.js), and a render that then measures
        it during a capture's scroll placed the handle 24 px high, so the note is set only when its
        text differs (the panels take it at creation) */
-    /* the recap's header carries no count (PW §10 item 17) */
-    if (!(opts && opts.recap)) setNoteOnce(p, DIVERGED + ' of ' + GRID.length + ' diverged');
+    /* the recap's header carries no count */
+    p.setNote(DIVERGED + ' of ' + GRID.length + ' diverged');
     if (opts && opts.reader) opts.reader(p);
     c.place(p, [], opts && opts.ctx);
-  }
-
-  function setNoteOnce(p, text) {
-    var n = p.head && p.head.querySelector('.panel-note');
-    if (!n || n.textContent !== text) p.setNote(text);
   }
 
   var fig = null, pa = null, pb = null, cur = null, curCtx = { hold: false };
@@ -511,7 +460,7 @@
     c.axisBreak(p, Math.sqrt(X0 * 1));                        /* between step 0 (at X0) and step 1 */
     if (!s) return;
     var items = [];
-    /* the pin: the curve at the pinned rate, dashed and named by its rate (DS §4.8) */
+    /* the pin: the curve at the pinned rate, dashed and named by its rate */
     var pin = ctx.pin && ctx.pin.state;
     if (pin && pin.rows) {
       var pr = clipTop(pin.rows);
@@ -527,8 +476,7 @@
     if (s.evals.length >= 2) {
       c.line(p, s.evals, xRow, yRow, { role: 'model', series: 'every-100', dash: 'trail', key: 'every-100' });
       /* in the phone layout the two series share their stretch after step 100 and no position
-         admits either form in the frame, so the name goes to (b)'s header in the series' tone
-         (page 9's reader finding 10) */
+         admits either form in the frame, so the name goes to (b)'s header in the series' tone */
       items.push({ id: 'every-100', text: 'every 100 steps', phone: p.phone ? { header: true } : { text: 'every 100' },
         role: 'model', series: 'every-100', feature: { type: 'line', of: 'every-100' }, captionNames: true, keySentence: true });
     }
@@ -546,14 +494,14 @@
     } else if (cv.peak > 1 && cv.spikeEnd != null) {
       /* In the phone layout the peak stands within a label's height of the top edge and of the
          rising and falling curve, and no position within 3 h admits the callout, so its header
-         form names the spike's step (DS §5.6, page 9's reader finding 10). */
+         form names the spike's step. */
       var pk = s.rows.filter(function (r) { return r.t === cv.peakStep; })[0];
       if (pk) c.annotation(p, { kind: 'callout', id: 'spike', text: p.phone ? 'spike at step ' + fmt.int(cv.peakStep) : 'spike',
         phone: p.phone ? { header: true } : null, anchor: { x: xStep(pk.t), y: pk.y, r: 4, series: 'every-step' } });
     }
     /* the phone header holds the note and two header forms on one line, so the note takes the
        pin labels' "lr" there */
-    setNoteOnce(p, (p.phone ? 'lr ' : 'learning rate ') + fmt.lr(s.rate));
+    p.setNote((p.phone ? 'lr ' : 'learning rate ') + fmt.lr(s.rate));
     c.place(p, items, ctx);
   }
 
@@ -567,7 +515,7 @@
   }
 
   /* The run at a rate the figure has not drawn takes tens of milliseconds of Toy D at the rates
-     below 0.05, so a drag frame that reached such a rate went over the 10-ms budget of DS §1. After
+     below 0.05, so a drag frame that reached such a rate went over the 10-ms budget of series style After
      the first settled draw, the runs at the other rates of the handle are computed in idle time,
      nearest rate first, one per idle period of at least 40 ms. The browser grants a period that
      long only while it renders no frames, so no run, transition or drag is delayed. curveOf
@@ -661,7 +609,7 @@
           encode: function (v) { return fmt.lr(v); }
         }
       },
-      /* 2026-11 review (post08): no pin. The three presets already compare the best rate with the
+      /* 2026-11 review: no pin. The three presets already compare the best rate with the
          rates above it, and the pin added a dock row for a comparison the tour makes. */
       presets: {
         '2 times the best rate': { key: '2x', rate: CAL.presets['2x'].rate },
@@ -678,22 +626,6 @@
   }
 
   /* ============================== the recap (§6.24, R8) ============================== */
-
-  TP.recaps = TP.recaps || {};
-  /** Panel (a) at the default: the crosses, the ring and the bracket, with no reader line. */
-  TP.recaps['F9.1:sweep'] = function (el) {
-    var p = C().panel(el, optsA({
-      letter: '', describe: 'best loss over training against learning rate, the sweep', note: '',
-      aspect: function (w, phone) { return phone ? 0.5 : 0.36; },
-      /* the recap's body holds the header's note as well, within 240 px, or 180 in the phone layout */
-      maxHeight: function (w, phone) { return phone ? 156 : 216; },
-      /* the phone's bottom margin keeps the axis title clear of the tick labels */
-      margin: function (w, phone) { return phone ? { t: 8, r: 14, b: 42, l: 50 } : { t: 10, r: 18, b: 42, l: 60 }; },
-      yTicks: [0.01, 0.1]
-    }));
-    p.update(function (q) { drawSweep(q, { recap: true }); });
-    return p;
-  };
 
   document.addEventListener('tp:ready', function () {
     var el = document.getElementById(ID);

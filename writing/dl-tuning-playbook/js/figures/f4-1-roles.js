@@ -9,7 +9,7 @@
  *   - each hyperparameter that exists under the goal is one row, with its three role buttons;
  *   - pressing a row's name or a role opens a short explanation under the row: a plain sentence
  *     (written for this page), the Playbook's reason (a verbatim quotation from TP.roles, checked
- *     against the README by tests/lib/roles.test.js) and, where the reader pressed or picked another
+ * against the README by calibration checks.test.js) and, where the reader pressed or picked another
  *     role, the Playbook-based reason against it.
  * In "Test yourself" the roles are hidden until the reader picks one, and each pick is marked at once
  * as matching, also acceptable, or different. Picks are kept per goal in the figure's own state
@@ -22,7 +22,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-roles.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-roles.
   var CAL = {
     "defaults": {},
     "presets": {},

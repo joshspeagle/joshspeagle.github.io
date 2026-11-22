@@ -1,48 +1,10 @@
-/*
- * f8-2-budget-line.js: figure F8.2, the step-budget line (fig-budget-line), on page 8 #refine, and
- * its recap TP.recaps['F8.2:strip'] (R7, page 10 #round).
- *
- * Work order: notes/revamp/implementation-plan.md §6.17 (WO-F8.2), with §6.0 and §6.24. Entry:
- * notes/revamp/figure-plan.md F8.2, and review/synthesis.md R11 and R40. Design:
- * notes/revamp/design-system.md §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with a
- * budget handle, a pin and a recap.
- *
- * The model is TP.budget (site/js/lib/budget.js): twelve trials of the curve family of
- * site/js/lib/curves.js, evaluated every INTERVAL steps to AXIS_END. TP.budget.bestAt(trials, B) is
- * each trial's lowest evaluation at or before the budget B (retrospective checkpoint selection), and
- * TP.budget.counts(trials, B) counts the best steps in the first tenth (fraction <= 0.1) and the last
- * quarter (fraction > 0.75). The curves do not depend on the budget, which holds for a constant
- * learning rate, so moving the budget truncates the same evaluations. This is the computation of
- * tests/calibration/fig-budget-line.calibrate.js, so the quantities equal the ledger's rows.
- *
- * The panels, (a) above (b) at every width, with the same left and right margins.
- *   (a) validation error against step: x log over CAL.domains.a.x, y over CAL.domains.a.y. The twelve
- *       curves are an ensemble (DS §4.6: model blue at 0.3 opacity and 1.5 px), each keyed by its
- *       trial. Each trial's best evaluation at or before the budget is a filled marker. The budget is a
- *       reader line with its handle (and a press band along the line) and its value named on the x
- *       axis. Two highlight windows, the first tenth and the last quarter of the run, move with the
- *       line; (b) names them. The provisional budget is a tick named "provisional budget" at every
- *       state. A pin is a dashed reader line named by its budget.
- *   (b) best step as a fraction of the budget: x from 0 to 1. The twelve best steps are filled
- *       model-blue dots in one row, keyed by trial and linked to their curves (C.link). Dots less than
- *       one marker apart stack upward in their row. The windows "first tenth" (0 to 0.1) and "last
- *       quarter" (0.75 to 1) carry their names at the top; at phone width "first tenth, 0 to 0.1" is
- *       (b)'s header form, and the axis shows 0.1 in place of 0. While a pin stands, a second row above the
- *       first holds the best steps at the pinned budget, named "pinned at B steps" on the y axis.
- *
- * The parameters: budget (TP.budget.budgets(), a log handle on (a), transition, no ghost) and the
- * seed ("Draw again", a cut). The November 2026 review (post07) removed the pin to keep the controls
- * to the handle, the presets and "Draw again"; the pinned-row code stays and is inert without it. The presets "provisional budget", "all in the first tenth" and "all in the last quarter" are
- * functions of the seed: at CAL.seed they return CAL.presets, and at another seed the thresholds of
- * that seed's study (TP.budget.thresholds). "Draw again", the presets and Reset sit in more.
- */
+/* Precomputed calibration constants for figure. */
 (function () {
   'use strict';
   var TP = window.TP = window.TP || {};
-  TP.recaps = TP.recaps || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-budget-line.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-budget-line.
   var CAL = {
     "defaults": {"budget": 20000, "seed": 52},
     "presets": {
@@ -205,7 +167,7 @@
     }).filter(Boolean);
   }
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var trials = trialsOf(values.seed), B = values.budget, c = M().counts(trials, B);
     return {
@@ -213,22 +175,6 @@
       rows: bestRows(trials, B),
       first: String(c.firstTenth), last: String(c.lastQuarter), n: String(c.n)
     };
-  }
-
-  /* The presets. At CAL.seed each returns CAL's budget. At another seed the thresholds come from that
-     seed's study, and where no listed budget puts all twelve in a window, the preset takes the end of
-     the handle's range on that side, where the readout states the counts. */
-  /* Unused since the post07 review moved the presets to states; kept for a seed-aware preset later. */
-  function thresholdPreset(which) {
-    var f = function (seed) {
-      if (seed === CAL.seed) return { budget: CAL.presets[which].budget };
-      var th = M().thresholds(trialsOf(seed)), list = M().budgets();
-      var v = which === 'all-first-tenth' ? th.allFirstTenth : th.allLastQuarter;
-      if (v == null) v = which === 'all-first-tenth' ? list[list.length - 1] : list[0];
-      return { budget: v };
-    };
-    f.key = which;
-    return f;
   }
 
   /* ============================== the drawing ============================== */
@@ -325,7 +271,7 @@
     /* the first tenth and the last quarter of the run, highlight windows that move with the line */
     C.window(p, CAL.domains.a.x[0], 0.1 * B, { kind: 'highlight', id: 'first-tenth-a' });
     C.window(p, 0.75 * B, B, { kind: 'highlight', id: 'last-quarter-a' });
-    /* the twelve curves, an ensemble (DS §4.6), each keyed by its trial. (a) places no label, so the
+    /* the twelve curves, an ensemble, each keyed by its trial. (a) places no label, so the
        curves' 30,000 points record no obstacles for the placer, which would index them on every
        frame of a drag or a transition. */
     var step = function (e) { return e.step; }, val = function (e) { return e.value; };
@@ -334,7 +280,7 @@
       lines[key] = lines[key] || {};
       C.line(p, t.evals, step, val, { role: 'model', series: 'curves', key: key, alpha: 0.3, weight: 1.5, cache: lines[key], ghost: false, obstacle: false });
     });
-    /* the pinned budget: a dashed reader line named on the axis by its budget (DS §4.8) */
+    /* the pinned budget: a dashed reader line named on the axis by its budget */
     if (v.pinB != null) {
       C.ref(p, { x: v.pinB }, { kind: 'pin', series: 'pin', key: 'pin' });
       var pn = C.level(p, 'x', v.pinB, { role: 'reader', text: fmt.int(v.pinB), series: 'pin-name' });
@@ -351,7 +297,7 @@
     var list = M().budgets();
     C.handle(p, {
       id: 'budget', axis: 'x', value: B, snap: list, min: list[0], max: list[list.length - 1], scale: 'log',
-      label: 'Step budget, max_train_steps', format: fmt.int, onLine: true,
+      label: 'Training step budget', format: fmt.int, onLine: true,
       onChange: function (x) { fig.set({ budget: x }, { transient: true }); },
       onSettle: function (x) { fig.set({ budget: x }); }
     });
@@ -401,7 +347,7 @@
     return { top: top, band: pinned ? band : 2 * band, pinBand: band, live: p.height - 5.5, pin: p.height - band - 5.5 };
   }
   /* Dots whose centres lie within one marker of one another stack upward from the row's baseline, at
-     one spacing for the whole row, so that every dot stays visible (DS §4.1: 8-px markers). */
+     one spacing for the whole row, so that every dot stays visible. */
   function stack(p, rows, base, band, pinned) {
     var R = 9.5, order = rows.slice().sort(function (a, b) { return a.fraction - b.fraction || a.index - b.index; });
     var placed = [], top = 0;
@@ -418,11 +364,10 @@
     var C = TP.chart, g = strip(p, p.phone, !!pinRows);
     /* In the recap's phone layout a dot near 0.1 stands within its own radius of the first tenth's
        edge (a fraction of 0.088 lies 3 px from it), so the dots inside the first tenth are drawn open
-       and the header's name says so, as F9.1's phone header ties "(bracket)" to its mark (page 10's
-       reader finding 15) */
+       and the header's name says so, as F9.1's phone header ties "(bracket)" to its mark */
     var openFirst = !!(recap && p.phone);
     /* the first tenth is about 30 px wide at phone width, too narrow for its name: the name goes to
-       (b)'s header there (DS §5.6), and the axis keeps its 0.1 tick (reader 8) */
+       (b)'s header there, and the axis keeps its 0.1 tick (reader 8) */
     C.window(p, 0, 0.1, { kind: 'highlight', id: 'first-tenth', name: p.phone ? (openFirst ? 'first tenth, 0 to 0.1 (open dots)' : 'first tenth, 0 to 0.1') : 'first tenth', phone: p.phone ? { header: true } : { text: ['first', 'tenth'] }, captionNames: true });
     C.window(p, 0.75, 1, { kind: 'highlight', id: 'last-quarter', name: 'last quarter', phone: { text: ['last', 'quarter'] }, captionNames: true });
     var dots = stack(p, rows, g.live, g.band, false);
@@ -448,7 +393,7 @@
     if (!state) return null;
     var trials = trialsOf(state.seed);
     /* a transition's frames draw the budget between its ends, as a drag would, so every frame is a
-       valid state of the figure (DS §9 rule 1) */
+       valid state of the figure */
     var B = ctx && ctx.transition ? Math.exp(state.lb) : state.budget;
     var rows = ctx && ctx.transition ? bestRows(trials, B) : state.rows;
     var pinB = ctx && ctx.pin && ctx.pin.values ? ctx.pin.values.budget : null;
@@ -524,7 +469,7 @@
         }
       },
       seed: CAL.seed,
-      /* The three named budgets are ledger states and the guided tour's steps (post07 review): as
+      /* The three named budgets are ledger states and the guided tour's steps: as
          preset buttons they duplicated the tour and doubled the height of the controls. */
       states: {
         'provisional-budget': { budget: CAL.presets['provisional-budget'].budget },
@@ -541,18 +486,6 @@
   }
 
   /* ============================== the recap (§6.24, R7) ============================== */
-
-  /* TP.recaps['F8.2:strip']: panel (b) alone, at the budget its setting names (the provisional budget
-     by default) and at the default seed, or setting.seed. No controls, no pin, no reading. */
-  TP.recaps['F8.2:strip'] = function (el, setting) {
-    setting = setting || {};
-    var list = M().budgets();
-    var B = setting.budget ? TP.chart.snap(+setting.budget, list, { log: true, min: list[0], max: list[list.length - 1] }) : CAL.defaults.budget;
-    var seed = setting.seed ? (+setting.seed >>> 0) : CAL.seed;
-    /* the recap's header carries no number (PW §10 item 17): the caption names the budget */
-    var p = buildStrip(el, { recap: true });
-    p.update(function (q) { drawStrip(q, bestRows(trialsOf(seed), B), null, null, {}, true); });
-  };
 
   document.addEventListener('tp:ready', function () {
     var el = document.getElementById(ID);

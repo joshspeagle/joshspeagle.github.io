@@ -1,9 +1,9 @@
 /*
  * f7-1-reruns.js: figure F7.1, reruns against repeated studies (#fig-reruns), on page 7 #reruns.
  *
- * Design: notes/revamp/figure-plan.md (FP) F7.1 and notes/revamp/implementation-plan.md WO-F7.1
- * (§6.15), with review/synthesis.md R8, R12 and R56, on the figure contract of site.js (TP.fig) and
- * the runtime of runtime.js (TP.run) in its action form (design-system.md §7.2).
+ * Design: design notes.md (FP) F7.1 and design notes.md
+ * (§6.15), with earlier review R8, R12 and R56, on the figure contract of site.js (TP.fig) and
+ * the runtime of runtime.js (TP.run) in its action form.
  *
  * The model is TP.variance (site/js/lib/variance.js), version 1's variance-components toy in
  * percentage points of validation error. A run measures the configuration's true value, plus the
@@ -14,10 +14,10 @@
  * the repeated study (TP.variance.repeat). The study offset belongs to the configuration the study
  * selected: reruns keep it, so they gather around that configuration's own error, mu + delta +
  * offset, and the figure draws no mark at mu + delta, which no number of reruns reaches. Each step draws from the runtime's generator for
- * TP.prng.deriveSeed(seed, t), as tests/calibration/fig-reruns.calibrate.js does, so the ledger's
+ * TP.prng.deriveSeed(seed, t), as calibration checks.calibrate.js does, so the ledger's
  * default numbers are the ones autoplay's five reruns draw. The record row of step t holds
  * {value, mean, se, n, m}: the value the step appended, the candidate's running mean and its
- * standard error, the candidate's reruns and the repeated studies so far (WO-F7.1).
+ * standard error, the candidate's reruns and the repeated studies so far.
  *
  * One panel, "validation error of each run, in percentage points", with three rows on one value
  * axis, CAL.domains.a.x, which covers every preset over seeds 1 to 1,000 and 60 steps of either
@@ -30,16 +30,16 @@
  * running mean and every point of row 3; phone form "study + trial") stand exactly while rows 1
  * and 3 both hold points.
  *
- * The reader's mark is figure state outside params (plan's decision in WO-F7.1). A press, a tap or
+ * The reader's mark is figure state outside params. A press, a tap or
  * Enter on the panel's reading element at a place of row 3 sets it to the value read there; it is
  * then a handle on row 3 along the value axis, in steps of MARK_SNAP. snapshot and restore keep it,
  * clear (Reset and printing) removes it, and it is never written to the URL.
  *
- * Work-order exceptions (notes/revamp/reports/fig-reruns.md):
- *   1. LIMIT (60) is the figure's constant, as WO-F7.1 states it; the calibration's LIMIT, which
+ * Work-order exceptions:
+ * 1. LIMIT (60) is the figure's constant, as states it; the calibration's LIMIT, which
  *      its domain sweep uses, must change with it (F5.2 keeps its LIMIT the same way).
  *   2. A value outside CAL.domains.a.x, which a seed beyond 1,000 can draw, stands at the frame's
- *      edge (DS §9 rule 3); the readout and the data table give its value.
+ * edge; the readout and the data table give its value.
  *   3. The reading element of row 3 reads places every MARK_SNAP along the value axis as well as
  *      the drawn diamonds, so that a press anywhere on row 3 finds a value to mark.
  */
@@ -48,7 +48,7 @@
   var TP = global.TP = global.TP || {};
 
 /* BEGIN GENERATED table-cal */
-// From tests/calibration/out/fig-reruns.json by npm run generate (tests/lib/write-generated.js).
+// Precomputed calibration constants for fig-reruns.
 var CAL = {
   "defaults": {"preset": "playbook", "seed": 225},
   "presets": {
@@ -183,7 +183,7 @@ var CAL = {
 
   var V = TP.variance;
   var STEPS = CAL.quantities['default'].reruns;     // autoplay's reruns (5)
-  var LIMIT = 60;                                   // WO-F7.1 "limit: 60" (exception 1)
+  var LIMIT = 60;                                   // "limit: 60" (exception 1)
   /* the value axis, in points. CAL.domains.a.x ([20, 25.5]) covers every preset over 1,000 seeds and
      60 steps, which left the runs in the middle fifth of the frame; post 6 (Nov 2026) narrows it to
      the range the three presets it offers use, and a rare value outside stands at the edge
@@ -212,9 +212,9 @@ var CAL = {
   function by(name) { return function (v) { return TP.fmt.byName(name)(v); }; }
   var f2 = by('fixed2');
 
-  /** The readout (FP F7.1), ending "and no study has been repeated" while m is 0. No verdict. From
+  /** The readout, ending "and no study has been repeated" while m is 0. No verdict. From
       the second rerun it gives the standard error of the difference of the two rerun means, the
-      site's adoption yardstick (Batch 7 ruling); the incumbent's mean then stands in the difference.
+      site's adoption yardstick; the incumbent's mean then stands in the difference.
       At most 29 words. */
   function differenceText(d) {
     var t = f2(Math.abs(d));
@@ -234,7 +234,7 @@ var CAL = {
     return head + ', ' + tail + '.';
   }
 
-  /** The named quantities of a state (plan WO-I5.1), with the model and seed rows of CAL. */
+  /** The named quantities of a state, with the model and seed rows of CAL. */
   function quantitiesOf(s) {
     var q = {}, sm = V.summary(s);
     q['trial-sd'] = s.trialSd;
@@ -248,7 +248,7 @@ var CAL = {
     q['candidate-sd'] = sm.candidate.sd;
     q['incumbent-sd'] = sm.incumbent.sd;
     /* the candidate's gain, the incumbent's mean minus the candidate's, and the standard error of
-       the difference, the yardstick of the Batch 7 ruling */
+       the difference, the yardstick of the */
     q.gain = sm.difference.value == null ? null : -sm.difference.value;
     q['gain-in-se'] = q.gain != null && sm.difference.se ? q.gain / sm.difference.se : null;
     q['se-diff'] = sm.difference.se;
@@ -369,7 +369,7 @@ var CAL = {
     var items = [], points = [], sm = V.summary(s), phone = p.phone;
     var cand = s.candidate.runs, inc = s.incumbent.runs, stu = s.studies;
     var X = function (d) { return xIn(d.value); };
-    /* row names, in text ink at the left of each row, level with its markers (WO-F7.1 "Labels"):
+    /* row names, in text ink at the left of each row, level with its markers:
        the feature is a point in plot px at the frame's left edge, set below the row's middle by
        half a text height, so that the placer's first candidate, top right, centres the name on
        the row */
@@ -400,7 +400,7 @@ var CAL = {
     }
     /* the brackets, computed from the state, exactly while rows 1 and 3 both hold points. The lower
        bracket spans row 3 and the candidate's mean, and each best trial there carries a new study
-       offset and a new trial draw, so it is named for both spreads (build log Batch 5, rulings on
+       offset and a new trial draw, so it is named for both spreads (rulings on
        the reads, page 7) */
     if (cand.length && stu.length) {
       var cv = cand.map(function (d) { return xIn(d.value); }), sv = stu.map(function (d) { return xIn(d.value); });
@@ -412,13 +412,13 @@ var CAL = {
         anchor: { x0: Math.min.apply(null, all), x1: Math.max.apply(null, all), y: ROW.studies + BAND[0] - 0.02, series: 'studies' },
         captionNames: true, keySentence: true });
     }
-    /* the reader's mark on row 3: a reader line across the row and the handle (DS §4.10) */
+    /* the reader's mark on row 3: a reader line across the row and the handle */
     if (o.mark != null) {
       var mTop = ROW.studies + BAND[1] + 0.04;
       C().ref(p, [[o.mark, ROW.studies + BAND[0] - 0.04], [o.mark, mTop]], { kind: 'reader', series: 'mark' });
       /* the name stands at the top end of the mark's line, above row 3's markers; with no position
          there it moves to the panel's header, and on a phone it may be dropped, since the caption
-         names the mark (DS §5.6) */
+         names the mark */
       items.push({ id: 'mark', text: 'your mark', role: 'reader', series: 'mark', tone: 'role',
         feature: { type: 'point', px: true, x: p.x(xIn(o.mark)), y: p.y(mTop), r: 1.5 },
         phone: phone ? { text: 'your mark' } : { header: true }, captionNames: true });
@@ -480,7 +480,7 @@ var CAL = {
     function setMark(v, transient) {
       mark = v == null ? null : C().snap(v, MARK_SNAP, { min: X_DOMAIN[0], max: X_DOMAIN[1] });
       dragging = !!transient;
-      /* the mark is the reader's handle, so it touches the run (DS §7.7 item 6) */
+      /* the mark is the reader's handle, so it touches the run */
       if (run) run.touch();
       fig.redraw(transient ? {} : { settle: true });
     }

@@ -1,4 +1,4 @@
-/* fig-update-rules.css: the layout of F2.1, the update rules (implementation-plan.md WO-F2.1),
+/* fig-update-rules.css: the layout of F2.1, the update rules,
    revised 2026-11 for post02. At 900 px and wider (a), (b) and (c) share one row and div.fig-side
    (the focus rule's update, the loss scale and its sliders) sits under them. From 640 to 899 px (a)
    takes the first row and (b) and (c) the second. In the phone layout the panels stack. The DOM
@@ -24,7 +24,7 @@
   }
 }
 
-/* Print (design-system.md §6.7): html.tp-print is laid out as a 680-px viewport, the paper's
+/* Print: html.tp-print is laid out as a 680-px viewport, the paper's
    column, so the rule for 900 px and wider excludes it and the 640-to-899-px grid applies. */
 
 /* div.fig-side: the focus rule's update in the first column and its sliders in the second, each
@@ -84,7 +84,7 @@
   #fig-update-rules .fig-side .ctl > .range { flex: 0 0 auto; min-width: 0; }
 }
 
-/* Print (design-system.md §6.7): the loss scale prints as its label and chosen value, as a control
+/* Print: the loss scale prints as its label and chosen value, as a control
    in a panel's header does (site.css), so that no segment is cut at the column's edge. */
 #fig-update-rules:is(html.tp-print *) .fig-side .ctl:has(> .seg) { flex-wrap: nowrap; align-items: baseline; gap: 0.4em; }
 #fig-update-rules:is(html.tp-print *) .fig-side .ctl:has(> .seg) > .lbl::after { content: ":"; }

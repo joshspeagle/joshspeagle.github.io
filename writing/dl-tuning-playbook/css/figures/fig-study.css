@@ -17,21 +17,25 @@
 #fig-study .panel[data-panel="a"] { grid-area: a; }
 #fig-study .panel[data-panel="b"] { grid-area: b; }
 #fig-study .panel[data-panel="c"] { grid-area: c; }
-/* the control in (b)'s header sets its label inline, on the row of its buttons */
-#fig-study .panel-head > .ctl { flex: 1 1 0; flex-direction: row; align-items: center; gap: 8px; max-width: none; min-width: 0; }
-#fig-study .panel-head > .ctl > .lbl { flex: 0 1 auto; min-width: 0; }
-#fig-study .panel-head > .ctl > .seg { flex: 0 0 auto; }
+/* the control in (b)'s header sets its label inline, and placed panel labels wrap cleanly onto
+   their own row so they never squeeze the control */
+#fig-study .panel[data-panel="b"] .panel-head { align-items: baseline; }
+#fig-study .panel[data-panel="b"] .panel-head > .ctl { flex: 1 1 auto; flex-direction: row; align-items: center; gap: 8px; max-width: none; min-width: max-content; }
+#fig-study .panel[data-panel="b"] .panel-head > .ctl > .lbl { flex: 0 0 auto; white-space: nowrap; }
+#fig-study .panel[data-panel="b"] .panel-head > .ctl > .seg { flex: 0 0 auto; }
+#fig-study .panel[data-panel="b"] .panel-head .panel-labels { flex: 1 1 100%; }
 @media (max-width: 639px) {
   #fig-study .fig-panels {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     grid-template-areas: "a c" "b b";
     gap: 10px 8px;
   }
-  #fig-study .panel-head > .ctl { flex-wrap: nowrap; }
+  #fig-study .panel[data-panel="b"] .panel-head > .ctl { flex-wrap: nowrap; min-width: 0; }
   #fig-study .panel-head .seg button { padding-left: 8px; padding-right: 8px; }
   #fig-study .panel[data-panel="b"] .panel-head .panel-note { order: 1; }
   #fig-study .panel[data-panel="b"] .panel-head > .ctl { order: 2; flex: 1 1 100%; }
+  #fig-study .panel[data-panel="b"] .panel-head .panel-labels { order: 3; flex: 1 1 100%; }
 }
 @media (max-width: 389.98px) {
-  #fig-study .panel-head > .ctl { flex-wrap: wrap; row-gap: 4px; }
+  #fig-study .panel[data-panel="b"] .panel-head > .ctl { flex-wrap: wrap; row-gap: 4px; }
 }

@@ -1,4 +1,4 @@
-/* fig-checkpoint.css: the layout of F1.1, the checkpoint run (implementation-plan.md WO-F1.1).
+/* fig-checkpoint.css: the layout of F1.1, the checkpoint run.
    From 640 px, panel (b), the buffer, is a column 140 px wide beside panel (a). In the phone layout
    panel (a) is the first row and (b) a row of three slots under it (site.css stacks the panels). */
 #fig-checkpoint .fig-panels { flex-wrap: nowrap; }

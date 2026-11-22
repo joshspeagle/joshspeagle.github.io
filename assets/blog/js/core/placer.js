@@ -2,8 +2,8 @@
  * placer.js: the label placer's geometry (TP.placer). No DOM; it loads in the browser as a
  * classic script and in Node for node --test, in the pattern of prng.js.
  *
- * It carries out notes/revamp/design-system.md (DS) §5.2 to §5.6 and §5.10 rule 2, as
- * notes/revamp/implementation-plan.md WO-I3 specifies. chart.js measures text, records
+ * It carries out series series conventions series style§5.6 and §5.10 rule 2, as
+ * series series conventions specifies. chart.js measures text, records
  * obstacles and renders the labels. This file decides where each label goes.
  *
  * UNITS. Coordinates are plot pixels: the origin is the top left of the frame (the plot area)
@@ -36,11 +36,11 @@
  *   kind   'rival'       a mark with a role: series lines and markers, references, limits and
  *                        levels. The default for a missing kind.
  *          'structure'   axes, ticks, gridlines, rugs, the crosshair, window edges. Labels
- *                        ignore it (DS §5.2 item 3).
+ *                        ignore it (design system item 3).
  *          'annotation'  a bracket, a tangent or a callout's line. No label box may touch it,
- *                        and it is not a rival (DS §5.10 rule 2).
+ *                        and it is not a rival (design system rule 2).
  *          'region'      a band, a tint or a reader window. It captures any label it does not
- *                        name (DS §5.2 item 7). Its id is what a label's `names` refers to.
+ *                        name (design system item 7). Its id is what a label's `names` refers to.
  *   type and geom
  *          'segment'     [[x0, y0], [x1, y1]] or {x0, y0, x1, y1}
  *          'polyline'    [[x, y], ...] or a flat [x0, y0, x1, y1, ...]; a non-finite point
@@ -53,7 +53,7 @@
  *   seriesId  shared by the marks of one series. A label's own series is never its rival.
  *
  *   Every distance is measured to the drawn ink: half a stroke's width and a point's radius are
- *   subtracted (DS §5.2). Obstacles beyond the grid's width and height are kept in its edge
+ *   subtracted (design system). Obstacles beyond the grid's width and height are kept in its edge
  *   cells, so a query anywhere, the right margin included, finds everything near the box.
  *
  * ---------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@
  *              | {type: 'region', box},          // the label names the region and sits inside it
  *       seriesId,                    // the label's own series
  *       names,                       // the id of a region the label names, which may hold it
- *       phone: {text, box} | {header: true} | null,  // the phone form of DS §5.6
+ *       phone: {text, box} | {header: true} | null,  // the phone form of design system
  *       captionNames: false,         // the caption names this token at every width
  *       keySentence: false           // the caption's key sentence names it
  *     }],
@@ -82,7 +82,7 @@
  *     previous: null,                // the last result, or {labelId: {candidate, form, tier}}
  *     hold: false,                   // true on the frames of a drag, of play and of a transition
  *     phone: false,                  // the phone layout, below 640 px
- *     nameMargin: 0,                 // width of the right margin reserved for names (DS §11.5)
+ *     nameMargin: 0,                 // width of the right margin reserved for names (design system)
  *     explain: false                 // true adds each label's rejected candidates to the result
  *   })
  *
@@ -118,7 +118,7 @@
  *   dFeature, dRival and ratio are null for 'header' and 'dropped'.
  *
  * ---------------------------------------------------------------------------------------------
- * RULES (DS §5.2 to §5.6; the multiples of h are in TP.placer.RULES)
+ * RULES (design system to §5.6; the multiples of h are in TP.placer.RULES)
  *
  * Candidates (item 4), in order:
  *   point and value  top right, top left, bottom left, bottom right, right, top, left, bottom,
@@ -127,7 +127,7 @@
  *                    extent, then below at the same five. The box is centred there, kept inside
  *                    the frame, and set exactly 0.5 h from the stroke's edge
  *   region           inside the region, 0.25 h from its edges: top left, top, top right, bottom
- *                    left, bottom, bottom right (DS §8.1 puts a window's name at its top); then
+ *                    left, bottom, bottom right (design system puts a window's name at its top); then
  *                    left and right at mid-height; then the quarter points of the top, bottom,
  *                    left and right edges; then the centre (REGION_AT)
  * A candidate is rejected when it leaves the frame, lies farther than 0.5 h from its feature or
@@ -138,7 +138,7 @@
  *   'clear'   no rival within 1 h, so r >= 2 as well. Preferred.
  *   'ratio'   a rival within 1 h but r >= 1.5: admissible, because where the absolute bound and
  *             the ratio disagree the ratio wins (canon, "Nearness is a ratio").
- *   'leader'  1.1 <= r < 1.5, with a leader (DS §5.4) that runs from the feature's point nearest
+ *   'leader'  1.1 <= r < 1.5, with a leader (design system) that runs from the feature's point nearest
  *             the box's centre, on the mark's drawn edge, toward that centre, starts where it
  *             leaves the box, crosses no rival, and arrives at 45 degrees or more to the line
  *             it names (the label's line, or its own series' line through a marker). Used only
@@ -155,7 +155,7 @@
  * their phone forms, then labels whose token the caption names are dropped (those the key
  * sentence does not name first), until they fit.
  *
- * No admissible position (DS §5.6). The steps are: the full form, the phone form (a header phone
+ * No admissible position (design system). The steps are: the full form, the phone form (a header phone
  * form moves the label to the panel header), a leader in either form, then outside the frame. The
  * phone layout runs the same steps, from the full form, with its own h and without the margin. A
  * line's name goes to the right margin at the height its line leaves by, when nameMargin holds
@@ -172,15 +172,15 @@
  */
 (function (global) {
   'use strict';
-  var TP = global.TP = global.TP || {};
+  var TP = global.Blog = global.TP = global.Blog || global.TP || {};
 
   var RULES = {
-    near: 0.5,       // a label sits within 0.5 h of its feature (DS §5.2 item 1)
+    near: 0.5,       // a label sits within 0.5 h of its feature (design system item 1)
     rival: 1,        // no rival within 1 h of a 'clear' label (item 1)
     other: 1,        // no other label within 1 h of a label's feature (item 1)
     ratio: 1.5,      // rival distance over feature distance (item 2)
-    leader: 1.1,     // leaders between ratios 1.1 and 1.5 (DS §5.4)
-    angle: 45,       // a leader arrives at 45 degrees or more to the line it names (DS §5.4)
+    leader: 1.1,     // leaders between ratios 1.1 and 1.5 (design system)
+    angle: 45,       // a leader arrives at 45 degrees or more to the line it names (design system)
     pointGap: 0.2,   // gap between a point label's box and its mark's edge (placer's choice)
     labelGap: 0.5,   // least gap between two label boxes (placer's choice)
     regionPad: 0.25, // inset of a region's name from the region's edges (placer's choice)
@@ -192,7 +192,7 @@
   var POINT_NAMES = ['top right', 'top left', 'bottom left', 'bottom right', 'right', 'top', 'left', 'bottom'];
   var LINE_AT = [0.15, 0.3, 0.5, 0.7, 0.85];
   // A region's name: the corners and the mid-edges of the region's part of the frame, then the
-  // quarter points along each edge, then the centre (DS §5.2 item 4, §5.10 "A region name").
+  // quarter points along each edge, then the centre (design system item 4, §5.10 "A region name").
   // Each is [name, fraction across, fraction down, anchor]; the first six keep version 1's order.
   var REGION_AT = [
     ['top left inside', 0, 0, 'start'], ['top inside', 0.5, 0, 'middle'], ['top right inside', 1, 0, 'end'],
@@ -730,7 +730,7 @@
     else { out.fx = out.cx; out.fy = out.cy; }
   }
 
-  /* ---------- candidates (DS §5.2 item 4) ---------- */
+  /* ---------- candidates (design system item 4) ---------- */
 
   // The height of the line's clearance curve c over x, for a box spanning [x0, x1]: c over the
   // box, falling as a quarter circle over the c past each end.
@@ -792,7 +792,7 @@
     return finite(best) ? sg * best : NaN;
   }
 
-  // The candidate boxes of a feature for a box w wide and bh tall, in the order of DS §5.2 item 4.
+  // The candidate boxes of a feature for a box w wide and bh tall, in the order of design system item 4.
   // Each is {x0, y0, x1, y1, name, anchor}; a box that cannot be built has NaN coordinates.
   function candidates(pf, w, bh, S) {
     var out = [], h = S.h, i;
@@ -846,12 +846,12 @@
   //   'outside'     a region's name not inside its region
   //   'ink'         the box touches a series' ink, its own series included
   //   'region'      the box sits in a region it does not name (item 7)
-  //   'annotation'  the box touches an annotation's line (DS §5.10 rule 2)
+  //   'annotation'  the box touches an annotation's line (design system rule 2)
   //   'feature'     the box comes within 1 h of another label's feature (item 1)
   //   'between'     a rival crosses the segment from the box's centre to its feature (item 6)
   //   'rival'       a region's name with a rival within 1 h
-  //   'ratio'       ratio under 1.1 (item 2, DS §5.4)
-  //   'angle'       a leader would arrive at under 45 degrees to its line (DS §5.4)
+  //   'ratio'       ratio under 1.1 (item 2, design system)
+  //   'angle'       a leader would arrive at under 45 degrees to its line (design system)
   //   'label'       within 0.5 h of a placed label's box, or touching a placed leader
   var NR = { d: 0, bx: 0, by: 0, cx: 0, cy: 0, fx: 0, fy: 0 }, NR2 = { d: 0, bx: 0, by: 0, cx: 0, cy: 0, fx: 0, fy: 0 };
 
@@ -882,7 +882,7 @@
     return false;
   }
 
-  // The leader of a box (DS §5.4): it runs from the feature's point nearest the box's centre, on
+  // The leader of a box (design system): it runs from the feature's point nearest the box's centre, on
   // the mark's drawn edge, toward that centre, and starts where it leaves the box. Returns
   // [x1, y1, x2, y2], from the box to the mark, and sets LP.x, LP.y to the centreline point (the
   // mark's centre for a point). reach bounds the search of a line.
@@ -1155,7 +1155,7 @@
     return false;
   }
 
-  // Phase 2, leaders for the deferred labels, and phase 3, the steps outside the frame (DS §5.6).
+  // Phase 2, leaders for the deferred labels, and phase 3, the steps outside the frame (design system).
   function finish(S, out) {
     var failing = [], i, P;
     runOrder(S, out.deferred.slice(), out.placed, out.res, true, function (P) { failing.push(P); });
@@ -1185,7 +1185,7 @@
     return ok;
   }
 
-  // The label to drop in the phone layout while some label has no admissible position (DS §5.6):
+  // The label to drop in the phone layout while some label has no admissible position (design system):
   // a label whose token the caption names, first among those the key sentence does not name; the
   // unplaced label itself when it is one of them, else the one nearest its feature. The unplaced
   // label is the first deferred one, by index, that has a position with no other label in the
@@ -1225,7 +1225,7 @@
 
   // Item 8, before any placement: if the boxes would cover more than 12.5 per cent of the frame,
   // labels take their phone forms, then labels whose token the caption names are dropped, in the
-  // order of DS §5.6, until they fit. Returns true when they still do not.
+  // order of design system, until they fit. Returns true when they still do not.
   function densityStep(S, labels) {
     var limit = RULES.density * S.W * S.H, area = 0, order = [], i, P;
     for (i = 0; i < labels.length; i++) {

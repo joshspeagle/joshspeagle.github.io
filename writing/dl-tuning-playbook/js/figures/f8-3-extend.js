@@ -1,8 +1,8 @@
 /*
  * f8-3-extend.js: figure F8.3, extending a schedule (fig-extend).
  *
- * Work order: notes/revamp/implementation-plan.md §6.18 (WO-F8.3), with §6.0. Entry:
- * notes/revamp/figure-plan.md F8.3, and review/synthesis.md R11. Design: notes/revamp/design-system.md
+ * Work order: design notes.md §6.18, with §6.0. Entry:
+ * design notes.md F8.3, and earlier review R11. Design: design notes.md
  * §3.4, §3.5, §4, §5 and §9. Revised in the November 2026 review (post07): a fixed figure
  * (fig l-wide) with one slider, the Round 2 length k from 1.5 to 8 Round 1 lengths, a readout, and
  * the schedules computed from TP.schedules at the current k. CAL keeps the default state (k = 4)
@@ -23,16 +23,16 @@
  *   (a) linear decay after a constant phase, and (b) cosine decay. Each frame draws Round 1 in context
  *       grey to step 1, the pitfall's continuation from step 1 to k in third gold with open circles,
  *       and the playbook's extension in model blue with filled circles, markers thinned to 24 px
- *       (DS §4.2) on the rows of CAL.tables.schedules. On [0, 1] the pitfall is Round 1 itself, so
+ * on the rows of CAL.tables.schedules. On [0, 1] the pitfall is Round 1 itself, so
  *       its gold line starts where Round 1 ends. Half the base rate is a dashed limit named on the y
  *       axis, "half the base rate (ours)".
  *   Under each frame a strip (its own panel, data-panel "a-below" or "b-below", on the frame's x
  *   pixel range) marks, one row per Round 2 schedule, the steps below half the base rate: a filled
  *   model-blue bar for the extension and an open third-gold bar for the pitfall, so that the rows
- *   differ by fill as well as by hue (DS §2.3 rule 4), with the fraction of Round 2 printed at each
+ * differ by fill as well as by hue, with the fraction of Round 2 printed at each
  *   row's end in the row's label tone. The strips keep the two schedules' regions apart where they
- *   overlap (WO-F8.3, plan's decision).
- *   From 900 px the families sit side by side as small multiples (DS §3.5 item 7): one y axis on (a),
+ * overlap.
+ * From 900 px the families sit side by side as small multiples: one y axis on (a),
  *   and a first grid column that gives (a) the width of its y axis, so that both frames take one
  *   pixel range (fig-extend.css). Below 900 px they stack, each with its own axes.
  *
@@ -44,7 +44,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-extend.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-extend.
   var CAL = {
     "defaults": {"k": 4, "c": 0.8},
     "presets": {},
@@ -539,7 +539,7 @@
 
   function by(name) { return TP.fmt.byName(name); }
   function frac(v) { return by('sig3')(v); }
-  /* html.tp-print is laid out as a 680-px viewport, the paper's column (design-system.md §6.7), so
+  /* html.tp-print is laid out as a 680-px viewport, the paper's column, so
      the families stack in print whatever the screen's width */
   function sideBySide() {
     if (document.documentElement.classList.contains('tp-print')) return false;
@@ -564,7 +564,7 @@
     return pts;
   }
 
-  /** The derived state. Every array's rows carry a key (DS §9). */
+  /** The derived state. Every array's rows carry a key. */
   function apply(values) {
     var K = values.k;
     var S = TP.schedules, o = { k: K, c: CF };
@@ -662,7 +662,7 @@
     if (!s) return;
     var f = s.families[family];
     var T = function (q) { return q.t; }, R = function (q) { return q.r; };
-    /* the limit the site states: half the base rate, dashed, named on the y axis (DS §4.7, §5.5) */
+    /* the limit the site states: half the base rate, dashed, named on the y axis */
     if (innerOf(family)(p.phone)) C.ref(p, { y: s.half }, { kind: 'limit' });
     else C.level(p, 'y', s.half, { role: 'ref', line: true, text: p.phone ? ['half'] : ['half the', 'base rate'] });
     /* Round 1 in context grey, then the two Round 2 schedules, the extension above the pitfall */
@@ -677,7 +677,7 @@
       { role: 'third', series: 'pitfall', shape: 'circle', fill: 'open', thin: 24, key: function (r) { return family + '-pitfall-' + r.key; } });
     C.markers(p, s.rows, function (r) { return r.t; }, function (r) { return r[colExt]; },
       { role: 'model', series: 'extension', shape: 'circle', fill: 'filled', thin: 24, key: function (r) { return family + '-extension-' + r.key; } });
-    /* the direct labels (WO-F8.3) */
+    /* the direct labels */
     C.place(p, LABELS.map(function (Lb) {
       return { id: Lb.id, text: Lb.text, role: Lb.role, series: Lb.id, tone: Lb.tone, feature: featureOf(f, Lb.id),
         phone: Lb.phone ? { text: Lb.phone } : undefined, captionNames: true, keySentence: Lb.id !== 'round1' };
@@ -772,9 +772,9 @@
   function pct(v) { return TP.fmt.byName('sig3')(100 * v) + '%'; }
   function readout(state) {
     var L = state.families.linear.below, Cs = state.families.cosine.below;
-    return 'With Round 2 ' + by('sig3')(state.k) + ' times as long as Round 1, the linear extension spends ' + pct(L.extension.fraction) +
-      ' of Round 2 below half the base rate and its pitfall ' + pct(L.pitfall.fraction) + '. The stretched cosine spends ' +
-      pct(Cs.extension.fraction) + ' and its pitfall ' + pct(Cs.pitfall.fraction) + '.';
+    return 'At ' + by('sig3')(state.k) + '× Round 1 length, linear extension spends ' + pct(L.extension.fraction) +
+      ' below half the base rate (pitfall ' + pct(L.pitfall.fraction) + ') vs. ' + pct(Cs.extension.fraction) +
+      ' for stretched cosine (pitfall ' + pct(Cs.pitfall.fraction) + '); high-rate duration matters alongside the cooldown slope.';
   }
 
   function init(element) {

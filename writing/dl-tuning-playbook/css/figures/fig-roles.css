@@ -38,10 +38,9 @@
 #fig-roles .rl-role .rl-also { display: block; font-weight: 500; font-size: 0.72rem; line-height: 1.1; }
 /* the preferred role in "Show the roles", and the reader's pick in "Test yourself" */
 #fig-roles .rl-role.rl-sci.is-answer, #fig-roles .rl-role.rl-sci.is-picked { background: var(--rl-sci); border-color: var(--rl-sci); color: #fff; }
-#fig-roles .rl-role.rl-nuis.is-answer, #fig-roles .rl-role.rl-nuis.is-picked { background: var(--rl-nuis); border-color: var(--rl-nuis); color: #fff; }
+#fig-roles .rl-role.rl-nuis.is-answer, #fig-roles .rl-role.rl-nuis.is-picked { background: var(--rl-nuis); border-color: var(--rl-nuis); color: var(--energy-ink, #0b0704); }
 #fig-roles .rl-role.rl-fixed.is-answer, #fig-roles .rl-role.rl-fixed.is-picked { background: var(--ink-2); border-color: var(--ink-2); color: var(--surface); }
-:root[data-theme="dark"] #fig-roles .rl-role.rl-nuis.is-answer, :root[data-theme="dark"] #fig-roles .rl-role.rl-nuis.is-picked { color: #1a1300; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #fig-roles .rl-role.rl-nuis.is-answer, :root:not([data-theme="light"]) #fig-roles .rl-role.rl-nuis.is-picked { color: #1a1300; } }
+:root:not([data-theme="light"]) #fig-roles .rl-role.rl-sci.is-answer, :root:not([data-theme="light"]) #fig-roles .rl-role.rl-sci.is-picked { color: var(--bg-1, #0a1022); }
 #fig-roles .rl-role.is-accepted { border-style: dashed; color: var(--ink); }
 #fig-roles .rl-role.rl-sci.is-accepted { border-color: var(--rl-sci); }
 #fig-roles .rl-role.rl-nuis.is-accepted { border-color: var(--rl-nuis); }

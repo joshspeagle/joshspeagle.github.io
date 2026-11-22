@@ -29,6 +29,8 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
+from check_writing import check_all as check_writing
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -265,6 +267,7 @@ def main():
     check_tokens()
     check_palette()
     check_links(docs)
+    check_writing(errors, warnings)
 
     for w in warnings:
         print(f"  WARNING: {w}")
