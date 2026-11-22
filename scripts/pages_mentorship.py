@@ -13,7 +13,7 @@ Renders:
 4. Former Mentees & Alumni (70) in a clearly separated section below, with Former
    Undergraduates (56) sub-grouped into 3 collapsible pathway sections.
 """
-from pages_shared import (attr_esc, card_meta, chip, date_range, esc, listview_status,
+from pages_shared import (attr_esc, card_meta, chip, date_range, esc, esc_text, listview_status,
                           parse_latest_year, period_end_key, strip_tags as _strip_tags)
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
@@ -258,7 +258,7 @@ def _mentorship_dashboard(mbs, completed):
         title = f"{short_lbl}: {cnt} undergraduate researchers"
         ug_rows.append(
             f'<button type="button" class="mc-row mc-row-ug mc-row-btn" data-lv-trigger '
-            f'data-lv-facet="{tag_tok}" data-lv-label="{attr_esc(short_lbl)}" '
+            f'data-lv-facet="{tag_tok}" data-lv-label="{esc_text(short_lbl).replace(chr(34), "&quot;")}" '
             f'aria-pressed="false" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
             f'<span class="mc-label"><span class="dot d-{color}"></span>{esc(short_lbl)}</span>'
             f'<span class="mc-track">'

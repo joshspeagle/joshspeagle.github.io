@@ -52,10 +52,10 @@ img { max-width: 100%; }
 #board { position: absolute; top: 0; left: 0; z-index: 0; pointer-events: none; overflow: visible; }
 body:not(.page-home) #board { opacity: 0.55; }
 .board-nav { display: none; }
-@media (min-width: 1280px) {
+@media (min-width: 1360px) {
   .board-nav {
     position: fixed; left: 10px; top: 50%; transform: translateY(-50%); z-index: 25;
-    display: flex; flex-direction: column; gap: 3px; width: 92px;
+    display: flex; flex-direction: column; gap: 3px; width: 88px;
     padding: 8px 6px;
     background: color-mix(in srgb, var(--bg-0) 80%, transparent);
     -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
@@ -1864,7 +1864,7 @@ main, footer { position: relative; z-index: 1; }
 
 /* ---------------- Coarse Pointer & Small Viewport Touch Targets ---------------- */
 @media (pointer: coarse), (max-width: 860px) {
-  .theme-toggle, #hamburger, .srv-expand-btn, .chip,
+  .theme-toggle, #hamburger, .srv-expand-btn, .chip, .pub-search, .pub-sort,
   .paper-links a.reslink, .item-links a.reslink, a.reslink, a.reslink.opp-chip,
   .paper-abs-btn, .globe-city-chip, .globe-ctrl-btn, .globe-zoom-btn,
   .pub-tab, .pub-statbtn, .lv-active-pill, .lv-active-clear,

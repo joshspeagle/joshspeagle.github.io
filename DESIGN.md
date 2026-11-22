@@ -53,7 +53,7 @@ Every dashboard visualization integrates directly with the shared `[data-listvie
 
 1. **Homepage (`index.html`):**
    - **Hero Canvas (`assets/js/redesign/hero.js`):** Deep-field spiral and elliptical galaxies across the left/center emit glowing violet-cyan-gold signal beams through the constellation network into an open rotated Bayesian posterior (`1σ`, `2σ`, `3σ` credible ellipses and live MCMC/nested-sampling cloud) on the right.
-   - **Left-Margin Constellation Rail (`assets/js/redesign/board.js` & `#board-nav`):** Vertical copper rail in the left margin (`W >= 1180px`) with scroll-coupled amber horizon paired with a compact fixed section-navigation rail (`W >= 1280px`) tracking the active homepage section.
+   - **Left-Margin Constellation Rail (`assets/js/redesign/board.js` & `#board-nav`):** Vertical copper rail in the left margin (`W >= 1180px`) with scroll-coupled amber horizon paired with a compact fixed section-navigation rail (`W >= 1360px`) tracking the active homepage section.
    - **Hub Routing:** Clickable Research Area cards link directly to pre-filtered `publications.html?cat=<key>#pub-root`; About links to `biography.html` and `service.html`; Latest Highlights surfaces the three most recent news updates above the Research Group & Working With Me sections.
 2. **Publications (`publications.html`):**
    - **Compact Telemetry Strip & Role Filter:** Five compact summary tiles linking to curated ADS libraries above a clickable Research Mix cross-filter, an authorship-role filter bar, and a tabbed **Portfolio Explorer** (`role="tablist"` in `assets/js/redesign/pubchart.js`).

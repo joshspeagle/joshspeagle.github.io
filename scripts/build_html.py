@@ -41,7 +41,10 @@ from pages_mentorship import generate_content as gen_mentorship  # noqa: E402
 from pages_awards import generate_content as gen_awards        # noqa: E402
 from pages_service import generate_content as gen_service      # noqa: E402
 from pages_software import generate_content as gen_software    # noqa: E402
-from pages_news import generate_content as gen_news            # noqa: E402
+from pages_news import (_render_card as render_news_card,        # noqa: E402
+                        _sort_num as news_sort_num,
+                        _type_meta as news_type_meta,
+                        generate_content as gen_news)
 from pages_writing import generate_content as gen_writing      # noqa: E402
 from build_writing import build_all as build_writing           # noqa: E402
 
@@ -648,6 +651,19 @@ def render_shell(key, data, content):
     root = page.get("root", "")
     scripts = "".join(f'\n  <script src="{root}assets/js/redesign/{s}" defer></script>'
                       for s in [SITE_SCRIPT] + list(page.get("scripts", [])))
+    body_cls = "page-home" if key == "index" else f"page-{key}"
+    board_nav = ""
+    if key == "index":
+        board_nav = (
+            '  <nav class="board-nav" id="board-nav" aria-label="On this page">\n'
+            '    <a class="board-nav-link is-active" href="#main-content" aria-current="location">Overview</a>\n'
+            '    <a class="board-nav-link" href="#about">About</a>\n'
+            '    <a class="board-nav-link" href="#research">Research</a>\n'
+            '    <a class="board-nav-link" href="#highlights">News</a>\n'
+            '    <a class="board-nav-link" href="#team">Group</a>\n'
+            '    <a class="board-nav-link" href="#join">Join</a>\n'
+            '  </nav>\n'
+        )
     return (
         '<!DOCTYPE html>\n'
         '<html lang="en" data-theme="dark">\n'
@@ -655,9 +671,10 @@ def render_shell(key, data, content):
         f'{_credit_comment(data)}'
         f'{render_head(key, page, data)}\n'
         '\n'
-        '<body>\n'
+        f'<body class="{body_cls}">\n'
         f'{SPRITE}\n'
         '  <svg id="board" aria-hidden="true"></svg>\n'
+        f'{board_nav}'
         '\n'
         '  <a class="skip-link" href="#main-content">Skip to main content</a>\n'
         '\n'
@@ -851,6 +868,10 @@ def generate_home_about(data):
         '<div class="intro-body">'
         f'{paras_html}'
         f'{contact}'
+        '<div class="about-actions">'
+        '<a class="btn-ghost" href="biography.html">Full biography &amp; career timeline →</a>'
+        '<a class="reslink" href="service.html">Academic service &amp; leadership →</a>'
+        '</div>'
         '</div>\n'
         f'{photo}\n'
         '</div>\n'
@@ -883,11 +904,15 @@ def generate_home_research(data):
     cards = []
     for i, area in enumerate(areas):
         icon, cls = _HOME_ICONS[i] if i < len(_HOME_ICONS) else _HOME_ICONS[-1]
+        atitle = area.get("title", "")
         cards.append(
             f'<article class="research-card {cls}" data-cat="{cls}">'
             f'{_use(icon, "icon")}'
-            f'<h3>{esc(area.get("title", ""))}</h3>'
-            f'<p>{esc(area.get("description", ""))}</p></article>'
+            f'<h3>{esc(atitle)}</h3>'
+            f'<p>{esc(area.get("description", ""))}</p>'
+            f'<a class="rc-link" href="publications.html?cat={cls}#pub-root" '
+            f'aria-label="Browse {esc(atitle)} publications">Explore papers →</a>'
+            '</article>'
         )
     head = home_section(data, "research")
     intro = esc(head.get("intro", ""))
@@ -899,14 +924,20 @@ def generate_home_research(data):
     # Auto-computed metric pads (pipeline-maintained publication metrics + the
     # all-time mentee count).
     m = _pub_metrics()
-    metric_defs = [(m.get("totalPapers"), "Papers"),
-                   (m.get("totalCitations"), "Citations"),
-                   (m.get("hIndex"), "h-index"),
-                   (_mentee_count(data), "Mentees")]
-    metrics_html = "".join(
-        f'<div class="pub-metric"><span class="n">{v:,}</span><span class="l">{esc(l)}</span></div>'
-        for v, l in metric_defs if v
-    )
+    metric_defs = [(m.get("totalPapers"), "Papers", "publications.html"),
+                   (m.get("totalCitations"), "Citations", None),
+                   (m.get("hIndex"), "h-index", None),
+                   (_mentee_count(data), "Mentees", "mentorship.html")]
+    metrics_parts = []
+    for v, lbl, href in metric_defs:
+        if not v:
+            continue
+        inner = f'<span class="n">{v:,}</span><span class="l">{esc(lbl)}</span>'
+        if href:
+            metrics_parts.append(f'<a class="pub-metric pub-metric-link" href="{url_attr(href)}">{inner}</a>')
+        else:
+            metrics_parts.append(f'<div class="pub-metric">{inner}</div>')
+    metrics_html = "".join(metrics_parts)
     pubbox = ""
     if metrics_html or publinks:
         pubbox = (
@@ -915,6 +946,12 @@ def generate_home_research(data):
             f'<div class="pub-links"><span class="pub-links-label">{esc(pubs.get("intro", ""))}</span>'
             f'<div class="pub-links-row">{publinks}</div>'
             '<a class="btn-ghost go" href="publications.html">Browse all publications, metrics &amp; figures →</a>'
+            '</div>'
+            '<div class="pub-hub-links">'
+            '<span class="pub-links-label">Explore more</span>'
+            '<a class="reslink" href="software.html">Open-source software &amp; code →</a>'
+            '<a class="reslink" href="talks.html">Talks, colloquia &amp; globe →</a>'
+            '<a class="reslink" href="teaching.html">Courses &amp; workshops →</a>'
             '</div></article>'
         )
     return (
@@ -924,6 +961,35 @@ def generate_home_research(data):
         f'<div class="research-grid">{"".join(cards)}</div>\n'
         f'{pubbox}\n'
         "</div>"
+    )
+
+
+def generate_home_highlights(data):
+    """Compact 3-card latest highlights strip bridging Home to News & Awards."""
+    news_sec = (data.get("sections", {}).get("news", {}) or {})
+    types = news_sec.get("types", {}) or {}
+    items = sorted(news_sec.get("items", []) or [], key=news_sort_num, reverse=True)[:3]
+    if not items:
+        return ""
+    pubs_by_bib = load_publications_by_bibcode()
+    meta_by_type = {
+        n.get("type", "press"): news_type_meta(types, n.get("type", "press"))
+        for n in items
+    }
+    cards = "".join(render_news_card(n, meta_by_type, pubs_by_bib, featured=True) for n in items)
+    head = home_section(data, "highlights")
+    intro = head.get("intro") or "Recent papers, group milestones, awards, and talks."
+    return (
+        '<div class="container">\n'
+        + sec_head(head.get("title", "Latest Highlights")) + '\n'
+        '<div class="home-highlights-head">'
+        f'<p class="section-intro">{esc(intro)}</p>'
+        '<div class="home-highlights-links">'
+        '<a class="btn-ghost" href="news.html">All news &amp; press →</a>'
+        '<a class="reslink" href="awards.html">Awards &amp; honors →</a>'
+        '</div></div>\n'
+        f'<div class="featured-grid">{cards}</div>\n'
+        '</div>'
     )
 
 
@@ -1008,18 +1074,6 @@ def generate_home_team(data):
         arrow = "" if cls == "btn" else (' <span aria-hidden="true">↗</span>' if ext else "")
         btns.append(f'<a class="{cls}" href="{url_attr(url)}"{attrs}>{esc(c.get("text", ""))}{arrow}</a>')
 
-    values_items = (collab.get("values") or {}).get("items", []) or []
-    val_accents = ["sla", "ic"]
-    values_html = ""
-    if values_items:
-        vcards = "".join(
-            f'<article class="value-card vc-{val_accents[i % len(val_accents)]}">'
-            f'<h4>{esc(v.get("title", ""))}</h4>'
-            f'<p>{v.get("content", "")}</p></article>'
-            for i, v in enumerate(values_items)
-        )
-        values_html = f'<div class="values-grid">{vcards}</div>\n'
-
     opp_cards_data = (collab.get("opportunities") or {}).get("cards", []) or []
     opp_cards = "".join(
         f'<article class="opp-card opp-{_OPP_ACCENTS[i % len(_OPP_ACCENTS)]}">'
@@ -1033,9 +1087,11 @@ def generate_home_team(data):
     join_html = (
         '<div class="join-panel" id="join">\n'
         f'<div class="join-head"><h3>{esc(collab.get("title", "Working With Me"))}</h3>'
-        '<a class="btn-ghost" href="mentorship.html">Current group &amp; alumni directory →</a></div>\n'
+        '<div class="home-highlights-links">'
+        '<a class="reslink" href="mentorship.html#group-values">Group values (EDI &amp; open science) →</a>'
+        '<a class="btn-ghost" href="mentorship.html">Current group &amp; alumni directory →</a>'
+        '</div></div>\n'
         f'<p class="section-intro">{esc(collab.get("intro", ""))}</p>\n'
-        f'{values_html}'
         f'<div class="opp-grid" id="opportunities">{opp_cards}</div>\n'
         '</div>'
     )
@@ -1936,11 +1992,13 @@ _CONTENT_GENERATORS = {
     "writing": gen_writing,
 }
 
-# Home is three generated <section>s rather than one content container:
-# About Me (#about) -> Research & Impact (#research) -> Research Group & Working With Me (#team, containing #join).
+# Home is four generated <section>s rather than one content container:
+# About Me (#about) -> Astronomy, Statistics & AI (#research) -> Latest Highlights (#highlights)
+# -> Research Group & Working With Me (#team, containing #join).
 _HOME_SECTIONS = [
     ("about", "section", generate_home_about),
     ("research", "section", generate_home_research),
+    ("highlights", "section", generate_home_highlights),
     ("team", "section", generate_home_team),
 ]
 

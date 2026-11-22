@@ -15,8 +15,8 @@ import json
 import re
 from collections import Counter, defaultdict
 
-from pages_shared import (accent_class, attr_esc, card_meta, esc, parse_latest_year,
-                          scaffold, slug, term_month, url_attr, warn)
+from pages_shared import (accent_class, attr_esc, card_meta, esc, esc_text,
+                          parse_latest_year, scaffold, slug, term_month, url_attr, warn)
 
 # City / region -> (display label, lat, lon, region_key, search_key)
 # Grouped slightly only where two suburbs share a metro pin on a world map.
@@ -553,7 +553,7 @@ def _talks_by_topic_svg(categories):
         tip = esc(f"{tlabel}: {tot} talks — {parts} (click to filter)").replace('"', "&quot;")
         rows.append(
             f'<button type="button" class="talks-theme-row" data-lv-trigger '
-            f'data-lv-facet="theme-{tk}" data-lv-label="{attr_esc(tlabel)}" aria-pressed="false" '
+            f'data-lv-facet="theme-{tk}" data-lv-label="{esc_text(tlabel).replace(chr(34), "&quot;")}" aria-pressed="false" '
             f'aria-label="{tip}" data-tip="{tip}">'
             '<span class="ttr-head">'
             f'<span class="ttr-name">{esc(tlabel)}</span>'
