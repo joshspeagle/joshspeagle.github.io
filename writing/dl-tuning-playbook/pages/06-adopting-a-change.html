@@ -33,8 +33,18 @@
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
     <p class="lede">
-      Suppose a study has finished, its plots look healthy, and the best trial beats the baseline by a tenth or two of a percentage point. Should we fold the change into the baseline? Two training runs of the same configuration rarely give the same validation error, so the answer depends on how that gap compares with the run-to-run noise. The Playbook's advice on this decision is brief, and I found it much easier to follow once I had a picture of where the noise comes from and of how large a gain has to be before I believe it. So we'll start by separating the sources of variation and the optimism that comes from picking a winner, then see how rerunning the best trial shrinks the noise and what it leaves unmeasured, before turning to the adoption rule itself and to the final study that ends the exploration phase.
+      Suppose a tuning study finishes, its diagnostics pass, and the winner trims validation error by a tenth or two of a point. Should you adopt that change into the baseline? Training the same config twice rarely returns identical validation scores, so the answer rests on signal versus noise. Below I separate training, search, and data variance, quantify selection optimism, measure how reruns narrow error bars, and trace the path from lenient exploration adoption to the final Bayesian optimization run.
     </p>
+
+    <aside class="in-brief" aria-labelledby="in-brief-heading">
+      <div class="in-brief-head" id="in-brief-heading">In brief</div>
+      <ul>
+        <li><strong>Expect an optimistic study winner:</strong> Minimum selection picks lucky seeds; fresh reruns remove selection bias and recover true mean error (<a href="#variance">Where the noise comes from</a>).</li>
+        <li><strong>Vary every seed during reruns:</strong> Sweep fresh initialization, batch shuffle, dropout, and augmentation seeds across $N$ runs, or pair seeds to cut standard error (<a href="#reruns">Rerunning the best trial</a>).</li>
+        <li><strong>Remember search luck stays hidden from reruns:</strong> Repeating a point measures trial variance alone; checking study variance takes dense search or repeating the sweep (<a href="#study-variance">What reruns cannot measure</a>).</li>
+        <li><strong>Adopt leniently inside exploration:</strong> Accept clear improvements after accounting for seed noise unless complexity outweighs the gain, then finish with Bayesian optimization (<a href="#adopt">Making the call</a>).</li>
+      </ul>
+    </aside>
 
     <article class="post-body">
 
@@ -42,16 +52,16 @@
       <section class="prose" id="variance">
         <h2>Where the noise comes from</h2>
 
-        <p>
-          Most people who train networks have met the situation that opens the Playbook's <cite data-ref="playbook"><span class="cit-num"><a href="#ref-playbook">[3]</a></span></cite> <a href="https://github.com/google-research/tuning_playbook#determining-whether-to-adopt-a-training-pipeline-change-or-hyperparameter-configuration" target="_blank" rel="noopener">section on adopting changes</a>. A candidate change beats the incumbent (the configuration currently serving as the baseline) on validation error, we repeat the experiment, and the advantage is gone. To make sense of why, Godbole et al. sort the most important causes of such inconsistent results into <dfn data-concept="variance-sources">broad categories of variation</dfn>:
+        <p data-src="1057-1093">
+          Everyone who trains networks eventually runs into the puzzle opening the Playbook's <cite data-ref="playbook"><span class="cit-num"><a href="#ref-playbook">[3]</a></span></cite> <a href="https://github.com/google-research/tuning_playbook#determining-whether-to-adopt-a-training-pipeline-change-or-hyperparameter-configuration" target="_blank" rel="noopener">section on adopting changes</a>: a candidate beats the current baseline, you repeat the experiment, and the margin vanishes. Godbole et al. organize those random fluctuations into three <dfn data-concept="variance-sources">broad categories of variation</dfn>:
         </p>
-        <ul>
-          <li><strong>Training procedure variance</strong>, which the Playbook also calls <a data-concept="trial-variance" href="04-searching-the-space.html#trials">trial variance</a> or retrain variance (<a href="04-searching-the-space.html#trials">Part 4, How many trials?</a>). This is the spread between runs that share their hyperparameters but use different random seeds, and so differ in initialization, the order in which training data are shuffled, dropout masks, data augmentation, and the order of parallel arithmetic operations.</li>
-          <li><strong>Hyperparameter search variance</strong>, or <a data-concept="study-variance" href="04-searching-the-space.html#trials">study variance</a>, which comes from the procedure that selects the hyperparameters. Running a quasi-random search over the same space with two different seeds can end with two different selected configurations.</li>
-          <li><strong>Data collection and sampling variance</strong>, which comes from a random split into training, validation and test data, or from the process that generates the training data. I'll shorten this to <dfn data-concept="data-variance">data variance</dfn> below.</li>
+        <ul data-src="1057-1093">
+          <li><strong>Training procedure variance</strong> (also called <a data-concept="trial-variance" href="04-searching-the-space.html#trials">trial variance</a> or retrain variance, <a href="04-searching-the-space.html#trials">Part 4</a>): spread across runs sharing identical hyperparameters under fresh random seeds (weight initialization, batch order, dropout masks, augmentation draws, and parallel reduction order).</li>
+          <li><strong>Hyperparameter search variance</strong> (<a data-concept="study-variance" href="04-searching-the-space.html#trials">study variance</a>): variation induced by the search sequence itself, where rerunning quasi-random exploration on two search seeds chooses two slightly different optima.</li>
+          <li><strong>Data collection and sampling variance</strong> (shortened here to <dfn data-concept="data-variance">data variance</dfn>): variability from finite training/validation/test splits and data sampling.</li>
         </ul>
         <p>
-          Figure 1 draws one picture for each source and marks what stays fixed while it varies. That bookkeeping will matter for the rest of the post, because the usual remedy, rerunning the best trial, varies only the seed.
+          <a href="#fig-variance-sources" class="figref" data-static-figref="1">Figure 1</a> diagrams what each noise source holds fixed versus varies. That accounting matters later because rerunning a single winner probes only training variance.
         </p>
       </section>
 
@@ -130,15 +140,15 @@
 
       <section class="prose">
         <p>
-          How large are these sources in practice? The Playbook doesn't give general sizes, but <cite data-ref="bouthillier2021">Bouthillier et al. (2021) <span class="cit-num"><a href="#ref-bouthillier2021">[1]</a></span></cite> measured them on five modest benchmarks. Resampling the data was the largest source they found, while repeating the hyperparameter search added, on average, about as much variance as changing the initialization seed. On CIFAR-10 with a VGG11 network at about 91% accuracy, the initialization seed alone gave a standard deviation of about 0.23 percentage points.
+          How large are those sources empirically? While the Playbook gives no general bounds, <cite data-ref="bouthillier2021">Bouthillier et al. (2021) <span class="cit-num"><a href="#ref-bouthillier2021">[1]</a></span></cite> measured them across five vision and language benchmarks. Resampling data splits was the largest contributor overall, while search variation matched initialization noise on average; on CIFAR-10 VGG11 (~91% accuracy), initialization seed alone showed a standard deviation of 0.23 percentage points.
         </p>
-        <p>
-          This framing also explains a warning in the Playbook about statistical tests on the validation set. A test that treats the finite validation set as the only source of randomness can declare a significant difference between two trained models that share every hyperparameter and differ only in their seeds. That test is answering a question about two particular trained networks, whereas the adoption decision is about configurations, and a configuration's result includes its training randomness.
+        <p data-src="1084-1093">
+          This explains the Playbook's warning against paired McNemar-style significance tests conditioned on one fixed validation split. Treating test-set sampling as the only randomness can flag two identical hyperparameter runs trained from different seeds as "significantly different," answering a question about two frozen checkpoints rather than the repeatability of a training pipeline.
         </p>
 
         <h3>Why the best trial looks better than its configuration</h3>
-        <p>
-          Noise is only half of the problem, because the act of selection adds a bias on top of it. A study reports the minimum validation error over many trials, and when several trials have hyperparameters that perform about equally well, the minimum tends to land on whichever one drew a lucky seed. This is a form of the winner's curse, a property of the order statistics of noisy draws, and Figure 2 sketches it. The winner's first result sits below the error its configuration produces on average, while fresh reruns of the same configuration scatter around that average instead. Rerunning removes the bias precisely because nothing selects the new seeds.
+        <p data-src="1094-1100">
+          Variance alone is only half the trap because minimum selection adds downward bias. When several configurations perform similarly near the valley floor, picking the lowest observed validation error favors whichever configuration drew an unusually lucky seed (<a href="#fig-selection-bias" class="figref" data-static-figref="1">Figure 2</a>). Fresh reruns sample unconditioned seeds centered back around that configuration's true average error.
         </p>
       </section>
 
@@ -196,11 +206,11 @@
         <details class="math-aside">
           <summary>How large the selection bias is</summary>
           <p>
-            Let's write the observed error of trial $k$ as $Y_k = L_k + \varepsilon_k$, where $L_k = L(\mathbf{h}_k)$ is the configuration's average over seeds and $\varepsilon_k$ is seed noise with mean zero. The study reports $\min_k Y_k$, and because the minimum is a concave function, Jensen's inequality gives
+            Write trial $k$'s observed error as $Y_k = L_k + \varepsilon_k$, where $L_k = L(\mathbf{h}_k)$ is its true mean across seeds and $\varepsilon_k$ has mean zero. Reporting $\min_k Y_k$ puts concave minimization outside expectation, so Jensen's inequality gives
           </p>
           $$\mathbb{E}\Big[\min_k Y_k\Big] \;\le\; \min_k \mathbb{E}[Y_k] \;=\; \min_k L_k .$$
           <p>
-            So the reported best is optimistic on average. To see how optimistic, take the worst case, in which all $K$ trials tie at $L_k = L$ and the noise is Gaussian with standard deviation $\sigma$. Then $\mathbb{E}[\min_k Y_k] = L - m_K\,\sigma$, where $m_K$ is the expected maximum of $K$ standard normal draws:
+            Thus the best observed run is optimistic on average. In the boundary case where $K$ configurations tie at $L$ with Gaussian noise of standard deviation $\sigma$, $\mathbb{E}[\min_k Y_k] = L - m_K\,\sigma$, where $m_K$ is the expected maximum of $K$ standard normals:
           </p>
           <div class="scroll">
             <table>
@@ -210,7 +220,7 @@
             </table>
           </div>
           <p>
-            Taking the Playbook's figure of about 0.1 points of retrain variation for a ResNet-50 on ImageNet, ten tied trials make the winner look about 0.15 points better than its configuration. Real trials do not tie exactly, so only those within a few $\sigma$ of the best contribute and the bias is smaller. A rerun, by contrast, draws a new $\varepsilon$ that no minimum selected, so $\mathbb{E}[Y_{\text{rerun}}] = L_k$ for the chosen trial.
+            Taking the Playbook's ImageNet ResNet-50 figure of $\sigma_{\text{trial}} \approx 0.1$ points, ten tied trials inflate the winner by roughly 0.15 points (error reads $-0.15$ low relative to true expectation). Real sweeps spread trials away from ties so bias is smaller; independent reruns draw fresh unconditioned noise with $\mathbb{E}[Y_{\text{rerun}}] = L_k$.
           </p>
         </details>
       </section>
@@ -218,11 +228,11 @@
       <!-- ============================== Rerunning the best trial ============================== -->
       <section class="prose" id="reruns">
         <h2>Rerunning the best trial</h2>
-        <p>
-          If both the noise and the selection bias live in the seed, the natural remedy is to draw more seeds, and the Playbook recommends that "before adopting a candidate change, consider running the best trial N times to characterize the run-to-run trial variance." The authors qualify this in three ways. We can usually get away with re-estimating the trial variance only after major changes to the pipeline, some applications need fresher estimates, and in others a <dfn data-concept="rerun">rerun of the best trial</dfn> costs too much to be worth it. Bouthillier et al. add a practical detail, finding that reruns that changed only the initialization seed captured less of the variance than reruns that changed every source of randomness, so a rerun should also vary the shuffle order, augmentation and dropout seeds.
+        <p data-src="1094-1100">
+          Since both trial variance and selection bias live in the random seed, rerunning cures both. The Playbook advises: "before adopting a candidate change, consider running the best trial N times to characterize the run-to-run trial variance." You do not need full $N$-seed sweeps on every minor tweak; re-estimate trial variance after major pipeline edits or on high-stakes launches when budgets permit. Bouthillier et al. <cite data-ref="bouthillier2021"><span class="cit-num"><a href="#ref-bouthillier2021">[1]</a></span></cite> emphasize that varying initialization alone understates variance, so a proper <dfn data-concept="rerun">rerun of the best trial</dfn> must resample shuffle order, data augmentation, and dropout seeds together.
         </p>
         <p>
-          To see what seed noise does to a comparison, consider Figure 3. Panel (a) draws the runs of a baseline and a candidate, while panel (b) simulates the gap between the means of two identical configurations 400 times, which is the spread we would see if the change did nothing at all. The shaded band covers two standard errors on either side of zero.
+          <a href="#fig-gain-noise" class="figref" data-static-figref="1">Figure 3</a> illustrates how seed spread controls detectability. Panel (a) draws baseline and candidate reruns, while panel (b) simulates 400 null differences at $\sigma_{\text{trial}} = 0.1$ points with a $\pm 2\,\mathrm{SE}$ noise band centered at zero.
         </p>
       </section>
 
@@ -259,38 +269,38 @@
         <details class="fig-model">
           <summary>How this toy works</summary>
           <p>
-            Baseline run $k$ has error $23 + \sigma z_k$ and candidate run $k$ has error $23 - g + \sigma z'_k$, in percentage points, where $g$ is the true gain and $z_k, z'_k$ are standard normal draws. The observed gap is the baseline mean minus the candidate mean. Panel (b) shows 400 draws of $\sigma\sqrt{2/N}\,z$, the gap between two configurations with no true difference, binned in steps of 0.025 points. The band uses the true $\sigma$ from the slider. In practice we estimate $\sigma$ from the reruns themselves (see the aside below the figure). The default $\sigma = 0.1$ reads the Playbook's "+/- 0.1%" retrain variation for a ResNet-50 on ImageNet as a standard deviation. Seed 142 was chosen so that the default draws sit close to their expected values.
+            Baseline run $k$ draws error $23 + \sigma z_k$ and candidate run $k$ draws $23 - g + \sigma z'_k$ percentage points, where $g$ is true gain and $z_k, z'_k \sim \mathcal{N}(0,1)$. Panel (b) bins 400 null differences $\sigma\sqrt{2/N}\,z$ at width 0.025 around zero; in practice you estimate $\sigma$ directly from reruns (see aside). Default $\sigma = 0.1$ models the Playbook's "$\pm 0.1\%$" ImageNet ResNet-50 retrain variation as a standard deviation (seed 142 sits close to expected spread).
           </p>
         </details>
       </figure>
 
       <section class="prose">
         <p>
-          The default setting gives each configuration a single run, which is exactly the comparison a single tuning study hands us. The standard error of the gap is then <span data-num="fig-gain-noise:default:se-gap">0.14</span> points, so noise alone produces gaps as large as ±<span data-num="fig-gain-noise:default:band">0.28</span> points and the observed <span data-num="fig-gain-noise:default:gap">0.13</span> points tells us little. With <button type="button" class="preset-link" data-figure="fig-gain-noise" data-preset="five-reruns">five runs each</button>, the same true gain stands <span data-num="fig-gain-noise:five-reruns:gap-in-se">2.4</span> standard errors from zero.
+          With one run each ($N=1$), standard error is <span data-num="fig-gain-noise:default:se-gap">0.14</span> points and zero-difference noise routinely spans $\pm$<span data-num="fig-gain-noise:default:band">0.28</span> points, swamping the observed <span data-num="fig-gain-noise:default:gap">0.13</span>-point gain. Moving to <button type="button" class="preset-link" data-figure="fig-gain-noise" data-preset="five-reruns">five runs each</button> pushes the same signal <span data-num="fig-gain-noise:five-reruns:gap-in-se">2.4</span> standard errors past zero.
         </p>
         <p>
-          The quantity behind the band is the standard error of the gap, which is worth writing down because it is what we actually compute from reruns. With $N_{\text{b}}$ reruns of the baseline and $N_{\text{c}}$ of the candidate, sample means $\bar{L}_{\text{b}}$ and $\bar{L}_{\text{c}}$, and sample standard deviations $s_{\text{b}}$ and $s_{\text{c}}$ across seeds,
+          To quantify that band from real reruns of baseline ($N_{\text{b}}$ runs, mean $\bar{L}_{\text{b}}$, SD $s_{\text{b}}$) and candidate ($N_{\text{c}}$, $\bar{L}_{\text{c}}$, $s_{\text{c}}$), compute:
         </p>
         $$\widehat{\Delta} = \bar{L}_{\text{b}} - \bar{L}_{\text{c}}, \qquad \mathrm{SE}(\widehat{\Delta}) = \sqrt{\frac{s_{\text{b}}^2}{N_{\text{b}}} + \frac{s_{\text{c}}^2}{N_{\text{c}}}} .$$
         <p>
-          With equal spreads $\sigma$ and equal counts $N$, the standard error reduces to $\sigma\sqrt{2/N}$, which means that quadrupling the reruns only halves it. I treat a gap of about two standard errors as the point where seed noise stops being a comfortable explanation. That threshold is my own convention for these notes rather than the Playbook's, whose qualitative rule we'll come to in <a href="#adopt">making the call</a>.
+          With equal counts $N$ and noise $\sigma$, $\mathrm{SE} = \sigma\sqrt{2/N}$, meaning quadrupling compute only halves error bars. As a personal convention in these notes, a gap around two standard errors signals noise alone is an unlikely explanation; the Playbook states its own qualitative adoption rule in <a href="#adopt">Making the call</a>.
         </p>
 
         <details class="math-aside">
           <summary>The standard error of a gap, and paired reruns</summary>
           <p>
-            The mean of $N$ independent runs with standard deviation $\sigma$ has variance $\sigma^2/N$. Runs of the baseline and the candidate are independent of each other, so the variance of the difference of their means is the sum of the two variances:
+            An average over $N$ independent seeds with standard deviation $\sigma$ has variance $\sigma^2/N$. Independent baseline and candidate batches add variances directly:
           </p>
           $$\operatorname{Var}\big(\bar{L}_{\text{b}} - \bar{L}_{\text{c}}\big) = \frac{\sigma_{\text{b}}^2}{N_{\text{b}}} + \frac{\sigma_{\text{c}}^2}{N_{\text{c}}} .$$
           <p>
-            Replacing each $\sigma$ with its sample estimate $s$ gives the formula in the text. With few reruns, though, the estimate $s$ is itself noisy (at $N = 2$ it rests on one degree of freedom), so the ratio $\widehat{\Delta}/\mathrm{SE}$ follows a Student $t$ distribution with heavier tails than a normal one, and two standard errors carry less confidence than they would with many runs.
+            Substituting sample standard deviations $s_{\text{b}}, s_{\text{c}}$ yields the text formula. When $N$ is tiny (say $N=2$), noisy $s$ gives $\widehat{\Delta}/\mathrm{SE}$ heavier Student-$t$ tails, weakening two-SE bounds.
           </p>
           <p>
-            We can also pair the reruns. If rerun $k$ of the baseline and rerun $k$ of the candidate share a seed or a data split, we compute the per-pair differences $d_k$ and use $\mathrm{SE} = s_d/\sqrt{N}$, where $s_d$ is the standard deviation of the $d_k$. Because
+            Pairing reruns helps when pipeline seeds share variance: if pair $k$ shares initialization/split seeds with difference $d_k$, compute $\mathrm{SE} = s_d/\sqrt{N}$, where
           </p>
-          $$\operatorname{Var}(d_k) = \sigma_{\text{b}}^2 + \sigma_{\text{c}}^2 - 2\rho\,\sigma_{\text{b}}\sigma_{\text{c}},$$
+          $$\operatorname{Var}(d_k) = \sigma_{\text{b}}^2 + \sigma_{\text{c}}^2 - 2\rho\,\sigma_{\text{b}}\sigma_{\text{c}}.$$
           <p>
-            pairing reduces the standard error when the shared randomness makes the two runs of a pair correlated ($\rho &gt; 0$), and changes little when it does not. Bouthillier et al. recommend pairing, and they base their own decision rule on the probability that the candidate beats the baseline in a paired run; at their chosen error rates, that rule needs 29 paired runs per comparison.
+            Positive pair correlation ($\rho &gt; 0$) shrinks variance cleanly. Bouthillier et al. advise pairing and estimate 29 paired runs per comparison under their error-rate threshold rule (far more than everyday exploration rounds afford).
           </p>
         </details>
       </section>
@@ -298,11 +308,11 @@
       <!-- ============================== What reruns cannot measure ============================== -->
       <section class="prose" id="study-variance">
         <h2>What reruns cannot measure</h2>
-        <p>
-          Reruns fix the seed problem, but they leave something untouched. Every rerun of a best trial uses the hyperparameters that one particular study selected, so if the candidate's study happened to sample a point close to its best learning rate while the baseline's study did not, all the reruns inherit that difference. This is why the Playbook is "most concerned about study variance when trying to make conclusions that go beyond the level of an individual point in hyperparameters space." How much it matters depends on the number of trials and the search space, and the authors report having seen study variance both larger and much smaller than trial variance. Their own example is the ResNet-50 on ImageNet in the <a href="https://github.com/google-research/tuning_playbook#how-many-trials-are-needed-to-get-good-results-with-quasi-random-search" target="_blank" rel="noopener">FAQ on how many trials quasi-random search needs</a>, where even with 20 trials the gap between lucky and unlucky studies is likely larger than the retrain variation of about 0.1 points.
+        <p data-src="1069-1083">
+          Reruns measure seed variance cleanly, yet freeze the hyperparameters returned by one search. If the candidate's sweep stumbled close to its true optimum while the baseline's sweep missed slightly, every seed rerun inherits that offset. That is why the Playbook stays "most concerned about study variance when trying to make conclusions that go beyond the level of an individual point in hyperparameters space." On their ImageNet ResNet-50 benchmark (<a href="https://github.com/google-research/tuning_playbook#how-many-trials-are-needed-to-get-good-results-with-quasi-random-search" target="_blank" rel="noopener">FAQ on trial counts ↗</a>), even 20-trial study variation (about 0.3 points SD, inferred from a 0.4-point IQR) exceeds the $\sigma_{\text{trial}} = 0.1$ retrain spread.
         </p>
         <p>
-          To separate the two kinds of luck, I built Figure 4 so that each study's selected configuration carries an offset, drawn once per study and shared by every rerun of it. In the default setting the candidate's study came out <span data-num="fig-reruns:default:candidate-offset">0.02</span> points above the candidate's average over studies, while the baseline's came out <span data-num="fig-reruns:default:incumbent-offset">0.17</span> points above its own. The true gain is 0.2 points, yet after five reruns of each the observed gain is <span data-num="fig-reruns:default:gain">0.30</span> points with a standard error of <span data-num="fig-reruns:default:se-diff">0.07</span>, or <span data-num="fig-reruns:default:gain-in-se">4.1</span> standard errors. The reruns are precise about the two selected configurations, but they say nothing about the extra 0.15 points of search luck. Pressing "Repeat the study" runs the candidate's whole search again and plots its new best trial, and the spread of those points shows us the luck that reruns cannot see.
+          <a href="#fig-reruns" class="figref" data-static-figref="1">Figure 4</a> separates those two variances by drawing one search offset per study shared across its reruns. At defaults, the candidate's study scored <span data-num="fig-reruns:default:candidate-offset">0.02</span> above mean versus <span data-num="fig-reruns:default:incumbent-offset">0.17</span> for the baseline, inflating a true 0.20-point gain into an observed <span data-num="fig-reruns:default:gain">0.30</span> $\pm$ <span data-num="fig-reruns:default:se-diff">0.07</span> (<span data-num="fig-reruns:default:gain-in-se">4.1</span> SE). Press "Repeat the study" to expose the search luck five reruns could not see.
         </p>
       </section>
 
@@ -330,44 +340,45 @@
         </div>
         <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
-          The top row shows the candidate's reruns with their mean and ±1 standard error, the middle row shows the baseline's five reruns, and the bottom row shows the best trial of each repeated study of the candidate. All values are synthetic, in percentage points of validation error. The default spreads follow my reading of the Playbook's ImageNet example, where the seed spread of 0.1 points treats its ±0.1% retrain variation as a standard deviation, and the search spread of 0.3 points is the 20-trial box's interquartile range in the Playbook's Figure 3 (about 0.4 points) divided by 1.35, which converts an interquartile range to a standard deviation for a normal distribution.
+          Top: candidate reruns with mean and $\pm 1\text{ SE}$. Middle: baseline's five reruns. Bottom: winners of repeated candidate studies. Values are synthetic error points around 23%. Defaults take $\sigma_{\text{trial}} = 0.1$ from the Playbook's $\pm 0.1\%$ variation and $\sigma_{\text{study}} = 0.3$ from Playbook Figure 3's ~0.4-point 20-trial IQR divided by 1.35.
         </p>
         <details class="fig-model">
           <summary>How this toy works</summary>
           <p>
-            A run of configuration $j$ has error $L_j + u_j + e$, with $L_{\text{b}} = $ <span data-num="fig-reruns:model:incumbent-true">23</span> points for the baseline and $L_{\text{c}} = L_{\text{b}} - 0.2$ for the candidate. The study offset $u_j \sim \mathcal{N}(0, \sigma_{\text{study}}^2)$ is drawn once per study and shared by every rerun of that study's best trial, and the seed noise $e \sim \mathcal{N}(0, \sigma_{\text{trial}}^2)$ is drawn fresh for every run. "Rerun" adds a candidate run with its study's offset. "Repeat the study" draws a new offset and adds that study's best trial. This is the variance-components picture of Bouthillier et al. (their Eq. 7). The Gaussian offset is a simplification of mine. The search spread of 0.3 points is a standard deviation, from the 20-trial box's interquartile range of about 0.4 points in Playbook Figure 3 divided by 1.35 (<a href="04-searching-the-space.html#trials">Part 4, How many trials?</a>, reads the same box). The simulation runs for up to <span data-num="fig-reruns:model:limit">60</span> steps from default seed <span data-num="fig-reruns:seed:chosen">225</span>, chosen as a median case from <span data-num="fig-reruns:seed:n">1,000</span> seeds.
+            Configuration $j$ yields error $L_j + u_j + e$, with $L_{\text{b}} = $ <span data-num="fig-reruns:model:incumbent-true">23</span> points for baseline and $L_{\text{c}} = L_{\text{b}} - 0.2$ (a $-0.20$-point change in error) for candidate. Study offset $u_j \sim \mathcal{N}(0, \sigma_{\text{study}}^2)$ draws once per study; seed error $e \sim \mathcal{N}(0, \sigma_{\text{trial}}^2)$ draws fresh per run, echoing Bouthillier et al.'s variance-components model (Eq. 7) with my Gaussian simplification for $u_j$. The simulation caps at <span data-num="fig-reruns:model:limit">60</span> steps from median seed <span data-num="fig-reruns:seed:chosen">225</span> (chosen over <span data-num="fig-reruns:seed:n">1,000</span> seeds).
           </p>
         </details>
       </figure>
 
       <section class="prose">
         <p>
-          Whether search luck matters, then, depends on what we are claiming. If the claim is "this configuration beats that one", reruns measure the right thing, because the selected points are what we would actually ship. If instead the claim is about a change in general (a new schedule beats the old one when both are well tuned), study variance enters the comparison. In that case I think the protections are a search dense enough to pass the checks in <a href="05-reading-the-results.html#density">Part 5, Have we sampled enough points?</a>, a fair amount of tuning for the baseline, and, when the budget allows, repeating the study.
+          Whether search luck enters your conclusion depends on what you claim. To ship one concrete config, seed reruns measure the right uncertainty. To claim a general method beats another when tuned cleanly, confirm dense symmetric searches (<a href="05-reading-the-results.html#density">Part 5</a>) or repeat studies if compute allows. For expensive model or optimizer edits, modern scaling workflows often test candidates on narrow proxy widths parameterized with <strong>$\mu$P</strong> <cite data-ref="yang2022"><span class="cit-num"><a href="#ref-yang2022">[4]</a></span></cite> so multi-seed reruns finish cheaply before zero-shot transfer to full width.
         </p>
       </section>
 
       <!-- ============================== Making the call ============================== -->
       <section class="prose" id="adopt">
         <h2>Making the call</h2>
-        <p>
-          Once we have measured the noise as well as we can afford, how sure do we need to be? Perhaps surprisingly, the Playbook's rule for <dfn data-concept="adoption">adopting a change</dfn> is lenient. The authors write that "demanding complete certainty that something helps isn't the right answer either," and continue:
+        <p data-src="1101-1109">
+          Once seed noise is bounded, how confident must you be? Surprisingly, the Playbook's criterion for <dfn data-concept="adoption">adopting a change</dfn> leans permissive: "demanding complete certainty that something helps isn't the right answer either":
         </p>
-        <blockquote>
+        <blockquote class="playbook" data-src="1101-1109">
+          <span class="who">The Playbook <a href="https://github.com/google-research/tuning_playbook#determining-whether-to-adopt-a-training-pipeline-change-or-hyperparameter-configuration" target="_blank" rel="noopener">on adopting changes ↗</a></span>
           <p>if a new hyperparameter point (or other change) gets a better result than the baseline (taking into account the retrain variance of both the new point and the baseline as best we can), then we probably should adopt it as the new baseline for future comparisons.</p>
         </blockquote>
         <p>
-          The leniency makes sense once we remember what adoption means here. The new baseline is only the reference point for the next round of the incremental strategy, and that round will test it again. Wrongly adopting a small, simple change costs us one round's comparisons, whereas waiting for certainty on every change would slow down every round that follows. This is an asymmetric-loss argument, and in a sequential loop it favours acting on the evidence we have.
+          That leniency reflects what adoption means inside an iterative loop: the updated config merely seeds the next round rather than shipping permanently. Falsely adopting a zero-gain tweak wastes one exploratory comparison, whereas demanding strict proof on every iteration stalls progress. In a sequential loop, asymmetric costs favor acting on solid provisional evidence.
         </p>
-        <p>
-          The rule does come with one condition: "we should only adopt changes that produce improvements that outweigh any complexity they add." I find it useful to think of complexity as whatever the change asks of every later experiment, which would include extra code paths, new hyperparameters that later studies must tune, slower steps and more memory. In my view, a real gain of a few hundredths of a point rarely justifies a new tuned hyperparameter, while a change that simplifies the pipeline at equal error is worth adopting even with no gain.
+        <p data-src="1109-1110">
+          One guardrail offsets that leniency: "we should only adopt changes that produce improvements that outweigh any complexity they add." Complexity means persistent ongoing drag: extra branching code, new nuisance parameters every later sweep must tune, slower throughput, or higher activation RAM. Gains under a few hundredths of a point rarely pay back another tuned hyperparameter, whereas simplifications that tie on error belong in right away.
         </p>
       </section>
 
       <!-- ============================== After exploration concludes ============================== -->
       <section class="prose" id="after">
         <h2>After exploration concludes</h2>
-        <p>
-          Everything so far belongs to the exploration phase, where the goal of each round is insight into the tuning problem. Eventually, though, the rounds have taught us what they can, and the goal changes to producing <dfn data-concept="final-study">a single best configuration</dfn> to launch or otherwise use. The Playbook's <a href="https://github.com/google-research/tuning_playbook#after-exploration-concludes" target="_blank" rel="noopener">section on what happens after exploration</a> describes this switch. By that point we should have a refined search space that comfortably contains the region around the best observed trial and has been sampled adequately, and exploration should have revealed which hyperparameters matter and sensible ranges for them. Figure 5 sets the two phases side by side.
+        <p data-src="1111-1145">
+          Everything above serves exploration, where rounds build insight. Once rounds reveal which knobs move validation loss and bracket their best regions (<a href="#fig-final-study" class="figref" data-static-figref="1">Figure 5</a>), the Playbook switches to producing <dfn data-concept="final-study">a single best configuration</dfn> (<a href="https://github.com/google-research/tuning_playbook#after-exploration-concludes" target="_blank" rel="noopener">after exploration ↗</a>).
         </p>
       </section>
 
@@ -399,57 +410,130 @@
           <div><strong>Then consider the test set</strong>Check test performance. Fold the validation set into training only for a workload with no future launches.</div>
         </div>
         <p class="fig-caption">
-          The rows summarize the Playbook's sections on exploration and on what follows it. The left column's search-space and budget entries paraphrase its incremental strategy, which we covered in <a href="01-the-tuning-loop.html">Part 1</a>.
+          Summary comparing Playbook exploration against final exploitation. Search space and budget structure follow the incremental loop covered in <a href="01-the-tuning-loop.html">Part 1</a>.
         </p>
       </figure>
 
-      <section class="prose">
-        <p>
-          The change of search algorithm follows directly from the change of goal. Quasi-random search suits exploration because its properties serve insight, such as uniform coverage that keeps axis plots readable and the freedom to change the objective after the fact (the full list is in <a href="04-searching-the-space.html#why-not-bo">Part 4, Why not Bayesian optimization?</a>). Once insight no longer matters, many of those advantages stop applying, and the Playbook's view is that Bayesian optimization tools should then find the best configuration automatically.
+      <section class="prose" id="worked-adoption">
+        <p data-src="1111-1145">
+          Switching search tools matches the goal shift. Quasi-random search excels while building axis plots and re-scoring objectives (<a href="04-searching-the-space.html#why-not-bo">Part 4</a>); once exploration ends, turn optimization over to Bayesian search.
         </p>
-        <p>
-          Two details of the final study need care. The first is divergent trials. If the search space still contains a non-trivial volume of divergent points (NaN training loss, or loss many standard deviations worse than the mean), the optimizer has to handle such trials properly, and the Playbook points to <cite data-ref="gelbart2014">Gelbart et al. (2014) <span class="cit-num"><a href="#ref-gelbart2014">[2]</a></span></cite> for a good method while noting that Vizier supports marking trials infeasible, although its approach depends on how it is configured. The second is the test set, since the end of exploration is the natural point to consider checking performance on it. The authors even mention folding the validation set into the training set and retraining the best configuration, but only when there will be no future launches with this workload, such as a one-time Kaggle competition.
+        <p data-src="1125-1145">
+          Mind two final details before launching the grand sweep. First, handle infeasible runs properly: if divergences still occur inside the refined box, configure your Bayesian tool to mark NaN or extreme-loss trials infeasible using constraint handling such as <cite data-ref="gelbart2014">Gelbart et al. (2014) <span class="cit-num"><a href="#ref-gelbart2014">[2]</a></span></cite> (supported in Vizier depending on configuration). Second, evaluate your held-out test set at the end, folding the validation set into final training only for one-off workloads without future tuning rounds (such as fixed competitions).
         </p>
+
+        <h3>Worked example: candidate versus baseline across all six steps</h3>
+        <p>
+          Below is how the six adoption checks play out on a synthetic candidate run (calibrated to the $\sigma_{\text{trial}} = 0.1$ setup in <a href="#fig-gain-noise" class="figref" data-static-figref="1">Figure 3</a> and <a href="#fig-reruns" class="figref" data-static-figref="1">Figure 4</a>) before folding a change into the baseline:
+        </p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Step</th>
+                <th scope="col">Check run</th>
+                <th scope="col">Measured result</th>
+                <th scope="col">Decision impact</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1. Initial winner gap</th>
+                <td>Single winner vs baseline ($N = 1$ each)</td>
+                <td>Baseline 23.20%, Candidate 23.07% ($\Delta = +0.13$ pts, $\mathrm{SE} = 0.14$)</td>
+                <td>Inside $\pm 0.28$ noise band; too weak to decide alone</td>
+              </tr>
+              <tr>
+                <th scope="row">2. Seed reruns</th>
+                <td>$N = 5$ fresh full-randomness seeds each</td>
+                <td>Candidate drops to $-0.15$ pts ($\Delta = +0.15$, $\mathrm{SE} = 0.06$, $2.4\,\mathrm{SE}$)</td>
+                <td>Clears 2-SE seed check; selection optimism removed</td>
+              </tr>
+              <tr>
+                <th scope="row">3. Noise regime check</th>
+                <td>Check if $\sigma_{\text{trial}}$ rose (e.g., to $0.3$) or use pairing</td>
+                <td>Unpaired $N=5$ loses power; paired tests need up to $29$ runs in <cite data-ref="bouthillier2021"><span class="cit-num"><a href="#ref-bouthillier2021">[1]</a></span></cite></td>
+                <td>Pair data-order/init seeds whenever budget is tight</td>
+              </tr>
+              <tr>
+                <th scope="row">4. Study-luck check</th>
+                <td>Inspect candidate &amp; baseline density/edges (<a href="05-reading-the-results.html">Part 5</a>)</td>
+                <td>Dense 20-trial search ($\sigma_{\text{study}} \approx 0.3$); verify balanced baseline window</td>
+                <td>Avoids $0.17$-pt baseline under-tuning artifact</td>
+              </tr>
+              <tr>
+                <th scope="row">5. Scale/complexity audit</th>
+                <td>Count added hyperparameters &amp; compute cost (or $\mu$P proxy stability)</td>
+                <td>1 scalar weight decay added; step time $+0\%$, 0 extra code branches</td>
+                <td>Gain justifies one tunable nuisance knob</td>
+              </tr>
+              <tr>
+                <th scope="row">6. Adoption call</th>
+                <td>Apply Playbook lenient update rule</td>
+                <td>Net $+0.15$ pts at low drag; beats noise floor cleanly</td>
+                <td>Adopt into new baseline; keep Bayesian final run for end of exploration</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </section>
 
       <!-- ============================== In practice ============================== -->
-      <section class="prose" id="practice">
+      <section class="prose in-practice" id="in-practice">
         <h2>In practice</h2>
         <p>
-          Putting the pieces together, this is the sequence I follow when a study's best trial beats the baseline. Each step is tagged below to distinguish the Playbook's rules from my own conventions.
+          Follow these six steps whenever a candidate beats the baseline; source tags distinguish Playbook rules from conventions added in these notes.
         </p>
-        <ol class="p06-steps">
+        <ol class="practice-steps">
           <li>
-            <span class="p06-step-head">Rerun the best trial and the baseline</span>
-            <p class="p06-step-body">Run each N times with fresh seeds, varying every source of randomness we control. Reuse a recent estimate of the trial variance unless the pipeline changed substantially. <span class="p06-step-src">Playbook; Bouthillier et al.</span></p>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 13.7-5.7L20 9M20 4v5h-5"/><path d="M20 12a8 8 0 0 1-13.7 5.7L4 15M4 20v-5h5"/></svg></span>
+            <div>
+              <h3>Rerun the best trial and the baseline <span class="practice-step-src">Playbook; Bouthillier et al.</span></h3>
+              <p>Train each $N$ times across fresh seeds varying initialization, batch order, augmentation, and dropout. Reuse recent trial-variance estimates if pipeline noise stayed unchanged.</p>
+            </div>
           </li>
           <li>
-            <span class="p06-step-head">Compare the gap with its standard error</span>
-            <p class="p06-step-body">Compute $\mathrm{SE} = \sqrt{s_{\text{b}}^2/N_{\text{b}} + s_{\text{c}}^2/N_{\text{c}}}$. A gap of about two standard errors or more is hard to explain by seed noise. Keep in mind that the best trial's first result is optimistic. <span class="p06-step-src">My reading</span></p>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12h16M8 7v10M16 7v10"/></svg></span>
+            <div>
+              <h3>Compare the gap with its standard error <span class="practice-step-src">This post</span></h3>
+              <p>Compute $\mathrm{SE} = \sqrt{s_{\text{b}}^2/N_{\text{b}} + s_{\text{c}}^2/N_{\text{c}}}$. A margin past two standard errors resists seed noise; discount un-rerun study winners for minimum-selection optimism.</p>
+            </div>
           </li>
           <li>
-            <span class="p06-step-head">Check the search behind each configuration</span>
-            <p class="p06-step-body">For a claim about a change in general, confirm both studies were dense and fair, since reruns cannot see search luck. Repeat the study when the budget allows. <span class="p06-step-src">My reading</span></p>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></span>
+            <div>
+              <h3>Check the search behind each configuration <span class="practice-step-src">This post</span></h3>
+              <p>To support general claims beyond one config pair, confirm dense symmetric studies in <a href="05-reading-the-results.html">Part 5</a> or repeat the search when budget allows.</p>
+            </div>
           </li>
           <li>
-            <span class="p06-step-head">Weigh the complexity</span>
-            <p class="p06-step-body">Adopt only if the improvement outweighs the code, hyperparameters, time and memory the change adds. <span class="p06-step-src">Playbook</span></p>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8h14M6 16l-2-8h4zM18 16l-2-8h4z"/></svg></span>
+            <div>
+              <h3>Weigh the complexity <span class="practice-step-src">Playbook</span></h3>
+              <p>Adopt only when validated gains clearly outweigh added code paths, extra nuisance hyperparameters, step latency, or memory pressure.</p>
+            </div>
           </li>
           <li>
-            <span class="p06-step-head">Adopt without demanding certainty</span>
-            <p class="p06-step-body">A change that beats the baseline after allowing for both configurations' retrain variance probably becomes the new baseline. The next round will test it again. <span class="p06-step-src">Playbook</span></p>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+            <div>
+              <h3>Adopt without demanding certainty <span class="practice-step-src">Playbook</span></h3>
+              <p>If the candidate beats the baseline after weighing both retrain variances, make it the new baseline and let later rounds retest it.</p>
+            </div>
           </li>
-          <li class="is-later">
-            <span class="p06-step-head">When exploration ends, run one final study</span>
-            <p class="p06-step-body">Use Bayesian optimization over the refined search space with the largest budget we can, handle divergent trials, then consider the test set. <span class="p06-step-src">Playbook</span></p>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></span>
+            <div>
+              <h3>When exploration ends, run one final study <span class="practice-step-src">Playbook</span></h3>
+              <p>Deploy Bayesian optimization across your narrowed space with full trial budget, mark infeasible points cleanly, and evaluate on the held-out test set afterward.</p>
+            </div>
           </li>
         </ol>
       </section>
 
-      <section class="prose" id="where-this-fits">
+      <section class="prose" id="where">
         <h2>Where this fits</h2>
         <p>
-          Adopting a change closes one round of the Playbook's loop, and the new baseline becomes the starting point for the next. In <a href="07-training-horizon.html">Part 7</a> we turn to a hyperparameter that the rounds so far have quietly held fixed, namely how long each training run should be.
+          Adopting an improvement closes one Playbook round and promotes the new baseline for the next. In <a href="07-training-horizon.html">Part 7</a> you relax a knob held constant across every study so far: training duration itself.
         </p>
       </section>
 
@@ -459,7 +543,7 @@
 
       <section class="refs" id="references">
         <h2>References</h2>
-        <ol id="reflist"><li id="ref-bouthillier2021">Xavier Bouthillier, Pierre Delaunay, Mirko Bronzi, Assya Trofimov, Brennan Nichyporuk, Justin Szeto, Nazanin Mohammadi Sepahvand, Edward Raff, Kanika Madan, Voleti Vikram, Samira Ebrahimi Kahou, Vincent Michalski, Tal Arbel, Chris Pal, Gael Varoquaux, Pascal Vincent (2021). <a href="https://arxiv.org/abs/2103.03098" target="_blank" rel="noopener">Accounting for Variance in Machine Learning Benchmarks</a>. Proceedings of Machine Learning and Systems (MLSys 2021).</li><li id="ref-gelbart2014">Michael A. Gelbart, Jasper Snoek, Ryan P. Adams (2014). <a href="https://arxiv.org/abs/1403.5607" target="_blank" rel="noopener">Bayesian Optimization with Unknown Constraints</a>. Proceedings of the 30th Conference on Uncertainty in Artificial Intelligence (UAI 2014).</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li></ol>
+        <ol id="reflist"><li id="ref-bouthillier2021">Xavier Bouthillier, Pierre Delaunay, Mirko Bronzi, Assya Trofimov, Brennan Nichyporuk, Justin Szeto, Nazanin Mohammadi Sepahvand, Edward Raff, Kanika Madan, Voleti Vikram, Samira Ebrahimi Kahou, Vincent Michalski, Tal Arbel, Chris Pal, Gael Varoquaux, Pascal Vincent (2021). <a href="https://arxiv.org/abs/2103.03098" target="_blank" rel="noopener">Accounting for Variance in Machine Learning Benchmarks</a>. Proceedings of Machine Learning and Systems (MLSys 2021).</li><li id="ref-gelbart2014">Michael A. Gelbart, Jasper Snoek, Ryan P. Adams (2014). <a href="https://arxiv.org/abs/1403.5607" target="_blank" rel="noopener">Bayesian Optimization with Unknown Constraints</a>. Proceedings of the 30th Conference on Uncertainty in Artificial Intelligence (UAI 2014).</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li><li id="ref-yang2022">Greg Yang, Edward J. Hu, Igor Babuschkin, Szymon Sidor, Xiaodong Liu, David Farhi, Nick Ryder, Jakub Pachocki, Weizhu Chen, Jianfeng Gao (2022). <a href="https://arxiv.org/abs/2203.03466" target="_blank" rel="noopener">Tensor Programs V: Tuning Large Neural Networks via Zero-Shot Hyperparameter Transfer</a>. arXiv:2203.03466.</li></ol>
       </section>
 
       <nav class="pager" aria-label="Post navigation"><a class="prev" href="../pages/05-reading-the-results.html"><small>&larr; Previous Post</small>Reading the results of a tuning study</a><a class="next" href="../pages/07-training-horizon.html"><small>Next Post &rarr;</small>How long to train</a></nav>

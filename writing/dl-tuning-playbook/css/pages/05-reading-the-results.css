@@ -103,43 +103,8 @@ ul.p05-questions li { margin-bottom: 0.45em; }
 .p05-calc .scrub-calc-prose { margin: 0; }
 
 /* ---------- In practice ---------- */
-ol.p05-steps { list-style: none; padding: 0; margin: 1rem auto 1.4rem; counter-reset: p05step; }
-li.p05-step {
-  counter-increment: p05step; display: grid; grid-template-columns: 52px 1fr; gap: 0 14px;
-  position: relative; padding: 0 0 18px;
-}
-li.p05-step::before {
-  content: ""; position: absolute; left: 25px; top: 52px; bottom: 0; width: 2px; background: var(--grid);
-}
-li.p05-step:last-child::before { display: none; }
-.p05-step-icon {
-  width: 52px; height: 52px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
-  background: var(--model-tint, color-mix(in srgb, var(--model) 12%, transparent)); border: 1.5px solid color-mix(in srgb, var(--model) 55%, var(--grid));
-  position: relative;
-}
-.p05-step-icon::after {
-  content: counter(p05step); position: absolute; right: -4px; top: -4px; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--model); color: #fff; font: 700 0.72rem/20px var(--font); text-align: center;
-}
-.p05-step-icon svg { width: 30px; height: 30px; }
-.p05-step-icon svg circle { fill: var(--ink-3); }
-.p05-step-icon svg .ic-hl { fill: var(--accent); }
-.p05-step-icon svg .ic-axis { fill: none; stroke: var(--ink-2); stroke-width: 1.8; }
-.p05-step-icon svg .ic-x { fill: none; stroke: var(--accent); stroke-width: 2; }
-.p05-step-icon svg .ic-val { fill: none; stroke: var(--model); stroke-width: 2.2; }
-.p05-step-icon svg .ic-train { fill: none; stroke: var(--third); stroke-width: 2; stroke-dasharray: 3 2.5; }
-.p05-step-body h3 { font-family: var(--font-serif); font-size: 1.08rem; margin: 0.7rem 0 0.25rem; }
-.p05-step-body p { margin: 0 0 0.25rem; font-size: 0.97rem; line-height: 1.55; }
-.p05-practice-quote { border-left: 3px solid var(--grid); padding-left: 14px; color: var(--ink-2); }
-@media (max-width: 560px) {
-  li.p05-step { grid-template-columns: 44px 1fr; gap: 0 12px; }
-  .p05-step-icon { width: 44px; height: 44px; }
-  li.p05-step::before { left: 21px; top: 44px; }
-  .p05-step-icon svg { width: 26px; height: 26px; }
-  .p05-step-body h3 { margin-top: 0.45rem; }
-}
-
-.p05-then { color: var(--model); font-weight: 700; margin: 0 4px; }
+.p05-practice-quote { margin-top: 1rem; border-left: 3px solid var(--grid); padding-left: 14px; color: var(--ink-2); }
+.p05-then { color: var(--model-label, var(--model)); font-weight: 700; margin: 0 4px; }
 
 /* ---------- "In this post" box: each item a block, title over takeaway ---------- */
 nav.post-roadmap a.roadmap-item { display: block; text-decoration: none; color: inherit; }
