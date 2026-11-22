@@ -67,20 +67,22 @@
     });
   });
 
-  function updateBoardNav(sy, vh, maxScroll) {
-    if (!navItems.length) return;
+  function resolveActiveNav(sy, vh, maxScroll) {
+    if (sy <= 2) return navItems[0].link;
+    if (sy >= maxScroll - 24) return navItems[navItems.length - 1].link;
+    var threshold = Math.min(220, vh * 0.34);
     var active = navItems[0].link;
-    if (sy > 2) {
-      if (sy >= maxScroll - 24) {
-        active = navItems[navItems.length - 1].link;
-      } else {
-        var refY = sy + Math.min(220, vh * 0.34);
-        for (var i = 0; i < navItems.length; i++) {
-          var top = abs(navItems[i].target.getBoundingClientRect()).top;
-          if (top <= refY) active = navItems[i].link;
-        }
+    for (var i = 0; i < navItems.length; i++) {
+      if (navItems[i].target.getBoundingClientRect().top <= threshold) {
+        active = navItems[i].link;
       }
     }
+    return active;
+  }
+
+  function updateBoardNav(sy, vh, maxScroll) {
+    if (!navItems.length) return;
+    var active = resolveActiveNav(sy, vh, maxScroll);
     navItems.forEach(function (entry) {
       var on = entry.link === active;
       entry.link.classList.toggle('is-active', on);

@@ -13,8 +13,9 @@ Renders:
 4. Former Mentees & Alumni (70) in a clearly separated section below, with Former
    Undergraduates (56) sub-grouped into 3 collapsible pathway sections.
 """
-from pages_shared import (attr_esc, card_meta, chip, date_range, esc, esc_text, listview_status,
-                          parse_latest_year, period_end_key, strip_tags as _strip_tags)
+from pages_shared import (attr_esc, card_meta, chip, date_range, esc, listview_status,
+                          mc_row, parse_latest_year, period_end_key, stat_tile,
+                          strip_tags as _strip_tags)
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
 _STAGES = [
@@ -75,17 +76,22 @@ def _is_summer_fellow(rec):
     return _has_tag_kw(rec, "programs", _SUMMER_FELLOWSHIP_KWS) or _has_tag_kw(rec, "awards", _SUMMER_FELLOWSHIP_KWS)
 
 
+_THESIS_COURSE_TAGS = (
+    ("senior thesis", "ug-senior-thesis"),
+    ("research course", "ug-research-course"),
+    ("junior thesis", "ug-junior-thesis"),
+)
+_THESIS_TAGS = {tok for _, tok in _THESIS_COURSE_TAGS}
+
+
 def _ug_pathway_tags(rec):
     """Exact facet tokens for Panel 2 Undergraduate Pathways cross-filtering."""
     tags = []
     if _is_summer_fellow(rec):
         tags.append("ug-summer")
-    if _has_tag_kw(rec, "courses", ("senior thesis",)):
-        tags.append("ug-senior-thesis")
-    if _has_tag_kw(rec, "courses", ("research course",)):
-        tags.append("ug-research-course")
-    if _has_tag_kw(rec, "courses", ("junior thesis",)):
-        tags.append("ug-junior-thesis")
+    for kw, tok in _THESIS_COURSE_TAGS:
+        if _has_tag_kw(rec, "courses", (kw,)):
+            tags.append(tok)
     if (
         _has_tag_kw(rec, "programs", ("rop", "co-op"))
         or (not rec.get("courses") and not rec.get("programs") and not _is_summer_fellow(rec))
@@ -209,13 +215,14 @@ def _mentorship_dashboard(mbs, completed):
         title = f"{_CHIP_LABEL[cat]}: {cur} current, {former} alumni ({tot} total)"
         badge_cur = f'<span class="mc-cur-pill mc-pill-{color}">{cur} active</span>' if cur else ""
         stage_rows.append(
-            f'<button type="button" class="mc-row mc-row-btn" data-lv-trigger data-lv-cat="{cat}" '
-            f'aria-pressed="false" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
-            f'<span class="mc-label"><span class="dot d-{color}"></span>{esc(_CHIP_LABEL[cat])}</span>'
-            f'<span class="mc-track">'
-            f'{seg_cur}{seg_for}</span>'
-            f'<span class="mc-total">{badge_cur}<strong>{tot}</strong></span>'
-            '</button>'
+            mc_row(
+                "",
+                f'<span class="dot d-{color}"></span>{esc(_CHIP_LABEL[cat])}',
+                f"{seg_cur}{seg_for}",
+                f"{badge_cur}<strong>{tot}</strong>",
+                title=title,
+                cat=cat,
+            )
         )
     stage_legend = (
         '<div class="pf-leg" aria-hidden="true">'
@@ -239,9 +246,8 @@ def _mentorship_dashboard(mbs, completed):
         return sum(1 for tl in ug_tag_lists if tok in tl)
 
     n_both = sum(
-        1 for u in all_ugs
-        if (_is_summer_fellow(u) or _has_tag_kw(u, "programs", ("rop", "co-op")))
-        and _has_tag_kw(u, "courses", ("senior thesis", "research course", "junior thesis"))
+        1 for tl in ug_tag_lists
+        if ("ug-summer" in tl or "ug-rop" in tl) and bool(_THESIS_TAGS.intersection(tl))
     )
 
     ug_items = [
@@ -252,20 +258,19 @@ def _mentorship_dashboard(mbs, completed):
         ("A&S ROP, Co-op & Visiting",       "ug-rop",             _count_ug("ug-rop"),             "st-secondary"),
     ]
     max_ug = max((c for _, _, c, _ in ug_items), default=1) or 1
-    ug_rows = []
-    for short_lbl, tag_tok, cnt, color in ug_items:
-        w = cnt / max_ug * 100
-        title = f"{short_lbl}: {cnt} undergraduate researchers"
-        ug_rows.append(
-            f'<button type="button" class="mc-row mc-row-ug mc-row-btn" data-lv-trigger '
-            f'data-lv-facet="{tag_tok}" data-lv-label="{esc_text(short_lbl).replace(chr(34), "&quot;")}" '
-            f'aria-pressed="false" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
-            f'<span class="mc-label"><span class="dot d-{color}"></span>{esc(short_lbl)}</span>'
-            f'<span class="mc-track">'
-            f'<span class="mc-seg mc-{color}" style="width:{w:.2f}%"></span></span>'
-            f'<span class="mc-total"><strong>{cnt}</strong></span>'
-            '</button>'
+    ug_rows = [
+        mc_row(
+            "mc-row-ug ",
+            f'<span class="dot d-{color}"></span>{esc(short_lbl)}',
+            f'<span class="mc-seg mc-{color}" style="width:{cnt / max_ug * 100:.2f}%"></span>',
+            f"<strong>{cnt}</strong>",
+            title=f"{short_lbl}: {cnt} undergraduate researchers",
+            facet=tag_tok,
+            label=short_lbl,
+            clear="0",
         )
+        for short_lbl, tag_tok, cnt, color in ug_items
+    ]
     ug_legend = (
         '<div class="pf-leg" aria-hidden="true">'
         f'<span class="pf-key">{len(all_ugs)} researchers ({n_both} completed both a fellowship &amp; thesis/course)</span>'
@@ -374,12 +379,13 @@ def generate_content(data):
 
     stats = (
         '<div class="pub-stats ment-stats">'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-total" data-lv-trigger data-lv-cat="all" aria-pressed="true"><span class="n">{total}</span><span class="l">Total mentees</span></button>'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-student" data-lv-trigger data-lv-cat="current" aria-pressed="false"><span class="n">{n_current}</span><span class="l">Active group</span></button>'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-postdoc" data-lv-trigger data-lv-cat="postdoc" aria-pressed="false"><span class="n">{n_postdocs}</span><span class="l">Postdoctoral fellows</span></button>'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-significant" data-lv-trigger data-lv-facet="stage-grad" data-lv-label="Graduate students" aria-pressed="false"><span class="n">{n_grads}</span><span class="l">Graduate students</span></button>'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="former" aria-pressed="false"><span class="n">{n_former}</span><span class="l">Alumni</span></button>'
-        '</div>'
+        + stat_tile(total, "Total mentees", "role-tile-total", cat="all", pressed=True)
+        + stat_tile(n_current, "Active group", "role-tile-student", cat="current")
+        + stat_tile(n_postdocs, "Postdoctoral fellows", "role-tile-postdoc", cat="postdoc")
+        + stat_tile(n_grads, "Graduate students", "role-tile-significant",
+                    facet="stage-grad", label="Graduate students", clear="0")
+        + stat_tile(n_former, "Alumni", "role-tile-primary", cat="former")
+        + '</div>'
     )
     top = (
         '<div class="container">'

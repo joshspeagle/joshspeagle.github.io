@@ -19,7 +19,17 @@ import re
 from datetime import datetime
 
 from config import get_data_path
-from pages_shared import accent_class, attr_esc, card_meta, esc, listview_status, slug, url_attr
+from pages_shared import (accent_class, attr_esc, card_meta, chip, esc, listview_status,
+                          lv_trigger_attrs, mc_row, slug, url_attr)
+
+
+def _repo_role(repo, cur):
+    """Classify maintainer role consistently across dashboard bars, chips, and cards."""
+    if repo.get("isFork"):
+        return "fork"
+    if repo.get("external") or cur.get("external"):
+        return "collab"
+    return "lead"
 
 # GitHub language -> (short label, css token)
 _LANG = {
@@ -146,13 +156,15 @@ def _software_dashboard(shown, curation, groups, group_accent):
         fork_txt = f" · {forks} forks" if forks else ""
         title = f"{name}: {stars:,} stars{fork_txt}" + (f" · {dl}/mo downloads" if dl else "")
         pkg_rows.append(
-            f'<button type="button" class="mc-row sw-pkg-row mc-row-btn" data-lv-trigger '
-            f'data-lv-query="{attr_esc(name)}" aria-pressed="false" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
-            f'<span class="mc-label"><span class="dot d-{acc}"></span><code>{esc(name)}</code></span>'
-            f'<span class="mc-track">'
-            f'<span class="mc-seg mc-{acc}" style="width:{w:.1f}%"></span></span>'
-            f'<span class="mc-total">{dl_badge}<strong>★ {stars:,}</strong></span>'
-            '</button>'
+            mc_row(
+                "sw-pkg-row ",
+                f'<span class="dot d-{acc}"></span><code>{esc(name)}</code>',
+                f'<span class="mc-seg mc-{acc}" style="width:{w:.1f}%"></span>',
+                f"{dl_badge}<strong>★ {stars:,}</strong>",
+                title=title,
+                query=name,
+                clear="filters",
+            )
         )
     panel1_leg = (
         '<div class="pf-leg" aria-hidden="true">'
@@ -178,12 +190,7 @@ def _software_dashboard(shown, curation, groups, group_accent):
     for name, r in shown.items():
         cur = curation.get(name, {})
         gid = cur.get("group") or "scratch"
-        if r.get("isFork"):
-            rk = "fork"
-        elif r.get("external") or cur.get("external"):
-            rk = "collab"
-        else:
-            rk = "lead"
+        rk = _repo_role(r, cur)
         dom_roles[gid][rk] += 1
         role_counts[rk] += 1
 
@@ -210,19 +217,20 @@ def _software_dashboard(shown, curation, groups, group_accent):
             parts.append(f'{rc["fork"]} fork')
         title = f"{lbl}: {cnt} repositories ({', '.join(parts)})"
         dom_rows.append(
-            f'<button type="button" class="mc-row sw-dom-row mc-row-btn" data-lv-trigger '
-            f'data-lv-cat="{slug(gid)}" aria-pressed="false" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
-            f'<span class="mc-label"><span class="dot d-{acc}"></span>{esc(lbl)}</span>'
-            f'<span class="mc-track">'
-            f'{"".join(segs)}</span>'
-            f'<span class="mc-total"><strong>{cnt}</strong></span>'
-            '</button>'
+            mc_row(
+                "sw-dom-row ",
+                f'<span class="dot d-{acc}"></span>{esc(lbl)}',
+                "".join(segs),
+                f"<strong>{cnt}</strong>",
+                title=title,
+                cat=slug(gid),
+            )
         )
     panel2_leg = (
         '<div class="pf-leg">'
-        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger data-lv-cat="role-lead" aria-pressed="false"><i class="pf-kw seg-primary"></i>Lead author ({role_counts["lead"]})</button>'
-        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger data-lv-cat="role-collab" aria-pressed="false"><i class="pf-kw seg-significant"></i>Co-author / Collab ({role_counts["collab"]})</button>'
-        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger data-lv-cat="role-fork" aria-pressed="false"><i class="pf-kw seg-other"></i>Contributed forks ({role_counts["fork"]})</button>'
+        f'<button type="button" class="pf-key pf-key-btn" {lv_trigger_attrs(cat="role-lead")}><i class="pf-kw seg-primary"></i>Lead author ({role_counts["lead"]})</button>'
+        f'<button type="button" class="pf-key pf-key-btn" {lv_trigger_attrs(cat="role-collab")}><i class="pf-kw seg-significant"></i>Co-author / Collab ({role_counts["collab"]})</button>'
+        f'<button type="button" class="pf-key pf-key-btn" {lv_trigger_attrs(cat="role-fork")}><i class="pf-kw seg-other"></i>Contributed forks ({role_counts["fork"]})</button>'
         '</div>'
     )
     panel2 = (
@@ -252,18 +260,16 @@ def _list_card(name, repo, cur, group_id, group_label, accent, featured):
     lang = "Python" if cur.get("pypi") else _LANG.get(repo.get("language") or "", ("", ""))[0]
     blurb = esc(cur.get("blurb") or repo.get("description") or "")
 
-    role_cat = "lead"
+    role_cat = _repo_role(repo, cur)
     tags = f'<span class="badge b-{accent}">{esc(group_label)}</span>' if group_label else ""
     if featured:
         tags = '<span class="tag feat">★ Featured</span>' + tags
     if cur.get("pypi"):
         tags += f'<span class="badge b-role-primary">PyPI: {esc(cur["pypi"])}</span>'
-    if repo.get("isFork"):
+    if role_cat == "fork":
         tags += '<span class="tag fork">Fork</span>'
-        role_cat = "fork"
-    elif repo.get("external") or cur.get("external"):
+    elif role_cat == "collab":
         tags += '<span class="tag external">Co-Maintainer</span>'
-        role_cat = "collab"
     if repo.get("archived"):
         tags += '<span class="tag archived">Archived</span>'
 
@@ -364,12 +370,7 @@ def generate_content(data):
         gid = group_of(name, repo)
         counts[gid] = counts.get(gid, 0) + 1
         cur = curation.get(name, {})
-        if repo.get("isFork"):
-            role_counts["fork"] += 1
-        elif repo.get("external") or cur.get("external"):
-            role_counts["collab"] += 1
-        else:
-            role_counts["lead"] += 1
+        role_counts[_repo_role(repo, cur)] += 1
 
     chips = [f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">All <span class="ct">{len(rows)}</span></button>']
     for gid in group_order:

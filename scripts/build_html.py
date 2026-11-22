@@ -33,18 +33,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pages_shared import (SPRITE, ads_abs_url, attr_esc, card_meta, clean_text,  # noqa: E402
                           date_range, esc, esc_text, expand_item_citations,
                           listview_status, load_publications_by_bibcode,
-                          percent_shares, slug, strip_tags, term_month,
-                          url_attr, warn)
+                          lv_trigger_attrs, percent_shares, slug, strip_tags,
+                          term_month, tip_attrs, url_attr, warn)
 from pages_talks import generate_content as gen_talks          # noqa: E402
 from pages_teaching import generate_content as gen_teaching    # noqa: E402
 from pages_mentorship import generate_content as gen_mentorship  # noqa: E402
 from pages_awards import generate_content as gen_awards        # noqa: E402
 from pages_service import generate_content as gen_service      # noqa: E402
 from pages_software import generate_content as gen_software    # noqa: E402
-from pages_news import (_render_card as render_news_card,        # noqa: E402
-                        _sort_num as news_sort_num,
-                        _type_meta as news_type_meta,
-                        generate_content as gen_news)
+from pages_news import generate_content as gen_news, render_highlights  # noqa: E402
 from pages_writing import generate_content as gen_writing      # noqa: E402
 from build_writing import build_all as build_writing           # noqa: E402
 
@@ -967,16 +964,9 @@ def generate_home_research(data):
 def generate_home_highlights(data):
     """Compact 3-card latest highlights strip bridging Home to News & Awards."""
     news_sec = (data.get("sections", {}).get("news", {}) or {})
-    types = news_sec.get("types", {}) or {}
-    items = sorted(news_sec.get("items", []) or [], key=news_sort_num, reverse=True)[:3]
-    if not items:
+    cards = render_highlights(news_sec, limit=3)
+    if not cards:
         return ""
-    pubs_by_bib = load_publications_by_bibcode()
-    meta_by_type = {
-        n.get("type", "press"): news_type_meta(types, n.get("type", "press"))
-        for n in items
-    }
-    cards = "".join(render_news_card(n, meta_by_type, pubs_by_bib, featured=True) for n in items)
     head = home_section(data, "highlights")
     intro = head.get("intro") or "Recent papers, group milestones, awards, and talks."
     return (
@@ -1484,16 +1474,12 @@ def _n(v):
     return f"{v:.2f}".rstrip("0").rstrip(".") or "0"
 
 
-def _tip(text):
-    """A focusable, hoverable hit target's shared attributes."""
-    t = esc(text).replace('"', "&quot;")
-    return f'role="img" tabindex="0" aria-label="{t}" data-tip="{t}"'
-
-
-def _tip_btn(text):
-    """Tooltip attributes for native interactive <button> chart targets."""
-    t = esc(text).replace('"', "&quot;")
-    return f'aria-label="{t}" data-tip="{t}"'
+def _band_span(x_center, step):
+    """Return (left%, width%) clamped inside [0, 100] with zero neighbor overlap."""
+    raw_left = x_center - step / 2
+    left = max(0.0, raw_left)
+    right = min(100.0, raw_left + step)
+    return left, max(0.0, right - left)
 
 
 def _pf_grid(ticks, yp):
@@ -1597,13 +1583,13 @@ def _roles_svg(pubs):
             summ = f"{y}: {total} publication" + ("s" if total != 1 else "") + f" — {parts} (click to filter)"
             plot.append(
                 f'<button type="button" class="pf-col" style="left:{_n(i * slot)}%;width:{_n(slot)}%" '
-                f'data-lv-trigger data-lv-target="#pub-root" data-lv-year="{y}" '
-                f'data-lv-label="Published in {y}" aria-pressed="false" {_tip_btn(summ)}></button>'
+                f'{lv_trigger_attrs(year=y, label=f"Published in {y}", target="#pub-root")} '
+                f'{tip_attrs(summ)}></button>'
             )
     xt = [(i * slot + slot / 2, str(y)) for i, y in enumerate(years) if y % 2 == 0]
     legend = "".join(
-        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger '
-        f'data-lv-target="#pub-root" data-lv-cat="role-{key}" aria-pressed="false">'
+        f'<button type="button" class="pf-key pf-key-btn" '
+        f'{lv_trigger_attrs(cat=f"role-{key}", target="#pub-root")}>'
         f'<i class="pf-kw seg-{key}"></i>{label}</button>'
         for key, label in _ROLE_META
     )
@@ -1644,12 +1630,11 @@ def _citations_svg(metrics):
                 f'{cpy[years[-1]]:,} in {years[-1]}</span>')
     step = 100 / (n - 1) if n > 1 else 100
     for i, y in enumerate(years):
-        left = max(0, xp(i) - step / 2)
+        left, band_w = _band_span(xp(i), step)
         plot.append(
-            f'<button type="button" class="pf-band" style="left:{_n(left)}%;'
-            f'width:{_n(min(step, 100 - left))}%" data-lv-trigger data-lv-target="#pub-root" '
-            f'data-lv-year="{y}" data-lv-label="Published in {y}" aria-pressed="false" '
-            f'{_tip_btn(f"{y}: {cpy[y]:,} citations (click to filter papers published in {y})")}></button>'
+            f'<button type="button" class="pf-band" style="left:{_n(left)}%;width:{_n(band_w)}%" '
+            f'{lv_trigger_attrs(year=y, label=f"Published in {y}", target="#pub-root")} '
+            f'{tip_attrs(f"{y}: {cpy[y]:,} citations (click to filter papers published in {y})")}></button>'
         )
     xt = [(xp(i), str(y)) for i, y in enumerate(years) if y % 2 == 0]
     return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt), ycol=5,
@@ -1709,9 +1694,9 @@ def _riq_svg(metrics):
                 for key, label in _RIQ_SERIES if yr in dict(data[key])]
         if not bits:
             continue
-        left = max(0, xp(yr) - step / 2)
-        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;width:{_n(min(step, 100 - left))}%" '
-                    f'{_tip(f"{yr} — " + " · ".join(bits))}></span>')
+        left, band_w = _band_span(xp(yr), step)
+        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;width:{_n(band_w)}%" '
+                    f'{tip_attrs(f"{yr} — " + " · ".join(bits), focusable=True)}></span>')
     xt = [(xp(yr), str(yr)) for yr in years if yr % 2 == 0]
 
     # direct labels at the right edge, nudged apart so no two overlap
@@ -1720,13 +1705,11 @@ def _riq_svg(metrics):
     spread = _spread([(i, yp(ends[i][2])) for i in order], 11.0)
     legend = "".join(
         f'<button type="button" class="pf-rl pf-rl-btn ln-{ends[i][0]}" style="--y:{_n(spread[i])}%" '
-        f'data-lv-trigger data-lv-target="#pub-root" '
-        f'data-lv-cat="{"all" if ends[i][0] == "all" else "role-" + ends[i][0]}" '
-        f'aria-pressed="{"true" if ends[i][0] == "all" else "false"}">'
+        f'{lv_trigger_attrs(cat="all" if ends[i][0] == "all" else f"role-{ends[i][0]}", target="#pub-root", pressed=ends[i][0] == "all")}>'
         f'<b>{round(ends[i][2]):,}</b> {ends[i][1]}</button>'
         for i in range(len(ends))
     )
-    rcol = max(len(f"{round(v):,} {label}") for _, label, v in ends) + 2
+    rcol = max(len(f"{round(v):,} {label}") for _, label, v in ends) + 4
     return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt),
                      legend=legend,
                      cls=" has-r", ycol=3, rcol=rcol,
@@ -1761,14 +1744,13 @@ def _mix_svg(pubs):
         tip = f"{name}: {pct}% of classified output (click to filter)"
         short_bar = "AI & ML" if key == "sla" else name.split("&")[0].strip()
         inner = f'<b>{esc(short_bar)}</b><i>{pct}%</i>'
+        cat_attrs = lv_trigger_attrs(cat=key, target="#pub-root")
         segs.append(
             f'<button type="button" class="mix-seg mix-{key}" style="flex:{pct}" '
-            f'data-lv-trigger data-lv-target="#pub-root" data-lv-cat="{key}" aria-pressed="false" '
-            f'{_tip_btn(tip)}>{inner}</button>'
+            f'{cat_attrs} {tip_attrs(tip)}>{inner}</button>'
         )
         keys.append(
-            f'<button type="button" class="pf-key pf-key-mix pf-key-btn" '
-            f'data-lv-trigger data-lv-target="#pub-root" data-lv-cat="{key}" aria-pressed="false">'
+            f'<button type="button" class="pf-key pf-key-mix pf-key-btn" {cat_attrs}>'
             f'<i class="pf-kw mix-{key}"></i>'
             f'<strong>{esc(name)}</strong> <span class="pf-key-pct">{pct}%</span></button>'
         )
@@ -1870,25 +1852,34 @@ def generate_publications_redesign(data):
             f'{svg}</figure>'
         )
 
+    tab_defs = [
+        ("cites", "Citations per year", "Citations received per year",
+         peak_txt + " · click a year to filter", _citations_svg(metrics)),
+        ("roles", "Publications by year &amp; role", "Publications by year &amp; role",
+         "click any year bar or role legend to filter", _roles_svg(papers_with_year)),
+        ("riq", "Research impact (RIQ)", "Research impact by role",
+         "RIQ vs. typical range · click a role label to filter", _riq_svg(metrics)),
+    ]
+    tab_buttons = "".join(
+        f'<button type="button" class="pub-tab" role="tab" id="pub-tab-{tid}" '
+        f'aria-controls="pub-panel-{tid}" aria-selected="{"true" if idx == 0 else "false"}" '
+        f'tabindex="{0 if idx == 0 else -1}">{tlabel}</button>'
+        for idx, (tid, tlabel, *_rest) in enumerate(tab_defs)
+    )
+    tab_panels = "".join(
+        f'<div class="pub-tabpanel" role="tabpanel" id="pub-panel-{tid}" '
+        f'aria-labelledby="pub-tab-{tid}"{"" if idx == 0 else " hidden"}>'
+        f'{_fig(ftitle, fmeta, fsvg, wide=True)}</div>'
+        for idx, (tid, _tlabel, ftitle, fmeta, fsvg) in enumerate(tab_defs)
+    )
+
     figures = (
         '<div class="pub-figures">'
         + _fig("Research mix", "click any area to filter papers", _mix_svg(papers_with_year), wide=True)
         + '</div>'
         '<section class="pub-explorer" data-tabs aria-label="Publication metrics and trends">'
-        '<div class="pub-tabs" role="tablist" aria-label="Publication trend charts">'
-        '<button type="button" class="pub-tab" role="tab" id="pub-tab-cites" aria-controls="pub-panel-cites" aria-selected="true" tabindex="0">Citations per year</button>'
-        '<button type="button" class="pub-tab" role="tab" id="pub-tab-roles" aria-controls="pub-panel-roles" aria-selected="false" tabindex="-1">Publications by year &amp; role</button>'
-        '<button type="button" class="pub-tab" role="tab" id="pub-tab-riq" aria-controls="pub-panel-riq" aria-selected="false" tabindex="-1">Research impact (RIQ)</button>'
-        '</div>'
-        '<div class="pub-tabpanel" role="tabpanel" id="pub-panel-cites" aria-labelledby="pub-tab-cites">'
-        + _fig("Citations received per year", peak_txt + " · click a year to filter", _citations_svg(metrics), wide=True)
-        + '</div>'
-        '<div class="pub-tabpanel" role="tabpanel" id="pub-panel-roles" aria-labelledby="pub-tab-roles" hidden>'
-        + _fig("Publications by year &amp; role", "click any year bar or role legend to filter", _roles_svg(papers_with_year), wide=True)
-        + '</div>'
-        '<div class="pub-tabpanel" role="tabpanel" id="pub-panel-riq" aria-labelledby="pub-tab-riq" hidden>'
-        + _fig("Research impact by role", "RIQ vs. typical range · click a role label to filter", _riq_svg(metrics), wide=True)
-        + '</div>'
+        f'<div class="pub-tabs" role="tablist" aria-label="Publication trend charts">{tab_buttons}</div>'
+        f'{tab_panels}'
         '</section>'
         '<details class="pub-fig-note-details">'
         '<summary>How to read these summaries (research mix, authorship roles &amp; RIQ)</summary>'

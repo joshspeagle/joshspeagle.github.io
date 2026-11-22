@@ -75,6 +75,7 @@
     const picks = filterEls.map(() => 'all');
     const state = {
       q: '',
+      queryFromTrigger: false,
       year: '',
       facet: null,
       sort: root.dataset.lvSort || 'default',
@@ -133,6 +134,20 @@
       });
     }
 
+    function addBarButton(cls, text, ariaLabel, clearFn) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = cls;
+      if (ariaLabel) btn.setAttribute('aria-label', ariaLabel);
+      btn.textContent = text;
+      btn.addEventListener('click', () => {
+        clearFn();
+        resetPaging();
+        compute();
+      });
+      activeEl.appendChild(btn);
+    }
+
     function renderActiveBar() {
       if (!activeEl) return;
       activeEl.textContent = '';
@@ -147,44 +162,17 @@
       activeEl.appendChild(lbl);
 
       if (state.year) {
-        const pill = document.createElement('button');
-        pill.type = 'button';
-        pill.className = 'lv-active-pill';
-        pill.setAttribute('aria-label', 'Clear year filter ' + state.year);
-        pill.textContent = 'Year: ' + state.year + ' ×';
-        pill.addEventListener('click', () => {
-          state.year = '';
-          resetPaging();
-          compute();
-        });
-        activeEl.appendChild(pill);
+        addBarButton('lv-active-pill', 'Year: ' + state.year + ' ×',
+          'Clear year filter ' + state.year, () => { state.year = ''; });
       }
-
       if (state.facet) {
-        const pill = document.createElement('button');
-        pill.type = 'button';
-        pill.className = 'lv-active-pill';
-        pill.setAttribute('aria-label', 'Clear filter ' + state.facet.label);
-        pill.textContent = state.facet.label + ' ×';
-        pill.addEventListener('click', () => {
-          state.facet = null;
-          resetPaging();
-          compute();
-        });
-        activeEl.appendChild(pill);
+        addBarButton('lv-active-pill', state.facet.label + ' ×',
+          'Clear filter ' + state.facet.label, () => { state.facet = null; });
       }
-
-      const clearBtn = document.createElement('button');
-      clearBtn.type = 'button';
-      clearBtn.className = 'lv-active-clear';
-      clearBtn.textContent = 'Reset chart filters';
-      clearBtn.addEventListener('click', () => {
+      addBarButton('lv-active-clear', 'Reset chart filters', null, () => {
         state.year = '';
         state.facet = null;
-        resetPaging();
-        compute();
       });
-      activeEl.appendChild(clearBtn);
     }
 
     function compute() {
@@ -242,18 +230,51 @@
       });
     }
 
+    function clearFilterGroup(gi) {
+      picks[gi] = 'all';
+      syncChips(filterEls[gi], 'all');
+    }
+
+    function clearScope(scope) {
+      if (!scope) return;
+      if (scope === 'filters') {
+        state.facet = null;
+        filterEls.forEach((_el, gi) => clearFilterGroup(gi));
+        if (state.queryFromTrigger) {
+          state.q = '';
+          state.queryFromTrigger = false;
+          if (searchEl) searchEl.value = '';
+        }
+      } else {
+        const gi = parseInt(scope, 10);
+        if (!Number.isNaN(gi) && gi >= 0 && gi < filterEls.length) clearFilterGroup(gi);
+      }
+    }
+
+    function clearConflictingFacet(gi) {
+      if (state.facet && (state.facet.clearScope === 'filters' || state.facet.clearScope === String(gi))) {
+        state.facet = null;
+      }
+      if (state.queryFromTrigger) {
+        state.q = '';
+        state.queryFromTrigger = false;
+        if (searchEl) searchEl.value = '';
+      }
+    }
+
     function resetAll() {
       state.q = '';
+      state.queryFromTrigger = false;
       state.year = '';
       state.facet = null;
       resetPaging();
       if (searchEl) searchEl.value = '';
-      filterEls.forEach((el, gi) => { picks[gi] = 'all'; syncChips(el, 'all'); });
+      filterEls.forEach((_el, gi) => clearFilterGroup(gi));
       compute();
     }
 
-    function maybeScrollToList(btn) {
-      if (btn.dataset.lvScroll === '0') return;
+    function maybeScrollToList(skip) {
+      if (skip) return;
       const target = root.querySelector('.pub-controls') || root;
       const rect = target.getBoundingClientRect();
       if (rect.top > window.innerHeight * 0.78) {
@@ -261,13 +282,70 @@
       }
     }
 
+    function toggleFacet(tok, label, scope) {
+      const same = Boolean(state.facet && state.facet.token === tok);
+      if (same) {
+        state.facet = null;
+        return false;
+      }
+      clearScope(scope);
+      state.facet = { token: tok, label: label || tok, clearScope: scope || '' };
+      return true;
+    }
+
+    function applyTrigger(btn) {
+      if (btn.dataset.lvYear) {
+        const y = btn.dataset.lvYear.trim();
+        const activated = state.year !== y;
+        state.year = activated ? y : '';
+        return activated;
+      }
+      if (btn.dataset.lvFacet) {
+        return toggleFacet(btn.dataset.lvFacet.trim(), btn.dataset.lvLabel, btn.dataset.lvClear);
+      }
+      if (btn.dataset.lvQuery) {
+        const raw = btn.dataset.lvQuery.trim();
+        const low = raw.toLowerCase();
+        const activated = !(state.q === low && state.queryFromTrigger);
+        if (activated) clearScope(btn.dataset.lvClear);
+        state.q = activated ? low : '';
+        state.queryFromTrigger = activated;
+        if (searchEl) searchEl.value = activated ? raw : '';
+        return activated;
+      }
+      if (btn.dataset.lvCat) {
+        const tok = btn.dataset.lvCat.trim();
+        if (tok === 'all') {
+          resetAll();
+          return null;
+        }
+        const found = findChipGroup(tok);
+        if (found) {
+          const activated = picks[found.gi] !== tok;
+          if (activated) {
+            clearConflictingFacet(found.gi);
+            if (btn.dataset.lvClear) clearScope(btn.dataset.lvClear);
+          }
+          picks[found.gi] = activated ? tok : 'all';
+          syncChips(found.el, picks[found.gi]);
+          return activated;
+        }
+        return toggleFacet(tok, btn.dataset.lvLabel || btn.textContent.trim(), btn.dataset.lvClear);
+      }
+      return false;
+    }
+
     if (searchEl) searchEl.addEventListener('input', () => {
-      state.q = searchEl.value.trim().toLowerCase(); resetPaging(); compute();
+      state.q = searchEl.value.trim().toLowerCase();
+      state.queryFromTrigger = false;
+      resetPaging();
+      compute();
     });
     if (sortEl) sortEl.addEventListener('change', () => { state.sort = sortEl.value; compute(); });
     filterEls.forEach((el, gi) => el.addEventListener('click', (e) => {
       const chip = e.target.closest('.chip');
       if (!chip || !el.contains(chip)) return;
+      clearConflictingFacet(gi);
       picks[gi] = chip.dataset.cat || 'all';
       resetPaging();
       syncChips(el, picks[gi]);
@@ -277,57 +355,37 @@
     if (resetEl) resetEl.addEventListener('click', resetAll);
 
     triggers.forEach(btn => btn.addEventListener('click', () => {
-      let activated = false;
-      if (btn.dataset.lvYear) {
-        const y = btn.dataset.lvYear.trim();
-        activated = state.year !== y;
-        state.year = activated ? y : '';
-      } else if (btn.dataset.lvFacet) {
-        const tok = btn.dataset.lvFacet.trim();
-        const same = Boolean(state.facet && state.facet.token === tok);
-        activated = !same;
-        state.facet = same ? null : { token: tok, label: btn.dataset.lvLabel || tok };
-      } else if (btn.dataset.lvQuery) {
-        const raw = btn.dataset.lvQuery.trim();
-        const low = raw.toLowerCase();
-        activated = state.q !== low;
-        state.q = activated ? low : '';
-        if (searchEl) searchEl.value = activated ? raw : '';
-      } else if (btn.dataset.lvCat) {
-        const tok = btn.dataset.lvCat.trim();
-        if (tok === 'all') {
-          resetAll();
-          return;
-        }
-        const found = findChipGroup(tok);
-        if (found) {
-          activated = picks[found.gi] !== tok;
-          picks[found.gi] = activated ? tok : 'all';
-          syncChips(found.el, picks[found.gi]);
-        } else {
-          const same = Boolean(state.facet && state.facet.token === tok);
-          activated = !same;
-          state.facet = same ? null : { token: tok, label: btn.dataset.lvLabel || btn.textContent.trim() };
-        }
+      const activated = applyTrigger(btn);
+      if (activated === null) return;
+      resetPaging();
+      compute();
+      if (activated) maybeScrollToList(btn.dataset.lvScroll === '0');
+    }));
+
+    root.addEventListener('lv:filter', (e) => {
+      const d = e.detail || {};
+      clearScope(d.clear || '');
+      if (d.facet) {
+        state.facet = { token: d.facet, label: d.label || d.facet, clearScope: d.clear || '' };
       }
       resetPaging();
       compute();
-      if (activated) maybeScrollToList(btn);
-    }));
+      if (d.scroll) maybeScrollToList(false);
+    });
 
-    // Read initial query parameters for deep-linking (only on primary listview unless addressed by id)
+    // Read initial query parameters for deep-linking (only on primary listview)
     if (rootIdx === 0 && window.location && window.location.search) {
       const params = new URLSearchParams(window.location.search);
       URL_FACET_PARAMS.forEach(k => {
         const raw = (params.get(k) || '').trim();
         if (!raw) return;
-        const found = findChipGroup(raw) || ((k === 'role' || k === 'theme') ? findChipGroup(k + '-' + raw) : null);
+        const prefixed = (k === 'role' || k === 'theme') && raw.indexOf(k + '-') !== 0 ? k + '-' + raw : raw;
+        const found = findChipGroup(raw) || (prefixed !== raw ? findChipGroup(prefixed) : null);
         if (found) {
           picks[found.gi] = found.chip.dataset.cat || raw;
           syncChips(found.el, picks[found.gi]);
         } else {
-          const facetTok = (k === 'role' || k === 'theme') && raw.indexOf(k + '-') !== 0 ? k + '-' + raw : raw;
-          state.facet = { token: facetTok, label: raw };
+          state.facet = { token: prefixed, label: raw, clearScope: '' };
         }
       });
       const py = (params.get('year') || '').trim();

@@ -11,9 +11,9 @@ Exposes generate_content(data) -> str, returning the inner HTML for the
      - Section 2: Short Courses, Summer Schools & Tutorials
 """
 import re
-from pages_shared import (accent_class, all_years, attr_esc, card_meta, chip, date_range, esc,
-                          listview_status, parse_latest_year, slug as _slug,
-                          strip_tags as _strip_tags, term_month as _term_month, url_attr, warn)
+from pages_shared import (accent_class, all_years, attr_esc, attr_text, card_meta, chip, date_range, esc,
+                          listview_status, lv_trigger_attrs, parse_latest_year, slug as _slug,
+                          stat_tile, strip_tags as _strip_tags, term_month as _term_month, url_attr, warn)
 
 
 _ACADEMIC_YEARS = ["2021–22", "2022–23", "2023–24", "2024–25", "2025–26", "2026–27"]
@@ -129,9 +129,9 @@ def _teaching_matrix(courses, short_courses, accents):
         rows_html.append(
             '<div class="tm-row">'
             '<div class="tm-course">'
-            f'<button type="button" class="tm-course-main tm-course-btn" data-lv-trigger '
-            f'data-lv-query="{attr_esc(code)}" aria-pressed="false" '
-            f'title="Filter U of T courses to {attr_esc(code)}"><span class="dot d-{acc}"></span>'
+            f'<button type="button" class="tm-course-main tm-course-btn" '
+            f'{lv_trigger_attrs(query=code, clear="filters")} '
+            f'title="Filter U of T courses to {attr_text(code)}"><span class="dot d-{acc}"></span>'
             f'<strong>{esc(code)}</strong> <span class="tm-ctitle">{esc(short_title)}</span></button>'
             f'<span class="badge b-{acc} tm-lvl">{esc(level)}</span></div>'
             f'<div class="tm-cells">{"".join(cells)}</div>'
@@ -155,9 +155,10 @@ def _teaching_matrix(courses, short_courses, accents):
     rows_html.append(
         '<div class="tm-row tm-row-workshops">'
         '<div class="tm-course">'
-        '<button type="button" class="tm-course-main tm-course-btn" data-lv-trigger '
-        'data-lv-cat="workshops" aria-pressed="false" '
-        f'title="Filter to workshops and summer schools"><span class="dot d-{w_acc}"></span>'
+        f'<button type="button" class="tm-course-main tm-course-btn" '
+        f'{lv_trigger_attrs(cat="workshops", clear="filters")} '
+        'title="Filter to workshops and summer schools">'
+        f'<span class="dot d-{w_acc}"></span>'
         '<strong>Workshops &amp; Schools</strong> <span class="tm-ctitle">Summer schools &amp; tutorials</span></button>'
         f'<span class="badge b-{w_acc} tm-lvl">Intensive</span></div>'
         f'<div class="tm-cells">{w_cells}</div>'
@@ -224,7 +225,7 @@ def generate_content(data):
         terms = course.get("terms", []) or []
         depts = _departments(course)
 
-        cat = ("uoft-course " + (" ".join(_slug(d) for d in depts) or "other")).strip()
+        cat = "uoft-course " + (" ".join(_slug(d) for d in depts) or "other")
         dept_display = " / ".join(depts)
         title_display = " · ".join(p for p in [code, title] if p)
         year = parse_latest_year(terms)
@@ -340,11 +341,13 @@ def generate_content(data):
     n_sc_sessions = sum(len(sc.get("terms") or []) for sc in short_courses)
     stats_html = (
         '<div class="pub-stats teach-stats">'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-total" data-lv-trigger data-lv-facet="uoft-course" data-lv-label="University of Toronto courses" aria-pressed="false"><span class="n">{len(courses)}</span><span class="l">University courses</span></button>'
-        f'<div class="pub-stat role-tile-significant"><span class="n">{n_offerings}</span><span class="l">Course offerings</span></div>'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="workshops" aria-pressed="false"><span class="n">{len(short_courses)}</span><span class="l">Workshop series ({n_sc_sessions}x)</span></button>'
-        f'<div class="pub-stat role-tile-student"><span class="n">{len(active_ays)}</span><span class="l">Academic years taught</span></div>'
-        '</div>'
+        + stat_tile(len(courses), "University courses", "role-tile-total",
+                    facet="uoft-course", label="University of Toronto courses", clear="filters")
+        + f'<div class="pub-stat role-tile-significant"><span class="n">{n_offerings}</span><span class="l">Course offerings</span></div>'
+        + stat_tile(len(short_courses), f"Workshop series ({n_sc_sessions}x)", "role-tile-primary",
+                    cat="workshops", clear="filters")
+        + f'<div class="pub-stat role-tile-student"><span class="n">{len(active_ays)}</span><span class="l">Academic years taught</span></div>'
+        + '</div>'
     )
 
     phil = teaching.get("philosophy") or {}

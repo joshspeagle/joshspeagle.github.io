@@ -16,8 +16,8 @@ Renders:
 import re
 
 from pages_shared import (accent_class, attr_esc, card_meta, chip, date_range,
-                          esc, listview_status, period_end_year, slug as _slug,
-                          strip_tags as _strip_tags, url_attr, warn)
+                          esc, listview_status, lv_trigger_attrs, period_end_year,
+                          slug as _slug, stat_tile, strip_tags as _strip_tags, url_attr, warn)
 
 
 _ACADEMIC_YEARS = ["2020–21", "2021–22", "2022–23", "2023–24", "2024–25", "2025–26", "2026–27"]
@@ -315,16 +315,16 @@ def _service_timeline(categories):
         orgs = _visible(_organizations(cat))
         extra = _visible(cat.get("items"))
         low = ctitle.lower()
+        gslug = _slug(ctitle)
         if "societ" in low:
-            groups.append((_slug(ctitle), ctitle, acc, _society_rows(orgs, acc)))
+            groups.append((gslug, ctitle, acc, _society_rows(orgs, acc)))
         elif "toronto" in low:
-            groups.append((_slug(ctitle), "University of Toronto Governance", acc, _uoft_rows(orgs, acc)))
+            groups.append((gslug, "University of Toronto Governance", acc, _uoft_rows(orgs, acc)))
         else:
-            groups.append((_slug(ctitle), ctitle, acc, _workshop_rows(orgs, extra, acc)))
+            groups.append((gslug, ctitle, acc, _workshop_rows(orgs, extra, acc)))
 
     group_blocks = [
-        f'<button type="button" class="srv-group-hd srv-group-btn" data-lv-trigger '
-        f'data-lv-cat="{attr_esc(gslug)}" aria-pressed="false">'
+        f'<button type="button" class="srv-group-hd srv-group-btn" {lv_trigger_attrs(cat=gslug)}>'
         f'<span class="dot d-{gacc}"></span><span>{esc(gtitle)}</span></button>{"".join(grows)}'
         for gslug, gtitle, gacc, grows in groups
     ]
@@ -482,11 +482,11 @@ def generate_content(data):
 
     stats_html = (
         '<div class="pub-stats service-stats">'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-total" data-lv-trigger data-lv-cat="all" aria-pressed="true"><span class="n">{total}</span><span class="l">Committees &amp; leadership roles</span></button>'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-postdoc" data-lv-trigger data-lv-cat="professional-societies" aria-pressed="false"><span class="n">{n_societies}</span><span class="l">Professional societies</span></button>'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="workshops-conferences" aria-pressed="false"><span class="n">{n_conferences}</span><span class="l">Conferences &amp; workshops</span></button>'
-        f'<a class="pub-stat pub-statlink role-tile-student" href="#referee-service"><span class="n">{n_referee}</span><span class="l">Journals refereed</span><span class="pub-stat-go" aria-hidden="true">Jump ↓</span></a>'
-        '</div>'
+        + stat_tile(total, "Committees &amp; leadership roles", "role-tile-total", cat="all", pressed=True)
+        + stat_tile(n_societies, "Professional societies", "role-tile-postdoc", cat="professional-societies")
+        + stat_tile(n_conferences, "Conferences &amp; workshops", "role-tile-primary", cat="workshops-conferences")
+        + f'<a class="pub-stat pub-statlink role-tile-student" href="#referee-service"><span class="n">{n_referee}</span><span class="l">Journals refereed</span><span class="pub-stat-go" aria-hidden="true">Jump ↓</span></a>'
+        + '</div>'
     )
 
     intro_box = (

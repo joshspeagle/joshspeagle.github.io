@@ -9,7 +9,7 @@ from collections import Counter
 
 from pages_shared import (accent_class, ads_abs_url, attr_esc, card_meta, esc,
                           expand_item_citations, load_publications_by_bibcode,
-                          scaffold, slug, strip_tags, term_month, url_attr, warn)
+                          scaffold, slug, stat_tile, strip_tags, term_month, url_attr, warn)
 
 _FALLBACK = {"label": "Update", "accent": "mute"}
 
@@ -114,6 +114,17 @@ def _render_card(n, meta_by_type, pubs_by_bib, featured=False):
     )
 
 
+def render_highlights(section, limit=3):
+    """Render the newest `limit` news items as featured cards (reused on Home)."""
+    types = section.get("types", {}) or {}
+    items = sorted(section.get("items", []) or [], key=_sort_num, reverse=True)[:limit]
+    if not items:
+        return ""
+    pubs_by_bib = load_publications_by_bibcode()
+    meta_by_type = {n.get("type", "press"): _type_meta(types, n.get("type", "press")) for n in items}
+    return "".join(_render_card(n, meta_by_type, pubs_by_bib, featured=True) for n in items)
+
+
 def generate_content(data):
     section = data["sections"]["news"]
     types = section.get("types", {}) or {}
@@ -122,14 +133,16 @@ def generate_content(data):
     counts = Counter(n.get("type", "note") for n in items_data)
     meta_by_type = {k: _type_meta(types, k) for k in counts}
 
+    n_research = counts.get("award", 0) + counts.get("paper", 0) + counts.get("software", 0)
     stats_html = (
         '<div class="container">\n'
         '<div class="pub-stats" aria-label="News and press summary">\n'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="all" aria-pressed="true"><span class="n">{len(items_data)}</span><span class="l">Updates &amp; Highlights</span></button>\n'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-postdoc" data-lv-trigger data-lv-cat="press" aria-pressed="false"><span class="n">{counts.get("press", 0)}</span><span class="l">Press &amp; Media Features</span></button>\n'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-student" data-lv-trigger data-lv-cat="group" aria-pressed="false"><span class="n">{counts.get("group", 0)}</span><span class="l">Group &amp; Student Milestones</span></button>\n'
-        f'<button type="button" class="pub-stat pub-statbtn role-tile-significant" data-lv-trigger data-lv-facet="news-research" data-lv-label="Awards &amp; Research Releases" aria-pressed="false"><span class="n">{counts.get("award", 0) + counts.get("paper", 0) + counts.get("software", 0)}</span><span class="l">Awards &amp; Research Releases</span></button>\n'
-        '</div>\n'
+        + stat_tile(len(items_data), "Updates &amp; Highlights", "role-tile-primary", cat="all", pressed=True) + "\n"
+        + stat_tile(counts.get("press", 0), "Press &amp; Media Features", "role-tile-postdoc", cat="press") + "\n"
+        + stat_tile(counts.get("group", 0), "Group &amp; Student Milestones", "role-tile-student", cat="group") + "\n"
+        + stat_tile(n_research, "Awards &amp; Research Releases", "role-tile-significant",
+                    facet="news-research", label="Awards & Research Releases", clear="filters") + "\n"
+        + '</div>\n'
         '</div>\n'
     )
 
