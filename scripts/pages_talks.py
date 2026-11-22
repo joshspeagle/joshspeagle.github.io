@@ -187,9 +187,14 @@ def _talk_item(talk, cat_id, cat_name, accent):
         if url else esc(title)
     )
 
+    th = _classify_talk_theme(talk, cat_id)
+    cat_tokens = f"{slug(cat_id)} theme-{th}"
+    if cat_id in ("lectures", "panels"):
+        cat_tokens += " group-tutorials-panels"
+
     return (
         f'<article class="item accent-{accent}" data-lv-item'
-        f' data-cat="{slug(cat_id)}"'
+        f' data-cat="{cat_tokens}"'
         f' data-search="{data_search}"'
         f' data-year="{data_year}"'
         f' data-num="{data_num}"'
@@ -448,10 +453,11 @@ def _talks_by_year_svg(categories):
                 f'height:{100.0 - yp(tot):.2f}%">{segs}</span>'
             )
             parts = ", ".join(f"{col[gk]} {glab.lower()}" for gk, glab, _ in _YEAR_CAT_GROUPS if col.get(gk))
-            summ = esc(f"{y}: {tot} event{'s' if tot != 1 else ''} — {parts}").replace('"', "&quot;")
+            summ = esc(f"{y}: {tot} event{'s' if tot != 1 else ''} — {parts} (click to filter)").replace('"', "&quot;")
             plot.append(
-                f'<span class="pf-col" style="left:{i * slot:.2f}%;width:{slot:.2f}%" '
-                f'tabindex="0" aria-label="{summ}" data-tip="{summ}"></span>'
+                f'<button type="button" class="pf-col" style="left:{i * slot:.2f}%;width:{slot:.2f}%" '
+                f'data-lv-trigger data-lv-year="{y}" data-lv-label="Year {y}" aria-pressed="false" '
+                f'aria-label="{summ}" data-tip="{summ}"></button>'
             )
     yticks = "".join(f'<span class="pf-yt" style="top:{yp(t):.2f}%">{t}</span>' for t in ticks)
     xticks = "".join(
@@ -544,17 +550,19 @@ def _talks_by_topic_svg(categories):
             for gk, _, _ in _YEAR_CAT_GROUPS if col.get(gk)
         )
         parts = ", ".join(f"{col[gk]} {glab.lower()}" for gk, glab, _ in _YEAR_CAT_GROUPS if col.get(gk))
-        tip = esc(f"{tlabel}: {tot} talks — {parts}").replace('"', "&quot;")
+        tip = esc(f"{tlabel}: {tot} talks — {parts} (click to filter)").replace('"', "&quot;")
         rows.append(
-            f'<div class="talks-theme-row" role="img" tabindex="0" aria-label="{tip}" data-tip="{tip}">'
-            '<div class="ttr-head">'
+            f'<button type="button" class="talks-theme-row" data-lv-trigger '
+            f'data-lv-facet="theme-{tk}" data-lv-label="{attr_esc(tlabel)}" aria-pressed="false" '
+            f'aria-label="{tip}" data-tip="{tip}">'
+            '<span class="ttr-head">'
             f'<span class="ttr-name">{esc(tlabel)}</span>'
             f'<span class="ttr-cnt">{tot}</span>'
-            '</div>'
-            '<div class="ttr-track">'
-            f'<div class="ttr-fill" style="width:{pct_width:.2f}%">{segs}</div>'
-            '</div>'
-            '</div>'
+            '</span>'
+            '<span class="ttr-track">'
+            f'<span class="ttr-fill" style="width:{pct_width:.2f}%">{segs}</span>'
+            '</span>'
+            '</button>'
         )
 
     legend = "".join(
@@ -617,21 +625,21 @@ def generate_content(data):
     stats_html = (
         '<div class="container">'
         '<div class="pub-stats talks-stats">'
-        f'<div class="pub-stat role-tile-total"><span class="n">{total}</span><span class="l">Total talks &amp; events</span></div>'
-        f'<div class="pub-stat role-tile-primary"><span class="n">{n_invited}</span><span class="l">Invited talks</span></div>'
-        f'<div class="pub-stat role-tile-student"><span class="n">{n_colloq}</span><span class="l">Colloquia &amp; seminars</span></div>'
-        f'<div class="pub-stat role-tile-postdoc"><span class="n">{n_lect_pan}</span><span class="l">Tutorials &amp; panels</span></div>'
-        f'<div class="pub-stat role-tile-significant"><span class="n">{len(distinct_cities)}</span><span class="l">Global speaking hubs</span></div>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-total" data-lv-trigger data-lv-cat="all" aria-pressed="true"><span class="n">{total}</span><span class="l">Total talks &amp; events</span></button>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="invited" aria-pressed="false"><span class="n">{n_invited}</span><span class="l">Invited talks</span></button>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-student" data-lv-trigger data-lv-cat="colloquia" aria-pressed="false"><span class="n">{n_colloq}</span><span class="l">Colloquia &amp; seminars</span></button>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-postdoc" data-lv-trigger data-lv-facet="group-tutorials-panels" data-lv-label="Tutorials &amp; Panels" aria-pressed="false"><span class="n">{n_lect_pan}</span><span class="l">Tutorials &amp; panels</span></button>'
+        f'<a class="pub-stat pub-statlink role-tile-significant" href="#talks-globe-canvas"><span class="n">{len(distinct_cities)}</span><span class="l">Global speaking hubs</span></a>'
         '</div>'
         '<div class="pub-figures talks-figures">'
         f'{_world_globe_section(categories)}'
         '<figure class="pub-fig">'
         '<figcaption class="pub-fig-head"><span class="t">Speaking activity by year &amp; format</span>'
-        '<span class="m">hover or tab through the bars</span></figcaption>'
+        '<span class="m">click any year bar to filter talks</span></figcaption>'
         f'{_talks_by_year_svg(categories)}</figure>'
         '<figure class="pub-fig">'
         '<figcaption class="pub-fig-head"><span class="t">Speaking topics by research theme &amp; format</span>'
-        '<span class="m">hover or tab rows for format breakdown</span></figcaption>'
+        '<span class="m">click any theme row to filter talks</span></figcaption>'
         f'{_talks_by_topic_svg(categories)}</figure>'
         '</div>'
         '</div>'

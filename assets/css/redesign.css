@@ -1868,7 +1868,7 @@ main, footer { position: relative; z-index: 1; }
   .paper-links a.reslink, .item-links a.reslink, a.reslink, a.reslink.opp-chip,
   .paper-abs-btn, .globe-city-chip, .globe-ctrl-btn, .globe-zoom-btn,
   .pub-tab, .pub-statbtn, .lv-active-pill, .lv-active-clear,
-  .pf-key-btn, .pf-rl-btn, .mc-row-btn, .tm-course-btn, .srv-group-btn, .talks-theme-row,
+  .pf-key-btn, .mc-row-btn, .tm-course-btn, .srv-group-btn, .talks-theme-row,
   .about-actions a, .home-highlights-links a, .pub-hub-links a {
     min-height: 44px;
   }
@@ -1887,6 +1887,9 @@ main, footer { position: relative; z-index: 1; }
   .paper-abs-btn {
     display: inline-flex; align-items: center;
   }
+}
+@media (max-width: 520px) {
+  .pf-rl-btn { min-height: 44px; display: inline-flex; align-items: center; }
 }
 
 /* ---------------- Print ---------------- */

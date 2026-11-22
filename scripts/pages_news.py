@@ -101,8 +101,9 @@ def _render_card(n, meta_by_type, pubs_by_bib, featured=False):
         )
     year = n.get("year", 0)
     search = attr_esc(f'{strip_tags(n.get("title", ""))} {strip_tags(blurb)} {outlet} {label}')
+    cat_tokens = f"{slug(typ)} news-research" if typ in ("award", "paper", "software") else slug(typ)
     return (
-        f'<article class="item accent-{accent}" data-lv-item data-cat="{slug(typ)}" data-search="{search}" '
+        f'<article class="item accent-{accent}" data-lv-item data-cat="{cat_tokens}" data-search="{search}" '
         f'data-year="{year}" data-num="{_sort_num(n)}" data-title="{attr_esc(n.get("title", ""))}">'
         f'{card_meta(n.get("date", ""), (label, True))}'
         f'<div class="item-head"><h3 class="item-title">{title_html}</h3></div>'
@@ -124,10 +125,10 @@ def generate_content(data):
     stats_html = (
         '<div class="container">\n'
         '<div class="pub-stats" aria-label="News and press summary">\n'
-        f'<div class="pub-stat role-tile-primary"><div class="n">{len(items_data)}</div><div class="l">Updates &amp; Highlights</div></div>\n'
-        f'<div class="pub-stat role-tile-postdoc"><div class="n">{counts.get("press", 0)}</div><div class="l">Press &amp; Media Features</div></div>\n'
-        f'<div class="pub-stat role-tile-student"><div class="n">{counts.get("group", 0)}</div><div class="l">Group &amp; Student Milestones</div></div>\n'
-        f'<div class="pub-stat role-tile-significant"><div class="n">{counts.get("award", 0) + counts.get("paper", 0) + counts.get("software", 0)}</div><div class="l">Awards &amp; Research Releases</div></div>\n'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="all" aria-pressed="true"><span class="n">{len(items_data)}</span><span class="l">Updates &amp; Highlights</span></button>\n'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-postdoc" data-lv-trigger data-lv-cat="press" aria-pressed="false"><span class="n">{counts.get("press", 0)}</span><span class="l">Press &amp; Media Features</span></button>\n'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-student" data-lv-trigger data-lv-cat="group" aria-pressed="false"><span class="n">{counts.get("group", 0)}</span><span class="l">Group &amp; Student Milestones</span></button>\n'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-significant" data-lv-trigger data-lv-facet="news-research" data-lv-label="Awards &amp; Research Releases" aria-pressed="false"><span class="n">{counts.get("award", 0) + counts.get("paper", 0) + counts.get("software", 0)}</span><span class="l">Awards &amp; Research Releases</span></button>\n'
         '</div>\n'
         '</div>\n'
     )

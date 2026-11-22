@@ -1357,7 +1357,7 @@ def _generate_paper_card(pub, board=False):
 
     lv = "" if board else " data-lv-item"
     return (
-        f'<article class="{cls}"{lv} data-cat="{catkey}" data-year="{year}" '
+        f'<article class="{cls}"{lv} data-cat="{catkey} role-{role}" data-year="{year}" '
         f'data-num="{cites_int}" data-title="{attr_esc(title)}" '
         f'data-search="{attr_esc(title + " " + " ".join(authors))}">'
         f'{card_meta(str(year), _venue_short(pub))}'
@@ -1432,6 +1432,12 @@ def _tip(text):
     """A focusable, hoverable hit target's shared attributes."""
     t = esc(text).replace('"', "&quot;")
     return f'role="img" tabindex="0" aria-label="{t}" data-tip="{t}"'
+
+
+def _tip_btn(text):
+    """Tooltip attributes for native interactive <button> chart targets."""
+    t = esc(text).replace('"', "&quot;")
+    return f'aria-label="{t}" data-tip="{t}"'
 
 
 def _pf_grid(ticks, yp):
@@ -1532,12 +1538,19 @@ def _roles_svg(pubs):
             plot.append(f'<span class="pf-bar" style="left:{_n(left)}%;width:{_n(width)}%;'
                         f'height:{_n(100 - yp(total))}%">{segs}</span>')
             parts = ", ".join(f"{col[k]} {lab.lower()}" for k, lab in _ROLE_META if col.get(k))
-            summ = f"{y}: {total} publication" + ("s" if total != 1 else "") + f" — {parts}"
-            plot.append(f'<span class="pf-col" style="left:{_n(i * slot)}%;width:{_n(slot)}%" '
-                        f'{_tip(summ)}></span>')
+            summ = f"{y}: {total} publication" + ("s" if total != 1 else "") + f" — {parts} (click to filter)"
+            plot.append(
+                f'<button type="button" class="pf-col" style="left:{_n(i * slot)}%;width:{_n(slot)}%" '
+                f'data-lv-trigger data-lv-target="#pub-root" data-lv-year="{y}" '
+                f'data-lv-label="Published in {y}" aria-pressed="false" {_tip_btn(summ)}></button>'
+            )
     xt = [(i * slot + slot / 2, str(y)) for i, y in enumerate(years) if y % 2 == 0]
-    legend = "".join(f'<span class="pf-key"><i class="pf-kw seg-{key}"></i>{label}</span>'
-                     for key, label in _ROLE_META)
+    legend = "".join(
+        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger '
+        f'data-lv-target="#pub-root" data-lv-cat="role-{key}" aria-pressed="false">'
+        f'<i class="pf-kw seg-{key}"></i>{label}</button>'
+        for key, label in _ROLE_META
+    )
     return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt),
                      legend=legend, ycol=3,
                      aria="Publications per year by my authorship role")
@@ -1576,8 +1589,12 @@ def _citations_svg(metrics):
     step = 100 / (n - 1) if n > 1 else 100
     for i, y in enumerate(years):
         left = max(0, xp(i) - step / 2)
-        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;'
-                    f'width:{_n(min(step, 100 - left))}%" {_tip(f"{y}: {cpy[y]:,} citations")}></span>')
+        plot.append(
+            f'<button type="button" class="pf-band" style="left:{_n(left)}%;'
+            f'width:{_n(min(step, 100 - left))}%" data-lv-trigger data-lv-target="#pub-root" '
+            f'data-lv-year="{y}" data-lv-label="Published in {y}" aria-pressed="false" '
+            f'{_tip_btn(f"{y}: {cpy[y]:,} citations (click to filter papers published in {y})")}></button>'
+        )
     xt = [(xp(i), str(y)) for i, y in enumerate(years) if y % 2 == 0]
     return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt), ycol=5,
                      aria="Citations received per year")
@@ -1646,8 +1663,11 @@ def _riq_svg(metrics):
     order = sorted(range(len(ends)), key=lambda i: yp(ends[i][2]))
     spread = _spread([(i, yp(ends[i][2])) for i in order], 11.0)
     legend = "".join(
-        f'<span class="pf-rl ln-{ends[i][0]}" style="--y:{_n(spread[i])}%">'
-        f'<b>{round(ends[i][2]):,}</b> {ends[i][1]}</span>'
+        f'<button type="button" class="pf-rl pf-rl-btn ln-{ends[i][0]}" style="--y:{_n(spread[i])}%" '
+        f'data-lv-trigger data-lv-target="#pub-root" '
+        f'data-lv-cat="{"all" if ends[i][0] == "all" else "role-" + ends[i][0]}" '
+        f'aria-pressed="{"true" if ends[i][0] == "all" else "false"}">'
+        f'<b>{round(ends[i][2]):,}</b> {ends[i][1]}</button>'
         for i in range(len(ends))
     )
     rcol = max(len(f"{round(v):,} {label}") for _, label, v in ends) + 2
@@ -1682,13 +1702,19 @@ def _mix_svg(pubs):
 
     segs, keys = [], []
     for (key, name, short, _frac), pct in zip(fr, pcts):
-        tip = f"{name}: {pct}% of classified output"
+        tip = f"{name}: {pct}% of classified output (click to filter)"
         short_bar = "AI & ML" if key == "sla" else name.split("&")[0].strip()
         inner = f'<b>{esc(short_bar)}</b><i>{pct}%</i>'
-        segs.append(f'<span class="mix-seg mix-{key}" style="flex:{pct}" {_tip(tip)}>{inner}</span>')
+        segs.append(
+            f'<button type="button" class="mix-seg mix-{key}" style="flex:{pct}" '
+            f'data-lv-trigger data-lv-target="#pub-root" data-lv-cat="{key}" aria-pressed="false" '
+            f'{_tip_btn(tip)}>{inner}</button>'
+        )
         keys.append(
-            f'<span class="pf-key pf-key-mix"><i class="pf-kw mix-{key}"></i>'
-            f'<strong>{esc(name)}</strong> <span class="pf-key-pct">{pct}%</span></span>'
+            f'<button type="button" class="pf-key pf-key-mix pf-key-btn" '
+            f'data-lv-trigger data-lv-target="#pub-root" data-lv-cat="{key}" aria-pressed="false">'
+            f'<i class="pf-kw mix-{key}"></i>'
+            f'<strong>{esc(name)}</strong> <span class="pf-key-pct">{pct}%</span></button>'
         )
     total_txt = ", ".join(f"{name} {pct}%" for (_k, name, _s, _f), pct in zip(fr, pcts))
     return (f'<div class="pf-mix" role="group" aria-label="Research mix: {esc(total_txt)}">'
@@ -1790,11 +1816,26 @@ def generate_publications_redesign(data):
 
     figures = (
         '<div class="pub-figures">'
-        + _fig("Research mix", "share of work by area", _mix_svg(papers_with_year), wide=True)
-        + _fig("Citations received per year", peak_txt, _citations_svg(metrics), wide=True)
-        + _fig("Publications by year &amp; role", "hover or tab through the bars", _roles_svg(papers_with_year))
-        + _fig("Research impact by role", "RIQ vs. the typical astronomer range", _riq_svg(metrics))
+        + _fig("Research mix", "click any area to filter papers", _mix_svg(papers_with_year), wide=True)
         + '</div>'
+        '<section class="pub-explorer" data-tabs aria-label="Publication metrics and trends">'
+        '<div class="pub-tabs" role="tablist" aria-label="Publication trend charts">'
+        '<button type="button" class="pub-tab" role="tab" id="pub-tab-cites" aria-controls="pub-panel-cites" aria-selected="true" tabindex="0">Citations per year</button>'
+        '<button type="button" class="pub-tab" role="tab" id="pub-tab-roles" aria-controls="pub-panel-roles" aria-selected="false" tabindex="-1">Publications by year &amp; role</button>'
+        '<button type="button" class="pub-tab" role="tab" id="pub-tab-riq" aria-controls="pub-panel-riq" aria-selected="false" tabindex="-1">Research impact (RIQ)</button>'
+        '</div>'
+        '<div class="pub-tabpanel" role="tabpanel" id="pub-panel-cites" aria-labelledby="pub-tab-cites">'
+        + _fig("Citations received per year", peak_txt + " · click a year to filter", _citations_svg(metrics), wide=True)
+        + '</div>'
+        '<div class="pub-tabpanel" role="tabpanel" id="pub-panel-roles" aria-labelledby="pub-tab-roles" hidden>'
+        + _fig("Publications by year &amp; role", "click any year bar or role legend to filter", _roles_svg(papers_with_year), wide=True)
+        + '</div>'
+        '<div class="pub-tabpanel" role="tabpanel" id="pub-panel-riq" aria-labelledby="pub-tab-riq" hidden>'
+        + _fig("Research impact by role", "RIQ vs. typical range · click a role label to filter", _riq_svg(metrics), wide=True)
+        + '</div>'
+        '</section>'
+        '<details class="pub-fig-note-details">'
+        '<summary>How to read these summaries (research mix, authorship roles &amp; RIQ)</summary>'
         '<p class="pub-fig-note"><strong>Reading these summaries:</strong> The <strong>research mix</strong> '
         'bar weights each paper by its topic probabilities across our four core research areas. The '
         '<strong>authorship breakdowns</strong> separate papers I led directly from those led by postdoctoral '
@@ -1804,6 +1845,7 @@ def generate_publications_redesign(data):
         'the shaded band shows the 60–150 range typical of established astronomers '
         '(<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" '
         'rel="noopener">Pepe &amp; Kurtz 2012</a>).</p>'
+        '</details>'
     )
 
     # Featured spotlight (papers flagged featured=true), shown with abstracts
@@ -1824,6 +1866,13 @@ def generate_publications_redesign(data):
         f'<span class="ct">{cat_counts[key]}</span></button>'
         for key in ("du", "ic", "sla", "ii")
     )
+    role_list_counts = Counter(p.get("authorshipCategory") or "other" for p in papers_with_year)
+    role_chips = "".join(
+        f'<button type="button" class="chip" data-cat="role-{rkey}" aria-pressed="false">'
+        f'<span class="dot b-role-{rkey}"></span>{esc(rlabel)} '
+        f'<span class="ct">{role_list_counts[rkey]}</span></button>'
+        for rkey, rlabel in _ROLE_META if role_list_counts.get(rkey)
+    )
     controls = (
         '<div class="pub-controls">'
         '<input type="search" id="pub-search" class="pub-search" data-lv-search '
@@ -1834,8 +1883,14 @@ def generate_publications_redesign(data):
         '<div class="pub-filters" id="pub-filters" data-lv-filters role="group" '
         'aria-label="Filter by research area">'
         f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">'
-        f'All <span class="ct">{all_count}</span></button>'
+        f'All areas <span class="ct">{all_count}</span></button>'
         f'{chips}'
+        '</div>'
+        '<div class="pub-filters" id="pub-role-filters" data-lv-filters role="group" '
+        'aria-label="Filter by authorship role">'
+        f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">'
+        f'All roles <span class="ct">{all_count}</span></button>'
+        f'{role_chips}'
         '</div>'
         '</div>'
     )

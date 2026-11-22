@@ -146,12 +146,13 @@ def _software_dashboard(shown, curation, groups, group_accent):
         fork_txt = f" · {forks} forks" if forks else ""
         title = f"{name}: {stars:,} stars{fork_txt}" + (f" · {dl}/mo downloads" if dl else "")
         pkg_rows.append(
-            '<div class="mc-row sw-pkg-row">'
+            f'<button type="button" class="mc-row sw-pkg-row mc-row-btn" data-lv-trigger '
+            f'data-lv-query="{attr_esc(name)}" aria-pressed="false" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
             f'<span class="mc-label"><span class="dot d-{acc}"></span><code>{esc(name)}</code></span>'
-            f'<span class="mc-track" role="img" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
+            f'<span class="mc-track">'
             f'<span class="mc-seg mc-{acc}" style="width:{w:.1f}%"></span></span>'
             f'<span class="mc-total">{dl_badge}<strong>★ {stars:,}</strong></span>'
-            '</div>'
+            '</button>'
         )
     panel1_leg = (
         '<div class="pf-leg" aria-hidden="true">'
@@ -165,7 +166,7 @@ def _software_dashboard(shown, curation, groups, group_accent):
     panel1 = (
         '<figure class="pub-fig mentor-chart">'
         '<figcaption class="pub-fig-head"><span class="t">Flagship package adoption</span>'
-        '<span class="m">GitHub stars &amp; PyPI downloads</span></figcaption>'
+        '<span class="m">stars &amp; PyPI · click a row to filter</span></figcaption>'
         f'<div class="mc-rows">{"".join(pkg_rows)}</div>{panel1_leg}'
         '</figure>'
     )
@@ -209,24 +210,25 @@ def _software_dashboard(shown, curation, groups, group_accent):
             parts.append(f'{rc["fork"]} fork')
         title = f"{lbl}: {cnt} repositories ({', '.join(parts)})"
         dom_rows.append(
-            '<div class="mc-row sw-dom-row">'
+            f'<button type="button" class="mc-row sw-dom-row mc-row-btn" data-lv-trigger '
+            f'data-lv-cat="{slug(gid)}" aria-pressed="false" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
             f'<span class="mc-label"><span class="dot d-{acc}"></span>{esc(lbl)}</span>'
-            f'<span class="mc-track" role="img" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
+            f'<span class="mc-track">'
             f'{"".join(segs)}</span>'
             f'<span class="mc-total"><strong>{cnt}</strong></span>'
-            '</div>'
+            '</button>'
         )
     panel2_leg = (
         '<div class="pf-leg">'
-        f'<span class="pf-key"><i class="pf-kw seg-primary"></i>Lead author ({role_counts["lead"]})</span>'
-        f'<span class="pf-key"><i class="pf-kw seg-significant"></i>Co-author / Collab ({role_counts["collab"]})</span>'
-        f'<span class="pf-key"><i class="pf-kw seg-other"></i>Contributed forks ({role_counts["fork"]})</span>'
+        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger data-lv-cat="role-lead" aria-pressed="false"><i class="pf-kw seg-primary"></i>Lead author ({role_counts["lead"]})</button>'
+        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger data-lv-cat="role-collab" aria-pressed="false"><i class="pf-kw seg-significant"></i>Co-author / Collab ({role_counts["collab"]})</button>'
+        f'<button type="button" class="pf-key pf-key-btn" data-lv-trigger data-lv-cat="role-fork" aria-pressed="false"><i class="pf-kw seg-other"></i>Contributed forks ({role_counts["fork"]})</button>'
         '</div>'
     )
     panel2 = (
         '<figure class="pub-fig mentor-chart">'
         '<figcaption class="pub-fig-head"><span class="t">Ecosystem by domain &amp; role</span>'
-        f'<span class="m">{len(shown)} repositories across {len(dom_rows)} categories</span></figcaption>'
+        f'<span class="m">{len(shown)} repositories across {len(dom_rows)} categories · click to filter</span></figcaption>'
         f'<div class="mc-rows">{"".join(dom_rows)}</div>{panel2_leg}'
         '</figure>'
     )

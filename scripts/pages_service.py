@@ -316,15 +316,17 @@ def _service_timeline(categories):
         extra = _visible(cat.get("items"))
         low = ctitle.lower()
         if "societ" in low:
-            groups.append((ctitle, acc, _society_rows(orgs, acc)))
+            groups.append((_slug(ctitle), ctitle, acc, _society_rows(orgs, acc)))
         elif "toronto" in low:
-            groups.append(("University of Toronto Governance", acc, _uoft_rows(orgs, acc)))
+            groups.append((_slug(ctitle), "University of Toronto Governance", acc, _uoft_rows(orgs, acc)))
         else:
-            groups.append((ctitle, acc, _workshop_rows(orgs, extra, acc)))
+            groups.append((_slug(ctitle), ctitle, acc, _workshop_rows(orgs, extra, acc)))
 
     group_blocks = [
-        f'<div class="srv-group-hd"><span class="dot d-{gacc}"></span><span>{esc(gtitle)}</span></div>{"".join(grows)}'
-        for gtitle, gacc, grows in groups
+        f'<button type="button" class="srv-group-hd srv-group-btn" data-lv-trigger '
+        f'data-lv-cat="{attr_esc(gslug)}" aria-pressed="false">'
+        f'<span class="dot d-{gacc}"></span><span>{esc(gtitle)}</span></button>{"".join(grows)}'
+        for gslug, gtitle, gacc, grows in groups
     ]
     head_cells = "".join(f'<span class="tm-yr">{ay}</span>' for ay in _ACADEMIC_YEARS)
     legend = (
@@ -339,7 +341,7 @@ def _service_timeline(categories):
     return (
         '<figure class="pub-fig wide teach-matrix-fig srv-matrix-fig">'
         f'<figcaption class="pub-fig-head"><span class="t">Leadership &amp; governance timeline by academic year ({span_lbl})</span>'
-        '<span class="m">role transitions, multi-year terms &amp; conference organization (click ▾ badges to expand)</span></figcaption>'
+        '<span class="m">click a group heading to filter or ▾ badges to expand</span></figcaption>'
         '<div class="tm-table srv-table">'
         f'<div class="tm-head"><span class="tm-course-hd">Organization &amp; Scope</span><div class="tm-cells srv-head-cells">{head_cells}</div></div>'
         f'{"".join(group_blocks)}'
@@ -381,7 +383,7 @@ def generate_content(data):
                     for it in ritems
                 )
                 referee_section = (
-                    '<section class="mentor-block service-section referee-section">'
+                    '<section class="mentor-block service-section referee-section" id="referee-service">'
                     '<div class="mentor-sec-header">'
                     f'<h2 class="item-section-title"><span class="dot d-{accent}"></span>{esc(cat_title)} '
                     f'<span class="mentor-sec-count">{len(ritems)}</span></h2>'
@@ -480,10 +482,10 @@ def generate_content(data):
 
     stats_html = (
         '<div class="pub-stats service-stats">'
-        f'<div class="pub-stat role-tile-total"><span class="n">{total}</span><span class="l">Committees &amp; leadership roles</span></div>'
-        f'<div class="pub-stat role-tile-postdoc"><span class="n">{n_societies}</span><span class="l">Professional societies</span></div>'
-        f'<div class="pub-stat role-tile-primary"><span class="n">{n_conferences}</span><span class="l">Conferences &amp; workshops</span></div>'
-        f'<div class="pub-stat role-tile-student"><span class="n">{n_referee}</span><span class="l">Journals refereed</span></div>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-total" data-lv-trigger data-lv-cat="all" aria-pressed="true"><span class="n">{total}</span><span class="l">Committees &amp; leadership roles</span></button>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-postdoc" data-lv-trigger data-lv-cat="professional-societies" aria-pressed="false"><span class="n">{n_societies}</span><span class="l">Professional societies</span></button>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="workshops-conferences" aria-pressed="false"><span class="n">{n_conferences}</span><span class="l">Conferences &amp; workshops</span></button>'
+        f'<a class="pub-stat pub-statlink role-tile-student" href="#referee-service"><span class="n">{n_referee}</span><span class="l">Journals refereed</span><span class="pub-stat-go" aria-hidden="true">Jump ↓</span></a>'
         '</div>'
     )
 

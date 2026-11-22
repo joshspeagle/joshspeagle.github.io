@@ -128,8 +128,11 @@ def _teaching_matrix(courses, short_courses, accents):
                        .replace(" and Data Science", " & Data Sci."))
         rows_html.append(
             '<div class="tm-row">'
-            f'<div class="tm-course"><span class="tm-course-main"><span class="dot d-{acc}"></span>'
-            f'<strong>{esc(code)}</strong> <span class="tm-ctitle">{esc(short_title)}</span></span>'
+            '<div class="tm-course">'
+            f'<button type="button" class="tm-course-main tm-course-btn" data-lv-trigger '
+            f'data-lv-query="{attr_esc(code)}" aria-pressed="false" '
+            f'title="Filter U of T courses to {attr_esc(code)}"><span class="dot d-{acc}"></span>'
+            f'<strong>{esc(code)}</strong> <span class="tm-ctitle">{esc(short_title)}</span></button>'
             f'<span class="badge b-{acc} tm-lvl">{esc(level)}</span></div>'
             f'<div class="tm-cells">{"".join(cells)}</div>'
             '</div>'
@@ -151,8 +154,11 @@ def _teaching_matrix(courses, short_courses, accents):
     )
     rows_html.append(
         '<div class="tm-row tm-row-workshops">'
-        f'<div class="tm-course"><span class="tm-course-main"><span class="dot d-{w_acc}"></span>'
-        f'<strong>Workshops &amp; Schools</strong> <span class="tm-ctitle">Summer schools &amp; tutorials</span></span>'
+        '<div class="tm-course">'
+        '<button type="button" class="tm-course-main tm-course-btn" data-lv-trigger '
+        'data-lv-cat="workshops" aria-pressed="false" '
+        f'title="Filter to workshops and summer schools"><span class="dot d-{w_acc}"></span>'
+        '<strong>Workshops &amp; Schools</strong> <span class="tm-ctitle">Summer schools &amp; tutorials</span></button>'
         f'<span class="badge b-{w_acc} tm-lvl">Intensive</span></div>'
         f'<div class="tm-cells">{w_cells}</div>'
         '</div>'
@@ -170,7 +176,7 @@ def _teaching_matrix(courses, short_courses, accents):
     return (
         '<figure class="pub-fig wide teach-matrix-fig">'
         '<figcaption class="pub-fig-head"><span class="t">Teaching &amp; curriculum timeline by academic year (2021–22 to 2026–27)</span>'
-        '<span class="m">full-year, fall &amp; winter courses plus summer schools</span></figcaption>'
+        '<span class="m">click any course or workshop row to filter below</span></figcaption>'
         '<div class="tm-table">'
         f'<div class="tm-head"><span class="tm-course-hd">Course / Module</span><div class="tm-cells">{head_cells}</div></div>'
         f'{"".join(rows_html)}'
@@ -218,7 +224,7 @@ def generate_content(data):
         terms = course.get("terms", []) or []
         depts = _departments(course)
 
-        cat = " ".join(_slug(d) for d in depts) or "other"
+        cat = ("uoft-course " + (" ".join(_slug(d) for d in depts) or "other")).strip()
         dept_display = " / ".join(depts)
         title_display = " · ".join(p for p in [code, title] if p)
         year = parse_latest_year(terms)
@@ -334,9 +340,9 @@ def generate_content(data):
     n_sc_sessions = sum(len(sc.get("terms") or []) for sc in short_courses)
     stats_html = (
         '<div class="pub-stats teach-stats">'
-        f'<div class="pub-stat role-tile-total"><span class="n">{len(courses)}</span><span class="l">University courses</span></div>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-total" data-lv-trigger data-lv-facet="uoft-course" data-lv-label="University of Toronto courses" aria-pressed="false"><span class="n">{len(courses)}</span><span class="l">University courses</span></button>'
         f'<div class="pub-stat role-tile-significant"><span class="n">{n_offerings}</span><span class="l">Course offerings</span></div>'
-        f'<div class="pub-stat role-tile-primary"><span class="n">{len(short_courses)}</span><span class="l">Workshop series ({n_sc_sessions}x)</span></div>'
+        f'<button type="button" class="pub-stat pub-statbtn role-tile-primary" data-lv-trigger data-lv-cat="workshops" aria-pressed="false"><span class="n">{len(short_courses)}</span><span class="l">Workshop series ({n_sc_sessions}x)</span></button>'
         f'<div class="pub-stat role-tile-student"><span class="n">{len(active_ays)}</span><span class="l">Academic years taught</span></div>'
         '</div>'
     )
@@ -359,7 +365,9 @@ def generate_content(data):
             '<aside class="highlight-box teach-phil-box">'
             '<div class="ment-intro-head">'
             f'<h2>{esc(phil.get("title", "Teaching Philosophy"))}</h2>'
-            '</div>'
+            '<div class="ment-intro-links">'
+            '<a class="reslink" href="index.html#join">Undergraduate research pathways →</a>'
+            '</div></div>'
             f'<p>{phil["content"]}</p>'
             '</aside>'
             f'{pillars_html}'
@@ -392,6 +400,9 @@ def generate_content(data):
         '<h2 class="item-section-title">Short Courses, Summer Schools &amp; Tutorials '
         f'<span class="mentor-sec-count" data-lv-count>{len(short_courses)}</span></h2>'
         f'<p class="section-intro teach-ws-intro">{workshops_intro}</p>'
+        '<div class="ment-intro-links">'
+        '<a class="reslink" href="talks.html?cat=lectures">Tutorials &amp; lectures in Talks archive →</a>'
+        '</div>'
         '</div>'
         f'<div class="mentee-grid">{"".join(workshop_cards)}</div>'
         '</section>'
