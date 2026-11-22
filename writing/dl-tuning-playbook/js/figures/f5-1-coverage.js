@@ -261,7 +261,7 @@ var CAL = {
       plotAspect: function (w, phone) { return phone ? 1 : 0.46; },
       margin: function (w, phone) {
         var s = wdStrip(phone), g = gridVars(fig);
-        return { t: phone ? 8 : 8, b: phone ? 3 : 4, r: s.gap + s.w + s.pad, l: (first ? g.y + g.gap : 0) + innerLeft(phone) };
+        return { t: phone ? 8 : 8, b: 9, r: s.gap + s.w + s.pad, l: (first ? g.y + g.gap : 0) + innerLeft(phone) };
       }
     };
   }

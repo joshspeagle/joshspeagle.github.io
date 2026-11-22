@@ -1752,7 +1752,14 @@ figure.schematic .fig-num {
   gap: 6px 10px;
   align-items: center;
 }
+.fig-tutorial:not(.fig-tour) {
+  display: none;
+}
+.fig-panels:empty {
+  display: none;
+}
 .fig-nojs {
+  display: block;
   margin: 8px 0 0;
   padding: 10px 14px;
   border: 1px dashed var(--border-2);
@@ -3064,7 +3071,8 @@ main.page :is(dfn, span, a)[data-concept]:focus-visible {
 
 /* 20.10 Print: the drawer stays closed except for model notes; figures print at column width */
 @media print {
-  .fig-tools, .nav-toggle, .fig-pane:not(.fig-model-pane) { display: none !important; }
+  .site-header, .page-toc, .pager, .skip, .fig-tools, .fig-controls-more, .fig-dock,
+  .nav-toggle, .tip, .handle-value, .fig-pane:not(.fig-model-pane) { display: none !important; }
   .fig-drawer, .fig-model-pane { display: block !important; }
   .fig-model-pane > details.fig-model > summary { display: block !important; font-weight: 700; margin-bottom: 4px; }
   main.page :is(figure.fig, figure.schematic, .l-wide) { width: auto; margin-left: 0; }
