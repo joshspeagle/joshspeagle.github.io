@@ -6,29 +6,29 @@ This document specifies the visual design, typography, color palette, angular su
 
 ## 1. Visual Identity & Core Concept
 
-The visual system combines astronomical observation and statistical computation through an **angular constellation-and-circuit** motif:
+The visual system combines astronomical observation and statistical computation through an **editorial constellation-and-circuit** motif:
 
-- **Substrate:** A deep night-sky navy background (`--bg-0`) in dark mode and warm archival paper (`#f7f5ef`) in light mode, overlaid with a subtle copper coordinate grid (`32px × 32px`).
-- **Angular Technical Geometry (`2px–3px` radii & `45°` Chamfers):** Instead of rounded pill buttons or thick left-only sidebars, buttons (`.btn`, `.btn-ghost`, `.cv`), filter chips (`.chip`), and bilingual nameplates (`.hero h1 .zh`) use crisp `45°` chamfered polygon corners (`clip-path: polygon(...)`) and rotated `45°` diamond indicators.
-- **Copper Traces (`--copper-rgb`) & Amber Energy (`--energy`):** Precision `45°` copper traces and diamond/via markers anchor section headers and the homepage left-margin rail, while warm amber highlights mark primary actions, active filters, and live posterior samples.
+- **Substrate:** A deep night-sky navy background (`--bg-0`) in dark mode and warm archival paper in light mode, overlaid with a subtle copper coordinate grid (`32px × 32px`).
+- **Crisp Technical Geometry (`3px` Radii):** Buttons (`.btn`, `.btn-ghost`, `.cv`), filter chips (`.chip`), tabs (`.pub-tab`), and bilingual nameplates (`.hero h1 .zh`) use crisp `3px` radii aligned with the long-form editorial dialect paired with rotated `45°` diamond indicators.
+- **Copper Traces (`--copper-rgb`) & Amber Energy (`--energy`):** Precision `45°` copper traces and diamond/via markers anchor section headers and the homepage left-margin navigation rail (`#board-nav`), while warm amber highlights mark primary actions, active cross-filters, and live posterior samples.
 
 ---
 
-## 2. Three-Tier Angular Surface Hierarchy
+## 2. Three-Tier Surface Hierarchy
 
 Components are organized into three distinct visual tiers based on their structural role:
 
-### Tier 1 — Constellation & IC Feature Modules
-Used for spotlight and summary modules: the ART research group panel (`.art-panel`), the four homepage research-area cards (`.research-card`), featured publication/software/press spotlight cards (`.feat-card`), interactive data-visualization panels (`.pub-fig`), metric tiles (`.pub-metrics-chip`, `.pub-stat`), opportunity directory cards (`.opp-card`), and award cards (`.award-card`).
-- **Surface:** Elevated card fill (`--chip`) with `--shadow-card`, `1px` border (`--border-2`), `3px` border radius (`--radius-card`), a `2.5px` top accent bar (`--edge`), and an angular top-right copper corner bracket (`::before`).
+### Tier 1 — Constellation & Editorial Feature Modules
+Used for spotlight and summary modules: the ART research group panel (`.art-panel`), the four homepage research-area cards (`.research-card`), featured publication/software/press spotlight cards (`.feat-card`), interactive data-visualization panels (`.pub-fig`), metric strips (`.pub-metrics-chip`, `.pub-stat`), opportunity directory cards (`.opp-card`), and award cards (`.award-card`).
+- **Surface:** Elevated card fill (`--chip`) with softened `--shadow-card`, `1px` border (`--border-2`), `3px` border radius (`--radius-card`), and a `2.5px` top accent bar (`--edge`).
 
-### Tier 2 — Angular Technical Callout Panels & Editorial Blocks
-Used for reflective prose callouts (`On Mentorship`, `Teaching Philosophy`, `Community Leadership & EDI`, `.highlight-box`), group values (`.editorial-block`), and the homepage **"Working With Me"** values and fellowship directory (`#join`).
-- **Surface:** Full-framed angular technical panels (`1px solid var(--border-2)`) with a `2.5px` top copper rule and a bottom-right copper corner bracket (`::before`).
+### Tier 2 — Editorial Callout Panels
+Used for reflective prose callouts (`On Mentorship`, `Teaching Philosophy`, `Community Leadership & EDI`, `.highlight-box`), group values (`.value-card`), and the homepage **"Working With Me"** directory (`#join`).
+- **Surface:** Clean framed panels (`1px solid var(--border-2)`, `3px` radius) with a `2.5px` top copper rule.
 
-### Tier 3 — Crisp Angular List Cards
-Used for academic records across `publications.html`, `talks.html`, `mentorship.html`, `teaching.html`, `service.html`, `software.html`, and `news.html` (`.paper:not(.feat-card)` and `.item:not(.award-card)`).
-- **Surface:** Sharp `2px`-radius cards (`--row-bg`, transitioning to `--row-hover` on hover) with a `1px` technical border (`--border-2`) and a `3px` left category indicator bar (`--edge`).
+### Tier 3 — Crisp Academic Record Cards
+Used for searchable/filterable academic records across `publications.html`, `talks.html`, `mentorship.html`, `teaching.html`, `service.html`, `software.html`, and `news.html` (`.paper:not(.feat-card)` and `.item:not(.award-card)`).
+- **Surface:** Crisp `3px`-radius cards (`--row-bg`, transitioning to `--row-hover` on hover) with a `1px` technical border (`--border-2`) and a `3px` left category indicator bar (`--edge`).
 - **Expandable Abstracts & Consolidated Card Footer:** Every publication card includes an inline `<details class="paper-abs-toggle">` disclosure and a unified footer bar pairing category/role badges on the left with outbound resource micro-buttons (`.reslink`) on the right.
 
 ---
@@ -49,26 +49,26 @@ All colors are defined in `assets/data/tokens.json` with paired `dark` and `ligh
 
 ## 4. Interactive Dashboards & Visualizations by Page
 
+Every dashboard visualization integrates directly with the shared `[data-listview]` filter engine (`assets/js/redesign/listview.js`) via declarative `[data-lv-trigger]` controls, exact year filters (`data-lv-year`), non-chip facets (`data-lv-facet`), and URL query deep-links (`?cat=...&year=...&q=...`):
+
 1. **Homepage (`index.html`):**
    - **Hero Canvas (`assets/js/redesign/hero.js`):** Deep-field spiral and elliptical galaxies across the left/center emit glowing violet-cyan-gold signal beams through the constellation network into an open rotated Bayesian posterior (`1σ`, `2σ`, `3σ` credible ellipses and live MCMC/nested-sampling cloud) on the right.
-   - **Left-Margin Constellation Rail (`assets/js/redesign/board.js`):** Clean vertical copper rail in the left margin (`W >= 1180px`) with `45°` section-header taps and scroll-coupled amber horizon.
+   - **Left-Margin Constellation Rail (`assets/js/redesign/board.js` & `#board-nav`):** Vertical copper rail in the left margin (`W >= 1180px`) with scroll-coupled amber horizon paired with a compact fixed section-navigation rail (`W >= 1440px`) tracking the active homepage section.
+   - **Hub Routing:** Clickable Research Area cards link directly to pre-filtered `publications.html?cat=<key>#pub-root`; About links to `biography.html` and `service.html`; Latest Highlights surfaces the three most recent news updates above the Research Group & Working With Me sections.
 2. **Publications (`publications.html`):**
-   - **Research Mix Proportional Bar:** Full-width 4-domain bar paired with an always-visible color-coded full-name legend.
-   - **Citations per Year:** Interactive area/line chart with hover tooltips (`assets/js/redesign/pubchart.js`).
-   - **Publications by Year & Role:** Multi-hue stacked bar chart using the vibrant `--role-*` palette.
-   - **Research Impact by Role (RIQ):** Multi-series trajectory plot with color-coded lines, diamond endpoint markers, and interactive year-band tooltips.
+   - **Compact Telemetry Strip & Role Filter:** Five compact summary tiles linking to curated ADS libraries above a clickable Research Mix cross-filter, an authorship-role filter bar, and a tabbed **Portfolio Explorer** (`role="tablist"` in `assets/js/redesign/pubchart.js`).
+   - **Research Mix Proportional Bar:** Interactive 4-domain bar + clickable full-name legend that cross-filters papers by research domain.
+   - **Portfolio Explorer Tabs (`Citations per year` · `Publications by year & role` · `Research impact by role (RIQ)`):** Houses all three trend charts cleanly above `Featured work` while allowing visitors to click any year bar or role label to filter the publication archive (all tab panels expand together under `@media print`).
 3. **Mentorship (`mentorship.html`):**
-   - **2-Panel Mentorship Dashboard:** *Mentorship by Career Stage (Current vs. Former)* paired with *Undergraduate Research Pathways Breakdown*.
-   - **Roster Organization:** Current Group Members displayed in a 2-column grid by stage at the top; Former Mentees & Alumni separated below, with Former Undergraduates organized into 3 collapsible pathway accordions (*Senior Thesis & Independent Research*, *Summer Research Fellowships*, *ROP, Work-Study & Academic-Year Research*).
+   - **Group Values & Interactive Dashboard:** Canonical `#group-values` section plus clickable telemetry strip, *Mentorship by Career Stage (Current vs. Alumni)* bar triggers, and *Undergraduate Research Pathways* bar triggers that filter the roster and auto-expand matching collapsible `<details>` pathways.
 4. **Talks & Events (`talks.html`):**
-   - **2-Panel Speaking Dashboard:** Interactive 3D orthographic Globe / 2D Map (`assets/js/redesign/talks-globe.js`) with great-circle arcs from Toronto, regional presets, and an inspectable city hub list, paired with *Speaking Activity by Year & Format* stacked bars and *Talks by Research Theme* breakdown.
+   - **3-D Globe + Cross-Filtered Speaking Charts:** Interactive 3D orthographic Globe / 2D Map (`assets/js/redesign/talks-globe.js`) with city-archive filtering, paired with clickable *Speaking Activity by Year & Format* bars and clickable *Speaking Topics by Research Theme* rows.
 5. **Software & Code (`software.html`):**
-   - **2-Panel Software Ecosystem Dashboard:** *Flagship Package Adoption (Monthly PyPI Downloads)* paired with *Software Ecosystem by Domain & Role*, followed by Flagship Packages, the interactive `allsky` showcase, and search/filter controls above a 2-column repository grid.
-6. **Teaching (`teaching.html`) & Service (`service.html`):**
-   - **Timeline Matrices:** Multi-year *Teaching & Curriculum Timeline (2021–22 to 2026–27)* on `teaching.html` and *Leadership & Governance Timeline (2020–2027)* on `service.html`.
-7. **Biography (`biography.html`), Awards (`awards.html`) & News (`news.html`):**
+   - **2-Panel Interactive Ecosystem Dashboard:** Clickable *Flagship Package Adoption* bars (filter directly to a package), clickable *Ecosystem by Domain & Role* bars and role legend keys, Flagship Packages, the interactive `allsky` showcase, and search/sort controls above a 2-column repository grid.
+6. **Teaching (`teaching.html`), Service (`service.html`) & News (`news.html`):**
+   - **Interactive Timelines & Telemetry Strips:** Clickable course/workshop rows in *Teaching & Curriculum Timeline (2021–22 to 2026–27)*, clickable category headings and expandable sub-rows in *Leadership & Governance Timeline (2020–2027)*, and clickable summary telemetry strips filtering records in place.
+7. **Biography (`biography.html`) & Awards (`awards.html`):**
    - **Biography:** 2-column Short Biography + childhood photo (`china_childhood.jpg`) followed by an alternating left/right *Career & Research Evolution Timeline* with research focus tags.
    - **Awards:** Research Prizes & Academic Awards 2-column grid + Competitive Fellowships + Group & Mentee Fellowships showcase.
-   - **News:** Featured Press & Research Highlights 3-card spotlight grid above the filterable chronological feed.
 8. **Writing (`writing.html` & `writing/dl-tuning-playbook/`):**
    - **Editorial index:** Each series is one framed panel (`.wr-series`) with its summary and entry links in a sticky left column and a book-style table of contents on the right (act headings, then numbered parts with a one-line summary). Standalone essays render below as a plain dated list. The series pages under `writing/<series-slug>/` keep their own reading-focused design.

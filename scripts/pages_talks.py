@@ -15,8 +15,9 @@ import json
 import re
 from collections import Counter, defaultdict
 
-from pages_shared import (accent_class, attr_esc, card_meta, esc, parse_latest_year,
-                          scaffold, slug, term_month, url_attr, warn)
+from pages_shared import (accent_class, attr_esc, attr_text, card_meta, esc,
+                          lv_trigger_attrs, parse_latest_year, scaffold, slug,
+                          stat_tile, term_month, tip_attrs, url_attr, warn)
 
 # City / region -> (display label, lat, lon, region_key, search_key)
 # Grouped slightly only where two suburbs share a metro pin on a world map.
@@ -74,6 +75,17 @@ _CITY_COORDS = {
     "tsukuba, japan": ("Tokyo / Tsukuba, Japan", 35.80, 139.90, "as", "Japan"),
     "singapore": ("Singapore", 1.35, 103.82, "as", "Singapore"),
 }
+
+
+def _talk_hub(location):
+    """Map a talk's location string to (hub_facet_token, hub_label)."""
+    loc_key = str(location or "").strip().lower()
+    if "virtual" in loc_key or "radio" in loc_key or not loc_key:
+        return "hub-virtual", "Virtual & Broadcast"
+    if loc_key in _CITY_COORDS:
+        label = _CITY_COORDS[loc_key][0]
+        return f"hub-{slug(label)}", label
+    return "", ""
 
 
 def _link_html(rec, label="Event"):
@@ -187,9 +199,17 @@ def _talk_item(talk, cat_id, cat_name, accent):
         if url else esc(title)
     )
 
+    th = _classify_talk_theme(talk, cat_id)
+    cat_tokens = [slug(cat_id), f"theme-{th}"]
+    if cat_id in ("lectures", "panels"):
+        cat_tokens.append("group-tutorials-panels")
+    hub_tok, _ = _talk_hub(location)
+    if hub_tok:
+        cat_tokens.append(hub_tok)
+
     return (
         f'<article class="item accent-{accent}" data-lv-item'
-        f' data-cat="{slug(cat_id)}"'
+        f' data-cat="{" ".join(cat_tokens)}"'
         f' data-search="{data_search}"'
         f' data-year="{data_year}"'
         f' data-num="{data_num}"'
@@ -278,6 +298,7 @@ def _world_globe_section(categories):
         talks_sorted = sorted(city_talks[label], key=lambda x: -x["sortNum"])
         cities_payload.append({
             "label": label,
+            "hubKey": f"hub-{slug(label)}",
             "lat": lat,
             "lon": lon,
             "region": reg,
@@ -289,6 +310,7 @@ def _world_globe_section(categories):
     virtual_sorted = sorted(virtual_talks, key=lambda x: -x["sortNum"])
     virtual_payload = {
         "label": "Virtual & Broadcast",
+        "hubKey": "hub-virtual",
         "lat": 0.0,
         "lon": 0.0,
         "region": "virtual",
@@ -383,8 +405,11 @@ def _world_globe_section(categories):
         '</div>'
         f'<ul class="gcd-list">{first_talks_html}</ul>'
         '<div class="gcd-foot">'
-        f'<button type="button" class="btn gcd-filter-btn" data-globe-filter-list="{attr_esc(first["searchKey"])}">'
-        f'Filter talk archive below to “{esc(first["searchKey"])}”'
+        f'<button type="button" class="btn gcd-filter-btn" '
+        f'data-globe-filter-hub="{attr_text(first["hubKey"])}" '
+        f'data-globe-filter-label="{attr_text(first["label"])}" '
+        f'data-globe-filter-list="{attr_esc(first["searchKey"])}">'
+        f'Filter talk archive below to “{esc(first["label"])}”'
         '</button>'
         '</div>'
         '</div>'
@@ -448,10 +473,11 @@ def _talks_by_year_svg(categories):
                 f'height:{100.0 - yp(tot):.2f}%">{segs}</span>'
             )
             parts = ", ".join(f"{col[gk]} {glab.lower()}" for gk, glab, _ in _YEAR_CAT_GROUPS if col.get(gk))
-            summ = esc(f"{y}: {tot} event{'s' if tot != 1 else ''} — {parts}").replace('"', "&quot;")
+            summ = f"{y}: {tot} event{'s' if tot != 1 else ''} — {parts} (click to filter)"
             plot.append(
-                f'<span class="pf-col" style="left:{i * slot:.2f}%;width:{slot:.2f}%" '
-                f'tabindex="0" aria-label="{summ}" data-tip="{summ}"></span>'
+                f'<button type="button" class="pf-col" style="left:{i * slot:.2f}%;width:{slot:.2f}%" '
+                f'{lv_trigger_attrs(year=y, label=f"Year {y}")} '
+                f'{tip_attrs(summ)}></button>'
             )
     yticks = "".join(f'<span class="pf-yt" style="top:{yp(t):.2f}%">{t}</span>' for t in ticks)
     xticks = "".join(
@@ -544,17 +570,18 @@ def _talks_by_topic_svg(categories):
             for gk, _, _ in _YEAR_CAT_GROUPS if col.get(gk)
         )
         parts = ", ".join(f"{col[gk]} {glab.lower()}" for gk, glab, _ in _YEAR_CAT_GROUPS if col.get(gk))
-        tip = esc(f"{tlabel}: {tot} talks — {parts}").replace('"', "&quot;")
+        tip = f"{tlabel}: {tot} talks — {parts} (click to filter)"
         rows.append(
-            f'<div class="talks-theme-row" role="img" tabindex="0" aria-label="{tip}" data-tip="{tip}">'
-            '<div class="ttr-head">'
+            f'<button type="button" class="talks-theme-row" '
+            f'{lv_trigger_attrs(facet=f"theme-{tk}", label=tlabel)} {tip_attrs(tip)}>'
+            '<span class="ttr-head">'
             f'<span class="ttr-name">{esc(tlabel)}</span>'
             f'<span class="ttr-cnt">{tot}</span>'
-            '</div>'
-            '<div class="ttr-track">'
-            f'<div class="ttr-fill" style="width:{pct_width:.2f}%">{segs}</div>'
-            '</div>'
-            '</div>'
+            '</span>'
+            '<span class="ttr-track">'
+            f'<span class="ttr-fill" style="width:{pct_width:.2f}%">{segs}</span>'
+            '</span>'
+            '</button>'
         )
 
     legend = "".join(
@@ -617,21 +644,22 @@ def generate_content(data):
     stats_html = (
         '<div class="container">'
         '<div class="pub-stats talks-stats">'
-        f'<div class="pub-stat role-tile-total"><span class="n">{total}</span><span class="l">Total talks &amp; events</span></div>'
-        f'<div class="pub-stat role-tile-primary"><span class="n">{n_invited}</span><span class="l">Invited talks</span></div>'
-        f'<div class="pub-stat role-tile-student"><span class="n">{n_colloq}</span><span class="l">Colloquia &amp; seminars</span></div>'
-        f'<div class="pub-stat role-tile-postdoc"><span class="n">{n_lect_pan}</span><span class="l">Tutorials &amp; panels</span></div>'
-        f'<div class="pub-stat role-tile-significant"><span class="n">{len(distinct_cities)}</span><span class="l">Global speaking hubs</span></div>'
-        '</div>'
+        + stat_tile(total, "Total talks &amp; events", "role-tile-total", cat="all", pressed=True)
+        + stat_tile(n_invited, "Invited talks", "role-tile-primary", cat="invited")
+        + stat_tile(n_colloq, "Colloquia &amp; seminars", "role-tile-student", cat="colloquia")
+        + stat_tile(n_lect_pan, "Tutorials &amp; panels", "role-tile-postdoc",
+                    facet="group-tutorials-panels", label="Tutorials & Panels", clear="filters")
+        + f'<a class="pub-stat pub-statlink role-tile-significant" href="#talks-globe-canvas"><span class="n">{len(distinct_cities)}</span><span class="l">Global speaking hubs</span></a>'
+        + '</div>'
         '<div class="pub-figures talks-figures">'
         f'{_world_globe_section(categories)}'
         '<figure class="pub-fig">'
         '<figcaption class="pub-fig-head"><span class="t">Speaking activity by year &amp; format</span>'
-        '<span class="m">hover or tab through the bars</span></figcaption>'
+        '<span class="m">click any year bar to filter talks</span></figcaption>'
         f'{_talks_by_year_svg(categories)}</figure>'
         '<figure class="pub-fig">'
         '<figcaption class="pub-fig-head"><span class="t">Speaking topics by research theme &amp; format</span>'
-        '<span class="m">hover or tab rows for format breakdown</span></figcaption>'
+        '<span class="m">click any theme row to filter talks</span></figcaption>'
         f'{_talks_by_topic_svg(categories)}</figure>'
         '</div>'
         '</div>'

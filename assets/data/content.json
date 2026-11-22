@@ -120,7 +120,7 @@
     },
     "collaboration": {
       "title": "Working With Me",
-      "intro": "Collaboration and mentorship are central to how I do research. Whether you are a prospective postdoctoral fellow, graduate student, undergraduate researcher, or visiting collaborator, here are the core values of our group and the primary pathways for joining.",
+      "intro": "Collaboration and mentorship are central to how I do research. Whether you are a prospective postdoctoral fellow, graduate student, undergraduate researcher, or visiting collaborator, below are the main pathways for joining our group—see our Mentorship page for group values and current and former members.",
       "values": {
         "title": "Group Values",
         "items": [
@@ -3970,7 +3970,7 @@
         },
         "research": {
           "kicker": "Research & Impact",
-          "title": "Statistics, AI & Astronomy",
+          "title": "Astronomy, Statistics & AI",
           "intro": "Our group develops statistical inference algorithms, scientific AI foundation models, and open-source software, applying them to large astronomical surveys to study stars, star clusters, interstellar dust, the Milky Way, and distant galaxies."
         },
         "team": {

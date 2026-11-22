@@ -33,15 +33,15 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pages_shared import (SPRITE, ads_abs_url, attr_esc, card_meta, clean_text,  # noqa: E402
                           date_range, esc, esc_text, expand_item_citations,
                           listview_status, load_publications_by_bibcode,
-                          percent_shares, slug, strip_tags, term_month,
-                          url_attr, warn)
+                          lv_trigger_attrs, percent_shares, slug, strip_tags,
+                          term_month, tip_attrs, url_attr, warn)
 from pages_talks import generate_content as gen_talks          # noqa: E402
 from pages_teaching import generate_content as gen_teaching    # noqa: E402
 from pages_mentorship import generate_content as gen_mentorship  # noqa: E402
 from pages_awards import generate_content as gen_awards        # noqa: E402
 from pages_service import generate_content as gen_service      # noqa: E402
 from pages_software import generate_content as gen_software    # noqa: E402
-from pages_news import generate_content as gen_news            # noqa: E402
+from pages_news import generate_content as gen_news, render_highlights  # noqa: E402
 from pages_writing import generate_content as gen_writing      # noqa: E402
 from build_writing import build_all as build_writing           # noqa: E402
 
@@ -648,6 +648,19 @@ def render_shell(key, data, content):
     root = page.get("root", "")
     scripts = "".join(f'\n  <script src="{root}assets/js/redesign/{s}" defer></script>'
                       for s in [SITE_SCRIPT] + list(page.get("scripts", [])))
+    body_cls = "page-home" if key == "index" else f"page-{key}"
+    board_nav = ""
+    if key == "index":
+        board_nav = (
+            '  <nav class="board-nav" id="board-nav" aria-label="On this page">\n'
+            '    <a class="board-nav-link is-active" href="#main-content" aria-current="location">Overview</a>\n'
+            '    <a class="board-nav-link" href="#about">About</a>\n'
+            '    <a class="board-nav-link" href="#research">Research</a>\n'
+            '    <a class="board-nav-link" href="#highlights">News</a>\n'
+            '    <a class="board-nav-link" href="#team">Group</a>\n'
+            '    <a class="board-nav-link" href="#join">Join</a>\n'
+            '  </nav>\n'
+        )
     return (
         '<!DOCTYPE html>\n'
         '<html lang="en" data-theme="dark">\n'
@@ -655,9 +668,10 @@ def render_shell(key, data, content):
         f'{_credit_comment(data)}'
         f'{render_head(key, page, data)}\n'
         '\n'
-        '<body>\n'
+        f'<body class="{body_cls}">\n'
         f'{SPRITE}\n'
         '  <svg id="board" aria-hidden="true"></svg>\n'
+        f'{board_nav}'
         '\n'
         '  <a class="skip-link" href="#main-content">Skip to main content</a>\n'
         '\n'
@@ -851,6 +865,10 @@ def generate_home_about(data):
         '<div class="intro-body">'
         f'{paras_html}'
         f'{contact}'
+        '<div class="about-actions">'
+        '<a class="btn-ghost" href="biography.html">Full biography &amp; career timeline →</a>'
+        '<a class="reslink" href="service.html">Academic service &amp; leadership →</a>'
+        '</div>'
         '</div>\n'
         f'{photo}\n'
         '</div>\n'
@@ -883,11 +901,15 @@ def generate_home_research(data):
     cards = []
     for i, area in enumerate(areas):
         icon, cls = _HOME_ICONS[i] if i < len(_HOME_ICONS) else _HOME_ICONS[-1]
+        atitle = area.get("title", "")
         cards.append(
             f'<article class="research-card {cls}" data-cat="{cls}">'
             f'{_use(icon, "icon")}'
-            f'<h3>{esc(area.get("title", ""))}</h3>'
-            f'<p>{esc(area.get("description", ""))}</p></article>'
+            f'<h3>{esc(atitle)}</h3>'
+            f'<p>{esc(area.get("description", ""))}</p>'
+            f'<a class="rc-link" href="publications.html?cat={cls}#pub-root" '
+            f'aria-label="Browse {esc(atitle)} publications">Explore papers →</a>'
+            '</article>'
         )
     head = home_section(data, "research")
     intro = esc(head.get("intro", ""))
@@ -899,14 +921,20 @@ def generate_home_research(data):
     # Auto-computed metric pads (pipeline-maintained publication metrics + the
     # all-time mentee count).
     m = _pub_metrics()
-    metric_defs = [(m.get("totalPapers"), "Papers"),
-                   (m.get("totalCitations"), "Citations"),
-                   (m.get("hIndex"), "h-index"),
-                   (_mentee_count(data), "Mentees")]
-    metrics_html = "".join(
-        f'<div class="pub-metric"><span class="n">{v:,}</span><span class="l">{esc(l)}</span></div>'
-        for v, l in metric_defs if v
-    )
+    metric_defs = [(m.get("totalPapers"), "Papers", "publications.html"),
+                   (m.get("totalCitations"), "Citations", None),
+                   (m.get("hIndex"), "h-index", None),
+                   (_mentee_count(data), "Mentees", "mentorship.html")]
+    metrics_parts = []
+    for v, lbl, href in metric_defs:
+        if not v:
+            continue
+        inner = f'<span class="n">{v:,}</span><span class="l">{esc(lbl)}</span>'
+        if href:
+            metrics_parts.append(f'<a class="pub-metric pub-metric-link" href="{url_attr(href)}">{inner}</a>')
+        else:
+            metrics_parts.append(f'<div class="pub-metric">{inner}</div>')
+    metrics_html = "".join(metrics_parts)
     pubbox = ""
     if metrics_html or publinks:
         pubbox = (
@@ -915,6 +943,12 @@ def generate_home_research(data):
             f'<div class="pub-links"><span class="pub-links-label">{esc(pubs.get("intro", ""))}</span>'
             f'<div class="pub-links-row">{publinks}</div>'
             '<a class="btn-ghost go" href="publications.html">Browse all publications, metrics &amp; figures →</a>'
+            '</div>'
+            '<div class="pub-hub-links">'
+            '<span class="pub-links-label">Explore more</span>'
+            '<a class="reslink" href="software.html">Open-source software &amp; code →</a>'
+            '<a class="reslink" href="talks.html">Talks, colloquia &amp; globe →</a>'
+            '<a class="reslink" href="teaching.html">Courses &amp; workshops →</a>'
             '</div></article>'
         )
     return (
@@ -924,6 +958,28 @@ def generate_home_research(data):
         f'<div class="research-grid">{"".join(cards)}</div>\n'
         f'{pubbox}\n'
         "</div>"
+    )
+
+
+def generate_home_highlights(data):
+    """Compact 3-card latest highlights strip bridging Home to News & Awards."""
+    news_sec = (data.get("sections", {}).get("news", {}) or {})
+    cards = render_highlights(news_sec, limit=3)
+    if not cards:
+        return ""
+    head = home_section(data, "highlights")
+    intro = head.get("intro") or "Recent papers, group milestones, awards, and talks."
+    return (
+        '<div class="container">\n'
+        + sec_head(head.get("title", "Latest Highlights")) + '\n'
+        '<div class="home-highlights-head">'
+        f'<p class="section-intro">{esc(intro)}</p>'
+        '<div class="home-highlights-links">'
+        '<a class="btn-ghost" href="news.html">All news &amp; press →</a>'
+        '<a class="reslink" href="awards.html">Awards &amp; honors →</a>'
+        '</div></div>\n'
+        f'<div class="featured-grid">{cards}</div>\n'
+        '</div>'
     )
 
 
@@ -1008,18 +1064,6 @@ def generate_home_team(data):
         arrow = "" if cls == "btn" else (' <span aria-hidden="true">↗</span>' if ext else "")
         btns.append(f'<a class="{cls}" href="{url_attr(url)}"{attrs}>{esc(c.get("text", ""))}{arrow}</a>')
 
-    values_items = (collab.get("values") or {}).get("items", []) or []
-    val_accents = ["sla", "ic"]
-    values_html = ""
-    if values_items:
-        vcards = "".join(
-            f'<article class="value-card vc-{val_accents[i % len(val_accents)]}">'
-            f'<h4>{esc(v.get("title", ""))}</h4>'
-            f'<p>{v.get("content", "")}</p></article>'
-            for i, v in enumerate(values_items)
-        )
-        values_html = f'<div class="values-grid">{vcards}</div>\n'
-
     opp_cards_data = (collab.get("opportunities") or {}).get("cards", []) or []
     opp_cards = "".join(
         f'<article class="opp-card opp-{_OPP_ACCENTS[i % len(_OPP_ACCENTS)]}">'
@@ -1033,9 +1077,11 @@ def generate_home_team(data):
     join_html = (
         '<div class="join-panel" id="join">\n'
         f'<div class="join-head"><h3>{esc(collab.get("title", "Working With Me"))}</h3>'
-        '<a class="btn-ghost" href="mentorship.html">Current group &amp; alumni directory →</a></div>\n'
+        '<div class="home-highlights-links">'
+        '<a class="reslink" href="mentorship.html#group-values">Group values (EDI &amp; open science) →</a>'
+        '<a class="btn-ghost" href="mentorship.html">Current group &amp; alumni directory →</a>'
+        '</div></div>\n'
         f'<p class="section-intro">{esc(collab.get("intro", ""))}</p>\n'
-        f'{values_html}'
         f'<div class="opp-grid" id="opportunities">{opp_cards}</div>\n'
         '</div>'
     )
@@ -1357,7 +1403,7 @@ def _generate_paper_card(pub, board=False):
 
     lv = "" if board else " data-lv-item"
     return (
-        f'<article class="{cls}"{lv} data-cat="{catkey}" data-year="{year}" '
+        f'<article class="{cls}"{lv} data-cat="{catkey} role-{role}" data-year="{year}" '
         f'data-num="{cites_int}" data-title="{attr_esc(title)}" '
         f'data-search="{attr_esc(title + " " + " ".join(authors))}">'
         f'{card_meta(str(year), _venue_short(pub))}'
@@ -1428,10 +1474,12 @@ def _n(v):
     return f"{v:.2f}".rstrip("0").rstrip(".") or "0"
 
 
-def _tip(text):
-    """A focusable, hoverable hit target's shared attributes."""
-    t = esc(text).replace('"', "&quot;")
-    return f'role="img" tabindex="0" aria-label="{t}" data-tip="{t}"'
+def _band_span(x_center, step):
+    """Return (left%, width%) clamped inside [0, 100] with zero neighbor overlap."""
+    raw_left = x_center - step / 2
+    left = max(0.0, raw_left)
+    right = min(100.0, raw_left + step)
+    return left, max(0.0, right - left)
 
 
 def _pf_grid(ticks, yp):
@@ -1532,12 +1580,19 @@ def _roles_svg(pubs):
             plot.append(f'<span class="pf-bar" style="left:{_n(left)}%;width:{_n(width)}%;'
                         f'height:{_n(100 - yp(total))}%">{segs}</span>')
             parts = ", ".join(f"{col[k]} {lab.lower()}" for k, lab in _ROLE_META if col.get(k))
-            summ = f"{y}: {total} publication" + ("s" if total != 1 else "") + f" — {parts}"
-            plot.append(f'<span class="pf-col" style="left:{_n(i * slot)}%;width:{_n(slot)}%" '
-                        f'{_tip(summ)}></span>')
+            summ = f"{y}: {total} publication" + ("s" if total != 1 else "") + f" — {parts} (click to filter)"
+            plot.append(
+                f'<button type="button" class="pf-col" style="left:{_n(i * slot)}%;width:{_n(slot)}%" '
+                f'{lv_trigger_attrs(year=y, label=f"Published in {y}", target="#pub-root")} '
+                f'{tip_attrs(summ)}></button>'
+            )
     xt = [(i * slot + slot / 2, str(y)) for i, y in enumerate(years) if y % 2 == 0]
-    legend = "".join(f'<span class="pf-key"><i class="pf-kw seg-{key}"></i>{label}</span>'
-                     for key, label in _ROLE_META)
+    legend = "".join(
+        f'<button type="button" class="pf-key pf-key-btn" '
+        f'{lv_trigger_attrs(cat=f"role-{key}", target="#pub-root")}>'
+        f'<i class="pf-kw seg-{key}"></i>{label}</button>'
+        for key, label in _ROLE_META
+    )
     return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt),
                      legend=legend, ycol=3,
                      aria="Publications per year by my authorship role")
@@ -1575,9 +1630,12 @@ def _citations_svg(metrics):
                 f'{cpy[years[-1]]:,} in {years[-1]}</span>')
     step = 100 / (n - 1) if n > 1 else 100
     for i, y in enumerate(years):
-        left = max(0, xp(i) - step / 2)
-        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;'
-                    f'width:{_n(min(step, 100 - left))}%" {_tip(f"{y}: {cpy[y]:,} citations")}></span>')
+        left, band_w = _band_span(xp(i), step)
+        plot.append(
+            f'<button type="button" class="pf-band" style="left:{_n(left)}%;width:{_n(band_w)}%" '
+            f'{lv_trigger_attrs(year=y, label=f"Published in {y}", target="#pub-root")} '
+            f'{tip_attrs(f"{y}: {cpy[y]:,} citations (click to filter papers published in {y})")}></button>'
+        )
     xt = [(xp(i), str(y)) for i, y in enumerate(years) if y % 2 == 0]
     return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt), ycol=5,
                      aria="Citations received per year")
@@ -1636,9 +1694,9 @@ def _riq_svg(metrics):
                 for key, label in _RIQ_SERIES if yr in dict(data[key])]
         if not bits:
             continue
-        left = max(0, xp(yr) - step / 2)
-        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;width:{_n(min(step, 100 - left))}%" '
-                    f'{_tip(f"{yr} — " + " · ".join(bits))}></span>')
+        left, band_w = _band_span(xp(yr), step)
+        plot.append(f'<span class="pf-band" style="left:{_n(left)}%;width:{_n(band_w)}%" '
+                    f'{tip_attrs(f"{yr} — " + " · ".join(bits), focusable=True)}></span>')
     xt = [(xp(yr), str(yr)) for yr in years if yr % 2 == 0]
 
     # direct labels at the right edge, nudged apart so no two overlap
@@ -1646,11 +1704,12 @@ def _riq_svg(metrics):
     order = sorted(range(len(ends)), key=lambda i: yp(ends[i][2]))
     spread = _spread([(i, yp(ends[i][2])) for i in order], 11.0)
     legend = "".join(
-        f'<span class="pf-rl ln-{ends[i][0]}" style="--y:{_n(spread[i])}%">'
-        f'<b>{round(ends[i][2]):,}</b> {ends[i][1]}</span>'
+        f'<button type="button" class="pf-rl pf-rl-btn ln-{ends[i][0]}" style="--y:{_n(spread[i])}%" '
+        f'{lv_trigger_attrs(cat="all" if ends[i][0] == "all" else f"role-{ends[i][0]}", target="#pub-root", pressed=ends[i][0] == "all")}>'
+        f'<b>{round(ends[i][2]):,}</b> {ends[i][1]}</button>'
         for i in range(len(ends))
     )
-    rcol = max(len(f"{round(v):,} {label}") for _, label, v in ends) + 2
+    rcol = max(len(f"{round(v):,} {label}") for _, label, v in ends) + 4
     return _pf_chart("".join(plot), _pf_yticks(ticks, yp), _pf_xticks(xt),
                      legend=legend,
                      cls=" has-r", ycol=3, rcol=rcol,
@@ -1682,13 +1741,18 @@ def _mix_svg(pubs):
 
     segs, keys = [], []
     for (key, name, short, _frac), pct in zip(fr, pcts):
-        tip = f"{name}: {pct}% of classified output"
+        tip = f"{name}: {pct}% of classified output (click to filter)"
         short_bar = "AI & ML" if key == "sla" else name.split("&")[0].strip()
         inner = f'<b>{esc(short_bar)}</b><i>{pct}%</i>'
-        segs.append(f'<span class="mix-seg mix-{key}" style="flex:{pct}" {_tip(tip)}>{inner}</span>')
+        cat_attrs = lv_trigger_attrs(cat=key, target="#pub-root")
+        segs.append(
+            f'<button type="button" class="mix-seg mix-{key}" style="flex:{pct}" '
+            f'{cat_attrs} {tip_attrs(tip)}>{inner}</button>'
+        )
         keys.append(
-            f'<span class="pf-key pf-key-mix"><i class="pf-kw mix-{key}"></i>'
-            f'<strong>{esc(name)}</strong> <span class="pf-key-pct">{pct}%</span></span>'
+            f'<button type="button" class="pf-key pf-key-mix pf-key-btn" {cat_attrs}>'
+            f'<i class="pf-kw mix-{key}"></i>'
+            f'<strong>{esc(name)}</strong> <span class="pf-key-pct">{pct}%</span></button>'
         )
     total_txt = ", ".join(f"{name} {pct}%" for (_k, name, _s, _f), pct in zip(fr, pcts))
     return (f'<div class="pf-mix" role="group" aria-label="Research mix: {esc(total_txt)}">'
@@ -1788,13 +1852,37 @@ def generate_publications_redesign(data):
             f'{svg}</figure>'
         )
 
+    tab_defs = [
+        ("cites", "Citations per year", "Citations received per year",
+         peak_txt + " · click a year to filter", _citations_svg(metrics)),
+        ("roles", "Publications by year &amp; role", "Publications by year &amp; role",
+         "click any year bar or role legend to filter", _roles_svg(papers_with_year)),
+        ("riq", "Research impact (RIQ)", "Research impact by role",
+         "RIQ vs. typical range · click a role label to filter", _riq_svg(metrics)),
+    ]
+    tab_buttons = "".join(
+        f'<button type="button" class="pub-tab" role="tab" id="pub-tab-{tid}" '
+        f'aria-controls="pub-panel-{tid}" aria-selected="{"true" if idx == 0 else "false"}" '
+        f'tabindex="{0 if idx == 0 else -1}">{tlabel}</button>'
+        for idx, (tid, tlabel, *_rest) in enumerate(tab_defs)
+    )
+    tab_panels = "".join(
+        f'<div class="pub-tabpanel" role="tabpanel" id="pub-panel-{tid}" '
+        f'aria-labelledby="pub-tab-{tid}"{"" if idx == 0 else " hidden"}>'
+        f'{_fig(ftitle, fmeta, fsvg, wide=True)}</div>'
+        for idx, (tid, _tlabel, ftitle, fmeta, fsvg) in enumerate(tab_defs)
+    )
+
     figures = (
         '<div class="pub-figures">'
-        + _fig("Research mix", "share of work by area", _mix_svg(papers_with_year), wide=True)
-        + _fig("Citations received per year", peak_txt, _citations_svg(metrics), wide=True)
-        + _fig("Publications by year &amp; role", "hover or tab through the bars", _roles_svg(papers_with_year))
-        + _fig("Research impact by role", "RIQ vs. the typical astronomer range", _riq_svg(metrics))
+        + _fig("Research mix", "click any area to filter papers", _mix_svg(papers_with_year), wide=True)
         + '</div>'
+        '<section class="pub-explorer" data-tabs aria-label="Publication metrics and trends">'
+        f'<div class="pub-tabs" role="tablist" aria-label="Publication trend charts">{tab_buttons}</div>'
+        f'{tab_panels}'
+        '</section>'
+        '<details class="pub-fig-note-details">'
+        '<summary>How to read these summaries (research mix, authorship roles &amp; RIQ)</summary>'
         '<p class="pub-fig-note"><strong>Reading these summaries:</strong> The <strong>research mix</strong> '
         'bar weights each paper by its topic probabilities across our four core research areas. The '
         '<strong>authorship breakdowns</strong> separate papers I led directly from those led by postdoctoral '
@@ -1804,6 +1892,7 @@ def generate_publications_redesign(data):
         'the shaded band shows the 60–150 range typical of established astronomers '
         '(<a href="https://doi.org/10.1371/journal.pone.0046428" target="_blank" '
         'rel="noopener">Pepe &amp; Kurtz 2012</a>).</p>'
+        '</details>'
     )
 
     # Featured spotlight (papers flagged featured=true), shown with abstracts
@@ -1824,6 +1913,13 @@ def generate_publications_redesign(data):
         f'<span class="ct">{cat_counts[key]}</span></button>'
         for key in ("du", "ic", "sla", "ii")
     )
+    role_list_counts = Counter(p.get("authorshipCategory") or "other" for p in papers_with_year)
+    role_chips = "".join(
+        f'<button type="button" class="chip" data-cat="role-{rkey}" aria-pressed="false">'
+        f'<span class="dot b-role-{rkey}"></span>{esc(rlabel)} '
+        f'<span class="ct">{role_list_counts[rkey]}</span></button>'
+        for rkey, rlabel in _ROLE_META if role_list_counts.get(rkey)
+    )
     controls = (
         '<div class="pub-controls">'
         '<input type="search" id="pub-search" class="pub-search" data-lv-search '
@@ -1834,8 +1930,14 @@ def generate_publications_redesign(data):
         '<div class="pub-filters" id="pub-filters" data-lv-filters role="group" '
         'aria-label="Filter by research area">'
         f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">'
-        f'All <span class="ct">{all_count}</span></button>'
+        f'All areas <span class="ct">{all_count}</span></button>'
         f'{chips}'
+        '</div>'
+        '<div class="pub-filters" id="pub-role-filters" data-lv-filters role="group" '
+        'aria-label="Filter by authorship role">'
+        f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">'
+        f'All roles <span class="ct">{all_count}</span></button>'
+        f'{role_chips}'
         '</div>'
         '</div>'
     )
@@ -1881,11 +1983,13 @@ _CONTENT_GENERATORS = {
     "writing": gen_writing,
 }
 
-# Home is three generated <section>s rather than one content container:
-# About Me (#about) -> Research & Impact (#research) -> Research Group & Working With Me (#team, containing #join).
+# Home is four generated <section>s rather than one content container:
+# About Me (#about) -> Astronomy, Statistics & AI (#research) -> Latest Highlights (#highlights)
+# -> Research Group & Working With Me (#team, containing #join).
 _HOME_SECTIONS = [
     ("about", "section", generate_home_about),
     ("research", "section", generate_home_research),
+    ("highlights", "section", generate_home_highlights),
     ("team", "section", generate_home_team),
 ]
 

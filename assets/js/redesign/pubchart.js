@@ -44,4 +44,40 @@
     if (e.key === 'Escape') hide();
   });
   window.addEventListener('scroll', hide, { passive: true });
+
+  function initTabs() {
+    document.querySelectorAll('[data-tabs]').forEach(function (container) {
+      var tabs = Array.prototype.slice.call(container.querySelectorAll('[role="tab"]'));
+      var panels = Array.prototype.slice.call(container.querySelectorAll('[role="tabpanel"]'));
+      if (!tabs.length || !panels.length) return;
+      function activate(targetTab, moveFocus) {
+        var targetId = targetTab.getAttribute('aria-controls');
+        tabs.forEach(function (tab) {
+          var on = tab === targetTab;
+          tab.setAttribute('aria-selected', on ? 'true' : 'false');
+          tab.tabIndex = on ? 0 : -1;
+        });
+        panels.forEach(function (panel) {
+          panel.hidden = panel.id !== targetId;
+        });
+        hide();
+        if (moveFocus) targetTab.focus();
+      }
+      tabs.forEach(function (tab, idx) {
+        tab.addEventListener('click', function () { activate(tab, false); });
+        tab.addEventListener('keydown', function (e) {
+          var next = -1;
+          if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length;
+          else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length;
+          else if (e.key === 'Home') next = 0;
+          else if (e.key === 'End') next = tabs.length - 1;
+          if (next !== -1) {
+            e.preventDefault();
+            activate(tabs[next], true);
+          }
+        });
+      });
+    });
+  }
+  if (document.readyState !== 'loading') initTabs(); else document.addEventListener('DOMContentLoaded', initTabs);
 })();

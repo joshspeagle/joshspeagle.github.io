@@ -14,7 +14,8 @@ Renders:
    Undergraduates (56) sub-grouped into 3 collapsible pathway sections.
 """
 from pages_shared import (attr_esc, card_meta, chip, date_range, esc, listview_status,
-                          parse_latest_year, period_end_key, strip_tags as _strip_tags)
+                          mc_row, parse_latest_year, period_end_key, stat_tile,
+                          strip_tags as _strip_tags)
 
 # Stage key -> (filter cat key, display label, color suffix used for accent + badge)
 _STAGES = [
@@ -73,6 +74,30 @@ def _has_tag_kw(rec, field, kws):
 
 def _is_summer_fellow(rec):
     return _has_tag_kw(rec, "programs", _SUMMER_FELLOWSHIP_KWS) or _has_tag_kw(rec, "awards", _SUMMER_FELLOWSHIP_KWS)
+
+
+_THESIS_COURSE_TAGS = (
+    ("senior thesis", "ug-senior-thesis"),
+    ("research course", "ug-research-course"),
+    ("junior thesis", "ug-junior-thesis"),
+)
+_THESIS_TAGS = {tok for _, tok in _THESIS_COURSE_TAGS}
+
+
+def _ug_pathway_tags(rec):
+    """Exact facet tokens for Panel 2 Undergraduate Pathways cross-filtering."""
+    tags = []
+    if _is_summer_fellow(rec):
+        tags.append("ug-summer")
+    for kw, tok in _THESIS_COURSE_TAGS:
+        if _has_tag_kw(rec, "courses", (kw,)):
+            tags.append(tok)
+    if (
+        _has_tag_kw(rec, "programs", ("rop", "co-op"))
+        or (not rec.get("courses") and not rec.get("programs") and not _is_summer_fellow(rec))
+    ):
+        tags.append("ug-rop")
+    return tags
 
 
 def _classify_ug_pathway(rec):
@@ -143,9 +168,15 @@ def _card(rec, cat, label, color, completed):
     tags_block = f'<div class="item-tags">{"".join(tags)}</div>' if tags else ""
     meta_html = f'<p class="item-meta">{meta}</p>' if meta else ""
 
+    cat_tokens = [cat, "former" if completed else "current"]
+    if cat in ("doctoral", "masters"):
+        cat_tokens.append("stage-grad")
+    if cat == "bachelors":
+        cat_tokens.extend(_ug_pathway_tags(rec))
+
     return (
         f'<article class="item mentee-card accent-{color}" data-lv-item '
-        f'data-cat="{cat} {"former" if completed else "current"}" '
+        f'data-cat="{" ".join(cat_tokens)}" '
         f'data-search="{data_search}" data-year="{data_year}" '
         f'data-num="{data_year}" data-title="{data_title}">'
         f'{card_meta(date_range(period), label, (sup, True))}'
@@ -184,12 +215,14 @@ def _mentorship_dashboard(mbs, completed):
         title = f"{_CHIP_LABEL[cat]}: {cur} current, {former} alumni ({tot} total)"
         badge_cur = f'<span class="mc-cur-pill mc-pill-{color}">{cur} active</span>' if cur else ""
         stage_rows.append(
-            '<div class="mc-row">'
-            f'<span class="mc-label"><span class="dot d-{color}"></span>{esc(_CHIP_LABEL[cat])}</span>'
-            f'<span class="mc-track" role="img" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
-            f'{seg_cur}{seg_for}</span>'
-            f'<span class="mc-total">{badge_cur}<strong>{tot}</strong></span>'
-            '</div>'
+            mc_row(
+                "",
+                f'<span class="dot d-{color}"></span>{esc(_CHIP_LABEL[cat])}',
+                f"{seg_cur}{seg_for}",
+                f"{badge_cur}<strong>{tot}</strong>",
+                title=title,
+                cat=cat,
+            )
         )
     stage_legend = (
         '<div class="pf-leg" aria-hidden="true">'
@@ -200,54 +233,44 @@ def _mentorship_dashboard(mbs, completed):
     panel1 = (
         '<figure class="pub-fig mentor-chart">'
         '<figcaption class="pub-fig-head"><span class="t">Mentorship by career stage</span>'
-        '<span class="m">active vs. alumni cohorts</span></figcaption>'
+        '<span class="m">active vs. alumni · click a stage to filter</span></figcaption>'
         f'<div class="mc-rows">{"".join(stage_rows)}</div>{stage_legend}'
         '</figure>'
     )
 
-    # Panel 2: Undergraduate courses & programs breakdown from actual content.json tags
+    # Panel 2: Undergraduate courses & programs breakdown from _ug_pathway_tags
     all_ugs = list(mbs.get("bachelors") or []) + list(completed.get("bachelors") or [])
+    ug_tag_lists = [_ug_pathway_tags(u) for u in all_ugs]
 
-    def _has_course(u, kw):
-        return _has_tag_kw(u, "courses", (kw,))
+    def _count_ug(tok):
+        return sum(1 for tl in ug_tag_lists if tok in tl)
 
-    def _has_prog(u, kws):
-        return _has_tag_kw(u, "programs", kws)
-
-    n_summer = sum(1 for u in all_ugs if _is_summer_fellow(u))
-    n_senior = sum(1 for u in all_ugs if _has_course(u, "senior thesis"))
-    n_rc     = sum(1 for u in all_ugs if _has_course(u, "research course"))
-    n_junior = sum(1 for u in all_ugs if _has_course(u, "junior thesis"))
-    n_other  = sum(
-        1 for u in all_ugs
-        if _has_prog(u, ("rop", "co-op")) or (not u.get("courses") and not u.get("programs") and not _is_summer_fellow(u))
-    )
     n_both = sum(
-        1 for u in all_ugs
-        if (_is_summer_fellow(u) or _has_prog(u, ("rop", "co-op")))
-        and _has_tag_kw(u, "courses", ("senior thesis", "research course", "junior thesis"))
+        1 for tl in ug_tag_lists
+        if ("ug-summer" in tl or "ug-rop" in tl) and bool(_THESIS_TAGS.intersection(tl))
     )
 
     ug_items = [
-        ("SURP · SUDS · SURF · SURA · USRA",         n_summer, "st-bachelors"),
-        ("Senior Thesis",                           n_senior, "st-doctoral"),
-        ("Research Course",                         n_rc,     "st-masters"),
-        ("Junior Thesis",                           n_junior, "st-postdoc"),
-        ("A&S ROP, Co-op & Visiting",               n_other,  "st-secondary"),
+        ("SURP · SUDS · SURF · SURA · USRA", "ug-summer",          _count_ug("ug-summer"),          "st-bachelors"),
+        ("Senior Thesis",                   "ug-senior-thesis",   _count_ug("ug-senior-thesis"),   "st-doctoral"),
+        ("Research Course",                 "ug-research-course", _count_ug("ug-research-course"), "st-masters"),
+        ("Junior Thesis",                   "ug-junior-thesis",   _count_ug("ug-junior-thesis"),   "st-postdoc"),
+        ("A&S ROP, Co-op & Visiting",       "ug-rop",             _count_ug("ug-rop"),             "st-secondary"),
     ]
-    max_ug = max((c for _, c, _ in ug_items), default=1) or 1
-    ug_rows = []
-    for short_lbl, cnt, color in ug_items:
-        w = cnt / max_ug * 100
-        title = f"{short_lbl}: {cnt} undergraduate researchers"
-        ug_rows.append(
-            '<div class="mc-row mc-row-ug">'
-            f'<span class="mc-label"><span class="dot d-{color}"></span>{esc(short_lbl)}</span>'
-            f'<span class="mc-track" role="img" aria-label="{attr_esc(title)}" title="{attr_esc(title)}">'
-            f'<span class="mc-seg mc-{color}" style="width:{w:.2f}%"></span></span>'
-            f'<span class="mc-total"><strong>{cnt}</strong></span>'
-            '</div>'
+    max_ug = max((c for _, _, c, _ in ug_items), default=1) or 1
+    ug_rows = [
+        mc_row(
+            "mc-row-ug ",
+            f'<span class="dot d-{color}"></span>{esc(short_lbl)}',
+            f'<span class="mc-seg mc-{color}" style="width:{cnt / max_ug * 100:.2f}%"></span>',
+            f"<strong>{cnt}</strong>",
+            title=f"{short_lbl}: {cnt} undergraduate researchers",
+            facet=tag_tok,
+            label=short_lbl,
+            clear="0",
         )
+        for short_lbl, tag_tok, cnt, color in ug_items
+    ]
     ug_legend = (
         '<div class="pf-leg" aria-hidden="true">'
         f'<span class="pf-key">{len(all_ugs)} researchers ({n_both} completed both a fellowship &amp; thesis/course)</span>'
@@ -256,7 +279,7 @@ def _mentorship_dashboard(mbs, completed):
     panel2 = (
         '<figure class="pub-fig mentor-chart">'
         '<figcaption class="pub-fig-head"><span class="t">Undergraduate pathways</span>'
-        '<span class="m">by fellowship &amp; course</span></figcaption>'
+        '<span class="m">click any pathway to filter roster</span></figcaption>'
         f'<div class="mc-rows">{"".join(ug_rows)}</div>{ug_legend}'
         '</figure>'
     )
@@ -344,19 +367,25 @@ def generate_content(data):
     val_items = "".join(
         f'<article class="value-card vc-{val_accents[i % len(val_accents)]}">'
         f'<h3>{esc(v.get("title", ""))}</h3>'
-        f'<p>{esc(v.get("content", ""))}</p></article>'
+        f'<p>{v.get("content", "")}</p></article>'
         for i, v in enumerate(vals.get("items") or [])
     )
-    values_html = f'<div class="values-grid">{val_items}</div>' if val_items else ""
+    values_html = (
+        '<section class="ment-values" id="group-values" aria-labelledby="ment-values-head">'
+        '<h2 id="ment-values-head" class="sr-only">Group Values</h2>'
+        f'<div class="values-grid">{val_items}</div></section>'
+        if val_items else ""
+    )
 
     stats = (
         '<div class="pub-stats ment-stats">'
-        f'<div class="pub-stat role-tile-total"><span class="n">{total}</span><span class="l">Total mentees</span></div>'
-        f'<div class="pub-stat role-tile-student"><span class="n">{n_current}</span><span class="l">Active group</span></div>'
-        f'<div class="pub-stat role-tile-postdoc"><span class="n">{n_postdocs}</span><span class="l">Postdoctoral fellows</span></div>'
-        f'<div class="pub-stat role-tile-significant"><span class="n">{n_grads}</span><span class="l">Graduate students</span></div>'
-        f'<div class="pub-stat role-tile-primary"><span class="n">{n_former}</span><span class="l">Alumni</span></div>'
-        '</div>'
+        + stat_tile(total, "Total mentees", "role-tile-total", cat="all", pressed=True)
+        + stat_tile(n_current, "Active group", "role-tile-student", cat="current")
+        + stat_tile(n_postdocs, "Postdoctoral fellows", "role-tile-postdoc", cat="postdoc")
+        + stat_tile(n_grads, "Graduate students", "role-tile-significant",
+                    facet="stage-grad", label="Graduate students", clear="0")
+        + stat_tile(n_former, "Alumni", "role-tile-primary", cat="former")
+        + '</div>'
     )
     top = (
         '<div class="container">'

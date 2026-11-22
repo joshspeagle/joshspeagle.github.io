@@ -53,15 +53,66 @@ def esc_text(s):
     """Full plain-text escape (&, <, >) for fields that must never carry markup."""
     return esc(s).replace("<", "&lt;").replace(">", "&gt;")
 
+def attr_text(s):
+    """Case-preserving escape for double-quoted HTML attributes (data-lv-label, title, aria-label)."""
+    return esc_text(s).replace('"', "&quot;")
+
 def attr_esc(s):
     """Lowercase + escape for a double-quoted HTML attribute value (data-search/title).
     These keys are plain text, so any inline markup in the source data is stripped."""
-    return esc_text(strip_tags(s)).replace('"', "&quot;").lower()
+    return attr_text(strip_tags(s)).lower()
 
 def url_attr(s):
     """Escape a URL for a double-quoted href/src attribute. Unlike attr_esc this does
     NOT lowercase (URLs are case-sensitive), and it escapes &, ", <, >."""
-    return esc(str(s or "")).replace('"', "&quot;").replace("<", "&lt;").replace(">", "&gt;")
+    return attr_text(s)
+
+def tip_attrs(text, focusable=False):
+    """Hover/focus tooltip attributes for SVG/CSS chart targets."""
+    t = attr_text(text)
+    prefix = 'role="img" tabindex="0" ' if focusable else ""
+    return f'{prefix}aria-label="{t}" data-tip="{t}"'
+
+def lv_trigger_attrs(cat=None, facet=None, year=None, query=None,
+                     label=None, target=None, clear=None, pressed=False):
+    """Build declarative [data-lv-trigger] attributes for cross-filtering triggers."""
+    parts = ["data-lv-trigger"]
+    if target:
+        parts.append(f'data-lv-target="{attr_text(target)}"')
+    if cat is not None:
+        parts.append(f'data-lv-cat="{attr_text(cat)}"')
+    if facet is not None:
+        parts.append(f'data-lv-facet="{attr_text(facet)}"')
+    if year is not None:
+        parts.append(f'data-lv-year="{attr_text(year)}"')
+    if query is not None:
+        parts.append(f'data-lv-query="{attr_esc(query)}"')
+    if label is not None:
+        parts.append(f'data-lv-label="{attr_text(label)}"')
+    if clear is not None:
+        parts.append(f'data-lv-clear="{attr_text(clear)}"')
+    parts.append(f'aria-pressed="{"true" if pressed else "false"}"')
+    return " ".join(parts)
+
+def stat_tile(value, caption, role_cls, **trigger_kw):
+    """Render an interactive .pub-statbtn telemetry strip button."""
+    attrs = lv_trigger_attrs(**trigger_kw)
+    return (
+        f'<button type="button" class="pub-stat pub-statbtn {role_cls}" {attrs}>'
+        f'<span class="n">{esc(value)}</span><span class="l">{caption}</span></button>'
+    )
+
+def mc_row(row_cls, label_html, track_html, total_html, title=None, **trigger_kw):
+    """Render an interactive horizontal .mc-row.mc-row-btn dashboard bar trigger."""
+    attrs = lv_trigger_attrs(**trigger_kw)
+    title_attr = f' aria-label="{attr_text(title)}" title="{attr_text(title)}"' if title else ""
+    return (
+        f'<button type="button" class="mc-row {row_cls}mc-row-btn" {attrs}{title_attr}>'
+        f'<span class="mc-label">{label_html}</span>'
+        f'<span class="mc-track">{track_html}</span>'
+        f'<span class="mc-total">{total_html}</span>'
+        '</button>'
+    )
 
 def strip_tags(s):
     """Remove any HTML tags from a string (for building plain search/sort text)."""

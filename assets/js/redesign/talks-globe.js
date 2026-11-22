@@ -632,6 +632,7 @@
       }).join("");
 
       var filterTerm = (sel.searchKey || sel.label.split("/")[0].split(",")[0]).trim();
+      var hubKey = (sel.hubKey || "").trim();
 
       detailContainer.innerHTML = (
         '<div class="gcd-head">' +
@@ -644,9 +645,11 @@
         '</div>' +
         '<ul class="gcd-list">' + talksHtml + '</ul>' +
         '<div class="gcd-foot">' +
-        '<button type="button" class="btn gcd-filter-btn" data-globe-filter-list="' +
+        '<button type="button" class="btn gcd-filter-btn" data-globe-filter-hub="' +
+        hubKey.replace(/"/g, "&quot;") + '" data-globe-filter-label="' +
+        sel.label.replace(/"/g, "&quot;") + '" data-globe-filter-list="' +
         filterTerm.replace(/"/g, "&quot;") + '">' +
-        'Filter talk archive below to \u201c' + filterTerm + '\u201d' +
+        'Filter talk archive below to \u201c' + sel.label + '\u201d' +
         '</button>' +
         '</div>'
       );
@@ -797,9 +800,16 @@
 
       var filterBtn = e.target.closest("[data-globe-filter-list]");
       if (filterBtn) {
+        var hubKey = (filterBtn.getAttribute("data-globe-filter-hub") || "").trim();
+        var hubLabel = (filterBtn.getAttribute("data-globe-filter-label") || "").trim();
         var q = filterBtn.getAttribute("data-globe-filter-list") || "";
+        var lvRoot = document.querySelector("#talks-content [data-listview]");
         var searchInput = document.querySelector("#talks-content [data-lv-search]");
-        if (searchInput) {
+        if (hubKey && lvRoot) {
+          lvRoot.dispatchEvent(new CustomEvent("lv:filter", {
+            detail: { facet: hubKey, label: hubLabel || q, clear: "filters", scroll: true }
+          }));
+        } else if (searchInput) {
           searchInput.value = q;
           searchInput.dispatchEvent(new Event("input", { bubbles: true }));
           searchInput.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
