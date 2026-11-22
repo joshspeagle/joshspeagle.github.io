@@ -1,9 +1,7 @@
 /*
  * f3-1-doubling.js: figure F3.1, the doubling procedure (#fig-doubling), on page 3 #feasible.
  *
- * Design: design notes.md (FP) F3.1 and design notes.md
- * (§6.4), with the rulings R10, R12 and R57 of design notes.md, on the figure
- * contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
+ * Built on the figure contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
  *
  * The model is TP.throughput (site/js/lib/throughput.js): TP.throughput.runs(accel, seed) gives
  * one run at each power of two from 8 through the first batch size above the memory limit, which
@@ -11,9 +9,9 @@
  * raised the measured throughput by at least the site's 10%). The noise comes from the seed
  * inside TP.throughput, so the runtime's per-step generators are never drawn from.
  *
- * One runtime step is one run (R10), so step k shows the first k runs. `steps` and `limit` are the
+ * One runtime step is one run, so step k shows the first k runs. `steps` and `limit` are the
  * number of runs to and including the failure. Autoplay performs the procedure once, 600 ms per
- * run, and stops at the failure, the default state. Reset replays it (reset: 'replay', R57).
+ * run, and stops at the failure, the default state. Reset replays it (`reset: 'replay'`).
  *
  * The one panel is the running view and the record. Its x axis is in step units, t = log2(B / 8)
  * + 1, so run k stands at x = k; the tick labels print batch sizes. A linear axis in t is a log

@@ -22,17 +22,27 @@ def main():
             continue
         out.append(f"  --{k}: {v};")
     out.append("  /* color — dark (default) */")
+    out.append("  color-scheme: dark;")
     for k, v in tv.items():
         out.append(f"  --{k}: {v['dark']};")
     out.append("}")
     out.append("")
     out.append('[data-theme="light"] {')
+    out.append("  color-scheme: light;")
     for k, v in tv.items():
         out.append(f"  --{k}: {v['light']};")
     out.append("}")
     out.append("")
+    out.append("@media print {")
+    out.append('  :root, [data-theme="dark"] {')
+    out.append("    color-scheme: light;")
+    for k, v in tv.items():
+        out.append(f"    --{k}: {v['light']};")
+    out.append("  }")
+    out.append("}")
+    out.append("")
 
-    with open(OUT, "w", encoding="utf-8") as f:
+    with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(out))
     print(f"Wrote {OUT} ({len(tv)} themed + {len([k for k in base if not k.startswith('_')])} base tokens)")
 

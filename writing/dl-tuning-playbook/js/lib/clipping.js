@@ -1,11 +1,6 @@
 /*
  * clipping.js: a synthetic series of logged, unclipped gradient norms and the clipping statistics at a
- * threshold (TP.clipping), the model of figure F9.3 (design notes.md F9.3;
- * design notes.md ).
- *
- * Ported from version 1's p8-clipping.js, figure
- * `clipping-threshold` of design notes.md, with every number unchanged. Version 2 fixes the
- * spike rate at version 1's default, SPIKE_RATE = 0.005, which series() uses when no rate is given.
+ * threshold (TP.clipping), backing figure F9.3 with default SPIKE_RATE = 0.005 when no rate is given.
  *
  * The series, t = 1..5,000 (no model is trained):
  *   log ||g_t|| = a exp(-t / t_e) + s w_t + S_t,   a = ln 5, t_e = 200, s = 0.25,

@@ -1,8 +1,7 @@
 /*
  * halton.js: scrambled, shifted Halton points for the quasi-random search figures (TP.halton).
  *
- * Implements the quasi-random convention of design notes.md ("Shared conventions"),
- * with the scrambling and shift described in notes/refs/bousquet2017.md (implementation notes).
+ * Implements scrambled Halton sequences (following Bousquet et al. 2017) with a seeded per-base shift.
  * For index i and base b, with d_0, d_1, ... the base-b digits of i (least significant first):
  *
  *   h_b(i) = sum over k of pi_{b,k}(d_k) * b^-(k+1),      u = (h_b(i) + s_b) mod 1,
@@ -14,7 +13,7 @@
  *
  * Keeping 0 fixed means leading zeros stay zero, so h_b(i) needs only the digits of i and is
  * exact. It also means the only base-2 permutation is the identity: in base 2 the seed acts
- * through the shift alone (bousquet2017.md makes the same remark).
+ * through the shift alone.
  *
  * Random draws: base b uses its own generator, TP.prng.create(TP.prng.deriveSeed(seed, 'halton:' + b)).
  * It draws the shift s_b first, then one Fisher-Yates shuffle of [1, ..., b-1] per digit

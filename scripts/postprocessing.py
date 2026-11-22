@@ -1180,12 +1180,13 @@ class PostProcessor:
         logger.info("--- Step 5: Apply authorship categories ---")
         self.apply_authorship_categories(cache)
 
-        logger.info("--- Step 5b: Reconcile role counts ---")
-        self.reconcile_role_counts(cache)
-
-        # Step 6: Fetch ADS metrics
+        # Step 6: Fetch ADS bibliometric metrics before reconciling role counts
+        # so roleReconciliation / papers counts are preserved on riqByCategory.
         logger.info("--- Step 6: Fetch ADS bibliometric metrics ---")
         self.fetch_ads_metrics()
+
+        logger.info("--- Step 6b: Reconcile role counts ---")
+        self.reconcile_role_counts(cache)
 
         # Save once
         self.save()

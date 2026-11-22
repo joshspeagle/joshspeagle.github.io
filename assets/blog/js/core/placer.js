@@ -2,9 +2,8 @@
  * placer.js: the label placer's geometry (TP.placer). No DOM; it loads in the browser as a
  * classic script and in Node for node --test, in the pattern of prng.js.
  *
- * It carries out series series conventions series style§5.6 and §5.10 rule 2, as
- * series series conventions specifies. chart.js measures text, records
- * obstacles and renders the labels. This file decides where each label goes.
+ * Implements the greedy label-placement geometry and region layout rules.
+ * chart.js measures text, records obstacles and renders the labels. This file decides where each label goes.
  *
  * UNITS. Coordinates are plot pixels: the origin is the top left of the frame (the plot area)
  * and y points down. Every length is in CSS px. h is the text height (14 at 640 px and wider,

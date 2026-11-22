@@ -35,13 +35,12 @@
   var T0 = 0.1;              // seconds per step while the accelerator is not saturated (arbitrary)
   var SHARPNESS = 4;         // sharpness of the saturation bend (arbitrary)
   var B_MIN = 8;             // the procedure's first batch size
-  var MEMORY_LIMIT = 4096;   // largest batch size that fits in memory (version 1's value; C4)
-  var THRESHOLD = 0.10;      // the site's gain per doubling (R10)
-  var NOISE_SD = 0.02;       // standard deviation of the log of the measurement noise (C4)
+  var MEMORY_LIMIT = 4096;   // largest batch size that fits in memory
+  var THRESHOLD = 0.10;      // gain-per-doubling threshold
+  var NOISE_SD = 0.02;       // standard deviation of the log of the measurement noise
 
   /* The presets set the saturation batch size and the input pipeline's limit in examples per
-     second (null for none). Version 1's figure opened at B_sat = 512 with no input limit; its
-     input slider offered 2,000 examples per second, below the peak of 5,120 (C4). */
+     second (null for none). The un-throttled baseline opens at B_sat = 512 with no input limit. */
   var PRESETS = Object.freeze({
     saturating: Object.freeze({ bSat: 512, rIo: null }),
     input: Object.freeze({ bSat: 512, rIo: 2000 })

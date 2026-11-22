@@ -17,12 +17,11 @@
  *                         U_RANGE on Toy S's E_none, with the same noise and divergence. Its
  *                         streams are version 1's: the sequence is seeded with
  *                         bs = TP.prng.deriveSeed(seed, 'isolation:baseline') and the noise is
- *                         TP.prng.create(TP.prng.deriveSeed(bs, 'noise')). Version 1's equally
- *                         tuned baseline had round(N / B) trials, BASELINE_N = 13 at 100 trials and
- *                         8 buckets, the default here until the worked case fixes it (§5.8).
+ *                         TP.prng.create(TP.prng.deriveSeed(bs, 'noise')). The equally
+ *                         tuned baseline uses round(N / B) trials, BASELINE_N = 13 at 100 trials and
+ *                         8 buckets by default.
  *
- * Version 1's "Playbook Fig. 2 design" (five fixed weight decays) and its include-or-exclude
- * verdict are not ported, because F6.3 draws neither (R2). Needs prng.js, halton.js and toyS.js,
+ * Only the single-baseline isolation view used by F6.3 is modeled here. Needs prng.js, halton.js and toyS.js,
  * looked up when called.
  */
 (function (global) {
@@ -34,7 +33,7 @@
   var U_DIV = -1.5;
   var N = 100;           // trials in F6.3's study
   var BUCKETS = 8;       // F6.3's default number of buckets
-  var BASELINE_N = 13;   // version 1's round(N / B) at the defaults (the worked case, §5.8)
+  var BASELINE_N = 13;   // round(N / B) baseline trial count at defaults
 
   function toyS() {
     if (!TP.toyS) throw new Error('TP.isolation: load prng.js, halton.js and toyS.js first');

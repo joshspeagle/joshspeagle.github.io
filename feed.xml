@@ -17,7 +17,7 @@
     </item>
     <item>
       <title>Five new postdoctoral fellows and PhD students join our group at U of T</title>
-      <link>mentorship.html#current-group</link>
+      <link>https://joshspeagle.com/mentorship.html#current-group</link>
       <guid isPermaLink="false">tag:joshspeagle.com,2026-09-01:news/five-new-postdoctoral-fellows-and-phd-students-join-our-grou</guid>
       <pubDate>01 Sep 2026 00:00:00 +0000</pubDate>
       <category>Group</category>
@@ -93,7 +93,7 @@
       <guid isPermaLink="false">tag:joshspeagle.com,2025-07-01:news/chronoflow-an-ai-model-for-the-ages-of-stars</guid>
       <pubDate>01 Jul 2025 00:00:00 +0000</pubDate>
       <category>Press</category>
-      <description>Led by PhD student Phil Van-Lane (co-supervised with Gwen Eadie; ApJ, 987, 152), ChronoFlow uses conditional normalizing flows calibrated on open star clusters to infer stellar rotation-age posteriors across the Milky Way, with press coverage in U of T News and Phys.org.</description>
+      <description>Led by PhD student Phil Van-Lane (co-supervised with Gwen Eadie; ApJ, 986, 59), ChronoFlow uses conditional normalizing flows calibrated on open star clusters to infer stellar rotation-age posteriors across the Milky Way, with press coverage in U of T News and Phys.org.</description>
     </item>
     <item>
       <title>First white dwarf–main-sequence binary candidates in open star clusters</title>
@@ -101,7 +101,7 @@
       <guid isPermaLink="false">tag:joshspeagle.com,2024-11-01:news/first-white-dwarf-main-sequence-binary-candidates-in-open-st</guid>
       <pubDate>01 Nov 2024 00:00:00 +0000</pubDate>
       <category>Press</category>
-      <description>Led by PhD student Steffani Grondin (ApJ, 976, 207), our team combined Gaia DR3, GALEX ultraviolet photometry, and machine learning to identify 52 post-common-envelope white dwarf–main-sequence binary candidates across 38 open star clusters, covered by U of T Arts &amp; Science, Phys.org, and SciTechDaily.</description>
+      <description>Led by PhD student Steffani Grondin (ApJ, 976, 102), our team combined Gaia DR3, GALEX ultraviolet photometry, and machine learning to identify 52 post-common-envelope white dwarf–main-sequence binary candidates across 38 open star clusters, covered by U of T Arts &amp; Science, Phys.org, and SciTechDaily.</description>
     </item>
     <item>
       <title>Sam Berek and Shivan Khullar win the 2024 Jui Lin (Allen) Yen Award</title>
@@ -109,7 +109,7 @@
       <guid isPermaLink="false">tag:joshspeagle.com,2024-09-01:news/sam-berek-and-shivan-khullar-win-the-2024-jui-lin-allen-yen-</guid>
       <pubDate>01 Sep 2024 00:00:00 +0000</pubDate>
       <category>Group</category>
-      <description>Sam Berek and Shivan Khullar received the department’s Jui Lin (Allen) Yen Award. Sam was honored for her paper introducing zero-inflated Bayesian hierarchical count models (HERBAL) to model galaxy–globular cluster scaling relations.</description>
+      <description>Sam Berek and Shivan Khullar received the department’s Jui Lin (Allen) Yen Award. Sam was honored for her paper (ApJ, 955, 22) introducing zero-inflated Bayesian hierarchical count models (HERBAL) to model galaxy–globular cluster scaling relations.</description>
     </item>
     <item>
       <title>A 5-D map of the Milky Way: AAS Nova featured image</title>
@@ -117,7 +117,7 @@
       <guid isPermaLink="false">tag:joshspeagle.com,2024-08-01:news/a-5-d-map-of-the-milky-way-aas-nova-featured-image</guid>
       <pubDate>01 Aug 2024 00:00:00 +0000</pubDate>
       <category>Press</category>
-      <description>Our lead-author study (Speagle et al. 2024, ApJ, 971, 136) mapping distances, extinctions, and stellar properties for 170 million stars across the Milky Way using brutus was highlighted as an AAS Nova Featured Image.</description>
+      <description>Our lead-author study (Speagle et al. 2024, ApJ, 970, 121) mapping distances, extinctions, and stellar properties for 170 million stars across the Milky Way using brutus was highlighted as an AAS Nova Featured Image.</description>
     </item>
     <item>
       <title>Students train AI for the Galaxy Zoo: Euclid citizen-science project</title>
@@ -173,7 +173,7 @@
       <guid isPermaLink="false">tag:joshspeagle.com,2020-02-01:news/dynesty-published-in-monthly-notices-of-the-royal-astronomic</guid>
       <pubDate>01 Feb 2020 00:00:00 +0000</pubDate>
       <category>Software</category>
-      <description>The release paper for dynesty, our open-source Python package for dynamic nested sampling and Bayesian posterior and evidence estimation, appeared in MNRAS (493, 3132) and has now been cited over 2,200 times.</description>
+      <description>The release paper for dynesty, our open-source Python package for dynamic nested sampling and Bayesian posterior and evidence estimation, appeared in MNRAS, 493, 3132 and has now been cited 2,600+ times.</description>
     </item>
     <item>
       <title>The Radcliffe Wave: the largest gaseous structure in the galaxy</title>

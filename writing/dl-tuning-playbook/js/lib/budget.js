@@ -1,14 +1,10 @@
 /*
  * budget.js: where the best steps of a study's trials fall within a training budget (TP.budget), the
- * model of figure F8.2 (design notes.md F8.2; design notes.md and
- * ) and the provisional budget that page 2 states.
+ * model of figure F8.2 and the provisional budget stated on page 2.
  *
- * Ported from version 1's p7-best-step.js, figure
- * `best-step-reader` of design notes.md. Version 1 evaluated 50 trials 100 times within each
- * budget, so every budget had its own evaluation steps. Version 2 evaluates 12 trials every INTERVAL
- * steps to AXIS_END, so that moving the budget truncates the same evaluations: the curves do not depend
- * on the budget, which holds for a constant learning rate. The curves are version 1's, from
- * TP.curves.simulateTrials at its defaults:
+ * Evaluates 12 trials every INTERVAL steps to AXIS_END, so that moving the budget truncates
+ * the same evaluations: the curves do not depend on the budget, which holds for a constant
+ * learning rate. The curves come from TP.curves.simulateTrials at its defaults:
  *   V_j(t) = 0.2 + exp(-t / tau_j) + 0.01 ln(1 + t / tau_j) + 0.005 z_{j,k},  tau_j = 1000 exp(0.5 u_j),
  * evaluated at steps k INTERVAL, k = 1, 2, ..., AXIS_END / INTERVAL. Trial j draws u_j and then z_{j,1},
  * z_{j,2}, ... from its own generator, so at a budget of 100 INTERVAL steps (20,000) the twelve trials

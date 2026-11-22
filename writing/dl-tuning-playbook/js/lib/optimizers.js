@@ -1,8 +1,6 @@
 /*
  * optimizers.js: the six update rules of the playbook's FAQ (README L2034-2086) on a
- * two-dimensional quadratic (TP.optimizers), for figure F2.1 of version 2
- * and, before it, version 1's `p10-optimizer-explorer` (design notes.md, section A;
- * design notes.md, `p1-optimizer-update-rules`).
+ * two-dimensional quadratic (TP.optimizers), for figure F2.1.
  *
  * The loss, with the loss scale c, the condition number kappa and the rotation phi (degrees):
  *

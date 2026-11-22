@@ -170,7 +170,7 @@ def _teaching_matrix(courses, short_courses, accents):
     return (
         '<figure class="pub-fig wide teach-matrix-fig">'
         '<figcaption class="pub-fig-head"><span class="t">Teaching &amp; curriculum timeline by academic year (2021–22 to 2026–27)</span>'
-        '<span class="m">full-year (Y), fall (F) &amp; winter (W) courses plus summer schools</span></figcaption>'
+        '<span class="m">full-year, fall &amp; winter courses plus summer schools</span></figcaption>'
         '<div class="tm-table">'
         f'<div class="tm-head"><span class="tm-course-hd">Course / Module</span><div class="tm-cells">{head_cells}</div></div>'
         f'{"".join(rows_html)}'

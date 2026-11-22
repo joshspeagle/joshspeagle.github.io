@@ -1,9 +1,7 @@
 /*
  * f6-1-range.js: figure F6.1, the range window (fig-range), on page 6 #boundaries.
  *
- * Work order: design notes.md §6.11, with §6.0. Entry:
- * design notes.md F6.1 and earlier review R9. Design: design notes.md
- * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with a draggable window and no dock.
+ * Fixed-frame figure with a draggable window and no dock.
  *
  * The model is TP.boundary (site/js/lib/boundary.js) on Toy S: study({lo, hi, n, seed, uDiv}) places
  * the trials in the learning-rate window, best3 picks the three lowest feasible trials, edgeCounts

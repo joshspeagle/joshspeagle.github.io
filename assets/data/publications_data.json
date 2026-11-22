@@ -2,7 +2,7 @@
   "lastUpdated": "2026-11-01T15:41:05.162492Z",
   "metrics": {
     "lastUpdated": "2026-11-01T15:41:05.162485Z",
-    "totalPapers": 143,
+    "totalPapers": 145,
     "hIndex": 46,
     "i10Index": 89,
     "totalCitations": 19873,
@@ -89,7 +89,7 @@
       }
     },
     "notes": {
-      "lastUpdated": "Timestamp of the last ADS/Scholar fetch, not of the last edit. Corrections applied to the cache without a refetch are listed in top-level `manualEdits`.",
+      "lastUpdated": "Timestamp of the last ADS/Scholar fetch, not of the last edit.",
       "totalPapers": "Distinct publication records on the site. `researchArea` is derived as argmax(categoryProbabilities); duplicates are collapsed by DOI / bibcode / arXiv id in postprocessing.py.",
       "totalCitations": "Google Scholar author total (a Scholar+ADS blend). It is deliberately larger than the sum of the per-paper `citations` field, which is ADS-only and matches citationsByPublicationYear.",
       "riqByCategory": "RIQ series come from the ADS Metrics API computed over the curated ADS libraries, so `libraryBibcodes` (what ADS measured) exceeds `papers` (distinct site records): a library may hold both the preprint and the published bibcode of one paper, and may hold records the site does not list. `papers` agrees with the authorshipCategory tallies; `unmatchedBibcodes` lists the library entries with no site record.",
@@ -6832,7 +6832,7 @@
       }
     },
     {
-      "title": "Author Correction: Nested sampling for physical scientists (Nature Reviews Methods Primers,(2022), 2, 1,(39), 10.1038/s43586-022-00121-x)",
+      "title": "Author Correction: Nested sampling for physical scientists",
       "year": 2022,
       "scholar_id": "Z6dqXGoAAAAJ:_xSYboBqXhAC",
       "source": "google_scholar",

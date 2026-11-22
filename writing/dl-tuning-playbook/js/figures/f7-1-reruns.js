@@ -1,9 +1,8 @@
 /*
  * f7-1-reruns.js: figure F7.1, reruns against repeated studies (#fig-reruns), on page 7 #reruns.
  *
- * Design: design notes.md (FP) F7.1 and design notes.md
- * (§6.15), with earlier review R8, R12 and R56, on the figure contract of site.js (TP.fig) and
- * the runtime of runtime.js (TP.run) in its action form.
+ * Built on the figure contract of site.js (TP.fig) and the runtime of runtime.js (TP.run)
+ * in its action form.
  *
  * The model is TP.variance (site/js/lib/variance.js), version 1's variance-components toy in
  * percentage points of validation error. A run measures the configuration's true value, plus the

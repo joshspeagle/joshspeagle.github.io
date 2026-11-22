@@ -1,14 +1,11 @@
 /*
  * bestofk.js: the best of K trials drawn from a pool (TP.bestOfK), for F5.2.
  *
- * Ported from version 1's p5-trials.js (TP.models.trials): the pool of 100 Toy S trials, a study's
- * best, and the type-7 quantiles and boxes are version 1's, with the same numbers. Version 1
- * resampled 1,000 studies per K at once; version 2 draws one study for each K per step of the
- * runtime (R8, R12).
+ * Draws one study for each K per runtime step from a shared pool of 100 Toy S trials.
  *
  *   pool(seed)          POOL_SIZE trials of TP.toyS.sampleStudy({n: 100, seed, uRange: U_RANGE,
- * vRange: V_RANGE}), each with its 1-based index i. (C2) calibrated
- *                       U_RANGE = [-5, -1.25] and V_RANGE = [-5, -3] so that the interquartile ranges
+ * vRange: V_RANGE}), each with its 1-based index i, with
+ * U_RANGE = [-5, -1.25] and V_RANGE = [-5, -3] calibrated so that the interquartile ranges
  *                       of the best of 6 and of 20 match Playbook Figure 3's read values, 0.020 and
  * 0.0039, within 25%. At Toy S's
  *                       default ranges, [-5, -0.5] and [-7, -1], the pool was version 1's.

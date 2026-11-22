@@ -34,9 +34,12 @@ Per-item card convention (so listview.js can filter/search/sort):
      ...content (use .item-head/.item-title/.item-when/.item-meta/.item-tags, .badge/.tag)...
   </article>
 """
+import json
 import math
 import re
 import sys
+
+from config import get_data_path
 
 # ---------------------------------------------------------------------------
 # Escaping (single source of truth for the whole build)
@@ -72,6 +75,95 @@ def slug(s):
 def warn(msg):
     """Print a build WARNING to stderr (visible in the build log and in CI)."""
     print(f"  WARNING: {msg}", file=sys.stderr)
+
+
+# ---------------------------------------------------------------------------
+# Programmatic bibliography & citation lookup (single source for news/awards/feed)
+# ---------------------------------------------------------------------------
+
+BIBCODE_VENUE_SHORT = {
+    "ApJ": "ApJ", "ApJS": "ApJS", "ApJL": "ApJL", "AJ": "AJ", "MNRAS": "MNRAS",
+    "A&A": "A&A", "PASJ": "PASJ", "PASP": "PASP", "PASA": "PASA", "JCAP": "JCAP",
+    "JOSS": "JOSS", "OJAp": "OJAp", "BAAS": "BAAS", "RNAAS": "RNAAS", "arXiv": "arXiv",
+    "Natur": "Nature", "NatAs": "Nature Astron.", "NRvMP": "Nat. Rev. Methods Primers",
+    "PhRvD": "Phys. Rev. D", "PhRvL": "Phys. Rev. Lett.", "PhDT": "PhD thesis",
+}
+
+
+_PUBS_BY_BIB_CACHE = {}
+
+
+def ads_abs_url(bibcode):
+    """Canonical NASA ADS abstract URL for a bibcode ('' when empty)."""
+    bib = (bibcode or "").strip()
+    return f"https://ui.adsabs.harvard.edu/abs/{bib}" if bib else ""
+
+
+def load_publications_by_bibcode():
+    """Return {bibcode: pub_dict} from publications_data.json, cached by stat metadata."""
+    path = get_data_path("publications_data.json")
+    if not path.exists():
+        return {}
+    st = path.stat()
+    key = (str(path), st.st_mtime_ns, st.st_size)
+    if key in _PUBS_BY_BIB_CACHE:
+        return _PUBS_BY_BIB_CACHE[key]
+    data = json.loads(path.read_text(encoding="utf-8"))
+    out = {}
+    for p in data.get("publications", []) or []:
+        bib = (p.get("bibcode") or p.get("id") or "").strip()
+        if bib:
+            out[bib] = p
+    _PUBS_BY_BIB_CACHE.clear()
+    _PUBS_BY_BIB_CACHE[key] = out
+    return out
+
+
+def parse_bibcode_cite(bibcode):
+    """Parse (short_journal, volume, page) from a 19-char ADS bibcode, or None."""
+    bib = (bibcode or "").strip()
+    if len(bib) != 19 or not bib[:4].isdigit():
+        return None
+    jcode = bib[4:9].strip(".")
+    if not jcode or jcode == "arXiv":
+        return None
+    journal = BIBCODE_VENUE_SHORT.get(jcode, jcode)
+    vol = bib[9:13].strip(".")
+    mid = "" if (bib[13] == "." or jcode.endswith(bib[13])) else bib[13]
+    page = f"{mid}{bib[14:18].lstrip('.')}"
+    if not (vol and page):
+        return None
+    return journal, vol, page
+
+
+def format_bibcode_cite(bibcode, html=True):
+    """Render '<em>Journal</em>, Vol, Page' (or plain text) from a bibcode."""
+    parsed = parse_bibcode_cite(bibcode)
+    if not parsed:
+        return ""
+    journal, vol, page = parsed
+    j_str = f"<em>{esc(journal)}</em>" if html else journal
+    return f"{j_str}, {vol}, {page}"
+
+
+def expand_item_citations(text, bibcode, pubs_by_bib=None):
+    """Expand {{cite}} and {{citations_floor}} placeholders from publications_data.json."""
+    if not text or not bibcode or ("{{" not in text):
+        return text
+    out = str(text)
+    if "{{cite}}" in out:
+        cite = format_bibcode_cite(bibcode, html=True)
+        if not cite:
+            warn(f"cannot expand {{{{cite}}}} for bibcode {bibcode!r}")
+        out = out.replace("{{cite}}", cite or bibcode)
+    if "{{citations_floor}}" in out:
+        if pubs_by_bib is None:
+            pubs_by_bib = load_publications_by_bibcode()
+        pub = pubs_by_bib.get(bibcode, {})
+        cites = int(pub.get("citations") or 0)
+        floor = (cites // 100) * 100 if cites >= 100 else cites
+        out = out.replace("{{citations_floor}}", f"{floor:,}+" if floor else "")
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -327,7 +419,7 @@ def chip(cat, label, count, accent=None, active=False):
     cls = "chip is-active" if active else "chip"
     ap = "true" if active else "false"
     ct = f' <span class="ct">{count}</span>' if count is not None else ""
-    return f'<button class="{cls}" data-cat="{key}" aria-pressed="{ap}">{dot}{esc(label)}{ct}</button>'
+    return f'<button type="button" class="{cls}" data-cat="{key}" aria-pressed="{ap}">{dot}{esc(label)}{ct}</button>'
 
 
 def scaffold(items_html, filters, total, sorts=None, batch=20,
@@ -355,7 +447,7 @@ def scaffold(items_html, filters, total, sorts=None, batch=20,
         opts = "".join(f'<option value="{v}">{esc(label)}</option>' for v, label in sorts)
         sort_html = f'<select class="pub-sort" data-lv-sort-control aria-label="Sort">{opts}</select>'
 
-    more_html = '<div class="pub-loadmore-wrap"><button type="button" class="btn-ghost" data-lv-more>Load more</button></div>' if batch else ""
+    more_html = '<div class="pub-loadmore-wrap"><button type="button" class="btn-ghost" data-lv-more hidden>Load more</button></div>' if batch else ""
 
     return (
         '<div class="container">\n'

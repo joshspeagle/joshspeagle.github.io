@@ -1,9 +1,6 @@
 /*
- * Toy D: expected-loss dynamics of SGD on a quadratic with one sharp direction.
- *
- * Spec: design notes.md ("Preamble: shared toy training dynamics"), with the
- * curvature rule revised in design notes.md ("Toy D preamble").
- * Calibration and timings: design notes.md.
+ * Toy D: expected-loss dynamics of SGD on a quadratic with one sharp direction
+ * and an exponentially relaxing edge-of-stability curvature rule.
  *
  * Model. Fixed directions i = 1..n (curvatures params.h) and one sharp direction s.
  * Each step with learning rate eta_t updates the second moments exactly:
@@ -19,8 +16,8 @@
  *
  * Learning-rate scale. Every rate the API takes or returns (a schedule's values, stepState's eta,
  * hStar's eta, run's lr, trace's eta, unstableBaseLR's result) is the printed rate. The model's
- * dynamics above read the model rate eta = printed rate / LR_SCALE, with LR_SCALE = 0.5 (build log,
- *, the first ruling): the scale puts the unstable base rate on the quarter-decade grid at
+ * dynamics above read the model rate eta = printed rate / LR_SCALE, with LR_SCALE = 0.5:
+ * the scale puts the unstable base rate on the quarter-decade grid at
  * 10^-1.5 = 0.0316, the rate above which Toy S's trials diverge, so that the worked case's study and
  * its sweeps read one learning-rate axis. The products eta_t h_s (trace's firstAbove, stepsAbove and
  * peakEtaH) use the model rate, so the stability limit on the printed axis is 2 LR_SCALE / h_s

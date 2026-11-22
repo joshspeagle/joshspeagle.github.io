@@ -2,23 +2,27 @@
    accordion) and the theme toggle. Loaded on all pages; the only inline script left
    in the shell is the theme boot line, which must run before first paint.
 
-   Nav model — the CSS is the single source of truth for what is visible:
-     desktop (>=861px)  .nav-group:hover / :focus-within reveals .menu, so JS never
-                        toggles a class here; it only mirrors that state into
-                        aria-expanded (the D3/E10 bug was JS claiming otherwise).
+   Nav model — CSS + .nav-group.open are the single source of truth:
+     desktop (>=861px)  .nav-group:hover and .nav-group.open reveal .menu; clicking a
+                        trigger toggles .open (without opening merely on Tab focus),
+                        and Escape / an outside click / focusout close it and restore
+                        focus to the active trigger.
      mobile  (<=860px)  .nav-open + .nav-group.open drive an accordion; opening one
                         group closes its siblings, and Escape / an outside click /
                         following a link closes everything and restores focus. */
 (function () {
   const root = document.documentElement;
 
-  // ---- theme toggle (also keeps <meta name="theme-color"> honest, D20) ----
+  // ---- theme toggle (also keeps <meta name="theme-color"> and aria-pressed synced) ----
   const themeMeta = document.querySelector('meta[name="theme-color"]');
   const toggle = document.getElementById('theme-toggle');
 
   function paintTheme() {
     const dark = root.getAttribute('data-theme') !== 'light';
-    if (toggle) toggle.textContent = dark ? '☾' : '☀';
+    if (toggle) {
+      toggle.textContent = dark ? '☾' : '☀';
+      toggle.setAttribute('aria-pressed', dark ? 'false' : 'true');
+    }
     if (themeMeta) {
       const bg = getComputedStyle(root).getPropertyValue('--bg-0').trim();
       if (bg) themeMeta.setAttribute('content', bg);
@@ -61,18 +65,22 @@
 
   groups.forEach(function (g) {
     const t = trigger(g);
-    // Desktop: report exactly what :hover / :focus-within is showing. The state is
-    // read after the event settles so focusout sees the new activeElement.
-    function sync() {
+    // Desktop: hover reveals visually and mirrors aria-expanded; clicking the trigger
+    // toggles .open explicitly so Tab focus alone does not trap keyboard users inside menus.
+    function syncDesktop() {
       if (!desktop.matches) return;
-      setExpanded(g, g.matches(':hover') || g.contains(document.activeElement));
+      setExpanded(g, g.classList.contains('open') || g.matches(':hover'));
     }
-    ['mouseenter', 'mouseleave', 'focusin', 'focusout'].forEach(function (ev) {
-      g.addEventListener(ev, function () { setTimeout(sync, 0); });
+    ['mouseenter', 'mouseleave'].forEach(function (ev) {
+      g.addEventListener(ev, function () { setTimeout(syncDesktop, 0); });
     });
-    // Mobile: tap-to-expand accordion, one group at a time.
+    g.addEventListener('focusout', function (e) {
+      if (!desktop.matches) return;
+      if (e.relatedTarget && g.contains(e.relatedTarget)) return;
+      g.classList.remove('open');
+      syncDesktop();
+    });
     if (t) t.addEventListener('click', function () {
-      if (desktop.matches) return;
       const open = !g.classList.contains('open');
       closeGroups();
       g.classList.toggle('open', open);
@@ -83,17 +91,18 @@
   nav.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', closeMenu));
 
   document.addEventListener('click', function (e) {
-    if (nav.classList.contains('nav-open') && !nav.contains(e.target)) closeMenu();
+    if (anyOpen() && !nav.contains(e.target)) closeMenu();
   });
 
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
-    if (anyOpen()) {                       // mobile menu / accordion
+    if (nav.classList.contains('nav-open')) {   // mobile drawer + accordion
       closeMenu();
       if (burger) burger.focus();
-    } else if (desktop.matches) {          // desktop menu held open by focus
-      const g = groups.find(x => x.contains(document.activeElement));
-      if (g && document.activeElement !== trigger(g)) document.activeElement.blur();
+    } else if (anyOpen() || (desktop.matches && groups.some(x => x.contains(document.activeElement)))) {
+      const g = groups.find(x => x.classList.contains('open') || x.contains(document.activeElement));
+      closeGroups();
+      if (g && trigger(g)) trigger(g).focus();
     }
   });
 

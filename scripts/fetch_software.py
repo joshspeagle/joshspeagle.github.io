@@ -151,19 +151,21 @@ def _warn_if_hand_edited(previous):
 
 
 def _infer_group(repo):
-    """Heuristic group suggestion for a newly discovered public repository."""
+    """Heuristic group suggestion matching sections.software.groups in content.json."""
     text = f"{repo.get('name', '')} {repo.get('description') or ''}".lower()
     if any(k in text for k in ("course", "lecture", "tutorial", "workshop", "school", "book", "intro")):
         return "teaching"
     if any(k in text for k in ("sampler", "nested", "mcmc", "bayes", "inference", "sbi", "flow")):
         return "inference"
     if any(k in text for k in ("star", "galaxy", "dust", "photometry", "sed", "spectra", "astro", "gaia")):
-        return "astro"
+        return "stellar"
     if any(k in text for k in ("arxiv", "paper", "llm", "agent", "workflow", "bot")):
-        return "workflow"
-    if any(k in text for k in ("web", "site", "github.io", "viz", "map")):
-        return "viz"
-    return "research"
+        return "literature"
+    if any(k in text for k in ("viz", "map", "chart", "plot")):
+        return "dataviz"
+    if any(k in text for k in ("web", "site", "github.io")):
+        return "websites"
+    return "scratch"
 
 
 def main():

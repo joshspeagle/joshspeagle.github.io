@@ -369,19 +369,19 @@ def generate_content(data):
         else:
             role_counts["lead"] += 1
 
-    chips = [f'<button class="chip is-active" data-cat="all" aria-pressed="true">All <span class="ct">{len(rows)}</span></button>']
+    chips = [f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">All <span class="ct">{len(rows)}</span></button>']
     for gid in group_order:
         if counts.get(gid):
             acc = group_accent[gid]
-            chips.append(f'<button class="chip" data-cat="{slug(gid)}" aria-pressed="false">'
+            chips.append(f'<button type="button" class="chip" data-cat="{slug(gid)}" aria-pressed="false">'
                          f'<span class="dot d-{acc}"></span>{esc(group_label[gid])} '
                          f'<span class="ct">{counts[gid]}</span></button>')
 
     role_chips = (
-        f'<button class="chip is-active" data-cat="all" aria-pressed="true">All roles <span class="ct">{len(rows)}</span></button>'
-        f'<button class="chip" data-cat="role-lead" aria-pressed="false"><span class="dot d-du"></span>Lead / Primary <span class="ct">{role_counts["lead"]}</span></button>'
-        f'<button class="chip" data-cat="role-collab" aria-pressed="false"><span class="dot d-ii"></span>Co-Maintainer <span class="ct">{role_counts["collab"]}</span></button>'
-        f'<button class="chip" data-cat="role-fork" aria-pressed="false"><span class="dot d-mute"></span>Forks <span class="ct">{role_counts["fork"]}</span></button>'
+        f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">All roles <span class="ct">{len(rows)}</span></button>'
+        f'<button type="button" class="chip" data-cat="role-lead" aria-pressed="false"><span class="dot d-du"></span>Lead / Primary <span class="ct">{role_counts["lead"]}</span></button>'
+        f'<button type="button" class="chip" data-cat="role-collab" aria-pressed="false"><span class="dot d-ii"></span>Co-Maintainer <span class="ct">{role_counts["collab"]}</span></button>'
+        f'<button type="button" class="chip" data-cat="role-fork" aria-pressed="false"><span class="dot d-mute"></span>Forks <span class="ct">{role_counts["fork"]}</span></button>'
     )
 
     cards = "".join(

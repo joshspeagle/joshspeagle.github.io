@@ -1,23 +1,20 @@
 /*
- * curves.js: made-up loss curves for the training-length and checkpoint figures (TP.curves).
+ * curves.js: synthetic loss curves for the training-length and checkpoint figures (TP.curves).
  *
- * Implements the validation-curve family V of `best-step-reader` and `retro-checkpoint-select`
- * in design notes.md:
+ * Implements the validation-curve family V_j(t):
  *
  *   V_j(t) = V* + A exp(-t / tau_j) + beta ln(1 + t / tau_j) + sigma_v z_{j,k},
  *   tau_j  = tauMean exp(tauSpread u_j),  u_j and z_{j,k} standard normals from the seed,
  *
  * evaluated at steps T/nEvals, 2T/nEvals, ..., T (T = max_train_steps), and the base curve
- * L(t) = Linf + (L0 - Linf) exp(-t / tau) of `curve-pathologies` in design notes.md.
+ * L(t) = Linf + (L0 - Linf) exp(-t / tau) for exponential decay curves.
  * Not a training model: the curves are shaped by hand. simulateTrials needs prng.js, looked up
  * when called, so the order of the script tags does not matter.
  *
- * retro-checkpoint-select (one run with tau = 1000, noise on a 20-step grid, subsampled) is
+ * Retrospective checkpoint selection (one run with tau = 1000, noise on a 20-step grid, subsampled) is
  * simulateTrials({nTrials: 1, tauSpread: 0, nEvals: 1000, maxSteps: 20000, seed}) followed by
  * taking every (interval / 20)-th evaluation, with the interval snapped to a multiple of 20.
- * checkpointRun() is that computation, ported from version 1's select() in p9-checkpoint.js (now
- * under design notes) with its numbers unchanged, for figure F1.1; bufferAt and
- * trialCurve are the additions of design notes.md for F1.1 and F1.2.
+ * checkpointRun() computes that run for figure F1.1, while bufferAt() and trialCurve() support F1.1 and F1.2.
  */
 (function (global) {
   'use strict';

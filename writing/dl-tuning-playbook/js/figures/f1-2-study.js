@@ -569,7 +569,7 @@
     fig.on('settle', function () { pointed = null; });
   }
 
-  /* ============================== the recap (§6.24, R1) ============================== */
+  /* ============================== recap registration ============================== */
 
   document.addEventListener('tp:ready', function () {
     var el = document.getElementById(ID);

@@ -30,9 +30,11 @@ FEED_XML = PROJECT_ROOT / FEED_FILE
 
 # Redesign per-page content generators (scripts/ on path so they import cleanly)
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from pages_shared import (SPRITE, attr_esc, card_meta, clean_text, date_range,  # noqa: E402
-                          esc, esc_text, listview_status, percent_shares, slug,
-                          strip_tags, term_month, url_attr, warn)
+from pages_shared import (SPRITE, ads_abs_url, attr_esc, card_meta, clean_text,  # noqa: E402
+                          date_range, esc, esc_text, expand_item_citations,
+                          listview_status, load_publications_by_bibcode,
+                          percent_shares, slug, strip_tags, term_month,
+                          url_attr, warn)
 from pages_talks import generate_content as gen_talks          # noqa: E402
 from pages_teaching import generate_content as gen_teaching    # noqa: E402
 from pages_mentorship import generate_content as gen_mentorship  # noqa: E402
@@ -268,8 +270,12 @@ def _page_title(key, page, data):
 # Document shell (head / nav / footer / scripts) — one copy for every page
 # ---------------------------------------------------------------------------
 
-THEME_BOOT = ("<script>(function () { var t = localStorage.getItem('preferred-theme') || 'dark'; "
-              "document.documentElement.setAttribute('data-theme', t); })();</script>")
+THEME_BOOT = (
+    "<script>(function () { var r = document.documentElement; r.classList.add('js'); "
+    "try { var t = localStorage.getItem('preferred-theme') || 'dark'; "
+    "r.setAttribute('data-theme', t === 'light' ? 'light' : 'dark'); } "
+    "catch (e) { r.setAttribute('data-theme', 'dark'); } })();</script>"
+)
 
 # Every page loads site.js (nav + theme toggle) before its page-specific scripts;
 # the theme boot line above is the only inline script left in the shell.
@@ -306,7 +312,7 @@ def render_nav(current, root):
                 arrow = ' <span aria-hidden="true">↗</span>' if ext else ""
                 links += f'<a href="{href}"{ext}{cur}>{label}{arrow}</a>'
             out.append('      <div class="nav-group">')
-            out.append(f'        <button class="nav-trigger" aria-haspopup="true" aria-expanded="false">'
+            out.append(f'        <button type="button" class="nav-trigger" aria-haspopup="true" aria-expanded="false">'
                        f'{entry["label"]} <span aria-hidden="true">▾</span></button>')
             out.append(f'        <div class="menu">{links}</div>')
             out.append('      </div>')
@@ -317,7 +323,7 @@ def render_nav(current, root):
     out.append('    </div>')
     out.append('    <div class="nav-right">')
     out.append(f'      <a class="cv" href="{root}{CV_FILE}">Curriculum Vitae</a>')
-    out.append('      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode">☾</button>')
+    out.append('      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Toggle dark/light mode" aria-pressed="false">☾</button>')
     out.append('      <button class="theme-toggle hamburger" id="hamburger" type="button" aria-label="Open menu" '
                'aria-expanded="false" aria-controls="nav-links">☰</button>')
     out.append('    </div>')
@@ -685,7 +691,7 @@ def write_sitemap():
            + "\n".join(rows) + "\n</urlset>\n")
     old = SITEMAP_XML.read_text(encoding="utf-8") if SITEMAP_XML.exists() else None
     if old != xml:
-        SITEMAP_XML.write_text(xml, encoding="utf-8")
+        SITEMAP_XML.write_text(xml, encoding="utf-8", newline="\n")
         print("  -> Updated sitemap.xml")
     return xml
 
@@ -715,6 +721,7 @@ def write_feed(data):
     news = (data.get("sections", {}).get("news", {}) or {})
     items = news.get("items", []) or []
     types = news.get("types", {}) or {}
+    pubs_by_bib = load_publications_by_bibcode()
     news_url = f'{SITE_URL}{PAGES["news"]["canonical"]}'
     rows, seen = [], set()
     for item in sorted(items, key=lambda n: _news_date(n)[0], reverse=True):
@@ -725,10 +732,18 @@ def write_feed(data):
             guid += "-b"
         seen.add(guid)
         label = (types.get(item.get("type")) or {}).get("label", "")
-        body = strip_tags(item.get("blurb", ""))
+        bib = (item.get("paperBibcode") or "").strip()
+        body = strip_tags(expand_item_citations(item.get("blurb", ""), bib, pubs_by_bib))
+        raw_link = (item.get("link") or "").strip()
+        if raw_link and not raw_link.startswith(("http://", "https://")):
+            link_url = f'{SITE_URL}/{raw_link.lstrip("/")}'
+        elif not raw_link and bib:
+            link_url = ads_abs_url(bib)
+        else:
+            link_url = raw_link or news_url
         rows.append('    <item>\n'
                     f'      <title>{esc_text(title)}</title>\n'
-                    f'      <link>{esc_text(item.get("link") or news_url)}</link>\n'
+                    f'      <link>{esc_text(link_url)}</link>\n'
                     f'      <guid isPermaLink="false">{esc_text(guid)}</guid>\n'
                     f'      <pubDate>{rfc822}</pubDate>\n'
                     + (f'      <category>{esc_text(label)}</category>\n' if label else "")
@@ -748,7 +763,7 @@ def write_feed(data):
            + "\n".join(rows) + '\n  </channel>\n</rss>\n')
     old = FEED_XML.read_text(encoding="utf-8") if FEED_XML.exists() else None
     if old != xml:
-        FEED_XML.write_text(xml, encoding="utf-8")
+        FEED_XML.write_text(xml, encoding="utf-8", newline="\n")
         print(f"  -> Updated {FEED_FILE}")
     return xml
 
@@ -844,8 +859,13 @@ def generate_home_about(data):
 
 
 def _pub_metrics():
-    """Pipeline-computed publication metrics (totalPapers/totalCitations/hIndex/i10Index)."""
-    return load_data_file("publications").get("metrics", {}) or {}
+    """Pipeline-computed publication metrics synced with actual publication count."""
+    pdata = load_data_file("publications")
+    metrics = dict(pdata.get("metrics", {}) or {})
+    pubs = pdata.get("publications", []) or []
+    if pubs:
+        metrics["totalPapers"] = len(pubs)
+    return metrics
 
 
 def _mentee_count(data):
@@ -1411,7 +1431,7 @@ def _n(v):
 def _tip(text):
     """A focusable, hoverable hit target's shared attributes."""
     t = esc(text).replace('"', "&quot;")
-    return f'tabindex="0" aria-label="{t}" data-tip="{t}"'
+    return f'role="img" tabindex="0" aria-label="{t}" data-tip="{t}"'
 
 
 def _pf_grid(ticks, yp):
@@ -1686,14 +1706,13 @@ _ADS_LIBRARY_TILES = [
 
 def generate_publications_redesign(data):
     """Generate the inner HTML for #publications-content (redesign)."""
-    try:
-        pub_data = json.loads(PUBLICATIONS_JSON.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as err:
-        raise BuildError(f"cannot read {PUBLICATIONS_JSON.name}: {err}") from err
+    pub_data = load_data_file("publications")
+    if not pub_data:
+        raise BuildError(f"cannot read {PUBLICATIONS_JSON.name}")
     metrics = pub_data.get("metrics", {})
     pubs = pub_data.get("publications", [])
 
-    total_papers = metrics.get("totalPapers", len(pubs))
+    total_papers = len(pubs) or metrics.get("totalPapers", 0)
     total_citations = metrics.get("totalCitations", 0)
 
     cat_counts = {"sla": 0, "ii": 0, "ic": 0, "du": 0}
@@ -1800,7 +1819,7 @@ def generate_publications_redesign(data):
         )
 
     chips = "".join(
-        f'<button class="chip" data-cat="{key}" aria-pressed="false">'
+        f'<button type="button" class="chip" data-cat="{key}" aria-pressed="false">'
         f'<span class="dot d-{key}"></span>{_PUB_CAT_LABEL[key]} '
         f'<span class="ct">{cat_counts[key]}</span></button>'
         for key in ("du", "ic", "sla", "ii")
@@ -1814,7 +1833,7 @@ def generate_publications_redesign(data):
         '<option value="num">Most cited</option></select>'
         '<div class="pub-filters" id="pub-filters" data-lv-filters role="group" '
         'aria-label="Filter by research area">'
-        f'<button class="chip is-active" data-cat="all" aria-pressed="true">'
+        f'<button type="button" class="chip is-active" data-cat="all" aria-pressed="true">'
         f'All <span class="ct">{all_count}</span></button>'
         f'{chips}'
         '</div>'
@@ -1827,7 +1846,7 @@ def generate_publications_redesign(data):
         'No papers match your search/filters. '
         '<button type="button" class="linkbtn" id="pub-reset" data-lv-reset>Show all</button></p>'
         '<div class="pub-loadmore-wrap">'
-        '<button type="button" id="pub-loadmore" class="btn-ghost" data-lv-more>Load more</button></div>'
+        '<button type="button" id="pub-loadmore" class="btn-ghost" data-lv-more hidden>Load more</button></div>'
     )
 
     return (
@@ -1904,7 +1923,7 @@ def main():
             failures += 1
             continue
         if not path.exists() or path.read_text(encoding="utf-8") != html:
-            path.write_text(html, encoding="utf-8")
+            path.write_text(html, encoding="utf-8", newline="\n")
             print(f"    -> Updated {page['file']}")
         else:
             print(f"    -> No changes needed for {page['file']}")

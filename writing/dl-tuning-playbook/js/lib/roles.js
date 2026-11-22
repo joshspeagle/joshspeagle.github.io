@@ -24,12 +24,11 @@
  * b; {q, cite}, a verbatim quotation of the paper TP.refs[cite]; {ref: [a, b]}, a README line
  * reference; {code}; {i}, italics. q is a string or a list of parts. A README quotation keeps the
  * README's words and punctuation and turns its markdown into parts (`x` into {code}, *x* into {i}),
- * and its range is the tightest that contains it. calibration checks.test.js checks every quotation
- * against source/README.md and the one quotation of a paper against notes/refs/pdf/choi2019.txt.
+ * and its range is the tightest that contains it. Each quotation matches the source README
+ * and cited reference text.
  *
- * Changes from version 1 beyond the restructuring:
- * - Goal 2 states its number of trials, TRIALS (the plan's lean, confirmed or changed by,
- * implementation series conventions, C6). Its cells for the learning rate, momentum, weight decay and
+ * Implementation notes:
+ * - Goal 2 states its number of trials, TRIALS. Its cells for the learning rate, momentum, weight decay and
  *     the dropout rate apply that number: momentum is fixed by preference with nuisance accepted,
  *     the learning rate and weight decay stay nuisance because their best values generally depend
  *     on the model (L569-L572, L612-L617), the dropout rate stays nuisance as the playbook says it
@@ -105,7 +104,7 @@
   var WHY_LR_FIXED = ['In the playbook\'s words, ',
     Q('we should generally assume that optimizer hyperparameters must be tuned separately to make fair comparisons between different settings of the scientific hyperparameters', 631, 634), '. '].concat(LADDER_LR);
   /* the rule of thumb for tuning Adam (L1650-L1659); a study of exactly 25 trials counts in the
-     10-25 band (notes/discrepancy-resolutions.md, R15) */
+     10-25 band */
   var LADDER_ADAM = ['Under the rule of thumb for tuning Adam, a study with 10 to 25 trials tunes the learning rate and ', C('beta1'), ' (', R(1656),
     '), a study with 25 trials or more also tunes ', C('epsilon'), ' (', R(1657), '), and ', C('beta2'),
     ' is added once a study can run substantially more than 25 trials (', R(1658, 1659), '). The playbook\'s bands overlap at 25 trials.'];

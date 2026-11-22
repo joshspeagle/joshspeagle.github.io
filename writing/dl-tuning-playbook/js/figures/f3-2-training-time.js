@@ -2,9 +2,7 @@
  * f3-2-training-time.js: figure F3.2, training time as a product (fig-training-time), on page 3
  * #training-time.
  *
- * Work order: design notes.md §6.5, with §6.0. Entry:
- * design notes.md F3.2 and earlier review R10. Design: design notes.md
- * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with two handles and no dock.
+ * Fixed-frame figure with two handles and no dock.
  *
  * The model is TP.scaling (site/js/lib/scaling.js) with the knee at F3.1's saturating B_sat
  * (TP.scaling.knee(), CAL.knee). The handle `critical` is the playbook's critical batch size, the

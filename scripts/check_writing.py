@@ -111,22 +111,33 @@ def _check_css_tokens(errors: list[str]) -> None:
                 errors.append(f"[{f.relative_to(REPO_ROOT)}] Undefined CSS custom property {name}")
 
 
+PUBLIC_BOUNDARY_PATTERNS = (
+    ("machine /mnt/ path", re.compile(r"(?:^|[\s\"'(=`])/mnt/[a-z]/")),
+    ("machine home path", re.compile(r"(?:^|[\s\"'(=`])/(?:home|Users)/[a-zA-Z0-9_-]+(?:/|[\s\"'`),;]|$)")),
+    ("local Windows path", re.compile(r"(?:D:\\+Dropbox|C:\\+Users\\)")),
+    ("local virtualenv path", re.compile(r"\.venvs/")),
+    ("file URI", re.compile(r"file:///")),
+    ("internal notes path", re.compile(r"notes/(?:revamp|specs|review|refs|discrepancy)")),
+    ("design notes reference", re.compile(r"design notes\.md")),
+    ("internal audit code", re.compile(r"(?:D3/E10|\bD20\b|\bDesign [A-Z]\b)")),
+    ("internal review reference", re.compile(r"(?:earlier review R\d+|synthesis ruling R\d+|Work order:|§6\.\d+)")),
+)
+
+_WRITING_ONLY_PATTERNS = (
+    ("internal test path", re.compile(r"tests/(?:calibration|lib)")),
+    ("internal synthesis path", re.compile(r"review/synthesis")),
+    ("internal plan doc", re.compile(r"implementation-plan\.md")),
+    ("internal design doc", re.compile(r"design-system\.md")),
+    ("persona draft marker", re.compile(r"persona-entry")),
+    ("post review label", re.compile(r"\bpost0\d\s+(?:review|report)\b")),
+    ("batch label", re.compile(r"\bBatch\s+\d")),
+    ("work order token", re.compile(r"\bWO-[A-Za-z0-9.]+\b")),
+    ("design section ref", re.compile(r"\(?DS\)?\s*§")),
+)
+
+
 def _check_leak_and_crlf(errors: list[str]) -> None:
-    forbidden = (
-        re.compile(r"/mnt/[a-z]/"),
-        re.compile(r"/home/[a-zA-Z0-9_-]+"),
-        re.compile(r"file://"),
-        re.compile(r"notes/(?:revamp|specs|review)"),
-        re.compile(r"tests/(?:calibration|lib)"),
-        re.compile(r"review/synthesis"),
-        re.compile(r"implementation-plan\.md"),
-        re.compile(r"design-system\.md"),
-        re.compile(r"persona-entry"),
-        re.compile(r"\bpost0\d\s+(?:review|report)\b"),
-        re.compile(r"\bBatch\s+\d"),
-        re.compile(r"\bWO-[A-Za-z0-9.]+\b"),
-        re.compile(r"\(?DS\)?\s*§"),
-    )
+    forbidden = PUBLIC_BOUNDARY_PATTERNS + _WRITING_ONLY_PATTERNS
     roots = [REPO_ROOT / "assets/blog", REPO_ROOT / "writing"]
     for base in roots:
         if not base.exists():
@@ -139,9 +150,9 @@ def _check_leak_and_crlf(errors: list[str]) -> None:
             if b"\r\n" in raw:
                 errors.append(f"[{rel}] Contains CRLF line endings (run build to normalize)")
             txt = raw.decode("utf-8", errors="replace")
-            for pat in forbidden:
+            for label, pat in forbidden:
                 if pat.search(txt):
-                    errors.append(f"[{rel}] Internal/machine reference matched {pat.pattern}")
+                    errors.append(f"[{rel}] Internal/machine reference matched ({label}: {pat.pattern})")
 
 
 def _check_hidden_preview(html_path: Path, raw: str, manifest: dict, errors: list[str]) -> None:

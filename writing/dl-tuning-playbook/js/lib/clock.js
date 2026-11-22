@@ -2,9 +2,8 @@
  * clock.js: one training run on two clocks, wall-clock time and training step (TP.clock), the model of
  * figure F11.1.
  *
- * Ported from version 1's p9-clock.js, figure
- * `eval-step-vs-time` of design notes.md, with every number unchanged. F11.1 runs it at the
- * defaults with the periodic component off, which is stepEvals() and timeEvals() with b = 0 or omitted.
+ * Compares progress by training step vs. wall-clock time (stepEvals() and timeEvals() with
+ * b = 0 or omitted by default for the figure).
  *
  * Clock (wall-clock time tau in seconds to training step): 10 steps per second, except from 1,000 s to
  * 1,600 s, when the slowdown divides the speed (slowRate steps per second, 3 by default). With the

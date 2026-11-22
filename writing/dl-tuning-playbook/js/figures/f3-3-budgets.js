@@ -1,9 +1,7 @@
 /*
  * f3-3-budgets.js: figure F3.3, epoch budget against step budget (fig-budgets).
  *
- * Work order: design notes.md §6.6, with §6.0. Entry:
- * design notes.md F3.3, and earlier review R10. Design: design notes.md
- * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure read by pointing, with no recap.
+ * Fixed-frame figure read by pointing, with no recap.
  *
  * The model. TP.scaling.examples(B, B_crit) = 1 + B / B_crit, the examples needed to reach the goal
  * in units of S_min B_crit (the minimum number of examples), and TP.scaling.steps(B, B_crit) =

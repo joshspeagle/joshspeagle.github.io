@@ -1,11 +1,10 @@
 /*
  * runtime.js: the runtime of running figures, TP.run(fig, spec).
  *
- * Design: series series conventions series style in full, with §4.8 and §4.9 (the ghost, the
- * record and the cursor), §6.7 (state and printing), §9 (motion) and §10 (accessibility), and
- * series series conventions. A classic script on window.TP. Every page
+ * Implements the runtime loop, ghost history, cursor state, reduced-motion handling, and
+ * printing hooks. A classic script on window.TP. Every page
  * with a running figure loads it after site.js and chart.js. It needs TP.prng (lib/prng.js). The
- * engine needs no DOM, so Node loads this file for calibration checks.test.js and drives it with
+ * engine needs no DOM, so Node loads this file cleanly for validation and drives it with
  * the third argument of TP.run (section G).
  *
  * This comment is the reference for figure builders:

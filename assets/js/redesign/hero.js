@@ -33,15 +33,15 @@
       gal: [[140, 185, 255], [255, 206, 145], [190, 155, 255]]
     },
     light: {
-      star: '110,115,155',
-      edge: '110,115,165',
-      node: '75,70,130',
+      star: '72,82,128',
+      edge: '84,96,152',
+      node: '52,58,118',
       v: [67, 36, 168],
       c: [14, 141, 156],
       g: [196, 109, 0],
-      starMax: 0.45,
-      edgeMax: 0.22,
-      sample: '25,100,180',
+      starMax: 0.62,
+      edgeMax: 0.34,
+      sample: '20,90,175',
       gal: [[45, 85, 165], [165, 95, 30], [105, 65, 155]]
     }
   };
@@ -86,17 +86,18 @@
   function build() {
     var rect = canvas.getBoundingClientRect();
     W = Math.max(360, rect.width);
-    H = Math.max(380, rect.height);
+    H = Math.max(240, rect.height);
     DPR = Math.min(2, window.devicePixelRatio || 1);
     canvas.width = Math.floor(W * DPR);
     canvas.height = Math.floor(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
     var isMobile = W < 760;
+    var isStacked = W <= 600;
     PX = W * (isMobile ? 0.80 : 0.875);
-    PY = H * (isMobile ? 0.72 : 0.50);
+    PY = H * (isStacked ? 0.50 : isMobile ? 0.72 : 0.50);
     pw = W * (isMobile ? 0.085 : 0.046);
-    ph = H * (isMobile ? 0.085 : 0.098);
+    ph = H * (isStacked ? 0.16 : isMobile ? 0.085 : 0.098);
 
     stars = [];
     var nStars = Math.round((W * H) / 6000);
@@ -131,7 +132,7 @@
       tries++;
       var fx = R(0.03, 0.48), fy = R(0.06, 0.94);
       if (!isMobile && fx < 0.43 && fy > 0.26 && fy < 0.72) continue;
-      if (isMobile && fy < 0.52) continue;
+      if (isMobile && !isStacked && fy < 0.52) continue;
       var depth = clamp((fx - 0.02) / 0.46, 0, 1);
       addGal(fx, fy, depth, R(0.75, 1.35), lerp(0.26, 0.60, depth) * R(0.85, 1.15));
     }
@@ -145,7 +146,8 @@
     inputs = [];
     var inX = isMobile ? 0.18 : INPUT_X;
     for (var k = 0; k < 5; k++) {
-      var fyIn = isMobile ? lerp(0.58, 0.88, k / 4) : lerp(0.22, 0.78, k / 4);
+      var fyIn = isStacked ? lerp(0.18, 0.82, k / 4)
+        : isMobile ? lerp(0.58, 0.88, k / 4) : lerp(0.22, 0.78, k / 4);
       inputs.push({
         x: W * R(inX - 0.02, inX + 0.015),
         y: H * fyIn + R(-8, 8),
@@ -163,8 +165,8 @@
       var count = [4, 5, 4][li];
       var arr = [];
       for (var j = 0; j < count; j++) {
-        var yMin = isMobile ? 0.56 : 0.19;
-        var yMax = isMobile ? 0.90 : 0.81;
+        var yMin = isStacked ? 0.16 : isMobile ? 0.56 : 0.19;
+        var yMax = isStacked ? 0.84 : isMobile ? 0.90 : 0.81;
         arr.push({
           x: W * fxCol + R(-W * 0.01, W * 0.01),
           y: H * lerp(yMin, yMax, j / (count - 1)) + R(-8, 8),

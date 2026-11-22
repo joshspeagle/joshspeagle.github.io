@@ -43,7 +43,7 @@ All colors are defined in `assets/data/tokens.json` with paired `dark` and `ligh
 | **Cyan-Teal** | `#2bc8d8` | `#0e8d9c` | `Interpretability & Insight` (`--cat-ii`) | `Student-Led` (`--role-student`) | `Doctoral Students (PhD)` (`--stage-doctoral`) |
 | **Sky Cobalt** | `#58a6ff` | `#1964c8` | `Inference & Computation` (`--cat-ic`) | `Significant Contribution` (`--role-significant`) | `Master's Students` (`--stage-masters`) |
 | **Warm Gold** | `#ffc266` | `#de8500` | `Discovery & Understanding` (`--cat-du`) | `Primary / Lead Author` (`--role-primary`) | `Undergraduate Researchers` (`--stage-bachelors`) |
-| **Neutral / Coral** | `#536084` / `#ff7b72` | `#94a3b8` / `#c93b2b` | `Secondary` (`--cat-sec`) | `Co-Author` (`--role-other`) | `High School` (`--stage-secondary`) |
+| **Neutral / Magenta** | `#6676a1` / `#f472b6` | `#64748b` / `#b1257a` | `Secondary` (`--cat-sec`) | `Co-Author` (`--role-other`) | `High School` (`--stage-secondary`) |
 
 ---
 
@@ -59,13 +59,13 @@ All colors are defined in `assets/data/tokens.json` with paired `dark` and `ligh
    - **Research Impact by Role (RIQ):** Multi-series trajectory plot with color-coded lines, diamond endpoint markers, and interactive year-band tooltips.
 3. **Mentorship (`mentorship.html`):**
    - **2-Panel Mentorship Dashboard:** *Mentorship by Career Stage (Current vs. Former)* paired with *Undergraduate Research Pathways Breakdown*.
-   - **Roster Organization:** Current Group Members (15) displayed in a 2-column grid by stage at the top; Former Mentees & Alumni (70) separated below, with Former Undergraduates (56) organized into 3 collapsible pathway accordions (*Senior Thesis & Independent Research*, *Summer Research Fellowships*, *ROP, Work-Study & Academic-Year Research*).
+   - **Roster Organization:** Current Group Members displayed in a 2-column grid by stage at the top; Former Mentees & Alumni separated below, with Former Undergraduates organized into 3 collapsible pathway accordions (*Senior Thesis & Independent Research*, *Summer Research Fellowships*, *ROP, Work-Study & Academic-Year Research*).
 4. **Talks & Events (`talks.html`):**
-   - **2-Panel Speaking Dashboard:** Inline SVG *Global Footprint of Talks & Lectures* world map (with proportional location pins, great-circle arcs from Toronto, and hover tooltips) paired with *Speaking Activity by Year & Format* stacked bar chart.
+   - **2-Panel Speaking Dashboard:** Interactive 3D orthographic Globe / 2D Map (`assets/js/redesign/talks-globe.js`) with great-circle arcs from Toronto, regional presets, and an inspectable city hub list, paired with *Speaking Activity by Year & Format* stacked bars and *Talks by Research Theme* breakdown.
 5. **Software & Code (`software.html`):**
    - **2-Panel Software Ecosystem Dashboard:** *Flagship Package Adoption (Monthly PyPI Downloads)* paired with *Software Ecosystem by Domain & Role*, followed by Flagship Packages, the interactive `allsky` showcase, and search/filter controls above a 2-column repository grid.
 6. **Teaching (`teaching.html`) & Service (`service.html`):**
-   - **Timeline Matrices:** Multi-year *Teaching & Curriculum Timeline (2021–2026)* on `teaching.html` and *Leadership & Governance Timeline (2020–2027)* on `service.html`.
+   - **Timeline Matrices:** Multi-year *Teaching & Curriculum Timeline (2021–22 to 2026–27)* on `teaching.html` and *Leadership & Governance Timeline (2020–2027)* on `service.html`.
 7. **Biography (`biography.html`), Awards (`awards.html`) & News (`news.html`):**
    - **Biography:** 2-column Short Biography + childhood photo (`china_childhood.jpg`) followed by an alternating left/right *Career & Research Evolution Timeline* with research focus tags.
    - **Awards:** Research Prizes & Academic Awards 2-column grid + Competitive Fellowships + Group & Mentee Fellowships showcase.

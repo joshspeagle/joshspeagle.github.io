@@ -1,10 +1,8 @@
 /*
  * f4-2-spread.js: figure F4.2, spreading a fixed number of trials (fig-spread), on page 4 #budget.
  *
- * Work order: design notes.md §6.8, with §6.0. Entry:
- * design notes.md F4.2 and earlier review R3 and R14. Design:
- * design notes.md §3.4, §3.5, §4, §5, §6 and §9. A fixed-frame figure with a width
- * handle on both panels, two segment controls in the dock, three presets and "Draw again".
+ * Fixed-frame figure with a width handle on both panels, two segment controls in the dock,
+ * three presets and "Draw again".
  *
  * The model is TP.desiderata (site/js/lib/desiderata.js), rebuilt by C6. The probability curve of
  * panel (a) is never computed in the page: the 30 curves (2 to 6 scientific values by 24, 48 or 96
