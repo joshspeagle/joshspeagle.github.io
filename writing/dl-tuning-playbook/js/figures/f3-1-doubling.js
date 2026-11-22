@@ -1,8 +1,8 @@
 /*
  * f3-1-doubling.js: figure F3.1, the doubling procedure (#fig-doubling), on page 3 #feasible.
  *
- * Design: notes/revamp/figure-plan.md (FP) F3.1 and notes/revamp/implementation-plan.md WO-F3.1
- * (§6.4), with the rulings R10, R12 and R57 of notes/revamp/review/synthesis.md, on the figure
+ * Design: design notes.md (FP) F3.1 and design notes.md
+ * (§6.4), with the rulings R10, R12 and R57 of design notes.md, on the figure
  * contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
  *
  * The model is TP.throughput (site/js/lib/throughput.js): TP.throughput.runs(accel, seed) gives
@@ -21,11 +21,11 @@
  * axis to the cursor directly (the same exception as F1.1's axis in checkpoint units). The
  * domain is CAL.domains.a.x mapped into t (4 to 16,384 is t = 0 to 12), and the y domain,
  * CAL.domains.a.y (10 to 40,960 examples per second), spans the same twelve doublings. The plot
- * area is square, so the doubling line prints at 45 degrees (DS §3.5 item 2).
+ * area is square, so the doubling line prints at 45 degrees.
  *
  * The figure draws no cursor line. The last run drawn is the cursor's run, and the reader's
- * vertical line is the mark alone (DS §4.10), so that two reader-token verticals never share the
- * frame (work-order exception, recorded in notes/revamp/reports/fig-doubling.md).
+ * vertical line is the mark alone, so that two reader-token verticals never share the
+ * frame.
  *
  * v4 review (post03, 2026-11): the mark now defaults to 1,024 (the rule's result) instead of 8, so
  * the loaded figure shows the procedure's answer; the plot is no longer forced square (aspect 0.5);
@@ -36,7 +36,7 @@
   var TP = global.TP = global.TP || {};
 
 /* BEGIN GENERATED table-cal */
-// From tests/calibration/out/fig-doubling.json by npm run generate (tests/lib/write-generated.js).
+// Precomputed calibration constants for fig-doubling.
 var CAL = {
   "defaults": {"accel": "saturating", "mark": 1024},
   "presets": {"saturating": {"accel": "saturating"}, "input-limited": {"accel": "input"}},
@@ -192,7 +192,7 @@ var CAL = {
   function falls(v) { return Math.round(v * 100) < 0; }
 
   /**
-   * The readout (FP F3.1, and WO-F3.1's form for a mark on the first run). Cases the entry leaves
+   * The readout. Cases the entry leaves
    * open: no run measured yet, the mark beyond the runs measured so far, the next doubling not yet
    * measured, the next run out of memory, and a doubling that lowered throughput.
    */
@@ -223,7 +223,7 @@ var CAL = {
     return head + ', against the ' + thr + ' threshold, and the next is not measured yet.';
   }
 
-  /** The named quantities of a state (plan WO-I5.1): the procedure's, the reader's and the model's. */
+  /** The named quantities of a state: the procedure's, the reader's and the model's. */
   function quantitiesOf(accel, seed, k, mark) {
     var runs = runsOf(accel, seed), rule = ruleOf(accel, seed), R = readerOf(accel, seed, k, mark), q = {};
     q.runs = runs.length;
@@ -305,9 +305,9 @@ var CAL = {
       else shown.push({ t: t, B: r.B, y: r.throughput });
     }
     var items = [];
-    /* the accelerator's peak, a level of the toy named on the throughput axis (DS §4.7) */
+    /* the accelerator's peak, a level of the toy named on the throughput axis */
     C().level(p, 'y', T.peak('saturating'), { role: 'model', text: peakName(p.phone), line: true, series: 'peak' });
-    /* perfect doubling through the first run, a dotted reference over the markers (DS §4.7) */
+    /* perfect doubling through the first run, a dotted reference over the markers */
     if (k >= 1) {
       var x1 = runs[0].throughput, lo = Math.max(X_DOMAIN[0], 1 + Math.log(Y_DOMAIN[0] / x1) / Math.LN2);
       var hi = Math.min(X_DOMAIN[1], 1 + Math.log(Y_DOMAIN[1] / x1) / Math.LN2);
@@ -329,7 +329,7 @@ var CAL = {
       items.push({ id: 'oom', text: 'out of memory', role: 'model', series: 'oom',
         feature: { type: 'point', x: failed[0].t, y: Y_DOMAIN[0], r: 5 }, phone: { text: 'OOM' }, captionNames: true });
     }
-    /* the reader's mark: a reader line with its value on the x axis, and its handle (DS §4.10) */
+    /* the reader's mark: a reader line with its value on the x axis, and its handle */
     var tm = tOf(mark);
     C().level(p, 'x', tm, { role: 'reader', text: (p.phone ? '' : 'chosen: ') + fmt.int(mark), line: true, series: 'mark' });
     if (o.onMark) {

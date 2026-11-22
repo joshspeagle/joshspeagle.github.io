@@ -1,7 +1,7 @@
-/* fig-range, F6.1: the range window (implementation-plan.md WO-F6.1).
+/* fig-range, F6.1: the range window.
    One panel in the text column at every width, so site.css's layout of the panels applies. The two
    handles of the reader window sit on the x axis at the window's edges, and each stands above the
-   axis route, so a press on a dot moves that bound (design-system.md §6.2). */
+   axis route, so a press on a dot moves that bound. */
 #fig-range .panel > .handle { z-index: 3; }
 
 /* Below 640 px the readout writes three lines at the default (390 x 660), where site.css reserves

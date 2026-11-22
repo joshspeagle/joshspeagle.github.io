@@ -9,10 +9,10 @@
  * Exact arithmetic, no noise: theta_{t+1} = (1 - eta mu) theta_t from theta_0 = THETA0.
  *
  * Panels (side by side from 640 px, stacked on a phone):
- *   (a) the quadratic: L against theta, the parabola in the context tone and the iterates joined in
- *       order as a trail (model blue), the start ringed.
- *   (b) theta_t against step t, linear axes: markers joined by a line, the minimum (theta = 0) a
- *       reference level, crosses on the frame's edge for iterates that leave it.
+ * (a) the quadratic: L against theta, the parabola in the context tone and the iterates joined in
+ * order as a trail (model blue), the start ringed.
+ * (b) theta_t against step t, linear axes: markers joined by a line, the minimum (theta = 0) a
+ * reference level, crosses on the frame's edge for iterates that leave it.
  * Parameters: eta (slider, 0.05 to 0.75 in steps of 0.05) and bowl (segment: wide mu = 2, narrow
  * mu = 4). No presets: the guided tour sets the values (data-params), so the controls stay at two.
  */
@@ -76,11 +76,6 @@
     pb.update(drawB);
   }
 
-  function setNoteOnce(p, text) {
-    var n = p.head && p.head.querySelector('.panel-note');
-    if (!n || n.textContent !== text) p.setNote(text);
-  }
-
   function drawA(p) {
     var s = cur;
     if (!s) return;
@@ -102,7 +97,7 @@
     var inside = s.rows.filter(function (r) { return r.inside; });
     c.markers(p, inside, function (r) { return r.theta; }, function (r) { return r.loss; }, { role: 'model', series: 'steps', key: function (r) { return r.key; } });
     c.ring(p, s.rows[0].theta, s.rows[0].loss, { role: 'model', series: 'steps', key: 'start' });
-    setNoteOnce(p, 'ημ = ' + f2(s.eh) + (p.phone ? '' : ', stable for η < 2/μ = ' + f2(s.limit)));
+    p.setNote('ημ = ' + f2(s.eh) + (p.phone ? '' : ', stable for η < 2/μ = ' + f2(s.limit)));
     c.place(p, [
       { id: 'bowl', text: p.phone ? 'loss' : 'loss ½μθ²', role: 'context', series: 'bowl', feature: { type: 'line', of: 'bowl' } },
       { id: 'start', text: 'start', role: 'model', series: 'steps', feature: { type: 'point', x: s.rows[0].theta, y: s.rows[0].loss, r: 10 } }
@@ -123,7 +118,7 @@
     var up = out.filter(function (r) { return r.theta > 0; }), down = out.filter(function (r) { return r.theta < 0; });
     if (up.length) c.cross(p, up, function (r) { return r.t; }, function () { return null; }, { role: 'model', series: 'theta', key: 'out-up', edge: 'top' });
     if (down.length) c.cross(p, down, function (r) { return r.t; }, function () { return null; }, { role: 'model', series: 'theta', key: 'out-down', edge: 'bottom' });
-    setNoteOnce(p, 'each step multiplies θ by 1 − ημ = ' + sgn(s.ratio));
+    p.setNote('each step multiplies θ by 1 − ημ = ' + sgn(s.ratio));
     c.place(p, [], curCtx);
   }
 

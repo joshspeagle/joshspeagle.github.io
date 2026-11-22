@@ -1,8 +1,8 @@
 /*
  * f5-2-best-of-k.js: figure F5.2, the best of K trials (#fig-best-of-k), on page 5 #trials.
  *
- * Design: notes/revamp/figure-plan.md (FP) F5.2 and notes/revamp/implementation-plan.md WO-F5.2
- * (§6.10), with review/synthesis.md R8 and R12, on the figure contract of site.js (TP.fig) and the
+ * Design: design notes.md (FP) F5.2 and design notes.md
+ * (§6.10), with earlier review R8 and R12, on the figure contract of site.js (TP.fig) and the
  * runtime of runtime.js (TP.run).
  *
  * The model is TP.bestOfK (site/js/lib/bestofk.js): the pool of 100 Toy S trials over the ranges
@@ -10,9 +10,9 @@
  * of K trials with replacement for each K of 6, 10, 20 and 50 and returns each study's best. One
  * runtime step is one draw of the four studies (R12), with the runtime's generator for
  * TP.prng.deriveSeed(seed, t), which TP.bestOfK.bests uses too, so the calibration script
- * (tests/calibration/fig-best-of-k.calibrate.js) measures the draws this figure shows. `shown`
+ * measures the draws this figure shows. `shown`
  * chooses which of the four distributions are drawn and changes nothing in the run (change
- * 'redraw', DS §7.6). The K = 50 distribution is computed from the first draw and shows when its
+ * 'redraw', series style). The K = 50 distribution is computed from the first draw and shows when its
  * toggle is pressed, the reveal of the task's prediction.
  *
  * The state at step t holds the seed, t draws (n), the best of every study so far for each K
@@ -22,19 +22,19 @@
  * Panel (a), "validation error against learning rate", is the pool as an axis plot: trials as 4-px
  * dots in context grey, the study of the smallest shown K at the cursor as a set in model blue with its
  * best ringed, and the infeasible trials as crosses at the top edge (blue when the study drew them,
- * grey otherwise, DS §8.1). Panel (b), "best validation error against K", has one column for each
+ * grey otherwise, series style). Panel (b), "best validation error against K", has one column for each
  * K. A shown K draws a stack of 4-px dots, one per draw, binned on 4-px rows of y and placed side
- * by side from the column's centre, with the cased, unfilled quartile box over it (DS §4.6), and
- * beside it the retrain spread as a data-red error bar of +/-0.001 around the median (WO-F5.2).
+ * by side from the column's centre, with the cased, unfilled quartile box over it, and
+ * beside it the retrain spread as a data-red error bar of +/-0.001 around the median.
  * Where a bin holds more dots than the column holds at 4.5-px spacing, the column's spacing shrinks
  * so that its widest bin fits, and the dots overlap (work-order exception 2 in the report).
  *
- * Work-order exceptions (notes/revamp/reports/fig-best-of-k.md):
+ * Work-order exceptions:
  *   1. Panel (b)'s y axis is CAL.domains.b.y, whose top B_TOP the calibration sets below the
- *      largest best (tests/calibration/fig-best-of-k.calibrate.js). On the full range the box at
+ * largest best. On the full range the box at
  *      K = 20 is 3 px tall and the bracket 1.4 px at 1440 x 790. B_TOP holds the upper quartile
  *      at K = 6 of every seed from 1 to 1,000 (the calibration's check). Bests above it stand on
- *      the top edge under an arrowhead, with the largest named, DS §9 rule 3.
+ * the top edge under an arrowhead, with the largest named, series style
  *   2. The stack's spacing shrinks where a bin overflows its column (above).
  *   3. The spec gives no recordPanel. The runtime's record press maps the record panel's x axis to
  *      steps, and (b)'s x axis is K. The counter stands in (b)'s header, written from ctx.counter,
@@ -46,7 +46,7 @@
   var TP = global.TP = global.TP || {};
 
 /* BEGIN GENERATED table-cal */
-// From tests/calibration/out/fig-best-of-k.json by npm run generate (tests/lib/write-generated.js).
+// Precomputed calibration constants for fig-best-of-k.
 var CAL = {
   "defaults": {"shown": [6, 20]},
   "presets": {"fifty": {"shown": [6, 20, 50]}},
@@ -106,7 +106,7 @@ var CAL = {
   var KS = BK ? Array.from(BK.KS) : [6, 10, 20, 50];
   var KEYS = KS.map(String);                          // the members of `shown`
   var STEPS = CAL.quantities['default'].draws;        // autoplay's draws (200)
-  var LIMIT = 1000;                                   // WO-F5.2 "limit: 1000"
+  var LIMIT = 1000;                                   // "limit: 1000"
   var BRACKET = CAL.bracket;                          // +/-0.001
   var Y_B = CAL.domains.b.y;                          // exception 1: the calibration's top
   var B_TOP = Y_B[1];
@@ -176,9 +176,9 @@ var CAL = {
     return KS.filter(function (K) { return set.indexOf(String(K)) >= 0; });
   }
 
-  /** The readout (FP F5.2), for the K values shown. */
+  /** The readout, for the K values shown. */
   /* Each shown K's interquartile range beside the retrain bracket's width, 2 BRACKET (0.002). The
-     readout gives no inside-or-outside verdict (the lead's ruling on the page 5 reads, Batch 4). */
+     readout gives no inside-or-outside verdict. */
   function readoutText(s, shown) {
     var br = 'the retrain bracket\'s width of ' + sig2(2 * BRACKET);
     if (!s || !s.n) return 'No study has been simulated yet. The interquartile ranges will stand beside ' + br + '.';
@@ -189,7 +189,7 @@ var CAL = {
     return 'After ' + n + ' the interquartile ranges of the best of ' + series(shown.map(String)) + ' trials are ' + series(iq) + ', beside ' + br + '.';
   }
 
-  /** The named quantities of a state (plan WO-I5.1): the draws', the pool's and the model's. */
+  /** The named quantities of a state: the draws', the pool's and the model's. */
   function quantitiesOf(s) {
     var q = {}, pool = poolOf(s.seed);
     q.draws = s.n;
@@ -264,7 +264,7 @@ var CAL = {
     });
     var x = function (d) { return lrOf(d.t); }, y = function (d) { return d.t.y; };
     /* the rest of the pool as 4-px dots and the study as 8-px markers, so that the set differs
-       from the pool by size as well as hue (DS §2.3 rule 4) */
+       from the pool by size as well as hue */
     C().dots(p, rest, x, y, { role: 'context', series: 'pool', r: 2 });
     C().cross(p, restBad, x, function () { return null; }, { role: 'context', series: 'pool', edge: 'top' });
     if (set.length) C().markers(p, set, x, y, { role: 'model', series: 'study', key: function (d) { return trialKey(d.i); } });
@@ -392,7 +392,7 @@ var CAL = {
         var rw = st.rows[Yk], Yv = +Yk;
         C().obstacle(p, [[rw[0] - 2, Yv], [rw[1] + 2, Yv]], { kind: 'rival', type: 'segment', width: 4, series: 'K' + K });
       });
-      /* the quartile box over the stack, with its casing (DS §4.1, §4.6) */
+      /* the quartile box over the stack, with its casing */
       var Y = function (v) { return p.y(Math.min(Math.max(v, Y_B[0]), Y_B[1])); };
       var y3 = Y(bx.q75), y1 = Y(bx.q25), ym = Y(bx.median), bh = Math.max(1, y1 - y3), x0 = g.cx - g.bw / 2;
       var box = put(N.box, { 'data-q25': bx.q25, 'data-median': bx.median, 'data-q75': bx.q75 });
@@ -443,7 +443,7 @@ var CAL = {
           rows: [{ value: q2.v.toFixed(4), label: 'best validation error', role: 'model' }] });
       });
     });
-    /* DS §5.6: where the full form finds no position, the phone layout tries "retrain spread" and
+    /* series style: where the full form finds no position, the phone layout tries "retrain spread" and
        may drop the label, which the caption names; from 640 px the label moves to (b)'s header */
     if (lastBar) {
       items.push({ id: 'retrain', text: ['retrain spread,', '±' + sig2(BRACKET), '(the Playbook\'s estimate)'], role: 'data', series: 'retrain', tone: 'role',

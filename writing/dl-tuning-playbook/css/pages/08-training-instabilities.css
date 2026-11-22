@@ -103,7 +103,7 @@
 .p08-branch-do a { white-space: nowrap; }
 .p08-branch-do a::before { content: "\2192\00a0"; }
 
-/* ---------- the Playbook pane with two images (p08-page.js) ---------- */
+/* ---------- the Playbook pane with two images ---------- */
 .fig-pb-pair { display: grid; grid-template-columns: 1fr 1.6fr; gap: 12px; align-items: start; width: 100%; }
 .fig-pb-pair img { max-width: 100%; }
 

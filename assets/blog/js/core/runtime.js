@@ -1,11 +1,11 @@
 /*
  * runtime.js: the runtime of running figures, TP.run(fig, spec).
  *
- * Design: series design spec (DS) §7 in full, with §4.8 and §4.9 (the ghost, the
+ * Design: series series conventions series style in full, with §4.8 and §4.9 (the ghost, the
  * record and the cursor), §6.7 (state and printing), §9 (motion) and §10 (accessibility), and
- * series design spec (the plan) WO-I6. A classic script on window.TP. Every page
+ * series series conventions. A classic script on window.TP. Every page
  * with a running figure loads it after site.js and chart.js. It needs TP.prng (lib/prng.js). The
- * engine needs no DOM, so Node loads this file for tests/lib/runtime.test.js and drives it with
+ * engine needs no DOM, so Node loads this file for calibration checks.test.js and drives it with
  * the third argument of TP.run (section G).
  *
  * This comment is the reference for figure builders:
@@ -77,7 +77,7 @@
  *                                "step 340 of 1,000", "step 340" for an open run, and, with
  *                                actions, "5 reruns, 1 repeat" (each kind with an s added)
  *
- * C. THE METHODS (design system, plan WO-I6)
+ * C. THE METHODS
  *   run.start(from)      play from the cursor (or step from). At the end (until or limit) it
  *                        replays from step 0. Steps are of the kind pressed last.
  *   run.pause()          pause and settle

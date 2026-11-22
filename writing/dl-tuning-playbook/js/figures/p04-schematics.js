@@ -53,11 +53,11 @@
     var cls = method === 'grid' ? 'p04-c-grid' : 'p04-c-random';
     var wrap = h('div', 'p04-proj-panel', host);
     h('div', 'p04-proj-name ' + cls, wrap, method === 'grid' ? 'Grid, 3 &times; 3' : 'Random, 9 trials');
-    var W0 = 320, H0 = 282;
+    var W0 = 320, H0 = 286;
     var svg = s('svg', { viewBox: '0 0 ' + W0 + ' ' + H0, role: 'img', 'aria-label': method === 'grid' ?
       'Nine grid trials fall on three learning rates; the valley of the error curve lies between two of them.' :
       'Nine random trials fall on nine different learning rates; one falls in the valley of the error curve.' }, wrap);
-    var L = 46, R = 306, CT = 22, CB = 92, ST = 112, SB = 252;
+    var L = 46, R = 306, CT = 26, CB = 96, ST = 116, SB = 256;
     var X = function (x) { return L + x * (R - L); };
     var Yc = function (v) { return CB - v * (CB - CT); };
     var Ys = function (y) { return SB - y * (SB - ST); };
@@ -65,7 +65,7 @@
     var d = '';
     for (var i = 0; i <= 120; i++) { var x = i / 120; d += (i ? 'L' : 'M') + r2(X(x)) + ',' + r2(Yc(err(x))); }
     s('path', { d: d, class: 'p04-curve' }, svg);
-    s('text', { x: L, y: 10, class: 'p04-t-small', 'text-anchor': 'start' }, svg, 'validation error');
+    s('text', { x: L, y: 14, class: 'p04-t-small', 'text-anchor': 'start' }, svg, 'validation error');
     s('text', { x: L - 8, y: CT + 4, class: 'p04-t-small', 'text-anchor': 'end' }, svg, 'high');
     s('text', { x: L - 8, y: CB, class: 'p04-t-small', 'text-anchor': 'end' }, svg, 'low');
     /* the box of the two hyperparameters */

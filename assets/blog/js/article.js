@@ -2,12 +2,12 @@
  * site.js: the behaviour every page shares, and TP.fig, the figure contract every figure script
  * hands its figure to.
  *
- * Design: series design spec (DS) §6, §9, §11.1, §11.2, §11.4, §11.7 and §13, and
- * series design spec (the plan) §2.4 and WO-I5. A classic script on window.TP
+ * Design: series series conventions series style, §9, §11.1, §11.2, §11.4, §11.7 and §13, and
+ * series series conventions and. A classic script on window.TP
  * with no dependencies. Every page loads it after lib/format.js, refs.js and concepts.js, and
  * before chart.js and runtime.js, so nothing here reads TP.chart or TP.run while it loads. The
  * parts of section 1 of the code need no DOM (the parameter schema, the URL text, presets and
- * the interpolation of transitions), and Node loads them for tests/lib/site.test.js.
+ * the interpolation of transitions), and Node loads them for calibration checks.test.js.
  *
  * This comment is the reference for figure builders and page writers:
  *   A. The page's life cycle and events
@@ -18,8 +18,8 @@
  *   F. The URL, TP.state
  *   G. Controls, presets, Reset, "Draw again", actions and printing
  *   H. Exercises
- *   I. Running figures: what TP.fig gives the runtime (WO-I6)
- *   J. Test hooks, TP.figures[id] (WO-I12, WO-I13)
+ * I. Running figures: what TP.fig gives the runtime
+ * J. Test hooks, TP.figures[id]
  *   K. TP.ui, the controls, with their markup and behaviour
  *   L. Page components outside figures (design system)
  *   M. Recaps, cases and TP.whenNear
@@ -66,7 +66,7 @@
  *     readout: function (state, ctx) { return 'One sentence.'; },   required unless static
  *     table: function (state, ctx) { return {columns: [{key, label, format}], rows, caption}; },
  *     quantities: function (state, ctx) { return {'divergence-step': 34}; },   the ledger keys'
- *                             third parts, in kebab case (article spec)
+ * third parts, in kebab case
  *     constrain: function (next, prev, changed) { return next; },   optional. It adjusts values
  *                             that depend on each other after a reader's change, such as F6.3's
  *                             slice when the number of buckets changes. `changed` lists the names
@@ -196,7 +196,7 @@
  *
  * F. THE URL, TP.state
  *   The query string holds one key per figure whose values differ from its defaults, such as
- *   ?fig-warmup=end:300,base:3x,t:340 (article spec). The pairs follow the order of params, then
+ * ?fig-warmup=end:300,base:3x,t:340. The pairs follow the order of params, then
  *   the seed, then t, a running figure's cursor when it is paused away from its default step. A
  *   number encodes as the shortest decimal text that snaps back to the same value (for a snap that
  *   is a list, the shortest text of the snapped value itself, such as 1024), a choice as its
@@ -247,7 +247,7 @@
  *
  * H. EXERCISES
  *   An exercise (fig exercise) has "Check" (button.btn.check) and Reset in its dock and writes
- *   nothing to the URL. Items in the page's HTML use the markup of article spec inside the
+ * nothing to the URL. Items in the page's HTML use the markup of series conventions inside the
  *   figure, usually inside a div.fig-panels of the HTML: div.item[data-item] holding its option
  *   buttons (in div.options, each with data-option) and, beside them, one p.feedback[data-option]
  *   per option, hidden until "Check". A p.feedback[data-item][data-option] elsewhere in the figure
@@ -258,7 +258,7 @@
  *   reads ctx.exercise = {answers: {item: option}, checked: {item: true}}, where checked holds
  *   the items committed by the last "Check" and not changed since. Reset clears both.
  *
- * I. RUNNING FIGURES: WHAT TP.fig GIVES THE RUNTIME (WO-I6)
+ * I. RUNNING FIGURES: WHAT TP.fig GIVES THE RUNTIME
  *   A running figure calls TP.run(fig, spec) right after TP.fig. The handshake:
  *     - TP.run calls fig.attach(run) once, before it draws. TP.fig then listens to
  *       run.on('settle') and exposes the run as TP.figures[id].run.
@@ -349,7 +349,7 @@
  *   ul.standard and div.product, section#limits, and the contents page's outline, questions and
  *   symptoms. Their appearance is the stylesheet's. site.js adds behaviour to three components,
  *   and records nothing anywhere (no storage, no URL):
- *   div.self-check (design system, article spec)
+ * div.self-check
  *     - One choice: div.options > button[data-option] (or button.clause[data-option] in p.task
  *       for choose-the-clause). A press sets aria-pressed on it alone and commits.
  *     - Several items: div.items > div.item[data-item] > div.options > button[data-option], and
@@ -417,7 +417,7 @@
 
   /* ======================================================================================
      1. The parts that need no DOM: the parameter schema, the URL text, presets and the
-        interpolation of transitions. tests/lib/site.test.js loads them in Node.
+        interpolation of transitions. calibration checks.test.js loads them in Node.
      ====================================================================================== */
 
   var NAME_RE = /^[a-z0-9-]+$/;
@@ -464,7 +464,7 @@
     return best;
   }
 
-  /* ---------- the parameter schema (design system, article spec) ---------- */
+  /* ---------- the parameter schema ---------- */
 
   function defaultControl(e) {
     if (e.type === 'number') return e.handle ? 'handle' : 'slider';
@@ -549,7 +549,7 @@
   function snapNumber(e, v, lo, hi) {
     if (Array.isArray(e.snap) && e.snap.length) {
       /* a value of the list inside the bounds is its own nearest element: return it without
-         filtering the list (frame cost, Batch 5), from a set kept per list */
+         filtering the list, from a set kept per list */
       if (v >= lo && v <= hi) {
         if (e._snapSetOf !== e.snap) { e._snapSetOf = e.snap; e._snapSet = new Set(e.snap); }
         if (e._snapSet.has(v)) return v;
@@ -617,7 +617,7 @@
     return out;
   }
 
-  /* The URL text of a value (article spec). */
+  /* The URL text of a value. */
   function encodeValue(e, v) {
     if (isFn(e.encode)) return String(e.encode(v));
     switch (e.type) {
@@ -706,7 +706,7 @@
     return map && typeof map.t === 'string' && /^\d+$/.test(map.t) ? +map.t : null;
   }
 
-  /* ---------- the URL text (article spec) ---------- */
+  /* ---------- the URL text ---------- */
 
   function parsePairs(text) {
     var map = {};
@@ -755,7 +755,7 @@
     return formatQuery(out);
   }
 
-  /* ---------- presets (article spec) ---------- */
+  /* ---------- presets ---------- */
 
   function kebab(name) {
     return String(name).toLowerCase().replace(/['’]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -794,7 +794,7 @@
     return r.t == null || r.t === t;
   }
 
-  /* ---------- the interpolation of transitions (design system rule 1, article spec) ---------- */
+  /* ---------- the interpolation of transitions ---------- */
 
   function isRows(list) {
     if (!list.length) return false;
@@ -846,12 +846,12 @@
      A standard's item names the subobjective it checks by number before its link, as
      "(1.1, which Starting a project teaches under <a>Architecture</a>)" or "(3.7, 3.8 and 3.9,
      <a>...</a>)". The numbers are the learning guide's and mean nothing to the reader, so the text
-     drops them and the item keeps them in data-item (the build log's Batch 7 rulings). strip takes
+     drops them and the item keeps them in data-item. strip takes
      the text directly before a link and returns {text, items}: "(1.1, which P teaches under " becomes
      "(taught on P, under ", "(3.1, which P teaches with the roles under " becomes "(taught on P,
      with the roles, under ", "(3.7, 3.8 and 3.9, " becomes "(", and "from 3.6, which P teaches
      under " becomes "taught on P, under ". Text without such a number comes back unchanged.
-     tests/lib/write-generated.js applies the same function to the reference page's copies. */
+     calibration checks.js applies the same function to the reference page's copies. */
   var SUB_NUMS = '\\d+\\.\\d+(?:(?:,\\s+|\\s+and\\s+)\\d+\\.\\d+)*';
   var SUB_TEACH = new RegExp('(\\(|\\bfrom\\s+)(' + SUB_NUMS + '),\\s+which\\s+([^()]+?)\\s+teaches(\\s+[^()]*?)?\\s+under\\s*$');
   var SUB_BARE = new RegExp('\\((' + SUB_NUMS + '),\\s*$');
@@ -950,10 +950,6 @@
   var theme = storedTheme;
   applyTheme(theme);
 
-  /* ---------- sources ---------- */
-  var sources = read('tp-sources') === 'on' ? 'on' : 'off';
-  html.setAttribute('data-sources', sources);
-
   /* ---------- motion (design system rule 7) ---------- */
   var motionQuery = global.matchMedia ? global.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var motionFns = [];
@@ -1048,8 +1044,6 @@
     var numbered = (TP.pages || []).filter(function (p) { return !p.unnumbered; });
     if (page && !page.unnumbered) {
       var partNum = numbered.indexOf(page) + 1;
-      var padNum = partNum < 10 ? '0' + partNum : String(partNum);
-      var padTot = numbered.length < 10 ? '0' + numbered.length : String(numbered.length);
       brandGroup.appendChild(el('span', { class: 'where' }, 'Part ' + partNum + ' of ' + numbered.length));
     } else if (here === 'design-sheet.html') {
       brandGroup.appendChild(el('span', { class: 'where' }, 'Design sheet'));
@@ -1186,9 +1180,6 @@
     return 'https://github.com/google-research/tuning_playbook/blob/' + TP.playbookCommit + '/README.md#' + frag;
   }
   TP.playbookRawLineUrl = srcUrl;
-  function buildSourceMarks() {
-    /* Source line badges disabled in blog format */
-  }
 
   /* ---------- citations ---------- */
   /* The first author's surname: the last word before the first comma of the author list. */
@@ -1824,7 +1815,7 @@
   function flushNear() { nearJobs.slice().forEach(runNear); }
 
   /* ======================================================================================
-     6. TP.fig: the figure contract (design system, §11.2; article spec to WO-I5.5)
+     6. TP.fig: the figure contract
      ====================================================================================== */
 
   var KINDS = ['fixed', 'running', 'static', 'exercise'];
@@ -2113,7 +2104,7 @@
     }
     function finishTransition() { if (tr) tr.finish(true); }
 
-    /* ---------- changes (design system, §9; article spec) ---------- */
+    /* ---------- changes ---------- */
     /* The values given, each clamped over base, with constrain applied; reports what it cannot
        use. Returns {next, names}. */
     function propose(given, base, opts) {
@@ -2414,7 +2405,7 @@
       resizeFrame = global.requestAnimationFrame(function () { resizeFrame = 0; relayout(); });
     });
 
-    /* ---------- the controls (design system; article spec) ---------- */
+    /* ---------- the controls ---------- */
     function valueText(e, v) {
       if (isFn(e.format)) return String(e.format(v));
       if (e.type === 'number' && finite(v) && TP.fmt && isFn(TP.fmt.sig)) return TP.fmt.sig(v, 3);
@@ -2537,7 +2528,7 @@
     /* Sets every control to the current values. A running figure calls it after every draw
        (opts.fromDraw); there, when the values and the control a drag holds are those of the last
        call, only the preset buttons and the pin are set, since the sliders, their ticks and the
-       `when` of each control depend on those alone (frame cost, Batch 5). Every other caller sets
+       `when` of each control depend on those alone. Every other caller sets
        every control. */
     var syncSig = null;
     function syncControls(opts) {
@@ -2744,7 +2735,7 @@
     return h;
   };
 
-  /* ---------- printing (design system, article spec) ---------- */
+  /* ---------- printing ---------- */
   var printSnaps = null;
   var printOpened = [];
   function beforePrint() {
@@ -2808,7 +2799,7 @@
     each(doc.querySelectorAll('img[loading="lazy"]'), function (img) { img.loading = 'eager'; });
   }
   /* A browser loads a web font when text first uses it, and the print layout does not wait for
-     one: math that no reader had scrolled to printed as blank glyphs (the Batch 7 print pass, the
+     one: math that no reader had scrolled to printed as blank glyphs (the print pass, the
      model notes opened for printing). The KaTeX faces are vendored and small, so they load once the
      page is idle, beside the lazy images. */
   function loadMathFonts() {
@@ -2850,7 +2841,7 @@
     });
   }
 
-  /* ---------- recaps (article spec) ---------- */
+  /* ---------- recaps ---------- */
   function parseSetting(s) {
     var out = {};
     if (!s) return out;
@@ -2861,17 +2852,10 @@
     return out;
   }
   TP.recaps.parseSetting = parseSetting;
-  /* The fixed sentence that ends the caption of every recap of a toy figure (design system, after the
-     lead's ruling on the page 4 reads): a recap carries no chip, so its caption says the data are
-     synthetic. A recap of a figure that draws the playbook's data would carry data-toy="false". */
-  var RECAP_SYNTHETIC = '';
-  TP.recaps.SYNTHETIC = RECAP_SYNTHETIC;
-  function markSynthetic() {}
   function initRecaps() {
     each(doc.querySelectorAll('figure.fig.recap'), function (f) {
       var name = f.getAttribute('data-recap');
       var label = f.id || 'a recap';
-      markSynthetic(f);
       if (!name) { global.console.error('TP.recaps: ' + label + ' lacks data-recap'); return; }
       TP.whenNear(f, function () {
         var fn = TP.recaps[name];
@@ -2897,7 +2881,7 @@
   }
 
   /* ======================================================================================
-     7. Page components outside figures (design system, §13.6, §13.9; article spec)
+     7. Page components outside figures
      ====================================================================================== */
 
   function reportCheck(box, msg) {
@@ -3467,10 +3451,6 @@
     };
   }
 
-  /* kept for the test hooks and older pages: the tour is built by initFigureTabs */
-  function initFigureTutorials() {}
-
-
   function initScrollyStages(scope) {
     var rootEl = scope || doc;
     each(rootEl.querySelectorAll('.scrolly-stage[data-figure]'), function (stage) {
@@ -3712,7 +3692,6 @@
 
   TP._helpers = { siteRoot: siteRoot, el: el, each: each, srcUrl: srcUrl, renderMath: renderMath, link: link, nextId: nextId };
   TP.initFigureTabs = initFigureTabs;
-  TP.initFigureTutorials = initFigureTutorials;
   TP.initScrollyStages = initScrollyStages;
   TP.initScrubNumbers = initScrubNumbers;
   TP.initDecisionTrees = initDecisionTrees;
@@ -3737,7 +3716,6 @@
   doc.addEventListener('DOMContentLoaded', function () {
     markNotes();
     buildHeader();
-    buildSourceMarks();
     buildCitations();
     buildSidenotes();
     numberFigures();
@@ -3749,7 +3727,6 @@
     renderStandardNumbers();
     doc.dispatchEvent(new CustomEvent('tp:ready'));
     initFigureTabs();
-    initFigureTutorials();
     initScrollyStages();
     checkRegistrations();
     checkPresetLinks();

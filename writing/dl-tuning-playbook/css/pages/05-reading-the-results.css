@@ -1,4 +1,4 @@
-/* Page styles for 05-reading-the-results.html (post05, 2026-11 review).
+/* Page styles for 05-reading-the-results.html.
    Semantic tokens only, so light and dark themes both work. */
 
 /* ---------- the opening questions ---------- */
@@ -51,7 +51,6 @@ ul.p05-questions li { margin-bottom: 0.45em; }
 .sym-svg .sym-band { fill: color-mix(in srgb, var(--accent) 14%, transparent); }
 .sym-svg .sym-mark { fill: none; stroke: var(--accent); stroke-width: 2.2; }
 .sym-svg .sym-guide { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 3 3; }
-.sym-svg .sym-arrow { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; }
 .sym-svg .sym-tangent { stroke: var(--accent); stroke-width: 2; stroke-dasharray: 4 3; }
 .sym-svg .sym-hl { fill: none; stroke: var(--accent); stroke-width: 6; stroke-opacity: 0.35; stroke-linecap: round; }
 @media (max-width: 900px) { .sym-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -79,9 +78,7 @@ ul.p05-questions li { margin-bottom: 0.45em; }
 .iso-svg .iso-best { fill: var(--model); stroke: var(--surface); stroke-width: 1.5; }
 .iso-svg .iso-winner { stroke: var(--accent); stroke-width: 2.5; }
 .iso-svg .iso-line { fill: none; stroke: var(--model); stroke-width: 2.4; }
-.iso-svg .iso-leader { fill: none; stroke: var(--ink-2); stroke-width: 1.2; }
 .iso-svg .iso-note { fill: var(--ink); font-family: var(--font); font-size: 13.5px; }
-.iso-svg .iso-note-x { fill: var(--ink-2); }
 @media (max-width: 760px) {
   .iso-steps { grid-template-columns: 1fr; }
   .iso-arrow { flex-direction: row; justify-content: center; }
@@ -105,9 +102,3 @@ ul.p05-questions li { margin-bottom: 0.45em; }
 /* ---------- In practice ---------- */
 .p05-practice-quote { margin-top: 1rem; border-left: 3px solid var(--grid); padding-left: 14px; color: var(--ink-2); }
 .p05-then { color: var(--model-label, var(--model)); font-weight: 700; margin: 0 4px; }
-
-/* ---------- "In this post" box: each item a block, title over takeaway ---------- */
-nav.post-roadmap a.roadmap-item { display: block; text-decoration: none; color: inherit; }
-nav.post-roadmap .roadmap-item-title { display: block; color: var(--ink); font-size: 0.98rem; }
-nav.post-roadmap .roadmap-item-desc { display: block; color: var(--ink-2); font-size: 0.9rem; line-height: 1.45; margin-top: 2px; }
-nav.post-roadmap a.roadmap-item:hover .roadmap-item-title { color: var(--model-label, var(--model)); text-decoration: underline; }

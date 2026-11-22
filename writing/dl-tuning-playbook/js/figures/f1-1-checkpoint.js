@@ -1,44 +1,10 @@
-/*
- * f1-1-checkpoint.js: figure F1.1, the checkpoint run (#fig-checkpoint), on page 1 #trial-result.
- *
- * Design: notes/revamp/figure-plan.md (FP) F1.1 and notes/revamp/implementation-plan.md WO-F1.1
- * (§6.1), on the figure contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
- *
- * The model is TP.curves.checkpointRun({seed, interval, steps, beta: CAL.beta}) with the settings of
- * TP.curves.checkpointDefaults (20,000 steps, a checkpoint every 1,000, noise drawn on a 20-step
- * grid), and TP.curves.bufferAt(evals, k, 3), the three best checkpoints after the k-th evaluation.
- * The run takes beta 0 (Batch 2 ruling): the curve falls, levels off and fluctuates about a value, the
- * case of README L1518-L1520. The calibration script (tests/calibration/fig-checkpoint.calibrate.js)
- * calls the same TP.curves.checkpointRun with the same beta.
- * One runtime step is one evaluation interval, so step k shows the run after its k-th checkpoint
- * (plan's decision). The noise comes from the seed through TP.curves, and the runtime's per-step
- * generators are never drawn from.
- *
- * Panel (a) is the record panel. Its x axis is in checkpoint units, 0 to 20, and its tick labels
- * print training steps, 0 to 20,000, so the runtime's record handlers and scrubbing map a position
- * on the axis to the cursor directly. Evaluations up to the cursor are filled markers on the series
- * line, and the rest of the run is drawn ahead in the trail tone (DS §4.9). At the end the selected
- * checkpoint takes the 20-px ring and the last checkpoint an open marker, with their direct labels.
- * Panel (b) is the buffer: three slots, lowest first, each naming a checkpoint's step and value,
- * linked to the markers of (a) by the checkpoint's index (C.link).
- *
- * At the end the frame holds one series, the run. The ring, the open marker, the cursor and the two
- * labels "selected checkpoint" and "last checkpoint" take the run's series, so that the placer tests
- * the labels against the drawn ink and against each other, and no mark of the run is their rival.
- *
- * 2026-11 review (post01): panel (a) is shorter (aspect 0.44, at most 300 px on a desktop, 240 px on
- * a phone) so that the figure fits one laptop screen. The public parts (TP.models.checkpointRun,
- * TP.recaps['F1.1:default'], the runtime's 0..20 steps) are unchanged.
- *
- * TP.recaps['F1.1:default'] draws panel (a) finished at the default seed, with the ring, the open
- * marker and their labels, and no cursor (plan §6.24, R5).
- */
+/* Precomputed calibration constants for figure. */
 (function (global) {
   'use strict';
   var TP = global.TP = global.TP || {};
 
 /* BEGIN GENERATED table-cal */
-// From tests/calibration/out/fig-checkpoint.json by npm run generate (tests/lib/write-generated.js).
+// Precomputed calibration constants for fig-checkpoint.
 var CAL = {
   "defaults": {"seed": 88},
   "presets": {},
@@ -131,7 +97,7 @@ var CAL = {
     return bufferOf(seed, k).map(function (i) { return runOf(seed).evals[i].step; });
   }
 
-  /** The readout (FP F1.1): the buffer during the run, the selection at its end. */
+  /** The readout: the buffer during the run, the selection at its end. */
   function readoutText(seed, k) {
     if (k >= N) {
       var s = summaryOf(seed);
@@ -144,7 +110,7 @@ var CAL = {
     return 'At step ' + stepText(k) + ' the buffer holds the checkpoint' + (b.length > 1 ? 's' : '') + ' at step' + (b.length > 1 ? 's ' : ' ') + series(b) + '.';
   }
 
-  /** The named quantities of a state (plan WO-I5.1): the run's, the cursor's, and the model's. */
+  /** The named quantities of a state: the run's, the cursor's, and the model's. */
   function quantitiesOf(seed, k) {
     var s = summaryOf(seed), q = {};
     q['selected-step'] = s.selectedStep;
@@ -173,7 +139,7 @@ var CAL = {
   var doc = global.document;
   if (!doc) return;
 
-  /** Ticks every 5,000 steps (WO-F1.1), in checkpoint units. */
+  /** Ticks every 5,000 steps, in checkpoint units. */
   var TICK_STEPS = 5000;
   function xTicks() { var v = []; for (var s = 0; s <= STEPS; s += TICK_STEPS) v.push(s / INTERVAL); return v; }
   function xOf(r) { return r.t; }
@@ -314,7 +280,7 @@ var CAL = {
             margin: { t: 12, r: 2, b: 2, l: 2 },
             aspect: function (w, phone) {
               /* on a phone the panel is 58 px tall, so that its plot, and the reading element
-                 over it, is 44 px tall (DS §6.8; accessibility finding Z9) */
+                 over it, is 44 px tall */
               if (phone) return 58 / w;
               return pa && pa.H ? pa.H / w : 1.9;
             }
@@ -390,21 +356,7 @@ var CAL = {
     });
   }
 
-  /* ---------- the recap (plan §6.24, R5) ---------- */
-
-  TP.recaps = TP.recaps || {};
-  /** Panel (a) finished at the default seed, with the ring, the open marker and their labels. */
-  TP.recaps['F1.1:default'] = function (el) {
-    var seed = CAL.seed, rows = [];
-    for (var t = 0; t <= N; t++) rows.push(Object.assign({ t: t }, rowOf(seed, t)));
-    var p = C().panel(el, panelA({
-      letter: '', describe: 'validation error against step, at the end of the run',
-      maxHeight: function (w, phone) { return phone ? 180 : 240; },
-      aspect: function (w, phone) { return phone ? 0.5 : 0.42; }
-    }));
-    p.update(function (q) { drawA(q, rows, N, seed, { cursor: false }); });
-    return p;
-  };
+  /* ---------- the recap ---------- */
 
   doc.addEventListener('tp:ready', function () {
     var el = doc.getElementById('fig-checkpoint');

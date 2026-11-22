@@ -1,9 +1,9 @@
 /*
  * chart.js: the chart helpers of version 2 (TP.chart).
  *
- * It carries out series design spec (DS) §11.5 with design system (marks), §5 (labels and
+ * It carries out series series conventions series style with series conventions (marks), §5 (labels and
  * annotations), §6.2 (handles), §8 (linking, reading, tooltips, dismissal) and §9 (motion), as
- * series design spec WO-I4 specifies. The label placer's geometry lives in
+ * series series conventions specifies. The label placer's geometry lives in
  * site/js/lib/placer.js (TP.placer), which this file feeds and renders. Colours come from the role
  * classes and mark classes of site/css/site.css (design system rule 7), so a theme change needs no redraw.
  * Classic script. The pure helpers (snapping, stepping, keys, ticks, interpolation, the ramp) load
@@ -967,6 +967,7 @@
         the next draw. The note's text, and adding or removing the note, read no layout. */
     p.setNote = function (text) {
       text = text == null ? '' : String(text);
+      if (noteSpan && noteSpan.parentNode && noteSpan.textContent === text) return p;
       var was = p._origin;
       if (!text) {
         if (noteSpan && noteSpan.parentNode) {

@@ -1,7 +1,7 @@
 /*
  * halton.js: scrambled, shifted Halton points for the quasi-random search figures (TP.halton).
  *
- * Implements the quasi-random convention of notes/specs/pages-4-6.md ("Shared conventions"),
+ * Implements the quasi-random convention of design notes.md ("Shared conventions"),
  * with the scrambling and shift described in notes/refs/bousquet2017.md (implementation notes).
  * For index i and base b, with d_0, d_1, ... the base-b digits of i (least significant first):
  *

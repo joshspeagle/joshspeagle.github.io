@@ -1,4 +1,4 @@
-/* fig-warmup.css: the layout of F9.2, warmup under the toy's limit (implementation-plan.md WO-F9.2).
+/* fig-warmup.css: the layout of F9.2, warmup under the toy's limit.
    Panel (a) is the first row and the strip (b) the second at every width, and (b) is at most
    120 px tall with its header. The dock holds the presets "ramp" and "hold, then jump" and the
    run strip: one row from 640 px, two rows in the phone layout. The base rate, "Clear the strip",

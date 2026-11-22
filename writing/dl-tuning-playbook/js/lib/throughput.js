@@ -12,7 +12,7 @@
  * per step grows in proportion to B, so the accelerator's peak throughput is B_sat / T0. The
  * constants are arbitrary.
  *
- * Version 2 adds (notes/revamp/implementation-plan.md WO-I8, WO-F3.1, R10):
+ * Version 2 adds:
  *   - a multiplicative log-normal measurement noise: a run at B measures X(B) exp(NOISE_SD z),
  *     with z the run's standard normal;
  *   - a memory limit: a batch size above MEMORY_LIMIT fails for memory;
@@ -20,7 +20,7 @@
  *   - runs(preset, seed), the doubling procedure from B = 8 through the first size that fails;
  *   - mark(runs), version 1's rule: the largest batch size up to which every doubling raised the
  *     measured throughput by at least THRESHOLD (10%, the site's tolerance for measurement noise).
- * NOISE_SD, MEMORY_LIMIT and PRESETS are calibrated in Batch 1 (implementation plan §5.7, C4), and
+ * NOISE_SD, MEMORY_LIMIT and PRESETS are calibrated in, and
  * each is one exported line below. MEMORY_LIMIT and the saturating preset keep version 1's values.
  *
  * Random draws: run k (k = 0 at B = 8) takes normal number k of

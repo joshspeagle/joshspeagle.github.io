@@ -1,7 +1,7 @@
 /*
  * baseline.js: the shapes of the fair and the unfair baseline (TP.baseline), for the static F6.4.
  *
- * New in version 2 (R2, WO-F6.4). The figure draws two curves of validation error against
+ * New in version 2. The figure draws two curves of validation error against
  * u = log10 learning rate, one for the best weight decay ('wd') and one for no weight decay
  * ('none'), each a parabola in u:
  *
@@ -13,13 +13,13 @@
  * exceeds the weight-decay optimum by falseWin(), which lies beyond the band.
  *
  * The curves are shapes, the site's, and fitted to no data. They share Toy S's form and scale (an
- * optimum of 0.23 at 10^-2.5 and a curvature of 0.06 per decade squared). Batch 1 calibrated the
- * constants (implementation plan §5.7, C7, tests/calibration/fig-baseline.calibrate.js), and each is
+ * optimum of 0.23 at 10^-2.5 and a curvature of 0.06 per decade squared). calibrated the
+ * constants, and each is
  * one exported line. PREFERRED is the interval of rates, rounded to 0.1 decade, over which the
  * weight-decay curve stays within BAND of its optimum. The playbook's claim is L1024-L1027.
  *
- * Batch 7 (the lead's ruling on the adoption yardstick): BAND is 0.001, the playbook's retrain
- * variation of about ±0.1% (L1792-L1796) as page 5 reads it, where it was 0.003, three times that.
+ * (the lead's ruling on the adoption yardstick): BAND is 0.001, the playbook's retrain
+ * variation of about ±0.1% (L1792-L1796) as review notes it, where it was 0.003, three times that.
  * E_NONE moved from 0.2315 to 0.2305, so that the fair comparison ties within the new band (a gap of
  * half the band), and PREFERRED narrowed from [-2.7, -2.3] to [-2.6, -2.4], the interval over which
  * the weight-decay curve stays within the new band. The curvature and both optima's rates are kept.
@@ -33,7 +33,7 @@
   var U_NONE = -1.9;                             // optimum of the curve without weight decay
   var E_NONE = 0.2305;                           // its error
   var CURVATURE = 0.06;                          // both curves' curvature per decade squared
-  var BAND = 0.001;                              // half-width of each curve's noise band: the playbook's ±0.1% as page 5 reads it (Batch 7)
+  var BAND = 0.001;                              // half-width of each curve's noise band: the playbook's ±0.1% as review notes it
   var PREFERRED = Object.freeze([-2.6, -2.4]);   // the rates the weight-decay study preferred: where E_wd stays within BAND of E_WD (C7)
   var AXIS = Object.freeze([-4, -1]);            // the learning-rate axis both panels share
 

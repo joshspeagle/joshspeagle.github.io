@@ -208,10 +208,10 @@
       <section class="prose" id="optimizer">
         <h2>Choosing an optimizer</h2>
         <p data-src="151-185">
-          With the architecture settled, the next decision is how to train it. The Playbook treats <a href="https://github.com/google-research/tuning_playbook#choosing-the-optimizer" target="_blank" rel="noopener">choosing the optimizer</a> with the same conservatism it applies to architectures: "Start with the most popular optimizer for the type of problem at hand." No optimizer dominates every workload, and fair optimizer comparisons are notoriously tricky <cite data-ref="choi2019"><span class="cit-num"><a href="#ref-choi2019">[2]</a></span></cite>, making a proven default the safe day-one baseline. Specifically, the authors favor Nesterov momentum SGD <cite data-ref="polyak1964"><span class="cit-num"><a href="#ref-polyak1964">[18]</a></span></cite><cite data-ref="nesterov1983"><span class="cit-num"><a href="#ref-nesterov1983">[17]</a></span></cite><cite data-ref="sutskever2013"><span class="cit-num"><a href="#ref-sutskever2013">[20]</a></span></cite>, alongside Adam <cite data-ref="kingma2014"><span class="cit-num"><a href="#ref-kingma2014">[13]</a></span></cite>, NAdam, and (for decoupled regularization) AdamW <cite data-ref="loshchilov2019"><span class="cit-num"><a href="#ref-loshchilov2019">[16]</a></span></cite>, describing the adaptive family as more general than momentum SGD.
+          With the architecture settled, the next decision is how to train it. The Playbook treats <a href="https://github.com/google-research/tuning_playbook#choosing-the-optimizer" target="_blank" rel="noopener">choosing the optimizer</a> with the same conservatism it applies to architectures: "Start with the most popular optimizer for the type of problem at hand." No optimizer dominates every workload, and fair optimizer comparisons are notoriously tricky <cite data-ref="choi2019"><span class="cit-num"><a href="#ref-choi2019">[2]</a></span></cite>, making a proven default the safe day-one baseline. Specifically, the authors favor Nesterov momentum SGD <cite data-ref="polyak1964"><span class="cit-num"><a href="#ref-polyak1964">[18]</a></span></cite><cite data-ref="nesterov1983"><span class="cit-num"><a href="#ref-nesterov1983">[17]</a></span></cite><cite data-ref="sutskever2013"><span class="cit-num"><a href="#ref-sutskever2013">[20]</a></span></cite>, alongside Adam <cite data-ref="kingma2014"><span class="cit-num"><a href="#ref-kingma2014">[13]</a></span></cite> and NAdam, describing the adaptive family as more general than momentum SGD (modern transformer pipelines usually substitute decoupled AdamW <cite data-ref="loshchilov2019"><span class="cit-num"><a href="#ref-loshchilov2019">[16]</a></span></cite>).
         </p>
         <p data-src="164-176 181-183">
-          The second half of their advice matters just as much: "be prepared to give attention to all hyperparameters of the chosen optimizer." Adam exposes four tunable <dfn data-concept="optimizer-hyperparameters">optimizer hyperparameters</dfn> (learning rate $\eta$, $\beta_1$, $\beta_2$, and $\epsilon$), plus decoupled weight decay $\lambda$ in AdamW. Every extra axis multiplies tuning cost, especially early on when optimizer knobs act as <a data-concept="nuisance-hp" href="01-the-tuning-loop.html#roles">nuisance hyperparameters</a> around other scientific questions. That is why the Playbook suggests starting with SGD at fixed momentum, or AdamW with fixed defaults for $\beta_1$, $\beta_2$, and $\epsilon$, and opening extra parameters only later.
+          The second half of their advice matters just as much: "be prepared to give attention to all hyperparameters of the chosen optimizer." Adam exposes four tunable <dfn data-concept="optimizer-hyperparameters">optimizer hyperparameters</dfn> (learning rate $\eta$, $\beta_1$, $\beta_2$, and $\epsilon$), alongside decoupled weight decay $\lambda$ when using AdamW. Every extra axis multiplies tuning cost, especially early on when optimizer knobs act as <a data-concept="nuisance-hp" href="01-the-tuning-loop.html#roles">nuisance hyperparameters</a> around other scientific questions. That is why the Playbook suggests starting with SGD at fixed momentum, or Adam with fixed defaults for $\beta_1$, $\beta_2$, and $\epsilon$, and opening extra parameters only later.
         </p>
         <p>
           That warning to watch every hyperparameter felt abstract until I plotted update trajectories on a valley low-dimensional enough to see directly.
@@ -566,7 +566,7 @@
             <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18c3-9 7-12 16-13"/><path d="M15 4.5l5 .5-1.5 4.6"/><circle cx="4.5" cy="18" r="1.6"/></svg></span>
             <div>
               <h3>Use the most popular optimizer for the problem type</h3>
-              <p>Keep secondary optimizer hyperparameters at defaults early on ($\gamma$, or AdamW's $\beta_1$, $\beta_2$, $\epsilon$) and unfreeze them as your trial budget grows. <a href="https://github.com/google-research/tuning_playbook#choosing-the-optimizer" target="_blank" rel="noopener">Playbook ↗</a></p>
+              <p>Keep secondary optimizer hyperparameters at defaults early on ($\gamma$, or Adam's $\beta_1$, $\beta_2$, $\epsilon$) and unfreeze them as your trial budget grows. <a href="https://github.com/google-research/tuning_playbook#choosing-the-optimizer" target="_blank" rel="noopener">Playbook ↗</a></p>
             </div>
           </li>
           <li>
@@ -600,9 +600,7 @@
         </p>
       </section>
 
-      <div class="l-wide">
-        <div class="playbook-map" data-active-zone="setup" data-default-node="s_arch"></div>
-      </div>
+      <div class="playbook-map" data-active-zone="setup" data-default-node="s_arch"></div>
 
       <section class="refs" id="references">
         <h2>References</h2>

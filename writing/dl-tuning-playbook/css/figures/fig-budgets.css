@@ -1,8 +1,8 @@
-/* fig-budgets.css: the layout of F3.3, epoch budget against step budget (implementation-plan.md
-   WO-F3.3). From 640 px, panels (a) and (b) sit side by side at equal widths, so that the shared
+/* fig-budgets.css: the layout of F3.3, epoch budget against step budget (series notes
+   ). From 640 px, panels (a) and (b) sit side by side at equal widths, so that the shared
    batch-size axis takes one pixel range in both, and the key of the two fills takes a full row under
    them. In the phone layout the panels stack, (a) above (b), each row at most 180 px tall with its
-   header (design-system.md §3.5 item 4). */
+   header. */
 #fig-budgets .fig-panels {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);

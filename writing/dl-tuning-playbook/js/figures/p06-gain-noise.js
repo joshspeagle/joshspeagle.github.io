@@ -25,7 +25,7 @@
   var TP = global.TP = global.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // computed from this file's apply() at seed 142 for every preset (see the post06 report)
+  // computed from this file's apply at seed 142 for every preset
   var CAL = {"defaults": {"reruns": 1, "noise": 0.1, "gain": 0.15, "seed": 142},
     "presets": {"single-run": {"reruns": 1, "noise": 0.1, "gain": 0.15},
     "five-reruns": {"reruns": 5, "noise": 0.1, "gain": 0.15},

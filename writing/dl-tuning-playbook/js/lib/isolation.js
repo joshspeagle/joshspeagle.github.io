@@ -32,7 +32,7 @@
   var U_RANGE = Object.freeze([-5, -0.5]);
   var V_RANGE = Object.freeze([-7, -1]);
   var U_DIV = -1.5;
-  var N = 100;           // trials in F6.3's study (FP F6.3)
+  var N = 100;           // trials in F6.3's study
   var BUCKETS = 8;       // F6.3's default number of buckets
   var BASELINE_N = 13;   // version 1's round(N / B) at the defaults (the worked case, §5.8)
 

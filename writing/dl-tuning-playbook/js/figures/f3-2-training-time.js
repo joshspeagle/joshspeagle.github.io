@@ -2,8 +2,8 @@
  * f3-2-training-time.js: figure F3.2, training time as a product (fig-training-time), on page 3
  * #training-time.
  *
- * Work order: notes/revamp/implementation-plan.md §6.5 (WO-F3.2), with §6.0. Entry:
- * notes/revamp/figure-plan.md F3.2 and review/synthesis.md R10. Design: notes/revamp/design-system.md
+ * Work order: design notes.md §6.5, with §6.0. Entry:
+ * design notes.md F3.2 and earlier review R10. Design: design notes.md
  * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with two handles and no dock.
  *
  * The model is TP.scaling (site/js/lib/scaling.js) with the knee at F3.1's saturating B_sat
@@ -12,7 +12,7 @@
  * TP.scaling.criticalFromEnd(critical). Each curve is reported relative to its value at batch size
  * 8 (TP.scaling.normalized), so that on the log axis the training-time curve is the sum of the
  * other two. The minimum and the 5% window are TP.scaling.minimum and TP.scaling.window, the
- * computation of tests/calibration/fig-training-time.calibrate.js, so the quantities equal the
+ * computation of calibration checks.calibrate.js, so the quantities equal the
  * ledger's rows at the default and at both presets.
  *
  * The derived state holds the natural logarithms of batch size and of the three curves, so that a
@@ -23,13 +23,13 @@
  * The panel, log-log: x batch size, 8 to 16,384; y each curve relative to batch size 8, over
  * CAL.domains.a.y. Time per step in third gold (open circles), steps to the result in fourth
  * indigo (open diamonds), training time in model blue (filled circles), markers at the powers of
- * two, the batch sizes the model samples (DS §4.2). The minimum of training time is a filled
+ * two, the batch sizes the model samples. The minimum of training time is a filled
  * marker with the callout "minimum". The batch sizes within 5% of the minimum are a highlight
  * window named "within 5% of the minimum (ours)". The knee is a level of the toy in third gold,
  * named on the x axis "accelerator saturates" (phone "saturates"). The reader's batch size is a
  * reader line through the three curves, named on the x axis by its value, with its handle on the
  * axis and a press band along the line. The critical batch size's handle sits on the step curve.
- * A change of `critical` leaves the previous step and training-time curves dashed (DS §4.8).
+ * A change of `critical` leaves the previous step and training-time curves dashed.
  *
  * The parameters: critical (powers of two over CAL.domains.critical, transition, ghost) and batch
  * (powers of two from 8 to 16,384, transition, no ghost), both handles on the panel. The presets
@@ -45,7 +45,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-training-time.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-training-time.
   var CAL = {
     "defaults": {"critical": 4096, "batch": 2048},
     "presets": {"inside": {"critical": 16384}, "beyond": {"critical": 64}},
@@ -138,7 +138,7 @@
     };
   }
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var M = S(), k = knee(), q = measure(values.critical, values.batch);
     var X = CAL.domains.a.x, n = Math.round(PER_DOUBLING * Math.log(X[1] / X[0]) / Math.LN2);
@@ -229,7 +229,7 @@
     C.line(p, s.rows, xOf, yT, { role: 'model', series: 'training-time', key: 'training-time' });
     C.markers(p, s.pts, xOf, yt, { role: 'third', series: 'time-per-step', key: function (r) { return 't-' + r.key; } });
     C.markers(p, s.pts, xOf, yS, { role: 'fourth', series: 'steps', key: function (r) { return 's-' + r.key; } });
-    /* the training-time curve's markers include its minimum, which the thinning of DS §4.2 keeps,
+    /* the training-time curve's markers include its minimum, which the thinning of series style keeps,
        so that no marker at a power of two stands within 24 px of the minimum's */
     var mB = E(s.lmin), mT = E(s.lTmin);
     var tRows = s.pts.concat([{ key: 'minimum', lb: s.lmin, lT: s.lTmin }]).sort(function (a, b) { return a.lb - b.lb; });
@@ -247,7 +247,7 @@
     separateNames(p, kneeName, readerName);
 
     /* The minimum lies inside the window at every state, so its callout names the window as well
-       and may stand in it (DS §5.2 item 7 keeps out the labels a region does not concern). */
+       and may stand in it. */
     C.annotation(p, {
       kind: 'callout', id: 'minimum', text: 'minimum', phone: { header: true }, captionNames: true, names: 'within',
       anchor: { x: mB, y: mT, r: 5, series: 'training-time' }
@@ -290,7 +290,7 @@
      two doublings long, tried from the right end of the axis leftward by one doubling. After a
      settled draw, each label takes the first stretch at which the placer sets it in its full form
      (or its phone form in the phone layout), searched from the start at every settle, so that the
-     positions depend on the settled state alone (DS §5.2). A held draw keeps the last choice. */
+     positions depend on the settled state alone. A held draw keeps the last choice. */
   var LABELS = [
     { id: 'training-time', text: 'training time', phone: 'time', role: 'model', y: 'lT', key: true },
     { id: 'steps', text: 'steps to the result', phone: 'steps', role: 'fourth', y: 'ls' },
@@ -368,7 +368,7 @@
 
   /* The window's name in as few lines as the window's widest stretch holds, from one line to four.
      The reader's line and the knee's level cross the window at some states, and a region's name
-     keeps 1 h clear of both (DS §5.2), so the stretch is the widest part between them. */
+     keeps 1 h clear of both, so the stretch is the widest part between them. */
   var WINDOW_NAMES = [
     ['within 5% of the minimum'],
     ['within 5% of the', 'minimum'],

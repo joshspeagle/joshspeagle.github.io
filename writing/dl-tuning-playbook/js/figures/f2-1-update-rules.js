@@ -1,25 +1,24 @@
 /*
  * f2-1-update-rules.js: figure F2.1, the update rules (#fig-update-rules), on page 2 #optimizer,
- * and its recap TP.recaps['F2.1:summary'] (plan §6.24, R2 on page 4 and R4 on page 9).
+ * and its recap TP.recaps['F2.1:summary'].
  *
- * Work order: notes/revamp/implementation-plan.md §6.3 (WO-F2.1), with §6.0. Entry:
- * notes/revamp/figure-plan.md F2.1, with review/synthesis.md R6 and R54. Design:
- * notes/revamp/design-system.md §3.4, §3.5, §4 to §9. A running figure on TP.fig and TP.run.
+ * Work order: design notes.md §6.3, with §6.0. Entry:
+ * design notes.md F2.1, with earlier review R6 and R54. Design:
+ * design notes.md §3.4, §3.5, §4 to §9. A running figure on TP.fig and TP.run.
  *
  * The model is TP.optimizers (site/js/lib/optimizers.js): the six update rules as README
- * L2034-L2086 write them, on the quadratic with loss scale c (the parameter `scale`: 1, 10 or 100,
- * default 100, Batch 7), condition number 20, rotation 0 and start (-4, 3.5) in the loss's
+ * L2034-L2086 write them, on the quadratic with loss scale c, condition number 20, rotation 0 and start (-4, 3.5) in the loss's
  * coordinates, with target loss TP.optimizers.targetFor(c), 0.01 c. The loss scale moves SGD's
  * fastest rate and bound by its factor while Adam's fastest rate stays (the playbook's L680-L686).
- *   - The run of the shown rules at one learning rate is TP.optimizers.trace(rules, hps), recorded
- *     at every step to the step axis's end (CAL.quantities.model['axis-end']), cached by its
- *     parameters. Its `until` is the step at which every shown rule's run has ended (converged,
- *     diverged or no new minimum for 200 steps), which is TP.optimizers.endStep.
- *   - The summary curve of a rule is TP.optimizers.summary(rule, hp, CAL.tables.rates). At the
- *     rule's default hyperparameters the figure reads CAL.tables.summary[scale], where -1 is a
- *     divergence, -2 a slow run (still falling at the axis's end, drawn with no mark) and null no
- *     progress. Another setting is computed once, on the settle of the change, and
- *     cached; during a drag of a hyperparameter the curve keeps its settled form.
+ * - The run of the shown rules at one learning rate is TP.optimizers.trace(rules, hps), recorded
+ * at every step to the step axis's end (CAL.quantities.model['axis-end']), cached by its
+ * parameters. Its `until` is the step at which every shown rule's run has ended (converged,
+ * diverged or no new minimum for 200 steps), which is TP.optimizers.endStep.
+ * - The summary curve of a rule is TP.optimizers.summary(rule, hp, CAL.tables.rates). At the
+ * rule's default hyperparameters the figure reads CAL.tables.summary[scale], where -1 is a
+ * divergence, -2 a slow run (still falling at the axis's end, drawn with no mark) and null no
+ * progress. Another setting is computed once, on the settle of the change, and
+ * cached; during a drag of a hyperparameter the curve keeps its settled form.
  *
  * The runtime. A step is one step of training. The runtime's state is {t, key}, where key names
  * the cached trace of the run's parameters. advance increments t, and record reads the positions
@@ -30,30 +29,30 @@
  * above the focus rule's equation and sliders, which takes no height from the working area on a
  * desktop (the dock and more would each add a row) and keeps the phone dock to one row.
  *
- * Tokens (DS §2.3 rule 3): the shown rules take model blue, third gold and fourth indigo in the
+ * Tokens: the shown rules take model blue, third gold and fourth indigo in the
  * order of the playbook (TP.optimizers.RULES), in all three panels. Their markers are the filled
  * circle, the open circle and the open diamond.
  *
- * The panels (WO-F2.1 letters them in reading order, so the summary panel is (b)):
- *   (a) the quadratic's contours (structure), each shown rule's path in its trail tone and its
- *       position at the cursor as its marker; a rule whose path has diverged ends in a cross where
- *       the path leaves the frame. Capped at 360 px tall.
- *   (b) steps to the target against learning rate: one curve per shown rule, crosses at the top
- *       edge where the rule diverges, open markers at the top edge where it makes no progress
- *       (named "no progress"), a ring on each rule's fastest rate (the largest rate on a tie), the
- *       handle for the learning rate with its reader line, and the focus rule's stability limit
- *       as a dash-dotted level named on the axis ("2 / sharpness" for SGD, "stability limit" for
- *       momentum and Nesterov; "limit" in the phone layout).
- *   (c) loss against step (the record panel): each rule's loss up to the cursor, a cross at the top
- *       edge at the step a rule diverged, the target loss dotted and labelled, the cursor, and the
- *       previous run dashed as the ghost. A frame of play that moves the cursor forward appends
- *       each line's new segment and the markers it passed to the last render and moves the cursor
- *       (stepC), with the labels as that render placed them; a divergence in the new steps, a new
- *       mark or the cursor meeting a placed label, or any other change renders (c) in full, as
- *       does every settled draw.
- * The rule names on (b) and (c) are selecting labels (DS §6.4) that set the focus rule. The focus
+ * The panels (letters them in reading order, so the summary panel is (b)):
+ * (a) the quadratic's contours (structure), each shown rule's path in its trail tone and its
+ * position at the cursor as its marker; a rule whose path has diverged ends in a cross where
+ * the path leaves the frame. Capped at 360 px tall.
+ * (b) steps to the target against learning rate: one curve per shown rule, crosses at the top
+ * edge where the rule diverges, open markers at the top edge where it makes no progress
+ * (named "no progress"), a ring on each rule's fastest rate (the largest rate on a tie), the
+ * handle for the learning rate with its reader line, and the focus rule's stability limit
+ * as a dash-dotted level named on the axis ("2 / sharpness" for SGD, "stability limit" for
+ * momentum and Nesterov; "limit" in the phone layout).
+ * (c) loss against step (the record panel): each rule's loss up to the cursor, a cross at the top
+ * edge at the step a rule diverged, the target loss dotted and labelled, the cursor, and the
+ * previous run dashed as the ghost. A frame of play that moves the cursor forward appends
+ * each line's new segment and the markers it passed to the last render and moves the cursor
+ * (stepC), with the labels as that render placed them; a divergence in the new steps, a new
+ * mark or the cursor meeting a placed label, or any other change renders (c) in full, as
+ * does every settled draw.
+ * The rule names on (b) and (c) are selecting labels that set the focus rule. The focus
  * rule's update, as README L2034-L2086 writes it, sits in div.fig-side above its sliders, each
- * symbol wrapped in \htmlClass{hp hp-<parameter>} (DS §6.3).
+ * symbol wrapped in \htmlClass{hp hp-<parameter>}.
  *
  * TP.recaps['F2.1:summary'](el, {rules, bound, scale}) draws panel (b) alone for the rules named,
  * at default hyperparameters and the default loss scale unless scale names another, with each rule's fastest rate ringed and, with bound=1, the bound of each
@@ -64,7 +63,7 @@
   var TP = global.TP = global.TP || {};
 
 /* BEGIN GENERATED table-cal */
-// From tests/calibration/out/fig-update-rules.json by npm run generate (tests/lib/write-generated.js).
+// Precomputed calibration constants for fig-update-rules.
 var CAL = {
   "defaults": {"rules": ["sgd", "momentum", "adam"], "focus": "sgd", "lr": 0.082, "scale": "1"},
   "presets": {"sgd-fastest": {"scale": "1", "lr": 0.091}, "loss-scale-100": {"scale": "100", "lr": 0.082}},
@@ -284,14 +283,13 @@ var CAL = {
   var RATES = CAL.tables.rates;
   /** The loss scale of the values v, as a number (the default scale when v names none). */
   function scaleOf(v) { return +((v && v.scale) || CAL.defaults.scale); }
-  function targetOf(v) { return O.targetFor(scaleOf(v)); }
   var AXIS_END = CAL.quantities.model['axis-end'];
   var ROLES = ['model', 'third', 'fourth'];
   var NAME = {};
   O.RULES.forEach(function (r) { NAME[r] = O.info[r].name; });
   var BOUNDED = { sgd: true, momentum: true, nesterov: true };
 
-  /* the figure's parameter for each hyperparameter a rule introduces (WO-F2.1) */
+  /* the figure's parameter for each hyperparameter a rule introduces */
   var HP = {
     sgd: {},
     momentum: { gamma: 'mg' },
@@ -439,7 +437,7 @@ var CAL = {
   function ordered(rules, focus) {
     return rules.filter(function (r) { return r === focus; }).concat(rules.filter(function (r) { return r !== focus; }));
   }
-  /** The readout (FP F2.1, WO-F2.1): each shown rule's result at the current rate, focus rule first. */
+  /** The readout: each shown rule's result at the current rate, focus rule first. */
   function readoutText(v, tr, t) {
     var rules = ordered(tr.rules, v.focus), running = false;
     var parts = rules.map(function (r) {
@@ -464,7 +462,7 @@ var CAL = {
     return out;
   }
 
-  /** The named quantities (plan WO-I5.1): the run's at the current rate, and the model's. */
+  /** The named quantities: the run's at the current rate, and the model's. */
   function quantitiesOf(v, tr, t) {
     var q = { lr: v.lr, scale: scaleOf(v), 'end-step': tr.until, step: t, focus: v.focus, rules: tr.rules.join('+') };
     tr.rules.forEach(function (r) {
@@ -528,7 +526,7 @@ var CAL = {
   /* ---- (a) the quadratic's contours ---- */
   var START = [-4, 3.5];
   var contourCache = null;
-  /** The contours at 1, 1/4, 1/16, ... of the starting loss, as closed ellipses (v1's form). */
+  /** The contours at 1, 1/4, 1/16,... of the starting loss, as closed ellipses (v1's form). */
   function contours() {
     if (contourCache) return contourCache;
     var P = O.problem({}), kappa = P.kappa, S = kappa * START[0] * START[0] + START[1] * START[1], rings = [];
@@ -667,7 +665,7 @@ var CAL = {
   }
   /** A rule's mark at step t in (a): its marker at its position, or, where the path has left the
       frame, a cross where it left when the run has diverged by now and otherwise the marker at the
-      frame's edge where it left (DS §9 rule 3). {kind: 'marker' | 'cross', pt: [x, y]} */
+      frame's edge where it left. {kind: 'marker' | 'cross', pt: [x, y]} */
   function headOf(run, t) {
     var rx = run.x, ry = run.y, last = Math.min(t, run.steps), head = [rx[last], ry[last]];
     if (inFrameA(head[0], head[1])) return { kind: 'marker', pt: head };
@@ -748,8 +746,7 @@ var CAL = {
       maxHeight: function (w, phone) { return phone ? 240 : 236; }
     }, o || {});
   }
-  /** Rows kept at least px apart along x, the first kept (DS §4.2 thinning, for the crosses and the
-      open markers along the top edge, whose rates are closer together than their marks). */
+  /** Rows kept at least px apart along x, the first kept. */
   function thinned(p, rows, px) {
     var out = [], last = -Infinity;
     rows.forEach(function (r) {
@@ -794,7 +791,7 @@ var CAL = {
           placed.np = true;
           var q = npk[0];
           /* in the phone layout the name is dropped where no position admits it, since the header
-             of (b), 170 px wide, then wraps to three lines with the rules' names (Batch 7); the
+             of (b), 170 px wide, then wraps to three lines with the rules' names; the
              caption names the open markers */
           items.push({ id: 'no-progress', text: 'no progress', tone: 'ink', role: role, series: 'np-' + r,
             feature: { type: 'point', x: q.lr, y: top, r: 5.5 }, captionNames: true, phone: p.phone ? null : { header: true } });
@@ -811,18 +808,17 @@ var CAL = {
           feature: { type: 'line', points: longest.map(function (x) { return [x.lr, x.crossing]; }) }, captionNames: true, keySentence: true };
         if (o.select) it.select = { pressed: o.focus === r, onPress: o.select(r) };
         /* a name with no admissible position goes to the panel header, in the phone layout too,
-           so that (b) names every shown rule and "no progress" (reader finding 15) */
+           so that (b) names every shown rule and "no progress" */
         it.phone = { header: true };
         items.push(it);
       }
     });
-    /* the ring on each rule's fastest rate, except where two rules' fastest rates lie within 10 px
-       (DS §4.4) */
+    /* the ring on each rule's fastest rate, except where two rules' fastest rates lie within 10 px */
     fastest.forEach(function (a) {
       var near = fastest.some(function (b) { return b !== a && Math.hypot(a.X - b.X, a.Y - b.Y) < 10; });
       if (!near) C().ring(p, a.lr, a.steps, { role: a.role, series: a.series, key: 'fastest-' + a.rule });
     });
-    /* the divergence bound as a level of the toy, named on the axis (DS §4.7, §5.5) */
+    /* the divergence bound as a level of the toy, named on the axis */
     var named = [];
     if (o.bound) {
       rules.forEach(function (r, i) {
@@ -903,7 +899,7 @@ var CAL = {
       maxHeight: function (w, phone) { return phone ? 240 : 236; }
     };
   }
-  /* the steps at which (c) draws markers: log-spaced about 24 px apart (DS §4.2) */
+  /* the steps at which (c) draws markers: log-spaced about 24 px apart */
   var markSteps = { w: 0, list: [] };
   function markStepsFor(p) {
     if (markSteps.w === p.width) return markSteps.list;
@@ -954,7 +950,7 @@ var CAL = {
         var gone = run.divergedAt != null && t >= run.divergedAt;
         if (gone) C().cross(p, [run.divergedAt], function (s) { return s; }, function () { return NaN; }, { role: role, series: series, edge: 'top' });
         /* a diverged rule's curve runs along the top edge, so its name stands at its cross; on a
-           desktop a name with no admissible position goes to the panel header (DS §5.6) */
+           desktop a name with no admissible position goes to the panel header */
         var feat = gone ? { type: 'point', x: run.divergedAt, y: d.y[1], r: 5 } : { type: 'line', of: series };
         var it = { id: 'c-' + r, text: NAME[r], role: role, series: series, feature: feat, captionNames: true, keySentence: true };
         if (!p.phone) it.phone = { header: true };
@@ -968,8 +964,7 @@ var CAL = {
   }
 
   /*
-   * (c) in a frame of play, drawn onto the last render (plan WO-F2.1, the Batch 5 ruling on the
-   * frame cost). A full render of (c) on every step rebuilds both loss lines, the markers, the
+   * (c) in a frame of play, drawn onto the last render. A full render of (c) on every step rebuilds both loss lines, the markers, the
    * label placement and its index. In a frame of play that only moves the cursor forward, stepC
    * appends each rule's new segment of the loss line and the markers of the steps it passed, and
    * moves the cursor and its name on the step axis. The labels stand as the last render placed
@@ -1363,30 +1358,7 @@ var CAL = {
     });
   }
 
-  /* ---------- the recap (plan §6.24, R2 and R4) ---------- */
-
-  TP.recaps = TP.recaps || {};
-  /** Panel (b) alone for the rules the setting names, at default hyperparameters and the default
-      loss scale (or the setting's scale), each fastest rate ringed, and with bound=1 each SGD-family
-      rule's bound named on the axis. */
-  TP.recaps['F2.1:summary'] = function (el, setting) {
-    setting = setting || {};
-    var names = String(setting.rules || 'sgd+adam').split('+');
-    var rules = O.RULES.filter(function (r) { return names.indexOf(r) >= 0; }).slice(0, 3);
-    var bound = String(setting.bound || '') === '1';
-    var v = { scale: String(setting.scale || CAL.defaults.scale) }, sums = {};
-    rules.forEach(function (r) { sums[r] = summaryOf(r, v, true); });
-    var p = C().panel(el, panelBOpts({
-      letter: '', describe: 'steps to the target against learning rate, at default hyperparameters',
-      /* the drawing, the panel's header included, is at most 240 px tall at 1440 px and 180 px in
-         the phone layout (plan §6.24). Above 640 px the SVG leaves 28 px for the panel's header, which
-         R2's label "no progress" takes at 1440 px (20 px and a 4-px gap). */
-      maxHeight: function (w, phone) { return phone ? 180 : 212; },
-      aspect: function (w, phone) { return phone ? 0.5 : 0.36; }
-    }));
-    p.update(function (q) { drawB(q, rules, v, { summaries: sums, bound: bound ? 'all' : false }); });
-    return p;
-  };
+  /* ---------- the recap ---------- */
 
   doc.addEventListener('tp:ready', function () {
     var el = doc.getElementById('fig-update-rules');

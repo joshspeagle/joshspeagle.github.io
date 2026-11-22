@@ -1,23 +1,23 @@
 /*
  * f4-2-spread.js: figure F4.2, spreading a fixed number of trials (fig-spread), on page 4 #budget.
  *
- * Work order: notes/revamp/implementation-plan.md §6.8 (WO-F4.2), with §6.0. Entry:
- * notes/revamp/figure-plan.md F4.2 and review/synthesis.md R3 and R14. Design:
- * notes/revamp/design-system.md §3.4, §3.5, §4, §5, §6 and §9. A fixed-frame figure with a width
+ * Work order: design notes.md §6.8, with §6.0. Entry:
+ * design notes.md F4.2 and earlier review R3 and R14. Design:
+ * design notes.md §3.4, §3.5, §4, §5, §6 and §9. A fixed-frame figure with a width
  * handle on both panels, two segment controls in the dock, three presets and "Draw again".
  *
  * The model is TP.desiderata (site/js/lib/desiderata.js), rebuilt by C6. The probability curve of
  * panel (a) is never computed in the page: the 30 curves (2 to 6 scientific values by 24, 48 or 96
  * trials by the two gap settings, at the 39 widths of CAL.tables.widths) are the table
  * CAL.tables.curves, which
- * tests/calibration/fig-spread.calibrate.js writes from TP.desiderata.curve over the fixed repeat
+ * calibration checks.calibrate.js writes from TP.desiderata.curve over the fixed repeat
  * seeds 1 to 200. A change of any control therefore costs a lookup, and "Draw again" never changes
  * the curve. Panel (b) is TP.desiderata.study at the current setting and seed.
  *
- * The derived state carries keyed rows (DS §9): the curve's 39 points ('w0' to 'w38'), the studies
+ * The derived state carries keyed rows: the curve's 39 points ('w0' to 'w38'), the studies
  * ('v1' to 'v6') and their trials ('v<j>-<i>'). A study's trials depend on its own seed and on the
  * first n points of its sequence, so a change of the number of values or trials keeps the trials
- * that remain, and a change of width maps the same sequence indices into the new range (DS §9
+ * that remain, and a change of width maps the same sequence indices into the new range series style
  * rule 6). Numbers that must stay whole (the pick) are kept in strings.
  *
  * The panels.
@@ -28,7 +28,7 @@
  *       y axis in the reader token. The region names "too narrow: the optimum is outside" over the
  *       widths below the width at which the truly best value's optimum enters the range, and "too
  *       wide: too sparse" along the curve from its best width to 5 decades. A change of `values`
- *       or `trials` leaves the previous curve dashed (DS §4.8).
+ * or `trials` leaves the previous curve dashed.
  *   (b) one study per scientific value, one row per value in six fixed slots, so the panel's height
  *       never changes: each row's trials as filled markers against the learning rate (log10 units
  *       over CAL.domains.b.x), the height inside a row the trial's validation error above the toy's
@@ -44,19 +44,19 @@
  * transition, no ghost), gap ('separated' or 'close', no control, transition, ghost: set by the
  * preset "values close together" and cleared by Reset; the readout names it while it stands) and
  * the seed ("Draw again" in more, cut). The presets "too narrow", "too wide", "a fourth value" (key
- * fourth-value) and "values close together" (key close-values, Batch 7 ruling) came from CAL.
+ * fourth-value) and "values close together" came from CAL.
  *
  * 2026-11 review (post01): panel (b) redrawn as one strip per option (see drawB), panel (a) shorter,
  * the preset buttons removed (the guided tour sets values through data-params), and the controls
  * renamed "Options compared" and "Total trials". The gap parameter stays, without a control. "Draw again" and Reset sit in
- * div.fig-controls-more (DS §3.5 item 8).
+ * div.fig-controls-more.
  */
 (function () {
   'use strict';
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-spread.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-spread.
   var CAL = {
     "defaults": {"values": 3, "trials": 48, "width": 3, "gap": "separated"},
     "presets": {
@@ -340,7 +340,7 @@
   /* a trial's height in its row: sqrt of its error above the floor over the curvature, in decades */
   function depth(y) { return Math.sqrt(Math.max(0, y - floor()) / D().CURVATURE); }
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var S = values.values, T = +values.trials, W = values.width, G = values.gap, M = D();
     var curve = curveOf(S, T, G), b = best(curve), def = best(curveOf(CAL.defaults.values, CAL.defaults.trials));
@@ -425,7 +425,7 @@
        value's optimum enters the range; "too wide" runs along the curve from its best width. */
     /* In the phone layout the region is about 56 px wide and the curve rises at its right edge, so
        no position inside it keeps 1 h from the curve. The name's phone form is then the panel
-       header (DS §5.6), where it names the widths the region spans. */
+       header, where it names the widths the region spans. */
     C.annotation(p, {
       kind: 'region', id: 'too-narrow', captionNames: true,
       text: p.phone ? 'too narrow: below ' + fmt.decades(s.enters) : narrowText(p), phone: p.phone ? { header: true } : { text: 'too narrow' },
@@ -449,7 +449,7 @@
 
   /* The name of the narrow region in as few lines as the region's width holds, from one line to
      six. The room ends 1.5 h before the curve first leaves zero, or before the reader's line where
-     that stands inside the region, since both are rivals of the name (DS §5.2). */
+     that stands inside the region, since both are rivals of the name. */
   var NARROW = [
     ['too narrow: the optimum is outside'], ['too narrow:', 'the optimum is outside'], ['too narrow:', 'the optimum', 'is outside'],
     ['too narrow:', 'the', 'optimum', 'is outside'], ['too', 'narrow:', 'the', 'optimum', 'is outside'],

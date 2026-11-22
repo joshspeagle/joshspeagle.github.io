@@ -1,10 +1,10 @@
 /*
  * desiderata.js: the toy for spreading a fixed number of trials (TP.desiderata), for F4.2.
  *
- * Version 1's p4-desiderata.js (TP.models.desiderata), rebuilt by Batch 1 (implementation plan §5.7,
- * C6, and WO-F4.2) to the conditions of synthesis ruling R3. The stated form is kept: one quadratic
+ * Version 1's p4-desiderata.js (TP.models.desiderata), rebuilt by (implementation series conventions,
+ * C6, and ) to the conditions of synthesis ruling R3. The stated form is kept: one quadratic
  * valley per scientific value in the nuisance learning rate. The constants are arbitrary and were
- * chosen by measurement (notes/revamp/calibration/c6-design.md):
+ * chosen by measurement:
  *   - the scientific values are a fixed list, VALUES, and a design with S values uses the first S of
  *     it, so adding a value never moves the truly best one (the second value, s = 0.2, at every S);
  *   - the best value's gap to each neighbour in E_min is GAP = 6 times SIGMA, and the setting
@@ -25,11 +25,11 @@
  *   So at every S the narrowest range that holds every value's optimum is the one the truly best
  *   value's optimum enters, 1.2 decades, and each value's optimum leaves the range below 2|offset|
  *   decades (1.2 for the truly best value, 0.6 for the third and fourth, 0.3 for the fifth and
- *   sixth, never for the first). Batch 4's figure fixes set this layout, which replaced a line of
- *   optima 0.6 decades apart (the first at the centre), under the lead's ruling on the page 4 reads:
+ * sixth, never for the first). figure fixes set this layout, which replaced a line of
+ * optima 0.6 decades apart (the first at the centre), under the lead's ruling on the review notes:
  *   at the width where the curve peaks, every value's optimum lies inside the range, and the truly
  *   best value's optimum is the farthest from the range's centre. With the old line the peak (1.375
- *   decades) left the third value's optimum outside. Among the layouts tried (tests/calibration/
+ * decades) left the third value's optimum outside. Among the layouts tried (calibration checks
  *   fig-spread.calibrate.js), this one also keeps every curve's maximum falling as values are added.
  * One study per scientific value, n = floor(T / S) trials each, over the range
  * [CENTER - W/2, CENTER + W/2]. Study j of a design with seed d places its trials at the first n
@@ -39,8 +39,8 @@
  * argmin_j E_min(s_j). P is the share of the REPEATS designs, with seeds 1 .. REPEATS, whose pick is
  * the truly best value. curve(S, T) gives P at each width of WIDTHS.
  *
- * Batch 7 (the lead's ruling on the practitioner's finding 3): SIGMA is 0.001, the playbook's retrain
- * spread of about ±0.1% as page 5 reads it, where it was 0.0001. The pick depends on the errors only
+ * (the lead's ruling on the practitioner's finding 3): SIGMA is 0.001, the playbook's retrain
+ * spread of about ±0.1% as review notes it, where it was 0.0001. The pick depends on the errors only
  * through their differences over the noise, so the gaps (6 SIGMA) and CURVATURE were scaled by the
  * same factor of 10 (0.0006 to 0.006, and 0.24 to 2.4). Every probability of the repeat designs is
  * therefore unchanged, and so is panel (b)'s depth, sqrt((E - E_min) / CURVATURE). Kept at 0.24, the
@@ -52,7 +52,7 @@
  * sequence is the plain radical inverse plus the shift, and the shift is the first uniform of
  * TP.prng.create(deriveSeed(seed, 'halton:2')) (both stated in halton.js). The repeats draw that
  * uniform and their normals with prng.js's generator written out inline, which allocates nothing
- * per stream, and cache the shifts and noise of each (repeat seed, j). tests/lib/desiderata.test.js
+ * per stream, and cache the shifts and noise of each (repeat seed, j). calibration checks.test.js
  * checks the direct numbers against TP.halton and TP.prng. Needs prng.js and halton.js, looked up
  * when called.
  */

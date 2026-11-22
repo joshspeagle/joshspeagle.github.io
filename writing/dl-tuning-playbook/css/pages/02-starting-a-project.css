@@ -132,7 +132,6 @@
 .p02-dot.p02-c-sgd, .p02-bar.p02-c-sgd { fill: var(--model); }
 .p02-dot.p02-c-momentum, .p02-bar.p02-c-momentum { fill: var(--third); }
 .p02-dot.p02-c-adam, .p02-bar.p02-c-adam { fill: var(--fourth); }
-.p02-dot { stroke: var(--surface); }
 .p02-bar { stroke: none; }
 .p02-bar.is-floor { opacity: 0.75; }
 .p02-strip-bg { fill: var(--surface-2); stroke: none; }

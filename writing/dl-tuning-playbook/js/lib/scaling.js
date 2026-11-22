@@ -11,11 +11,11 @@
  * The time per step is the toy accelerator's (throughput.js) with no input limit and its knee at
  * B_sat = knee, t(B) = T0 (1 + (B / knee)^P)^(1/P), and training time is T(B) = t(B) S(B).
  * Version 2 reports each curve relative to its value at B_REF = 8, so that on log axes the
- * training-time curve is the sum of the other two (WO-F3.2).
+ * training-time curve is the sum of the other two.
  *
  * The minimum of T over B is at B* = knee (B_crit / knee)^(1 / (P + 1)): setting d ln T / d ln B
  * to zero gives x^P / (1 + x^P) = r / (x + r) with x = B / knee and r = B_crit / knee, which
- * reduces to x^(P + 1) = r (our algebra; tests/lib/scaling.test.js checks it numerically).
+ * reduces to x^(P + 1) = r.
  * d ln T / d ln B rises with B, so T falls to B* and rises after it, and the batch sizes within
  * WINDOW of the minimum form one interval, found by bisection on each side.
  *
@@ -27,7 +27,7 @@
  * PERFECT_TOLERANCE (20%, Zhang et al. 2024) above the perfect-scaling line S_min B_crit / B.
  * That ratio is 1 + B / B_crit, so the point is B = 0.2 B_crit = B_crit / 5 (version 1's algebra).
  *
- * B_CRIT is F3.3's B_crit, calibrated in Batch 1 (C4, notes/revamp/calibration/c4-batch.md): 320, the
+ * B_CRIT is F3.3's B_crit, calibrated in : 320, the
  * B_crit of F3.2's preset "beyond" (critical batch size 64), so F3.3 draws a curve F3.2 draws. F3.2's
  * default B_crit, 20,480, would put the step budget's cut off the axis. EPOCH_MULTIPLE keeps version
  * 1's value, which C4 confirmed. The knee is F3.1's saturating preset, read from TP.throughput when
@@ -37,7 +37,7 @@
   'use strict';
   var TP = global.TP = global.TP || {};
 
-  var B_REF = 8;               // curves are reported relative to their value here (WO-F3.2)
+  var B_REF = 8;               // curves are reported relative to their value here
   var B_MAX = 16384;           // the largest batch size F3.2 and F3.3 draw
   var B_CRIT = 320;            // F3.3's B_crit, that of F3.2's preset "beyond" (C4; version 1's was 512)
   var EPOCH_MULTIPLE = 2;      // the epoch budget m, in units of S_min B_crit (version 1's; C4)

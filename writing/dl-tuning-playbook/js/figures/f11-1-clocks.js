@@ -1,7 +1,7 @@
 /*
  * f11-1-clocks.js: one training run evaluated on a timer and on a step schedule (fig-clocks).
  *
- * Revised 2026-11 (post09 review). The figure is now a fixed figure with one control, the
+ * Revised 2026-11. The figure is now a fixed figure with one control, the
  * evaluation schedule ("every 25 s" or "every 250 steps"), and a hidden focus parameter that the
  * guided tour sets. It makes the Playbook's claim (README "Setting up periodic evaluations":
  * evaluate at regular step intervals, not time intervals) visible as three linked panels:
@@ -130,7 +130,7 @@
     return { timer: inT / n, step: inS / n };
   };
 
-  /** The derived state for the values. Every array's rows carry a key (DS §9). */
+  /** The derived state for the values. Every array's rows carry a key. */
   function apply(values) {
     var clk = clock(), d = clk.derived, c = clk.clock;
     var schedule = values.schedule || 'time';

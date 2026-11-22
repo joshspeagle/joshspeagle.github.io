@@ -1,9 +1,9 @@
 /*
  * Toy D: expected-loss dynamics of SGD on a quadratic with one sharp direction.
  *
- * Spec: notes/specs/pages-7-9.md ("Preamble: shared toy training dynamics"), with the
- * curvature rule revised in notes/specs/addenda-literature.md ("Toy D preamble").
- * Calibration and timings: notes/toyD-calibration.md.
+ * Spec: design notes.md ("Preamble: shared toy training dynamics"), with the
+ * curvature rule revised in design notes.md ("Toy D preamble").
+ * Calibration and timings: design notes.md.
  *
  * Model. Fixed directions i = 1..n (curvatures params.h) and one sharp direction s.
  * Each step with learning rate eta_t updates the second moments exactly:
@@ -20,7 +20,7 @@
  * Learning-rate scale. Every rate the API takes or returns (a schedule's values, stepState's eta,
  * hStar's eta, run's lr, trace's eta, unstableBaseLR's result) is the printed rate. The model's
  * dynamics above read the model rate eta = printed rate / LR_SCALE, with LR_SCALE = 0.5 (build log,
- * Batch 7, the first ruling): the scale puts the unstable base rate on the quarter-decade grid at
+ *, the first ruling): the scale puts the unstable base rate on the quarter-decade grid at
  * 10^-1.5 = 0.0316, the rate above which Toy S's trials diverge, so that the worked case's study and
  * its sweeps read one learning-rate axis. The products eta_t h_s (trace's firstAbove, stepsAbove and
  * peakEtaH) use the model rate, so the stability limit on the printed axis is 2 LR_SCALE / h_s
@@ -108,7 +108,7 @@
   var N_EVAL = 400;
   var DEFAULT_STEPS = 20000;
   // The printed rate over the model rate (the header's "Learning-rate scale"). One half puts the
-  // unstable base rate at 10^-1.5, Toy S's divergence threshold (build log, Batch 7, first ruling).
+  // unstable base rate at 10^-1.5, Toy S's divergence threshold.
   var LR_SCALE = 0.5;
   function modelRate(eta) { return eta / LR_SCALE; }
   // The constants in the printed rate's units (the header's "Learning-rate scale"), for the texts.

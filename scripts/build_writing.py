@@ -388,11 +388,6 @@ def _populate_figures(text: str) -> str:
     main_body = re.sub(
         r'(<figure\b[^>]*>)([\s\S]*?)(</figure>)', _number_fig, main_body
     )
-    main_body = re.sub(
-        r'(<a\b[^>]*\bclass="[^"]*\bfigref\b[^"]*")>\s*data-static-figref="[^"]*">([\s\S]*?</a>)',
-        r'\1 data-static-figref="1">\2',
-        main_body,
-    )
 
     def _fill_figref(m: re.Match) -> str:
         open_a, inner, close_a = m.group(1), m.group(2), m.group(3)
@@ -523,7 +518,6 @@ def build_all() -> int:
 
             has_flowmap = (
                 'class="playbook-map"' in text
-                or 'class="flowmap"' in text
                 or "flowmap.js" in text
                 or "playbook-map.js" in text
             )

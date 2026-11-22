@@ -1,10 +1,10 @@
 /*
  * schedules.js: closed-form learning-rate schedules for extending a round (TP.schedules), the model of
- * figure F8.3 and of self-check SC5.5 (notes/revamp/figure-plan.md F8.3; notes/revamp/
- * implementation-plan.md WO-I8, WO-F8.3 and §6.23).
+ * figure F8.3 and of self-check SC5.5 (design notes.md F8.3; design notes
+ * series notes, and §6.23).
  *
- * Ported from version 1's p7-schedule.js (notes/revamp/v1-archive/site/js/figures/), figure
- * `round-schedule-extension` of notes/specs/pages-7-9.md, with every number unchanged. The base rate is
+ * Ported from version 1's p7-schedule.js, figure
+ * `round-schedule-extension` of design notes.md, with every number unchanged. The base rate is
  * 1, Round 1 has length N = 1 and Round 2 length k:
  *   inverse square root  eta(t) = sqrt(t0 / (t0 + t)), t0 = 0.1 N in both rounds;
  *   linear               constant 1 until L - D, then linear to 0 at L; Round 1 has D = (1 - c) N;
@@ -19,7 +19,7 @@
  *   linear               share = mean = 1 - D / (2 L);
  *   cosine               share = mean = 1/2;  continued: share = mean = 1 / (2 k).
  *
- * The additions of version 2 (WO-I8): the linear pitfall beside the cosine one, and the fraction of a
+ * The additions of version 2: the linear pitfall beside the cosine one, and the fraction of a
  * schedule below half the base rate, for the linear and cosine families of F8.3. For a family, the
  * kinds are 'round1' (length 1), 'extension' (the playbook's Round 2, length k: the linear decay keeps
  * its length, L1348-L1349; the cosine stretches to k, L1350-L1352) and 'pitfall' (Round 1 continued at
@@ -28,7 +28,7 @@
  *            pitfall (1 - D/2, k], (k - 1 + D/2)/k;  with D = 1 - c
  *   cosine   round1 (1/2, 1], 1/2;  extension (k/2, k], 1/2;  pitfall (1/2, k], (k - 1/2)/k
  * FACTOR (k) and CONSTANT_FRACTION (c) hold F8.3's settings, version 1's defaults of 4 and 0.8, which
- * Batch 1 calibrates.
+ * calibrates.
  *
  * API (no DOM):
  *   T0, COOLDOWN, invSqrt(t), linear(t, L, D), cosine(t, L), continued(t)

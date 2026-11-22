@@ -1,59 +1,10 @@
-/*
- * f6-3-isolation.js: figure F6.3, the isolation plot built from a cloud (fig-isolation), on page 6
- * #isolation, and its recap TP.recaps['F6.3:round'] (R6, page 10 #round).
- *
- * Work order: notes/revamp/implementation-plan.md §6.13 (WO-F6.3), with §6.0 and §6.24. Entry:
- * notes/revamp/figure-plan.md F6.3, with review/synthesis.md R2 and R22. Design:
- * notes/revamp/design-system.md §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with linked
- * views and a slice handle.
- *
- * The model is TP.isolation (site/js/lib/isolation.js) on Toy S: TP.isolation.study({seed}) gives
- * the 100 trials, TP.isolation.buckets(trials, B) the B equal-width buckets of log10 weight decay
- * over [-7, -1] with each bucket's best feasible trial, and an empty bucket (or one with no
- * feasible trial) breaks the isolation curve. This is the computation of
- * tests/calibration/fig-isolation.calibrate.js, so the quantities equal the ledger's rows at the
- * default.
- *
- * The panels, linked by C.link with the trial's key ("t1" to "t100"):
- *   (a) learning rate against weight decay, log axes: the feasible trials as filled model-blue
- *       markers and the diverged ones as model-blue crosses at their hyperparameters. The header
- *       note gives "k of 100 diverged" (DS §4.5).
- *   (b) validation error against weight decay: every trial in context grey, the diverged ones as
- *       grey crosses at the frame's top edge (their error is Toy S's cap, 0.8, the top of the
- *       domain), and the isolation curve in model blue through the best trial of each bucket,
- *       with markers on those trials, broken at a bucket that has no feasible trial. A change of
- *       `buckets` leaves the previous curve dashed (DS §4.8).
- *   The slice is a reader window over the weight-decay axis of both panels, with one handle at
- *   its centre on each panel's axis, and on (a)'s alone in the phone layout, where (a) stands
- *   directly above (b) (work-order exceptions to DS §4.10's two edge handles and, on a phone, to
- *   "either panel"). The
- *   slice's best trial is ringed in both panels. The axis titles name the roles: "weight decay, the
- *   scientific hyperparameter" and "learning rate, the nuisance hyperparameter" (the phone form of
- *   the second is "learning rate", because a 120-px plot cannot hold the full title, and the first
- *   takes the phone form "weight decay (scientific)" where its measured width exceeds the room
- *   under (b)'s frame, below about 375 px). (b) names the
- *   curve "isolation curve", as a direct label on the curve where the placer admits one and
- *   otherwise as a callout to one of its markers, and in the phone layout in (b)'s header; it names
- *   the ring "best trial in the slice" (phone "best in slice") as a callout. Panel (b)'s error axis
- *   starts one 0.05 step below the lowest error (CAL), so that the names have room under the curve.
- *
- * The parameters: buckets (4, 8, 16; transition, ghost; segment "Buckets" in more) and slice (the
- * bucket index, 0 to buckets - 1; transition, no ghost; the handles), with the seed ("Draw again",
- * cut). `buckets` precedes `slice` so that the slice's domain is a function of it. When the reader
- * changes `buckets`, constrain moves `slice` to the bucket that holds the previous slice's centre.
- *
- * The ghost is ctx.ghost, the state before the reader's last change of `buckets`. TP.fig decides
- * it from the names the reader set, so the move of `slice` that constrain makes keeps it, and a
- * change of the slice, a new seed or Reset clears it. The figure draws its curve when the state
- * differs from it in the number of buckets alone.
- */
+/* Precomputed calibration constants for figure. */
 (function () {
   'use strict';
   var TP = window.TP = window.TP || {};
-  TP.recaps = TP.recaps || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-isolation.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-isolation.
   var CAL = {
     "defaults": {"slice": 3, "buckets": 8},
     "presets": {},
@@ -447,7 +398,7 @@
     return rows;
   }
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9); the integers
+  /** The derived state for the values. Every array of rows carries a key; the integers
       that must not be interpolated are strings. */
   function apply(values) {
     var M = model(values.seed, values.buckets, values.slice), s = M.slice, b = s.best;
@@ -591,7 +542,7 @@
   /* The name "isolation curve" is a direct label on the curve's longest segment, or, where the placer
      admits no position there, on a stretch of it between neighbouring best trials. Where no stretch
      holds it, it becomes a callout with a leader to one of the curve's markers, the markers farthest
-     from the slice first (DS §5.10, §5.4). settleLabels tries the candidates in this order. */
+     from the slice first. settleLabels tries the candidates in this order. */
   function curveCandidates(s) {
     var segs = segments(s.curve), longest = null;
     segs.forEach(function (g) { if (!longest || g.rows.length > longest.rows.length) longest = g; });
@@ -673,7 +624,7 @@
   }
   /* After a draw placed from scratch, "isolation curve" tries its candidates in order until the
      placer sets it in its full form (or its phone form in the phone layout), searched from the
-     start at every settle, so that its position depends on the settled state alone (DS §5.2). Where
+     start at every settle, so that its position depends on the settled state alone. Where
      none succeeds it keeps the first candidate. A held draw reuses the choice. */
   function settleLabels() {
     if (!cur || curCtx.hold) return;
@@ -800,58 +751,6 @@
   }
 
   /* ============================== the recap (§6.24, R6) ============================== */
-
-  /* TP.recaps['F6.3:round']: both panels at the worked case's study (F6.3's default study), with no
-     slice: (a) the trials and crosses, (b) the cloud and the isolation curve at setting.buckets
-     (default 8), the curve's lowest point ringed in both. setting.seed may name another study. */
-  TP.recaps['F6.3:round'] = function (el, setting) {
-    setting = setting || {};
-    var B = BUCKET_CHOICES.indexOf(+setting.buckets) >= 0 ? +setting.buckets : CAL.defaults.buckets;
-    var seed = setting.seed ? +setting.seed : CAL.seed;
-    var M = model(seed, B, 0), C = TP.chart, dA = CAL.domains.a, dB = CAL.domains.b;
-    var rows = M.trials, feas = rows.filter(function (t) { return t.feasible; }), inf = rows.filter(function (t) { return !t.feasible; });
-    var curve = curveRows(M), best = M.lowest ? M.lowest.best : null;
-    var key = function (t) { return 't' + t.i; };
-    var xOf = function (t) { return pow10(t.v); };
-    var ticks = function (dom, px) { var out = []; for (var e = dA.x[0]; e <= dA.x[1]; e++) if ((e - dA.x[0]) % 2 === 0 || px >= 300) out.push(pow10(e)); return out; };
-    var common = {
-      xLog: 10, xDomain: [pow10(dA.x[0]), pow10(dA.x[1])], xLabel: 'weight decay', xFormat: fmt.decade, xTicks: ticks,
-      aspect: function (w, phone) { return (phone ? 150 : 200) / Math.max(w, 1); },
-      /* the phone margins leave a clear gap between the superscript tick labels and the axis titles,
-         inside the worked round's list indent on page 10 (build log, Batch 6) */
-      margin: function (w, phone) { return phone ? { t: 6, r: 8, b: 42, l: 58 } : { t: 8, r: 10, b: 40, l: 54 }; }
-    };
-    function opts(extra) { var o = {}, k; for (k in common) o[k] = common[k]; for (k in extra) o[k] = extra[k]; return o; }
-    var qa = C.panel(el, opts({
-      letter: '(a)', describe: 'learning rate against weight decay', yLog: 10, yDomain: [pow10(dA.y[0]), pow10(dA.y[1])],
-      yLabel: 'learning rate', yFormat: fmt.decade, grid: 'none',
-      yTicks: function () { var out = []; for (var e = Math.ceil(dA.y[0]); e <= Math.floor(dA.y[1]); e += 2) out.push(pow10(e)); return out; }
-    }));
-    var qb = C.panel(el, opts({
-      letter: '(b)', describe: 'validation error against weight decay', yDomain: errorDomain(),
-      yLabel: 'validation error', yFormat: fmt.fixed1, yTicks: [0.2, 0.4, 0.6, 0.8]
-    }));
-    /* the two panels stand in a row from 640 px and stack below it (site.css, .recap-stack), where
-       side by side each was 138 px wide and panel (b)'s axis kept two tick labels (page 10's
-       reader finding 16) */
-    el.classList.add('recap-stack');
-    qa.update(function (q) {
-      C.markers(q, feas, xOf, function (t) { return pow10(t.u); }, { role: 'model', series: 'trials', key: key });
-      C.cross(q, inf, xOf, function (t) { return pow10(t.u); }, { role: 'model', series: 'trials', key: key });
-      if (best) C.ring(q, xOf(best), pow10(best.u), { role: 'model', series: 'trials' });
-      C.place(q, []);
-    });
-    qb.update(function (q) {
-      C.dots(q, feas, xOf, function (t) { return t.y; }, { role: 'context', series: 'cloud', r: 2, key: key });
-      C.cross(q, inf, xOf, function () { return dB.y[1]; }, { role: 'context', series: 'cloud', key: key });
-      segments(curve).forEach(function (g, j) {
-        C.line(q, g.rows, xOf, function (r) { return r.y; }, { role: 'model', series: 'curve', key: 'curve-' + j });
-      });
-      C.markers(q, curve, xOf, function (r) { return r.y; }, { role: 'model', series: 'curve', key: function (r) { return r.key; } });
-      if (best) C.ring(q, xOf(best), best.y, { role: 'model', series: 'curve' });
-      C.place(q, []);
-    });
-  };
 
   document.addEventListener('tp:ready', function () {
     var el = document.getElementById(ID);

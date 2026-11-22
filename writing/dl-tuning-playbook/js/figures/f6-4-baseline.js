@@ -1,8 +1,8 @@
 /*
  * f6-4-baseline.js: figure F6.4, the fair and the unfair baseline (fig-baseline).
  *
- * Work order: notes/revamp/implementation-plan.md §6.14 (WO-F6.4), with §6.0. Entry:
- * notes/revamp/figure-plan.md F6.4, and review/synthesis.md R2. Design: notes/revamp/design-system.md
+ * Work order: design notes.md §6.14, with §6.0. Entry:
+ * design notes.md F6.4, and earlier review R2. Design: design notes.md
  * §3.4, §3.5, §4, §5 and §9. A static figure (fig static l-wide) with no controls, no readout and
  * no recap. The claim it draws is the playbook's (README L1024-L1027); the shapes are the site's.
  *
@@ -10,14 +10,14 @@
  * in u = log10(learning rate), one for the best weight decay ('wd') and one for no weight decay
  * ('none'), each with a noise band of half-width CAL.shapes.band. The curves are drawn from
  * CAL.tables.curves (121 rows over u from -4 to -1), and the optima, the band and the preferred
- * rates come from CAL.shapes, which tests/calibration/fig-baseline.calibrate.js wrote. The baseline's
+ * rates come from CAL.shapes, which calibration checks.calibrate.js wrote. The baseline's
  * best within the preferred rates is TP.baseline.bestWithin at CAL.shapes.preferred.
  *
  * The panels share both axes: x learning rate, log 10, and y validation error, over CAL.domains.
  *   (a) the baseline tuned equally well. Both curves in their tokens (model blue for the best
  *       weight decay, third gold for no weight decay), each over its band as the opaque tint, with
- *       markers on a subset of each curve (DS §4.2: filled circles for the first condition, open
- *       circles for the second), and each curve's optimum ringed (DS §4.4). A bracket on the y axis
+ * markers on a subset of each curve series style: filled circles for the first condition, open
+ * circles for the second), and each curve's optimum ringed. A bracket on the y axis
  *       spans the two optima, "within the band".
  *   (b) the baseline at the weight-decay study's rates. The same curves and bands, the preferred
  *       rates as a bracket on the x axis, "rates the weight-decay study preferred" (phone "preferred
@@ -32,7 +32,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-baseline.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-baseline.
   var CAL = {
     "defaults": {},
     "presets": {},
@@ -322,7 +322,7 @@
 
   /* ============================== the model ============================== */
 
-  /** The derived state. Every array's rows carry a key (DS §9). */
+  /** The derived state. Every array's rows carry a key. */
   function apply() {
     var B = TP.baseline;
     var wd = { u: SH.uWd, e: SH.eWd }, none = { u: SH.uNone, e: SH.eNone };
@@ -353,7 +353,7 @@
       xLabel: 'learning rate', yLabel: 'validation error',
       xTicks: function () { var out = []; for (var e = SH.axis[0]; e <= SH.axis[1]; e++) out.push(pow10(e)); return out; },
       xFormat: decade,
-      /* the domain's top is 0.27 since Batch 7's band of 0.001 */
+      /* the domain's top is 0.27 since band of 0.001 */
       yTicks: function (d, px) { return px < 140 ? [0.22, 0.26] : [0.22, 0.24, 0.26]; },
       yFormat: function (v) { return by('fixed2')(v); },
       aspect: function (w, phone) { return phone ? 230 / Math.max(w, 1) : 0.62; },
@@ -368,13 +368,13 @@
     var X = function (r) { return r.lr; };
     var yWd = function (r) { return r.wd; }, yNone = function (r) { return r.none; };
     var band = s.band;
-    /* the bands: each curve's opaque tint, under the gridlines (DS §4.6) */
+    /* the bands: each curve's opaque tint, under the gridlines */
     C.area(p, s.rows, X, function (r) { return r.none - band; }, function (r) { return r.none + band; }, { role: 'third', id: 'band-none' });
     C.area(p, s.rows, X, function (r) { return r.wd - band; }, function (r) { return r.wd + band; }, { role: 'model', id: 'band-wd' });
     /* the curves, the second condition first so that the first stands above it */
     C.line(p, s.rows, X, yNone, { role: 'third', series: 'none', key: 'none' });
     C.line(p, s.rows, X, yWd, { role: 'model', series: 'wd', key: 'wd' });
-    /* the points the panel compares (WO-F6.4), each a marker in its condition's form (DS §4.2, §4.3):
+    /* the points the panel compares, each a marker in its condition's form:
        the best weight decay's optimum, and the baseline's optimum in (a) or its best within the
        preferred rates in (b) */
     var noneSel = letter === 'a' ? s.optima.none : s.unfair;
@@ -387,7 +387,7 @@
     C.markers(p, pts.slice(0, 1), mX, mY, { role: 'model', series: 'wd', shape: 'circle', fill: 'filled', key: mK });
     p.el.setAttribute('data-selected', JSON.stringify({ wd: [s.optima.wd.u, s.optima.wd.e], none: [noneSel.u, noneSel.e] }));
 
-    /* the annotations (DS §5.10), each computed from the shapes */
+    /* the annotations, each computed from the shapes */
     var x0 = CAL.domains[letter].x[0];
     if (letter === 'a') {
       C.annotation(p, { kind: 'bracket', id: 'tie', text: 'a tie', side: 'right', phone: { header: true },
@@ -399,9 +399,9 @@
         phone: { header: true }, anchor: { x0: pow10(s.preferred[0]), x1: pow10(s.preferred[1]) } });
     }
 
-    /* the direct labels (WO-F6.4: the same form at both widths), each naming its own band, so that
-       it may stand inside the tint of its curve (DS §5.2 item 7). A label in a tint takes text ink
-       (DS §5.3), which chart.js gives every label that names a region. */
+    /* the direct labels, each naming its own band, so that
+       it may stand inside the tint of its curve. A label in a tint takes text ink
+, which chart.js gives every label that names a region. */
     C.place(p, LABELS.map(function (L) {
       return { id: L.id, text: L.text, role: L.role, series: L.id, names: 'band-' + L.id, feature: lineFeature(s, letter, L.id),
         captionNames: true, keySentence: true };
@@ -419,7 +419,7 @@
      the brackets take the ground beside it, so a label may instead name a stretch of its curve
      STRETCH decades long, tried from the right end of the axis leftward by STEP decades. After each
      draw at a new width, each label takes the first stretch at which the placer sets it in its full
-     form, searched from the whole curve, so that the positions depend on the width alone (DS §5.2).
+     form, searched from the whole curve, so that the positions depend on the width alone.
      The search runs after the render, never inside it. */
   var LABELS = [
     { id: 'wd', text: 'with weight decay', role: 'model' },

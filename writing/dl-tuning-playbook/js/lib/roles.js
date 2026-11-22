@@ -2,8 +2,8 @@
  * roles.js: the answer table of the roles matrix (TP.roles), for F4.1.
  *
  * Ported from version 1's p4-sort.js (TP.models.sortHparams), whose quotations were verified
- * against the README, and restructured as a matrix (notes/revamp/implementation-plan.md WO-F4.1).
- * The columns are version 1's three goals. The rows are the eleven of WO-F4.1, in its order. A
+ * against the README, and restructured as a matrix.
+ * The columns are version 1's three goals. The rows are the eleven of, in its order. A
  * cell is null where the hyperparameter does not exist under the goal, and the figure prints
  * "none" there. Version 1's rows for the learning-rate schedule, hidden width, batch size and
  * max_train_steps are dropped, since each has one role under all three goals.
@@ -24,18 +24,18 @@
  * b; {q, cite}, a verbatim quotation of the paper TP.refs[cite]; {ref: [a, b]}, a README line
  * reference; {code}; {i}, italics. q is a string or a list of parts. A README quotation keeps the
  * README's words and punctuation and turns its markdown into parts (`x` into {code}, *x* into {i}),
- * and its range is the tightest that contains it. tests/lib/roles.test.js checks every quotation
+ * and its range is the tightest that contains it. calibration checks.test.js checks every quotation
  * against source/README.md and the one quotation of a paper against notes/refs/pdf/choi2019.txt.
  *
  * Changes from version 1 beyond the restructuring:
- *   - Goal 2 states its number of trials, TRIALS (the plan's lean, confirmed or changed by Batch 1,
- *     implementation plan §5.7, C6). Its cells for the learning rate, momentum, weight decay and
+ * - Goal 2 states its number of trials, TRIALS (the plan's lean, confirmed or changed by,
+ * implementation series conventions, C6). Its cells for the learning rate, momentum, weight decay and
  *     the dropout rate apply that number: momentum is fixed by preference with nuisance accepted,
  *     the learning rate and weight decay stay nuisance because their best values generally depend
  *     on the model (L569-L572, L612-L617), the dropout rate stays nuisance as the playbook says it
  *     is once dropout is adopted (L659-L661), with fixed accepted, and the feedback of those cells
- *     quotes the procedure of L599-L617. (Batch 4's figure fixes made the dropout rate nuisance,
- *     under the lead's ruling on the page 4 reads; it was fixed by preference before.)
+ * quotes the procedure of L599-L617. ( figure fixes made the dropout rate nuisance,
+ * under the lead's ruling on the review notes; it was fixed by preference before.)
  *   - Every cell whose preferred role is fixed carries a note that states its caveat, in the words
  *     of L561-L563 (caveat()).
  *   - "Dropout, on or off" has a cell under goals 2 and 3, fixed in both, on the playbook's rule
@@ -440,7 +440,7 @@
 
   /** The ids of the rows of changes() that one role fits under every goal, as the preferred or an
       accepted role: a reader who keeps that role throughout counts the other rows alone, and the
-      exercise accepts either count (build log Batch 7). */
+      exercise accepts either count. */
   function steadyChanges() {
     return changes().filter(function (id) {
       var row = ROWS.filter(function (r) { return r.id === id; })[0];

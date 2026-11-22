@@ -2,11 +2,6 @@
 """Consistency, accessibility, link, CSS-token, and editorial checks for ``writing/``.
 
 Integrated into ``scripts/check_build.py`` and runnable standalone.
-
-Stage toggles:
-  STRICT_REFS:    Promote uncited bibliography keys to errors (after bibliography cleanup).
-  STRICT_CONTENT: Promote drifted section anchors, missing .in-brief / .practice-steps,
-                  and prose checks to errors (after page content overhaul).
 """
 
 from __future__ import annotations
@@ -22,12 +17,9 @@ WRITING_ROOT = REPO_ROOT / "writing"
 BLOG_CSS_DIR = REPO_ROOT / "assets" / "blog" / "css"
 TOKENS_CSS = REPO_ROOT / "assets" / "css" / "tokens.css"
 
-STRICT_REFS = True
-STRICT_CONTENT = True
 
-
-def _load_js_state(series_dir: Path) -> tuple[dict, dict, dict]:
-    """Load refs, concepts, and manifest pages via Node."""
+def _load_js_state(series_dir: Path) -> tuple[dict, dict]:
+    """Load refs and concepts via Node."""
     refs_js = series_dir / "js/refs.js"
     concepts_js = series_dir / "js/concepts.js"
     cfg_js = series_dir / "js/data/config.js"
@@ -38,7 +30,7 @@ def _load_js_state(series_dir: Path) -> tuple[dict, dict, dict]:
         " if(fs.existsSync(p)) vm.runInNewContext(fs.readFileSync(p,'utf8'),c);"
         "}"
         "const tp=c.TP||c.Blog||{};"
-        "console.log(JSON.stringify({refs:tp.refs||{},concepts:tp.concepts||{},pages:tp.pages||[]}));"
+        "console.log(JSON.stringify({refs:tp.refs||{},concepts:tp.concepts||{}}));"
     )
     proc = subprocess.run(
         ["node", "-e", js, str(cfg_js), str(refs_js), str(concepts_js)],
@@ -47,7 +39,7 @@ def _load_js_state(series_dir: Path) -> tuple[dict, dict, dict]:
         text=True,
     )
     data = json.loads(proc.stdout)
-    return data["refs"], data["concepts"], {p["file"]: p for p in data["pages"]}
+    return data["refs"], data["concepts"]
 
 
 class _HtmlIndex(HTMLParser):
@@ -120,20 +112,25 @@ def _check_css_tokens(errors: list[str]) -> None:
 
 
 def _check_leak_and_crlf(errors: list[str]) -> None:
-    machine_forbidden = (
+    forbidden = (
         re.compile(r"/mnt/[a-z]/"),
         re.compile(r"/home/[a-zA-Z0-9_-]+"),
         re.compile(r"file://"),
+        re.compile(r"notes/(?:revamp|specs|review)"),
+        re.compile(r"tests/(?:calibration|lib)"),
+        re.compile(r"review/synthesis"),
+        re.compile(r"implementation-plan\.md"),
+        re.compile(r"design-system\.md"),
+        re.compile(r"persona-entry"),
+        re.compile(r"\bpost0\d\s+(?:review|report)\b"),
+        re.compile(r"\bBatch\s+\d"),
+        re.compile(r"\bWO-[A-Za-z0-9.]+\b"),
+        re.compile(r"\(?DS\)?\s*§"),
     )
-    shared_forbidden = (
-        re.compile(r"notes/revamp"),
-        re.compile(r"\bDS §"),
-    ) + machine_forbidden
     roots = [REPO_ROOT / "assets/blog", REPO_ROOT / "writing"]
     for base in roots:
         if not base.exists():
             continue
-        pats = shared_forbidden if base == REPO_ROOT / "assets/blog" else machine_forbidden
         for p in sorted(base.rglob("*")):
             if not p.is_file() or p.suffix.lower() not in {".html", ".css", ".js", ".json"}:
                 continue
@@ -142,17 +139,23 @@ def _check_leak_and_crlf(errors: list[str]) -> None:
             if b"\r\n" in raw:
                 errors.append(f"[{rel}] Contains CRLF line endings (run build to normalize)")
             txt = raw.decode("utf-8", errors="replace")
-            for pat in pats:
+            for pat in forbidden:
                 if pat.search(txt):
                     errors.append(f"[{rel}] Internal/machine reference matched {pat.pattern}")
 
 
-def _check_hidden_preview(series_dir: Path, html_path: Path, raw: str, manifest: dict, errors: list[str]) -> None:
+def _check_hidden_preview(html_path: Path, raw: str, manifest: dict, errors: list[str]) -> None:
     if not manifest.get("noindex", True):
         return
     rel = html_path.relative_to(REPO_ROOT)
-    if not re.search(r'<meta\b[^>]*name=["\']robots["\'][^>]*noindex', raw, re.IGNORECASE):
-        errors.append(f"[{rel}] Missing noindex robots meta while manifest.noindex is true")
+    m = re.search(r'<meta\b[^>]*name=["\']robots["\'][^>]*content=["\']([^"\']+)["\']', raw, re.IGNORECASE)
+    if not m:
+        errors.append(f"[{rel}] Missing robots meta while noindex is enabled")
+        return
+    directives = {tok.strip().lower() for tok in m.group(1).split(",") if tok.strip()}
+    missing = [d for d in ("noindex", "nofollow", "noarchive") if d not in directives]
+    if missing:
+        errors.append(f"[{rel}] Robots meta missing {', '.join(missing)} while noindex is enabled")
 
 
 def _extract_prose_text(raw: str) -> str:
@@ -211,13 +214,14 @@ def check_all(errors: list[str], warnings: list[str]) -> None:
     robots_path = REPO_ROOT / "robots.txt"
     robots_txt = robots_path.read_text(encoding="utf-8") if robots_path.exists() else ""
 
-    content_bucket = errors if STRICT_CONTENT else warnings
-    ref_bucket = errors if STRICT_REFS else warnings
+    writing_hub = REPO_ROOT / "writing.html"
+    if writing_hub.exists():
+        _check_hidden_preview(writing_hub, writing_hub.read_text(encoding="utf-8"), {"noindex": True}, errors)
 
     for manifest_path in sorted(WRITING_ROOT.glob("*/manifest.json")):
         series_dir = manifest_path.parent
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        refs, concepts, _pages = _load_js_state(series_dir)
+        refs, concepts = _load_js_state(series_dir)
 
         if manifest.get("noindex", True):
             if "Disallow: /writing/" not in robots_txt:
@@ -248,7 +252,7 @@ def check_all(errors: list[str], warnings: list[str]) -> None:
             for dup in idx.dup_ids:
                 errors.append(f"[{rel}] Duplicate element id='{dup}'")
 
-            _check_hidden_preview(series_dir, hp, raw, manifest, errors)
+            _check_hidden_preview(hp, raw, manifest, errors)
             if 'data-theme-boot' not in raw:
                 errors.append(f"[{rel}] Missing synchronous data-theme-boot script in <head>")
             if 'data-theme="auto"' in raw:
@@ -296,22 +300,22 @@ def check_all(errors: list[str], warnings: list[str]) -> None:
             is_post = hp.parent.name == "pages" and hp.name != "reference.html"
             if is_post:
                 if 'class="in-brief"' not in raw:
-                    content_bucket.append(f"[{rel}] Missing compact .in-brief takeaway box")
+                    errors.append(f"[{rel}] Missing compact .in-brief takeaway box")
                 if 'class="practice-steps"' not in raw:
-                    content_bucket.append(f"[{rel}] Missing unified ol.practice-steps checklist")
+                    errors.append(f"[{rel}] Missing unified ol.practice-steps checklist")
                 if 'class="post-roadmap"' in raw:
-                    content_bucket.append(f"[{rel}] Legacy .post-roadmap still present")
+                    errors.append(f"[{rel}] Legacy .post-roadmap still present")
                 if 'class="playbook-map"' not in raw:
                     errors.append(f"[{rel}] Missing .playbook-map flowchart")
-                _check_prose_rules(rel, raw, content_bucket)
+                _check_prose_rules(rel, raw, errors)
             elif hp.name == "reference.html":
                 if 'class="playbook-map"' not in raw:
-                    content_bucket.append(f"[{rel}] Missing .playbook-map flowchart on reference page")
-                _check_prose_rules(rel, raw, content_bucket)
+                    errors.append(f"[{rel}] Missing .playbook-map flowchart on reference page")
+                _check_prose_rules(rel, raw, errors)
             elif hp.name == "index.html":
                 if 'class="playbook-map"' not in raw:
                     errors.append(f"[{rel}] Missing .playbook-map flowchart")
-                _check_prose_rules(rel, raw, content_bucket)
+                _check_prose_rules(rel, raw, errors)
 
         # Internal link + #anchor target checks across all indexed writing pages
         for hp, raw in page_texts.items():
@@ -323,19 +327,19 @@ def check_all(errors: list[str], warnings: list[str]) -> None:
                 if href.startswith("#"):
                     anchor = href[1:]
                     if anchor and anchor not in page_indexes[hp].ids:
-                        content_bucket.append(f"[{rel}] Broken same-page anchor #{anchor}")
+                        errors.append(f"[{rel}] Broken same-page anchor #{anchor}")
                     continue
                 file_part, _, anchor = href.split("?", 1)[0].partition("#")
                 target = (hp.parent / file_part).resolve()
                 if not target.exists():
                     errors.append(f"[{rel}] Broken internal link href='{href}'")
                 elif anchor and target in page_indexes and anchor not in page_indexes[target].ids:
-                    content_bucket.append(f"[{rel}] Broken cross-page anchor href='{href}'")
+                    errors.append(f"[{rel}] Broken cross-page anchor href='{href}'")
 
         # Dead bibliography keys check
         uncited = sorted(k for k in refs if k not in cited_keys)
         if uncited:
-            ref_bucket.append(f"[{series_dir.name}/js/refs.js] Uncited bibliography keys: {uncited}")
+            errors.append(f"[{series_dir.name}/js/refs.js] Uncited bibliography keys: {uncited}")
 
 
 def main() -> int:

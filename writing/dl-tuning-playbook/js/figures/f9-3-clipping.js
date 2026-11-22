@@ -1,8 +1,8 @@
 /*
  * f9-3-clipping.js: figure F9.3, the clipping threshold (fig-clipping), on page 9 #clipping.
  *
- * Work order: notes/revamp/implementation-plan.md §6.21 (WO-F9.3), with §6.0. Entry:
- * notes/revamp/figure-plan.md F9.3 and review/synthesis.md R11. Design: notes/revamp/design-system.md
+ * Work order: design notes.md §6.21, with §6.0. Entry:
+ * design notes.md F9.3 and earlier review R11. Design: design notes.md
  * §3.4, §3.5, §4, §5, §6, §8 and §9. A fixed-frame figure with one handle and no dock.
  *
  * The model is TP.clipping (site/js/lib/clipping.js): version 1's synthetic series of 5,000 logged,
@@ -10,7 +10,7 @@
  * lambda, TP.clipping.stats gives its percentile, the fraction of updates clipped (the share of norms
  * above lambda) and the mean multiplier on the gradient, the mean of min(1, lambda / ||g||). The
  * readout, the curves, the table and the quantities all come from stats, the computation of
- * tests/calibration/fig-clipping.calibrate.js, so the quantities equal the ledger's rows at the
+ * calibration checks.calibrate.js, so the quantities equal the ledger's rows at the
  * default and at the preset "half the updates clipped".
  *
  * Two stacked panels share the x axis, the norm or threshold on a log axis over CAL.domains.a.x:
@@ -24,11 +24,11 @@
  * ("Draw again", cut). The threshold is held to four significant figures whenever it is set
  * (constrain), and its URL text is those four figures, so a URL restores it exactly (the plan's
  * decision on the encoding). The default is CAL's, the default seed's 90th percentile, unrounded.
- * The handle's keys follow WO-F9.3: the arrows move 0.01 decade and Page Up and Page Down 0.1
+ * The handle's keys follow the arrows move 0.01 decade and Page Up and Page Down 0.1
  * decade (C.handle's step and page options), and Home and End go to the ends.
  * Presets "90th percentile" (key p90), "half the updates clipped" (key half) and "nearly all updates
  * clipped" (key nearly-all) are functions of the seed that set the threshold at the current seed's
- * 90th percentile, median or 1st percentile (CAL.quantities['nearly-all'].quantile) (WO-I5.4). No
+ * 90th percentile, median or 1st percentile (CAL.quantities['nearly-all'].quantile). No
  * dock: the presets, "Draw again" and Reset sit in more.
  */
 (function () {
@@ -36,7 +36,7 @@
   var TP = window.TP = window.TP || {};
 
   /* BEGIN GENERATED table-cal */
-  // From tests/calibration/out/fig-clipping.json by npm run generate (tests/lib/write-generated.js).
+  // Precomputed calibration constants for fig-clipping.
   var CAL = {
     "defaults": {"threshold": 1.7139445884180566, "seed": 226},
     "presets": {
@@ -104,7 +104,7 @@
 
   var ID = 'fig-clipping';
   var PER_DECADE = CAL.quantities.model['samples-per-decade'];   /* samples of the curves in (b) per decade of threshold (100) */
-  var KEY_STEP = 0.01, PAGE_STEP = 0.1;   /* the handle's keys, in decades (WO-F9.3) */
+  var KEY_STEP = 0.01, PAGE_STEP = 0.1;   /* the handle's keys, in decades */
   var LEVEL_TEXT = '90th percentile';
   var HALF_TEXT = ['half the updates'], HALF_PHONE = 'half';
 
@@ -152,7 +152,7 @@
     return S;
   }
 
-  /* the presets, functions of the seed (WO-I5.4) */
+  /* the presets, functions of the seed */
   function p90Preset(seed) { return { threshold: seriesOf(seed).p90 }; }
   p90Preset.key = 'p90';
   function halfPreset(seed) { return { threshold: seriesOf(seed).median }; }
@@ -164,7 +164,7 @@
   function nearlyAllPreset(seed) { return { threshold: seriesOf(seed).p01 }; }
   nearlyAllPreset.key = 'nearly-all';
 
-  /** The derived state for the values. Every array of rows carries a key (DS §9). */
+  /** The derived state for the values. Every array of rows carries a key. */
   function apply(values) {
     var S = seriesOf(values.seed), lam = values.threshold, st = CL().stats(S.ser, lam);
     /* the current threshold is a sample of both curves, so that the lines pass through the

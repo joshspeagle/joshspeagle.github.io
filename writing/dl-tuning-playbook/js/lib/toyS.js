@@ -1,8 +1,8 @@
 /*
  * toyS.js: Toy S, the shared made-up validation error surface (TP.toyS).
  *
- * Implements "Shared toy response T" in notes/specs/pages-4-6.md (renamed Toy S in
- * notes/specs/addenda-literature.md), used by boundary-explorer, how-many-trials and
+ * Implements "Shared toy response T" in design notes.md (renamed Toy S in
+ * design notes.md), used by boundary-explorer, how-many-trials and
  * isolation-builder. Not fitted to any data. Variables: u = log10(learning rate),
  * v = log10(weight decay).
  *

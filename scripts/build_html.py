@@ -336,7 +336,7 @@ def render_head(key, page, data):
            f'  <title>{title}</title>',
            f'  <meta name="description" content="{desc}">']
     if page.get("noindex"):
-        out.append('  <meta name="robots" content="noindex">')
+        out.append('  <meta name="robots" content="noindex, nofollow, noarchive">')
     if page.get("canonical"):
         url = f'{SITE_URL}{page["canonical"]}'
         w, h = OG_IMAGE_SIZE

@@ -61,11 +61,6 @@
     return { root: root, post: post };
   }
   function postEntry(n) { return (TP.pages || []).filter(function (p) { return p.num === n && !p.unnumbered; })[0]; }
-  function postShort(n) {
-    var en = postEntry(n);
-    var t = en && en.short ? String(en.short).replace(/^\d+\.\s*/, '') : '';
-    return 'Part ' + n + (t ? ' · ' + t : '');
-  }
   function postHref(root, n, hash) {
     var en = postEntry(n);
     return en ? root + en.file + (hash ? '#' + hash : '') : '#';
@@ -321,7 +316,7 @@
       it.li.classList.remove('is-open');
     }
 
-    function select(id, opts) {
+    function select(id) {
       var st = BY_ID[id];
       if (!st) return;
       state.sel = id;
@@ -370,7 +365,7 @@
       });
     }
 
-    select(initial, { from: 'init' });
+    select(initial);
     TP.playbookMaps = TP.playbookMaps || [];
     TP.playbookMaps.push({ el: mapEl, select: select, steps: STEPS.map(function (x) { return x.id; }) });
   }

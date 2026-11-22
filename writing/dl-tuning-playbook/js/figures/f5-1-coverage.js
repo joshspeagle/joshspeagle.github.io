@@ -1,7 +1,7 @@
 /*
  * f5-1-coverage.js: figure F5.1, coverage as points arrive (#fig-coverage), on page 5 #quasi-random.
  *
- * Design: notes/revamp/figure-plan.md (FP) F5.1 and notes/revamp/implementation-plan.md WO-F5.1
+ * Design: design notes.md (FP) F5.1 and design notes.md
  * (§6.9), on the figure contract of site.js (TP.fig) and the runtime of runtime.js (TP.run).
  *
  * The model is TP.coverage (site/js/lib/coverage.js): grid, uniform random and quasi-random
@@ -11,13 +11,13 @@
  * moves the trials already drawn. The grid is the largest full grid within n trials, k^d <= n, and
  * it is laid out afresh, as a cut, when k changes. The projection statistics (distinct values and
  * the largest gap, the gaps from 0 and to 1 included) are TP.coverage.project's, the computation of
- * tests/calibration/fig-coverage.calibrate.js, so the figure's quantities equal the ledger's rows.
+ * calibration checks.calibrate.js, so the figure's quantities equal the ledger's rows.
  * The model draws no number from the runtime's generators: the seed acts through TP.coverage.
  *
  * One runtime step adds one trial to each method, so step t shows t + 1 trials (R7). The run stops
  * at step CAL.defaults.t (16 trials) and computes up to the end of panel (d)'s axis (100 trials).
  *
- * The panels (WO-F5.1). (a) grid, (b) random, (c) quasi-random: weight decay against learning rate
+ * The panels. (a) grid, (b) random, (c) quasi-random: weight decay against learning rate
  * on unit axes, small multiples with one y axis on (a). Beside each frame a strip projects the
  * trials onto the weight decay (drawn in the frame's right margin), and under it a panel of its own
  * (a-lr, b-lr, c-lr) projects them onto the learning rate. Every trial's tick in both strips carries
@@ -29,9 +29,9 @@
  * The layout is a CSS grid (site/css/figures/fig-coverage.css). From 640 px the three strategy
  * columns sit side by side with their learning-rate strips under them and (d) under the row. Below
  * 640 px the scatters stay one row of small multiples with 4-px dots, the three learning-rate strips
- * become full-width rows named in their left margins, and (d) follows (DS §3.5 item 8).
+ * become full-width rows named in their left margins, and (d) follows.
  *
- * Tokens (WO-F5.1): quasi-random search model blue, grid search third gold, uniform random search
+ * Tokens: quasi-random search model blue, grid search third gold, uniform random search
  * fourth indigo, in all four panels.
  */
 (function (global) {
@@ -39,7 +39,7 @@
   var TP = global.TP = global.TP || {};
 
 /* BEGIN GENERATED table-cal */
-// From tests/calibration/out/fig-coverage.json by npm run generate (tests/lib/write-generated.js).
+// Precomputed calibration constants for fig-coverage.
 var CAL = {
   "defaults": {"dims": 4, "t": 15},
   "presets": {
@@ -175,8 +175,8 @@ var CAL = {
     };
   }
 
-  /** The readout (FP F5.1): the grid's placed trials, the distinct learning rates of all three
-      strips, and the three largest gaps (the lead's ruling on the page 5 reads, Batch 4). */
+  /** The readout: the grid's placed trials, the distinct learning rates of all three
+      strips, and the three largest gaps. */
   function readoutText(m, n, phone) {
     var s = m.stats[n];
     if (phone) return 'At ' + n + ' trial' + (n === 1 ? '' : 's') + ' the grid tests ' + s.grid.distinct + ' learning rates, random search ' +
@@ -186,7 +186,7 @@ var CAL = {
       sig2(s.grid.gap) + ', ' + sig2(s.random.gap) + ' and ' + sig2(s.quasi.gap) + '.';
   }
 
-  /** The named quantities (plan WO-I5.1): the ledger's at 16 and 30 trials for the current dims and
+  /** The named quantities: the ledger's at 16 and 30 trials for the current dims and
       seed, whatever the cursor; the cursor's own; and the seed sweep's, from CAL. */
   function quantitiesOf(m, n) {
     var q = {};
@@ -224,7 +224,7 @@ var CAL = {
   var doc = global.document;
   if (!doc) return;
   function C() { return TP.chart; }
-  /** The phone layout, below 640 px (DS §3.5), as chart.js reads it. */
+  /** The phone layout, below 640 px, as chart.js reads it. */
   var phoneQuery = null;
   function phone() {
     if (!phoneQuery && global.matchMedia) phoneQuery = global.matchMedia('(max-width: 639px)');
@@ -315,7 +315,7 @@ var CAL = {
   }
   function noteOf(method, n, s, phone) {
     if (phone) return NAME[method];
-    /* the grid prints the trials it cannot use (FP F5.1 "Running") */
+    /* the grid prints the trials it cannot use */
     if (method === 'grid') return 'grid, ' + TP.fmt.int(s.placed) + ' of ' + TP.fmt.int(n) + ' placed' + (s.remainder ? ', ' + TP.fmt.int(s.remainder) + ' unused' : '');
     return NAME[method] + ', ' + trialsText(n);
   }
@@ -330,7 +330,7 @@ var CAL = {
     }
   }
   /** A strip's ticks at plot px positions `at`, across [a, b] of the other axis: 1.5 px in the
-      role's token (DS §4.1, stems). With keyOf, each tick is a keyed C.line; without it, one path. */
+      role's token. With keyOf, each tick is a keyed C.line; without it, one path. */
   function ticks(p, at, axis, a, b, role, series, keyOf) {
     var px = function (v, w) { return axis === 'x' ? [v, w] : [w, v]; };
     if (!keyOf) {

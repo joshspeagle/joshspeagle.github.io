@@ -4,7 +4,7 @@
  *
  * Every page loads this file before site.js. The formatters are version 1's, moved here from
  * site.js unchanged, so that a script running in Node formats a number exactly as a page does.
- * series design spec WO-I12 adds TP.fmt.byName for the ledger's rounding names.
+ * series series conventions adds TP.fmt.byName for the ledger's rounding names.
  *
  * Usage: TP.fmt.int(12345.6) is "12,346"; TP.fmt.exp10(-3.5) is "3.2 × 10⁻⁴". No dependencies.
  */
@@ -43,7 +43,7 @@
   };
 
   /* TP.fmt.byName(name) returns the formatter of one of the ledger's rounding names
-     (design spec WO-I12 and §5.4). A ledger row's printed text is
+. A ledger row's printed text is
      TP.fmt.byName(row.rounding)(row.value), and the pages, the figures, the calibration scripts
      and the checks print a ledger number through the same function.
 
