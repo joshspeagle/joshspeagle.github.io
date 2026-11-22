@@ -33,17 +33,26 @@
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
     <p class="lede">
-      Every earlier post in this series quietly assumed that a training run measures what it claims to measure, with validation error computed on the right examples at comparable points in training and the accelerator spending its time on training steps rather than waiting. The Playbook closes its main guide with a section of engineering advice whose job is to keep those assumptions true. At first glance it reads like a list of unrelated tips, but I think most of the items share a theme, because each one describes a way a pipeline can produce misleading numbers without ever raising an error. In this final post we'll start with a few smoke tests of my own, then follow the Playbook through input throughput, the schedule and sample for periodic evaluation, checkpoint selection and experiment tracking, and finish with the subtler problems of batch norm across devices and multi-host training.
+      Every earlier post assumed that your training pipeline computes clean losses, measures comparable steps, and keeps accelerators fed. The Playbook closes its main guide with operational rules that protect those assumptions against silent bugs that corrupt numbers without crashing jobs. I open this final post with preflight smoke tests of my own, then trace Playbook advice across input profiling and modern compilation, evaluation timing and checkpoint buffers, study tracking, normalization across devices, and sharded multi-host runs.
     </p>
 
+    <aside class="in-brief" aria-labelledby="in-brief-heading">
+      <div class="in-brief-head" id="in-brief-heading">In brief</div>
+      <ul>
+        <li><strong>Run smoke checks first:</strong> Inspect decoded tensors, verify step-0 loss near $\ln C$, and overfit one tiny batch before scaling runs (<a href="#preflight">Smoke tests</a>).</li>
+        <li><strong>Keep accelerators fed without hidden stalls:</strong> Profile host I/O, isolate compile warmup, and strip accidental host sync barriers (<a href="#pipeline">Input pipelines</a>).</li>
+        <li><strong>Evaluate on step intervals and log buffers:</strong> Step clocks align runs cleanly; sample sizes and rare-class counts govern statistical sensitivity (<a href="#evaluation">Evaluating during training</a>).</li>
+        <li><strong>Replace batch norm and guard sharded state:</strong> Prefer RMSNorm or LayerNorm where possible, and align seeds, shards, and async checkpoints across hosts (<a href="#multihost">Multi-host pipelines</a>).</li>
+      </ul>
+    </aside>
 
     <article class="post-body">
 
       <section class="prose" id="preflight">
         <h2>Smoke tests before the first sweep</h2>
-        <p class="p09-ours-tag"><span>My addition</span> This section goes beyond the Playbook, whose pipeline guidance does not cover it.</p>
+        <p class="p09-ours-tag"><span>Author Prelude</span> This preflight section is my addition before the Playbook's seven pipeline sections begin.</p>
         <p>
-          The Playbook's list begins with input performance, but I'd first ask whether the pipeline is wired correctly at all. Speed only matters once the answer is yes, because a wiring bug silently wastes every trial that runs on top of it. The three checks I use, shown in <a href="#fig-verification-ladder" class="figref" data-static-figref="1">Figure 1</a>, come from Andrej Karpathy's 2019 blog post <em>A Recipe for Training Neural Networks</em> <cite data-ref="karpathy2019"><span class="cit-num"><a href="#ref-karpathy2019">[7]</a></span></cite>, and each needs only a short run with no tuning.
+          Whereas the Playbook opens with throughput tuning, I ask first whether the loss, targets, and gradients are wired properly. Speed never rescues a miswired loss because fast broken runs just waste sweep compute faster. Three zero-tuning checks (<a href="#fig-verification-ladder" class="figref" data-static-figref="1">Figure 1</a>), adapted from Andrej Karpathy's <em>A Recipe for Training Neural Networks</em> <cite data-ref="karpathy2019"><span class="cit-num"><a href="#ref-karpathy2019">[8]</a></span></cite>, catch silent pipeline bugs before your first tuning job.
         </p>
       </section>
 
@@ -95,7 +104,7 @@
           </li>
         </ol>
         <p class="fig-caption">
-          Three checks to run once per new pipeline, in order. Each asks a question whose answer we already know (what the data should look like, what the loss should be at initialization, whether the model can memorize a single batch), so a failure points squarely at the pipeline. The checks come from Karpathy's recipe rather than the Playbook, and apart from the flipped-label example the bugs listed under "Catches" are my own illustrations.
+          Run these three checks once per new pipeline, in order. Each tests a quantity with a known ground truth (decoded tensors, expected initial cross-entropy $\ln C$, and one-batch memorization), isolating wiring failures before tuning starts. The checks follow Karpathy's recipe rather than the Playbook; aside from the flipped-label bug, the failure modes listed under "Catches" are my illustrations.
         </p>
       </figure>
 
@@ -160,25 +169,28 @@
 
       <section class="prose" id="pipeline-causes">
         <p data-src="1382-1390">
-          What the toy makes clear is that every stall comes down to one comparison, between how long the host takes to produce a batch and how long the accelerator takes to consume it. The three common causes the Playbook lists each tip that balance in a different way, and each appears as a setting in <a href="#fig-input-timeline" class="figref" data-static-figref="1">Figure 2</a>.
+          Every input stall reduces to one race: host batch preparation versus device step compute (<a href="#fig-input-timeline" class="figref" data-static-figref="1">Figure 2</a>). The Playbook flags three common causes:
         </p>
         <ul class="p09-list" data-src="1382-1390">
           <li><strong>Data far from the training process.</strong> Reading training data over a network adds I/O latency to every batch. In the toy this is the network-storage setting, where the read segment dominates.</li>
           <li><strong>Expensive online preprocessing.</strong> Decoding and augmenting on the fly can cost more than the training step itself, so the Playbook suggests doing such preprocessing once, offline, and saving the result.</li>
-          <li><strong>Unintentional synchronization barriers.</strong> A call that makes the host wait for the device can interfere with prefetching. The Playbook's example is synchronizing metrics between the device and the host in <a href="https://github.com/google/CommonLoopUtils" target="_blank" rel="noopener">CommonLoopUtils</a>.</li>
+          <li><strong>Unintentional synchronization barriers.</strong> Calling the host back from device execution stalls prefetching, as when logging device metrics synchronously through <a href="https://github.com/google/CommonLoopUtils" target="_blank" rel="noopener">CommonLoopUtils</a> (or calling scalar synchronization such as <code>.item()</code> inside an inner loop).</li>
         </ul>
         <p data-src="1391-1398">
-          The suggested remedies map onto the same picture. Prefetching (for example <code>tf.data.Dataset.prefetch</code>) lets the host prepare upcoming batches while the accelerator computes, which hides input work as long as it is shorter than a step. Stripping unused features and metadata from each example as early in the pipeline as possible shortens the work per batch. Running more jobs that generate examples (for example with the <a href="https://www.tensorflow.org/api_docs/python/tf/data/experimental/service" target="_blank" rel="noopener">tf.data service</a>) raises the rate at which batches arrive, which is the two-worker setting in the toy. The authors also note that broader engineering concerns, such as keeping the data's disk footprint small, can justify accepting a slower input pipeline.
+          The remedies mirror that diagnosis. Prefetching (<code>tf.data.Dataset.prefetch</code>, or PyTorch <code>DataLoader</code> workers with <code>num_workers &gt; 0</code>, <code>pin_memory=True</code>, and <code>persistent_workers=True</code>) hides data loading behind device math. Stripping unused metadata early cuts transfer cost, and adding parallel input workers raises arrival throughput. Still, engineering constraints such as storage limits can justify accepting slower I/O.
         </p>
         <p data-src="238-244">
-          Before opening a profiler at all, I find one cheap comparison of my own useful. We feed the training step a batch that already sits in device memory, repeat it for a few hundred steps, and compare the steps per second against the real input pipeline. A large gap tells us the input pipeline is the bottleneck. This is a variant of the throughput check in <a href="03-batch-size.html#feasible">Part 3</a>, where the Playbook notes that throughput which stops doubling with the batch size before the accelerator saturates points to a bottleneck such as I/O or synchronization between compute nodes.
+          Before opening a heavy profiler, I run one quick ablation: feed the step loop a single tensor batch already sitting in device memory and compare steps per second against your real input loader. Any wide throughput gap confirms an input stall, echoing <a href="03-batch-size.html#feasible">Part 3</a>'s doubling test.
+        </p>
+        <p>
+          In modern compiled frameworks, separate compilation startup from steady-state throughput. Using PyTorch 2's <code>torch.compile</code> (built around TorchDynamo and TorchInductor <cite data-ref="ansel2024"><span class="cit-num"><a href="#ref-ansel2024">[1]</a></span></cite>), skip early warm-up steps when timing batch speed. Keep input shapes padded symmetrically as well, because shifting batch sizes during partial evaluation batches or batch-doubling sweeps triggers dynamic-shape recompiles that look like data stalls.
         </p>
       </section>
 
       <section class="prose" id="evaluation">
         <h2>Evaluating during training</h2>
         <p data-src="1405-1431">
-          Once batches arrive on time, we can turn to what the pipeline actually measures while it trains. It helps to separate three settings for evaluating a model, which the Playbook distinguishes and <a href="#fig-eval-settings" class="figref" data-static-figref="1">Figure 3</a> sketches. <strong>Online evaluation</strong> measures the model while it serves predictions in production. <strong>Offline evaluation</strong> runs it on held-out training, validation and test sets that represent the production environment. <strong>Periodic evaluation</strong> computes metrics during training as a proxy for the offline evaluation, often on a subset of its data. Tuning lives almost entirely in the third setting, so that is where most of the pitfalls are.
+          Once batches stream smoothly, verify what the loop measures. <a href="#fig-eval-settings" class="figref" data-static-figref="1">Figure 3</a> separates three evaluation settings from the Playbook. <strong>Online evaluation</strong> tracks live production predictions, <strong>offline evaluation</strong> scores full held-out datasets mimicking production, and <strong>periodic evaluation</strong> computes proxy validation metrics at intervals during training. Hyperparameter tuning lives almost wholly in periodic evaluation, where timing and batching traps arise.
         </p>
       </section>
 
@@ -218,7 +230,7 @@
 
       <section class="prose" id="evaluation-setup">
         <p data-src="1438-1450">
-          Periodic evaluations serve three purposes in the Playbook's workflow: monitoring training as it happens, supporting <a href="#checkpoints">retrospective checkpoint selection</a>, and letting us examine the <a href="05-reading-the-results.html#curves">training curves</a> after the run ends. The simplest setup alternates training and evaluation on the same machine, and there the Playbook recommends an evaluation batch size at least as large as the training batch size, because evaluation keeps no activations for a backward pass and so needs less memory per example.
+          Periodic evaluations serve three purposes: tracking live runs, feeding <a href="#checkpoints">retrospective checkpoint selection</a>, and drawing <a href="05-reading-the-results.html#curves">training curves</a> after completion. When training and evaluation alternate on the same device, the Playbook advises setting evaluation batch size at least as large as training batch size since evaluation discards activations rather than storing a backward pass.
         </p>
 
         <h3 id="step-clock">Step intervals, not time intervals</h3>
@@ -275,20 +287,20 @@
 
       <section class="prose" id="step-clock-why">
         <p>
-          The underlying problem is that a timer spaces evaluations evenly in time and therefore unevenly in steps. The slowdown's stretch of training gets more than three times the usual density of points, and the stretch repeated after the restart is evaluated twice at offset steps, so the line in panel (b) doubles back on itself. Neither feature tells us anything about the model; both are a record of what the cluster happened to be doing.
+          Timers space evaluations evenly across seconds rather than steps. Slowdowns crowd evaluations over three times tighter on the step axis, while preemptions evaluate repeated steps at misaligned points. Neither artifact measures the network; both merely reflect cluster jitter.
         </p>
         <p>
-          More worrying, the uneven density changes which checkpoint wins. The best checkpoint is a minimum over noisy evaluations, and a stretch with more evaluations offers more chances for a low noisy value, an order-statistics effect we will return to when we discuss checkpoints. In the run shown, the timer selects step <span data-num="fig-clocks:default:best-step">10,075</span> from inside the slowdown, while the step schedule selects step <span data-num="fig-clocks:step:best-step">6,500</span>, close to where the noise-free curve is lowest. If two trials hit slowdowns at different times, they are compared on unequal terms. On a step schedule, by contrast, every trial is evaluated at the same steps, so we can overlay curves point by point and every trial gets the same number of chances.
+          Worse, uneven spacing skews checkpoint selection. Because the best checkpoint takes a minimum over noisy validation scores, crowded regions buy extra lottery draws. Here the timer picks step <span data-num="fig-clocks:default:best-step">10,075</span> inside the slowdown window, whereas the step clock picks <span data-num="fig-clocks:step:best-step">6,500</span> near the true minimum. Fixed step schedules align every trial at identical evaluation steps so every model receives equal footing.
         </p>
 
         <h3 id="evaluation-bugs">Periodic patterns in validation metrics</h3>
         <p data-src="1456-1460">
-          Step intervals have a second, less obvious benefit that the Playbook points out. When the training, validation and test split is shuffled, periodicity in the validation or test metrics can indicate an implementation bug, such as test data that overlaps the training data or training data that is not properly shuffled, and regular step intervals make such patterns easier to catch. The Playbook doesn't spell out why, but because an epoch is a fixed number of steps, a pattern tied to the order of the training data repeats every fixed number of step-scheduled evaluations, while a timer smears it across uneven intervals.
+          Step intervals bring a second bonus the Playbook flags. When data splits should be shuffled, regular waves across periodic metrics expose dataset leakage or broken shuffling immediately. Though the Playbook skips the explanation, fixed epochs span fixed step counts, keeping pass-aligned bugs locked at constant period where timers smear them across irregular wall intervals.
         </p>
 
         <h3 id="padding">Partial batches and saved predictions</h3>
         <p data-src="1461-1470">
-          A smaller detail can bias the evaluation itself. When the size of the evaluation set is not divisible by the batch size, the final batch is partial, and implementations usually pad it to full size. The Playbook asks that the padded examples be weighted correctly so they do not bias the loss, and notes that they can often simply be given a weight of zero (<a href="#fig-padding" class="figref" data-static-figref="1">Figure 5</a>).
+          Small boundary errors bias metrics too. When evaluation counts do not divide evenly by batch size, pipelines pad the trailing partial batch. Weight padded slots cleanly (zero weight is standard, <a href="#fig-padding" class="figref" data-static-figref="1">Figure 5</a>) so dummy tensors never pollute validation means.
         </p>
       </section>
 
@@ -315,19 +327,19 @@
 
       <section class="prose" id="saved-predictions">
         <p data-src="1465-1470">
-          While we are inside the evaluation loop, the Playbook also recommends saving enough information at each evaluation to support offline analysis, ideally the predictions on a selection of individual examples, since these are invaluable for debugging. Artifacts such as TensorFlow <a href="https://www.tensorflow.org/guide/saved_model" target="_blank" rel="noopener">SavedModels</a> make ad hoc inspection easy after the evaluation jobs finish.
+          Inside every evaluation pass, the Playbook recommends logging individual model predictions alongside aggregate scores. Saving inspectable model artifacts such as TensorFlow <a href="https://www.tensorflow.org/guide/saved_model" target="_blank" rel="noopener">SavedModels</a> enables rapid post-hoc error analysis after jobs conclude.
         </p>
       </section>
 
       <section class="prose" id="sample">
         <h2>Choosing the evaluation sample</h2>
         <p data-src="1478-1483">
-          So far we have asked when to evaluate; the other half of the question is what to evaluate on. A periodic evaluation job often cannot compute metrics on the full offline evaluation set in a reasonable time, which in the Playbook's experience frequently makes a <dfn data-concept="evaluation-sample">sample for periodic evaluation</dfn> necessary. Choosing that sample is a small exercise in survey design, and the Playbook lists four considerations.
+          Alongside <em>when</em> to score, decide <em>what</em> slice to score. Because running periodic passes over a huge offline test suite stalls training, pipelines routinely define a compact <dfn data-concept="evaluation-sample">periodic evaluation sample</dfn> balancing four survey criteria:
         </p>
         <ul class="p09-list" data-src="1484-1504">
           <li><strong>No skew.</strong> Performance on the sample should match performance on the whole offline evaluation set.</li>
           <li><strong>Size.</strong> The sample should be small enough to evaluate in full without trouble, yet large enough to measure improvements to the model accurately, so that they are not overwhelmed by label noise.</li>
-          <li><strong>Repeated use.</strong> It should be large enough to support many evaluations across trials in sequence without adaptively fitting the validation set in a way that fails to generalize to a held-out test set, although the Playbook adds that this is rarely a practical concern. (For the theory of reusing a holdout set, see <cite data-ref="dwork2015">Dwork et al. (2015) <span class="cit-num"><a href="#ref-dwork2015">[2]</a></span></cite>.)</li>
+          <li><strong>Repeated use.</strong> It should be large enough to support many evaluations across trials in sequence without adaptively fitting the validation set in a way that fails to generalize to a held-out test set, although the Playbook adds that this is rarely a practical concern. (For the theory of reusing a holdout set, see <cite data-ref="dwork2015">Dwork et al. (2015) <span class="cit-num"><a href="#ref-dwork2015">[3]</a></span></cite>.)</li>
           <li><strong>Imbalanced classes.</strong> Performance on rare classes will often be noisy, so for a class with few examples the Playbook suggests logging the number of examples predicted correctly.</li>
         </ul>
         <p data-src="1500-1504">
@@ -393,7 +405,7 @@
 
       <section class="prose" id="checkpoints-count">
         <p>
-          Retrospective selection is also where the lesson of <a href="#fig-clocks" class="figref" data-static-figref="1">Figure 4</a> comes back. A trial's result is a minimum over noisy evaluations, so it depends on how many evaluations the trial received, which is the same effect as taking the best of many trials in <a href="04-searching-the-space.html#trials">Part 4</a>. We can't remove that bias, but a fixed step interval at least gives every trial in a study the same number of evaluations at the same steps, so the bias is roughly equal across trials and largely drops out of the comparison.
+          Retrospective selection revisits <a href="#fig-clocks" class="figref" data-static-figref="1">Figure 4</a>'s count bias directly. Scoring a run by its minimum noisy metric pulls the score downward as evaluation count $M$ rises (<a href="04-searching-the-space.html#trials">Part 4</a>). You cannot eliminate noise completely, yet evaluating at fixed steps keeps $M$ equal across compared trials so bias cancels in pairwise comparisons.
         </p>
         <details class="math-aside">
           <summary>How much lower does the minimum of more evaluations fall?</summary>
@@ -489,7 +501,7 @@
           <p>Nowadays batch norm can often be replaced with LayerNorm, but in cases where it cannot, there are tricky details when changing the batch size or number of hosts.</p>
         </blockquote>
         <p data-src="1555-1557">
-          Like the multi-host issues in the next section, these details produce bugs that are hard to spot, because the code runs and the numbers look plausible. Recall that batch norm <cite data-ref="ioffe2015"><span class="cit-num"><a href="#ref-ioffe2015">[6]</a></span></cite> normalizes each feature (a channel, in a convolutional network) using the mean and variance of that feature over a group of $n$ examples. For an activation $z_i$ of example $i$,
+          Like the multi-host issues in the next section, these details produce bugs that are hard to spot, because the code runs and the numbers look plausible. Recall that batch norm <cite data-ref="ioffe2015"><span class="cit-num"><a href="#ref-ioffe2015">[7]</a></span></cite> normalizes each feature (a channel, in a convolutional network) using the mean and variance of that feature over a group of $n$ examples. For an activation $z_i$ of example $i$,
         </p>
         <div class="math-block">
           $$\hat{z}_i = \frac{z_i - \htmlClass{math-col-model}{\bar{z}}}{\sqrt{\htmlClass{math-col-model}{s^2} + \epsilon}}, \qquad \htmlClass{math-col-model}{\bar{z}} = \frac{1}{\htmlClass{math-col-third}{n}}\sum_{j=1}^{\htmlClass{math-col-third}{n}} z_j,$$
@@ -498,7 +510,7 @@
           where $s^2$ is the variance over the same $n$ examples and $\epsilon$ is a small constant. At test time the layer instead uses exponential moving averages (EMAs) of these statistics collected during training. The subtlety the Playbook raises first is that with several devices, each holding part of the batch, the statistics differ from device to device unless they are explicitly synchronized. Without synchronization, $n$ equals the per-device batch size, $B/D$ for a global batch size $B$ split over $D$ devices, which means that changing either the batch size or the device count also changes $n$.
         </p>
         <p>
-          Why should we care about $n$? Because it changes the objective itself. <cite data-ref="goyal2017">Goyal et al. (2017) <span class="cit-num"><a href="#ref-goyal2017">[4]</a></span></cite> make this explicit: "if the per-worker minibatch sample size $n$ is changed, it changes the underlying loss function $L$ that is optimized", because the statistics "computed by BN with different $n$ exhibit different levels of random variation". For that reason they kept $n = 32$ per worker throughout their large-batch ImageNet runs. <a href="#fig-norm-multihost" class="figref" data-static-figref="1">Figure 9</a> compares what each normalization scheme averages over.
+          Why does $n$ matter mathematically? Changing group count alters the loss objective itself. <cite data-ref="goyal2017">Goyal et al. (2017) <span class="cit-num"><a href="#ref-goyal2017">[5]</a></span></cite> warn: "if the per-worker minibatch sample size $n$ is changed, it changes the underlying loss function $L$ that is optimized", holding $n = 32$ fixed across large-batch ImageNet experiments. <a href="#fig-norm-multihost" class="figref" data-static-figref="1">Figure 9</a> maps what four normalizers average over.
         </p>
       </section>
 
@@ -517,23 +529,23 @@
         </div>
         <p class="sr-only">Four grids of 16 examples by 6 features, split across two devices of 8 examples. Per-device batch norm averages one feature over the 8 examples of one device. Synchronized batch norm averages one feature over all 16 examples. Ghost batch norm averages one feature over a ghost batch of 4 examples. Layer norm averages one example over its 6 features.</p>
         <p class="fig-caption">
-          Each grid is one layer's activations for a global batch of 16 examples (rows) split over 2 devices, with 6 features (columns). Shaded cells are the values that one mean and variance are computed from. Per-device batch norm averages one feature over the 8 examples on a device, so its $n$ changes with the batch size and the device count. Synchronized batch norm averages over the whole batch. Ghost batch norm <cite data-ref="hoffer2017"><span class="cit-num"><a href="#ref-hoffer2017">[5]</a></span></cite> averages over fixed virtual batches (4 examples here) inside each device. Layer norm averages one example over its features and uses no other examples.
+          Each grid is one layer's activations for a global batch of 16 examples (rows) split over 2 devices, with 6 features (columns). Shaded cells are the values that one mean and variance are computed from. Per-device batch norm averages one feature over the 8 examples on a device, so its $n$ changes with the batch size and the device count. Synchronized batch norm averages over the whole batch. Ghost batch norm <cite data-ref="hoffer2017"><span class="cit-num"><a href="#ref-hoffer2017">[6]</a></span></cite> averages over fixed virtual batches (4 examples here) inside each device. Layer norm averages one example over its features and uses no other examples.
         </p>
       </figure>
 
       <section class="prose" id="batchnorm-details">
         <p data-src="1558-1563">
-          If $n$ matters, which value should we pick? The Playbook reports that anecdotally, mostly on ImageNet, computing the statistics over only about 64 examples works better in practice, and it points to ghost batch norm, introduced by <cite data-ref="hoffer2017">Hoffer et al. (2017) <span class="cit-num"><a href="#ref-hoffer2017">[5]</a></span></cite>, which computes the statistics over small virtual batches inside a large batch. To keep the provenance of the numbers straight, 64 is the Playbook authors' anecdote, while Hoffer et al. used ghost batches of 128, mostly on CIFAR. Whatever the value, decoupling the total batch size from the number of examples in the statistics is particularly useful when comparing batch sizes, which is where <a href="03-batch-size.html#batchnorm">Part 3</a> ran into the same issue.
+          Which group size $n$ works well? Anecdotally (primarily on ImageNet), the Playbook reports good empirical behavior near 64 examples per batch-norm estimate, citing ghost batch norm <cite data-ref="hoffer2017"><span class="cit-num"><a href="#ref-hoffer2017">[6]</a></span></cite>. Keep numbers separate: 64 is the Playbook authors' anecdote, whereas Hoffer et al. trained CIFAR with virtual batches of 128. Either choice decouples statistics from global batch size (<a href="03-batch-size.html#batchnorm">Part 3</a>).
         </p>
         <p data-src="1564-1571">
-          Two implementation details deserve attention, one about per-device batch sizes and one about the moving averages used at test time.
+          Two implementation details remain critical for clean evaluation:
         </p>
         <ul class="p09-list" data-src="1564-1571">
           <li><strong>Per-device batches larger than the ghost batch.</strong> Ghost batch norm implementations do not always handle a per-device batch size larger than the virtual batch size. In that case each device has to subsample its batch to compute statistics over the intended number of examples.</li>
-          <li><strong>The EMAs used at test time.</strong> The moving averages are linear combinations of training statistics, so synchronizing them across devices before they are saved in a checkpoint is enough. Some common implementations never synchronize them and save the EMA from the first device.</li>
+          <li><strong>The EMAs used at test time.</strong> Moving averages combine statistics linearly, so synchronizing them across devices right before checkpointing ensures test consistency. Common wrappers otherwise silently dump host-0's unaveraged EMA alone.</li>
         </ul>
         <p>
-          All of this bookkeeping explains why the Playbook suggests replacing batch norm where possible. Layer norm <cite data-ref="ba2016"><span class="cit-num"><a href="#ref-ba2016">[1]</a></span></cite> normalizes each example over its own features, and group norm <cite data-ref="wuhe2018"><span class="cit-num"><a href="#ref-wuhe2018">[8]</a></span></cite> over groups of channels within an example. Since neither uses other examples, neither depends on the batch size or the number of devices, and the whole problem disappears.
+          Modern transformer pipelines sidestep this book-keeping entirely by dropping batch norm. LayerNorm <cite data-ref="ba2016"><span class="cit-num"><a href="#ref-ba2016">[2]</a></span></cite>, RMSNorm <cite data-ref="zhang2019rmsnorm"><span class="cit-num"><a href="#ref-zhang2019rmsnorm">[10]</a></span></cite> (which drops mean-centering while preserving scaling invariance), and GroupNorm <cite data-ref="wuhe2018"><span class="cit-num"><a href="#ref-wuhe2018">[9]</a></span></cite> compute activations strictly within each example, eliminating cross-device synchronization bugs whenever batch size or node counts scale.
         </p>
       </section>
 
@@ -604,51 +616,74 @@
         <ul class="p09-list" data-src="1578-1585">
           <li><strong>Log and checkpoint on one host.</strong> Otherwise every host writes the same files, and the copies overwrite or duplicate one another.</li>
           <li><strong>Synchronize batch norm statistics before evaluation or checkpointing.</strong> The saved model then reflects the statistics of all hosts, which is the multi-host form of the EMA point in the <a href="#batchnorm">batch norm section</a>.</li>
-          <li><strong>Mark each RNG seed by its role.</strong> The Playbook calls it critical to use seeds that are the same across hosts for model initialization and seeds that differ across hosts for data shuffling and preprocessing. The reasoning is left implicit, but I read it as guarding against two opposite failures, since different initialization seeds start the replicas from different weights, while identical data seeds can give hosts identical batches when they read the same files.</li>
+          <li><strong>Mark each RNG seed by its role.</strong> Use identical seeds across hosts for weight initialization, yet distinct per-host seeds for shuffling and augmentation. Otherwise replicas diverge from different starting points or feed duplicate batches from shared files.</li>
           <li><strong>Shard data files across hosts.</strong> The Playbook recommends this for performance.</li>
+        </ul>
+
+        <p>
+          Two modern distributed realities extend those 2023 rules:
+        </p>
+        <ul class="p09-list">
+          <li><strong>Sharded states and async checkpoints.</strong> Under Fully Sharded Data Parallelism (PyTorch FSDP <cite data-ref="zhao2023"><span class="cit-num"><a href="#ref-zhao2023">[11]</a></span></cite>), weights, gradients, and optimizer moments stay partitioned across ranks and materialize one unit at a time during computation. Gathering everything onto host 0 hits host-RAM limits, so production pipelines save distributed checkpoints asynchronously in parallel across hosts (for example via <code>torch.distributed.checkpoint</code> or Orbax async).</li>
+          <li><strong>Mixed-precision and TensorCore non-determinism.</strong> Even with locked initialization and shuffle seeds, fast parallel kernels and <code>bf16</code> all-reduce reductions vary subtly in floating-point accumulation order across runs, reinforcing the seed-rerun variance checks from <a href="06-adopting-a-change.html">Part 6</a>.</li>
         </ul>
       </section>
 
-      <section class="prose p09-practice" id="what-to-do">
+      <section class="prose in-practice" id="in-practice">
         <h2>In practice</h2>
         <p>
-          Taken together, the advice in this post is easiest to use when sorted by the stage at which we act on it rather than by topic. Items marked as my addition are not in the Playbook.
+          Work through this operational checklist by pipeline stage before tuning, inside each training job, and after every study completes.
         </p>
-        <div class="p09-phases">
-          <div class="p09-phase">
-            <div class="p09-phase-head"><span class="p09-phase-n">1</span><h3>Before the first sweep</h3></div>
-            <ol class="p09-checks">
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg><span><a href="#preflight">Run the smoke tests</a> on a new pipeline by inspecting a batch, checking the step-0 loss, and overfitting one batch. <em class="p09-ours">My addition</em></span></li>
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18h4l3-12 4 12 3-6h4"/></svg><span><a href="#pipeline">Profile the input pipeline</a>. Compare steps per second against a cached batch, prefetch, and add input workers if the host cannot keep up.</span></li>
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/></svg><span>On several hosts, <a href="#multihost">log and checkpoint on host 0</a>, mark each seed by its role, and shard the data files.</span></li>
-            </ol>
-          </div>
-          <div class="p09-phase">
-            <div class="p09-phase-head"><span class="p09-phase-n">2</span><h3>While each trial trains</h3></div>
-            <ol class="p09-checks">
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span><a href="#step-clock">Evaluate every fixed number of steps</a>, with an evaluation batch at least as large as the training batch.</span></li>
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="5" height="8"/><rect x="10" y="8" width="5" height="8"/><path d="M17 8h4v8h-4z" stroke-dasharray="2 2"/></svg><span><a href="#padding">Give padded examples zero weight</a> and save predictions on a selection of examples.</span></li>
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/></svg><span><a href="#checkpoints">Keep the N best checkpoints</a>, with batch norm statistics synchronized before each save.</span></li>
-            </ol>
-          </div>
-          <div class="p09-phase">
-            <div class="p09-phase-head"><span class="p09-phase-n">3</span><h3>After each study</h3></div>
-            <ol class="p09-checks">
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9l3 3 6-6"/><circle cx="17" cy="16" r="4"/></svg><span><a href="#checkpoints">Select the best checkpoint retrospectively</a> as the trial's result.</span></li>
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M9 4v16"/></svg><span><a href="#tracking">Add a row to the tracking sheet</a> with the study name, config link, description, trial count, best validation performance, and reproduction notes.</span></li>
-              <li><svg class="p09-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6" stroke-dasharray="2 2"/></svg><span><a href="#sample">Check the evaluation sample</a> against the full offline set, and read rare-class results as counts.</span></li>
-            </ol>
-          </div>
-        </div>
-        <p>
-          For a single place to look things up later, the <a href="reference.html">reference page</a> collects the Playbook's rules from all nine posts.
-        </p>
+        <ol class="practice-steps">
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg></span>
+            <div>
+              <h3>Pass three preflight smoke tests <em class="p09-ours">Author addition</em></h3>
+              <p>Decode and inspect one final batch, confirm initial loss sits near $\ln C$ for classification, and overfit one small batch before launching your first sweep (<a href="#preflight">Smoke tests</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 18h4l3-12 4 12 3-6h4"/></svg></span>
+            <div>
+              <h3>Benchmark input throughput and warm up compiled graphs</h3>
+              <p>Compare live training throughput against a cached in-memory batch, prefetch across input workers, drop accidental sync calls, and keep padded batch shapes static past initial <code>torch.compile</code> warmup (<a href="#pipeline">Where the accelerator waits</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="13" width="18" height="7" rx="1.5"/></svg></span>
+            <div>
+              <h3>Align distributed hosts, seeds, shards, and async saves</h3>
+              <p>Unify initialization seeds, isolate per-host data seeds and file shards, log scalars once, and save sharded model/optimizer states asynchronously without saturating host 0 RAM (<a href="#multihost">Multi-host pipelines</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <div>
+              <h3>Evaluate at regular steps with zero-padded tail weights</h3>
+              <p>Schedule validation strictly by step interval using batches at least as big as training, mask padded final-batch examples to weight zero, and save sample predictions for inspection (<a href="#evaluation">Evaluating during training</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4"/></svg></span>
+            <div>
+              <h3>Keep the N best checkpoints and replace legacy BatchNorm</h3>
+              <p>Record top checkpoints continuously over fixed steps rather than stopping early; use RMSNorm, LayerNorm, or GroupNorm where possible, or sync EMA/stats before saving BatchNorm checkpoints (<a href="#batchnorm">Normalization</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1.5"/><path d="M3 9h18M9 4v16"/></svg></span>
+            <div>
+              <h3>Audit rare-class counts and log every study</h3>
+              <p>Report raw hit counts on small validation slices, verify periodic subset match against full offline data, and store study names, config commits, trial counts, and reproduction notes (<a href="#tracking">Experiment tracking</a>). Collect all 64 Playbook rules in <a href="reference.html">Reference</a>.</p>
+            </div>
+          </li>
+        </ol>
       </section>
 
-      <section class="prose" id="where-this-fits">
+      <section class="prose" id="where">
         <h2>Where this fits</h2>
         <p>
-          It seems fitting that the series ends here, with material that logically comes first. In the Playbook's workflow a working pipeline is a precondition for everything else, since every comparison in the earlier posts is only as trustworthy as the numbers the pipeline reports. The flowchart below highlights the node where these checks belong.
+          Appropriately, this closing post governs prerequisites for everything upstream. Every decision covered in Parts 1 through 8 rests on numbers produced by an unbiased, throughput-clean pipeline, mapped in the workflow node below.
         </p>
       </section>
 
@@ -658,8 +693,8 @@
 
       <section class="refs" id="references">
         <h2>References</h2>
-        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023) <span class="cit-num"><a href="#ref-playbook">[3]</a></span></cite>.</p>
-        <ol id="reflist"><li id="ref-ba2016">Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey E. Hinton (2016). <a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Layer Normalization</a>. arXiv:1607.06450.</li><li id="ref-dwork2015">Cynthia Dwork, Vitaly Feldman, Moritz Hardt, Toniann Pitassi, Omer Reingold, Aaron Roth (2015). <a href="https://doi.org/10.1126/science.aaa9375" target="_blank" rel="noopener">The Reusable Holdout: Preserving Validity in Adaptive Data Analysis</a>. Science, 349(6248), 636-638.</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li><li id="ref-goyal2017">Priya Goyal, Piotr Dollar, Ross Girshick, Pieter Noordhuis, Lukasz Wesolowski, Aapo Kyrola, Andrew Tulloch, Yangqing Jia, Kaiming He (2017). <a href="https://arxiv.org/abs/1706.02677" target="_blank" rel="noopener">Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour</a>. arXiv:1706.02677.</li><li id="ref-hoffer2017">Elad Hoffer, Itay Hubara, Daniel Soudry (2017). <a href="https://arxiv.org/abs/1705.08741" target="_blank" rel="noopener">Train longer, generalize better: closing the generalization gap in large batch training of neural networks</a>. Advances in Neural Information Processing Systems (NeurIPS 2017).</li><li id="ref-ioffe2015">Sergey Ioffe, Christian Szegedy (2015). <a href="https://proceedings.mlr.press/v37/ioffe15.html" target="_blank" rel="noopener">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>. Proceedings of the 32nd International Conference on Machine Learning (PMLR 37:448-456).</li><li id="ref-karpathy2019">Andrej Karpathy (2019). <a href="https://karpathy.github.io/2019/04/25/recipe/" target="_blank" rel="noopener">A Recipe for Training Neural Networks</a>. Essay, Andrej Karpathy blog, 25 April 2019.</li><li id="ref-wuhe2018">Yuxin Wu, Kaiming He (2018). <a href="https://arxiv.org/abs/1803.08494" target="_blank" rel="noopener">Group Normalization</a>. Proceedings of the European Conference on Computer Vision (ECCV 2018), pp. 3-19.</li></ol>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023) <span class="cit-num"><a href="#ref-playbook">[4]</a></span></cite>.</p>
+        <ol id="reflist"><li id="ref-ansel2024">Jason Ansel, Edward Yang, Horace He, Natalia Gimelshein, Animesh Jain, Michael Voznesensky, Bin Bao, et al. (2024). <a href="https://doi.org/10.1145/3620665.3640366" target="_blank" rel="noopener">PyTorch 2: Faster Machine Learning Through Dynamic Python Bytecode Transformation and Graph Compilation</a>. Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS 2024), Vol. 2, 929-947.</li><li id="ref-ba2016">Jimmy Lei Ba, Jamie Ryan Kiros, Geoffrey E. Hinton (2016). <a href="https://arxiv.org/abs/1607.06450" target="_blank" rel="noopener">Layer Normalization</a>. arXiv:1607.06450.</li><li id="ref-dwork2015">Cynthia Dwork, Vitaly Feldman, Moritz Hardt, Toniann Pitassi, Omer Reingold, Aaron Roth (2015). <a href="https://doi.org/10.1126/science.aaa9375" target="_blank" rel="noopener">The Reusable Holdout: Preserving Validity in Adaptive Data Analysis</a>. Science, 349(6248), 636-638.</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li><li id="ref-goyal2017">Priya Goyal, Piotr Dollar, Ross Girshick, Pieter Noordhuis, Lukasz Wesolowski, Aapo Kyrola, Andrew Tulloch, Yangqing Jia, Kaiming He (2017). <a href="https://arxiv.org/abs/1706.02677" target="_blank" rel="noopener">Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour</a>. arXiv:1706.02677.</li><li id="ref-hoffer2017">Elad Hoffer, Itay Hubara, Daniel Soudry (2017). <a href="https://arxiv.org/abs/1705.08741" target="_blank" rel="noopener">Train longer, generalize better: closing the generalization gap in large batch training of neural networks</a>. Advances in Neural Information Processing Systems (NeurIPS 2017).</li><li id="ref-ioffe2015">Sergey Ioffe, Christian Szegedy (2015). <a href="https://proceedings.mlr.press/v37/ioffe15.html" target="_blank" rel="noopener">Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift</a>. Proceedings of the 32nd International Conference on Machine Learning (PMLR 37:448-456).</li><li id="ref-karpathy2019">Andrej Karpathy (2019). <a href="https://karpathy.github.io/2019/04/25/recipe/" target="_blank" rel="noopener">A Recipe for Training Neural Networks</a>. Essay, Andrej Karpathy blog, 25 April 2019.</li><li id="ref-wuhe2018">Yuxin Wu, Kaiming He (2018). <a href="https://arxiv.org/abs/1803.08494" target="_blank" rel="noopener">Group Normalization</a>. Proceedings of the European Conference on Computer Vision (ECCV 2018), pp. 3-19.</li><li id="ref-zhang2019rmsnorm">Biao Zhang, Rico Sennrich (2019). <a href="https://arxiv.org/abs/1910.07467" target="_blank" rel="noopener">Root Mean Square Layer Normalization</a>. Advances in Neural Information Processing Systems (NeurIPS 2019).</li><li id="ref-zhao2023">Yanli Zhao, Andrew Gu, Rohan Varma, Liang Luo, Chien-Chin Huang, Min Xu, Less Wright, Hamid Shojanazeri, Myle Ott, Sam Shleifer, Alban Desmaison, Can Balioglu, et al. (2023). <a href="https://arxiv.org/abs/2304.11277" target="_blank" rel="noopener">PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel</a>. arXiv:2304.11277.</li></ol>
       </section>
 
       <nav class="pager" aria-label="Post navigation"><a class="prev" href="../pages/08-training-instabilities.html"><small>&larr; Previous Post</small>Finding and fixing training instabilities</a><a class="next" href="../pages/reference.html"><small>Next Post &rarr;</small>Rules, glossary and notation</a></nav>

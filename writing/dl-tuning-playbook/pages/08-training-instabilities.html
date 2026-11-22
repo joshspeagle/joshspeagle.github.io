@@ -27,13 +27,24 @@
       <h1>Finding and fixing training instabilities</h1>
       <div class="post-meta">
         <span>Josh Speagle</span>
-        <a href="https://github.com/google-research/tuning_playbook#how-can-optimization-failures-be-debugged-and-mitigated" target="_blank" rel="noopener">Notes on the Playbook's section on optimization failures ↗</a>
+        <span class="sep"></span>
+        <span><a href="https://github.com/google-research/tuning_playbook#how-can-optimization-failures-be-debugged-and-mitigated" target="_blank" rel="noopener">Notes on the Playbook's section on optimization failures ↗</a></span>
       </div>
     </header>
 
     <p class="series-note">Part of a series of notes on Google Research's <a href="../index.html">Deep Learning Tuning Playbook</a>. Read <a href="../index.html#about">what the Playbook is and how these notes work</a>.</p>
 
-    <p class="lede">If we push the learning rate high enough, any network's training loss will eventually spike or turn into NaN. Most of the time that failure simply marks the top of the useful range and tells us nothing more. Occasionally, though, the best learning rate in a sweep sits right at the edge of the failures, which suggests the model would train faster and end up better with larger steps if only it could survive them. The Playbook's section on optimization failures is about recognizing that situation and widening the range of usable learning rates. I want to start from a one-parameter quadratic that shows why a step can be too large, use it to read the signature of an unstable sweep, and then look at the two main remedies, learning-rate warmup and gradient clipping, before collecting everything into a short practical recipe.</p>
+    <p class="lede">Push the learning rate high enough and any network's training loss eventually spikes or turns into NaN. Usually that ceiling just marks the top of the useful window. Occasionally, however, a sweep's winning learning rate sits jammed against failing trials, signaling that the model could improve with larger steps if it survived them. Below I explain curvature limits for gradient and adaptive updates, show how to verify an unstable sweep, walk through warmup and gradient clipping, and finish with modern Transformer and low-precision safeguards.</p>
+
+    <aside class="in-brief" aria-labelledby="in-brief-heading">
+      <div class="in-brief-head" id="in-brief-heading">In brief</div>
+      <ul>
+        <li><strong>Distinguish harmless ceilings from blocked sweeps:</strong> Widen fixes only when winning rates crowd failing runs with rising loss curves above (<a href="#diagnosis">Identifying an unstable workload</a>).</li>
+        <li><strong>Trace step limits to loss curvature:</strong> Gradient descent overshoots past $2/\mu_{\max}$, while adaptive methods equilibrate the preconditioned Hessian (<a href="#mechanism">Why a step can be too large</a>).</li>
+        <li><strong>Use warmup for early transients:</strong> Ramp toward $10\times$ the unstable rate only as slowly as curvature relaxation demands (<a href="#warmup">Learning-rate warmup</a>).</li>
+        <li><strong>Clip outliers and harden architectures:</strong> Cap gradient spikes near the 90th percentile alongside Pre-LN, RMSNorm, QK-Norm, and z-loss (<a href="#clipping">Gradient clipping</a>).</li>
+      </ul>
+    </aside>
 
     <article class="post-body">
 
@@ -41,14 +52,14 @@
       <section class="prose" id="what">
         <h2>When an instability matters</h2>
 
-        <p>Any learning-rate sweep over a wide enough range has a failing end, where trials diverge to NaN or their loss climbs and stays high. So when should a failure worry us? Not simply because it exists, as the Playbook puts it bluntly:</p>
+        <p>Wide learning-rate sweeps always have a breaking point where trials turn to NaN or shoot upward and stall. Why treat that failure as a bug rather than a natural bound? The Playbook states the test plainly:</p>
 
         <blockquote class="pb-quote">
           <p>Any workload will become unstable if the learning rate is too large. Instability is only an issue when it forces us to use a learning rate that's too small.</p>
           <cite><a href="https://github.com/google-research/tuning_playbook#identifying-unstable-workloads" target="_blank" rel="noopener">Deep Learning Tuning Playbook, "Identifying unstable workloads" ↗</a></cite>
         </blockquote>
 
-        <p>In this sense a <span data-concept="instability">training instability</span> is really a problem with the learning rate's range. Larger learning rates usually make faster progress per step, so a model that would prefer a larger rate but cannot survive one trains more slowly and often ends up worse. Figure 1 sketches the distinction. In a healthy sweep the loss falls as the rate grows, reaches a minimum, and rises again before training fails outright. In an unstable workload the failures set in before that minimum is reached, which means the best rate we can measure is just the largest one that still trains, and the true optimum is hidden behind the failures.</p>
+        <p>Seen that way, a <span data-concept="instability">training instability</span> narrows your usable learning-rate range (<a href="#fig-ceiling" class="figref" data-static-figref="1">Figure 1</a>). Healthy sweeps bend cleanly through a minimum and rise well before trials diverge. Unstable runs diverge <em>ahead</em> of that valley floor, stranding your best trial against a cliff while hiding faster convergence behind broken steps.</p>
 
         <figure class="schematic l-text" id="fig-ceiling" role="group" aria-labelledby="fig-ceiling-title"
                 data-playbook-img="assets/playbook/stride_instability.png"
@@ -83,26 +94,26 @@
               <text class="p08-accent-text" x="244" y="224" text-anchor="middle">rates lost to the instability</text>
             </svg>
           </div>
-          <p class="fig-caption">A sketch of a learning-rate sweep for an unstable workload. Trials diverge before the loss reaches the minimum that the same model would reach at a larger rate if training stayed stable, so the best rate that trains sits at the edge of the failures. The Playbook's Figure 4, under "The Playbook's figure", shows a real case in which a single stride was changed in a WideResNet, dropping the best learning rate from roughly 0.2 to 0.01.</p>
+          <p class="fig-caption">A sketch of a learning-rate sweep for an unstable workload. Trials diverge before reaching the minimum a stable curve would attain at higher step size, pinning the best feasible run at the breakdown boundary. Playbook Figure 4 (under "The Playbook's figure") shows one stride change in a WideResNet shifting the starred optimum from roughly 0.2 down to 0.01 as read from the plotted stars and log axis.</p>
         </figure>
 
-        <p>It also matters <em>when</em> a run breaks, because the remedies differ. The Playbook separates two kinds of <span data-concept="instability-types">instability</span>:</p>
+        <p><em>When</em> a run fails selects the remedy. The Playbook distinguishes two <span data-concept="instability-types">instability classes</span>:</p>
         <ul>
           <li><strong>Early instability</strong> happens at initialization or in the first part of training. The loss spikes within the first few steps, and the run either diverges or recovers and then trains slowly.</li>
           <li><strong>Mid-training instability</strong> is a sudden blow-up in the middle of training, which the Playbook associates with outlier gradient norms.</li>
         </ul>
-        <p>Later work has identified a third pattern in large Transformers, a slow divergence toward the end of training driven by growing output logits. In those experiments an auxiliary loss on the logits (z-loss) resolved it, while weight decay mitigated it for the larger models <cite data-ref="wortsman2023"><span class="cit-num"><a href="#ref-wortsman2023">[6]</a></span></cite>. The Playbook's advice targets the first two types, and before turning to the fixes it helps to understand why a step can be too large in the first place.</p>
+        <p>Post-2023 Transformer runs also highlight a third, slower divergence later in training from unbounded logit growth, discussed alongside architectural defenses in <a href="#modern-stabilizers">Stabilizing large transformers and low precision</a>. The Playbook targets the first two patterns; before examining its fixes, <a href="#fig-overshoot" class="figref" data-static-figref="1">Figure 2</a> shows why a downhill gradient step can diverge.</p>
       </section>
 
       <!-- ============================== WHY A STEP CAN BE TOO LARGE ============================== -->
       <section class="prose" id="mechanism">
         <h2>Why a step can be too large</h2>
 
-        <p>Why should a larger step ever make things worse, when it points downhill? The simplest place to see the answer is a one-dimensional quadratic. Let's take the loss $\ell(\theta) = \tfrac{1}{2} \mu \theta^2$, where $\theta$ is a single weight and $\mu$ is the curvature (how sharply the loss bends around its minimum). The gradient is $\mu\theta$, so one step of gradient descent with learning rate $\eta$ gives</p>
+        <p>How can a step pointing straight downhill raise the loss? A one-dimensional quadratic captures the exact geometry. Take $\ell(\theta) = \tfrac{1}{2} \mu \theta^2$, where $\theta$ is one parameter and $\mu$ is its curvature. Since the gradient is $\mu\theta$, one gradient step at rate $\eta$ maps</p>
 
         <p>$$\theta_{t+1} = \theta_t - \eta \mu \theta_t = (1 - \eta \mu)\,\theta_t .$$</p>
 
-        <p>Every step multiplies the distance to the minimum by the same factor, $1 - \eta \mu$, so everything depends on that factor's sign and size. When $\eta \mu &lt; 1$ it is positive, and the weight approaches the minimum from one side. When $1 &lt; \eta \mu &lt; 2$ it is negative but smaller than one in magnitude, so the weight jumps to the other side of the minimum on every step while still ending a little closer each time. Once $\eta \mu &gt; 2$ its magnitude exceeds one, and every step overshoots farther than the last. The largest stable learning rate for this loss is therefore $2/\mu$, which means the more sharply the loss bends, the smaller the step it can tolerate.</p>
+        <p>Every update scales the offset by $1 - \eta \mu$, whose sign and size dictate convergence (<a href="#fig-overshoot" class="figref" data-static-figref="1">Figure 2</a>). When $\eta \mu &lt; 1$, $\theta$ steps monotonically toward zero. Between $1 &lt; \eta \mu &lt; 2$, steps hop across zero yet still decay. Past $\eta \mu &gt; 2$, magnitude exceeds one and oscillations grow exponentially. Thus the curvature limit is $2/\mu$: steeper valleys permit smaller steps.</p>
 
         <figure class="fig l-wide" id="fig-overshoot" role="group" aria-labelledby="fig-overshoot-title">
           <figcaption class="fig-head">
@@ -127,18 +138,18 @@
         <p>A real network's loss has millions of directions rather than one, and each has its own curvature. These curvatures are the eigenvalues of the loss's Hessian (the matrix of second derivatives), and the largest of them is called the <span data-concept="sharpness">sharpness</span>, $\mu_{\max}$. Near a minimum the loss is close to a quadratic, so gradient descent acts on each eigen-direction separately and the most curved direction is the first to fail. On a quadratic, gradient descent therefore diverges once $\eta &gt; 2/\mu_{\max}$ <cite data-ref="cohen2021"><span class="cit-num"><a href="#ref-cohen2021">[2]</a></span></cite>, and I will call $2/\mu_{\max}$ the <span data-concept="stability-limit">stability limit</span>.</p>
 
         <details class="math-aside"><summary>Why the most curved direction sets the limit</summary>
-          <p>Near a minimum $\theta^\star$, write the loss as $\ell(\theta) \approx \ell(\theta^\star) + \tfrac{1}{2}(\theta - \theta^\star)^\top H (\theta - \theta^\star)$ with Hessian $H$. Expand the offset in the eigenvectors $v_i$ of $H$, with eigenvalues $\mu_i$, as $\theta - \theta^\star = \sum_i a_i v_i$. One gradient step maps $a_i \mapsto (1 - \eta\mu_i)\, a_i$, which is the one-dimensional update applied to each direction on its own. Every coefficient shrinks only if $|1 - \eta\mu_i| &lt; 1$ for all $i$, which is $\eta &lt; 2/\mu_{\max}$.</p>
-          <p>Momentum changes the constant 2 by a factor of order one <cite data-ref="cohen2021"><span class="cit-num"><a href="#ref-cohen2021">[2]</a></span></cite>, and for Adam there is no clean analogue (Gilmer et al. fit an empirical limit of about $40/\eta$ in their appendix) <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[3]</a></span></cite>. So we should read $2/\mu_{\max}$ as setting the scale of the limit rather than its exact value.</p>
+          <p>Near a minimum $\theta^\star$, expand $\ell(\theta) \approx \ell(\theta^\star) + \tfrac{1}{2}(\theta - \theta^\star)^\top H (\theta - \theta^\star)$ with Hessian $H$. Writing $\theta - \theta^\star = \sum_i a_i v_i$ in eigenvectors $v_i$ with eigenvalues $\mu_i$, gradient descent updates $a_i \mapsto (1 - \eta\mu_i)\, a_i$ independently. Stability requires $|1 - \eta\mu_i| &lt; 1$ across all $i$, yielding $\eta &lt; 2/\mu_{\max}$.</p>
+          <p>Momentum shifts the constant 2 by an order-one factor <cite data-ref="cohen2021"><span class="cit-num"><a href="#ref-cohen2021">[2]</a></span></cite>. For adaptive optimizers such as Adam and RMSProp, <cite data-ref="cohen2022">Cohen et al. (2022) <span class="cit-num"><a href="#ref-cohen2022">[3]</a></span></cite> prove an analogous mechanism, Adaptive Edge of Stability: rather than bare Hessian curvature alone (cf. Gilmer et al.'s empirical fit <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[4]</a></span></cite>), training equilibrates the maximum eigenvalue of the <em>preconditioned</em> Hessian, letting adaptive methods enter steeper loss valleys by adapting the preconditioner. Treat $2/\mu_{\max}$ as setting the characteristic scale rather than an exact optimizer boundary.</p>
         </details>
 
-        <p>What makes this more than a textbook exercise is that a real network's sharpness changes as it trains. Two results, progressive sharpening (Cohen et al.) and the flatter-region picture of Gilmer et al., account for most of the Playbook's advice in my view. Under full-batch gradient descent the sharpness tends to rise during training until it reaches about $2/\eta$, and then it hovers there while the loss keeps falling over the long run, with brief rises along the way <cite data-ref="cohen2021"><span class="cit-num"><a href="#ref-cohen2021">[2]</a></span></cite>. Cohen et al. call this regime the edge of stability, and one consequence is that small upward blips in the loss near the limit are normal rather than alarming. Gilmer et al. studied the opposite direction. Models that start out sharp can diverge even at small learning rates, and training succeeds once the parameters reach a region where the sharpness is below $2/\eta$ <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[3]</a></span></cite>. A slowly rising learning rate pushes the parameters toward such flatter regions, and they measured the sharpness tracking about $2/\eta$ through much of warmup. They present this push as the mechanism behind warmup, and we will return to it with a toy model in the <a href="#why-warmup">warmup section</a>. First, though, we need a way to tell whether a given sweep is limited by an instability at all.</p>
+        <p>Curvature also evolves over training, connecting two key findings to the Playbook's practice. Under full-batch gradient descent, sharpness rises until it settles near $2/\eta$, hovering at this <em>edge of stability</em> with minor upward blips as loss continues falling <cite data-ref="cohen2021"><span class="cit-num"><a href="#ref-cohen2021">[2]</a></span></cite>. Conversely, models initialized in steep terrain diverge unless optimization nudges weights toward regions with $\mu_{\max} &lt; 2/\eta$ <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[4]</a></span></cite>. A gradual learning-rate ramp guides weights into flatter basins safely (<a href="#why-warmup">explored in the warmup section</a>), though first you must diagnose whether a sweep hits an instability ceiling.</p>
       </section>
 
       <!-- ============================== IDENTIFYING AN UNSTABLE WORKLOAD ============================== -->
       <section class="prose" id="diagnosis">
         <h2>Identifying an unstable workload</h2>
 
-        <p>The practical question, then, is whether the best learning rate in our latest sweep is the true optimum or merely the largest rate that survives an instability. Conveniently, the Playbook's answer starts from the sweep we already have. If the best trial sits right next to the infeasible ones (trials that produce NaNs or "uncharacteristically high values of the loss"), and the trials just above it show the loss going up during training, then the workload is unstable and fixing the instability will likely let us train better. Figure 3 lays out this procedure together with two supporting checks, evaluating every step early in training and logging the gradient norm.</p>
+        <p>To check whether a sweep's winning learning rate reflects a true optimum or a stability cliff, start with existing curves. If top feasible runs press right against infeasible trials (NaNs or "uncharacteristically high values of the loss") whose loss jumps mid-run, the workload is unstable and stabilization should unlock faster convergence. <a href="#fig-identify" class="figref" data-static-figref="1">Figure 3</a> diagrams the diagnostic plus two supporting measurements: single-step early evaluation and unclipped gradient-norm logging.</p>
 
         <figure class="schematic l-text" id="fig-identify" role="group" aria-labelledby="fig-identify-title"
                 data-playbook-img="assets/playbook/loss_model_with_instability.png"
@@ -170,13 +181,13 @@
             </div>
             <div class="p08-side-card">
               <span class="p08-step-icon p08-small" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20v-6M9 20v-4M13 20V5M17 20v-3"/></svg></span>
-              <div><strong>Log the gradient norm.</strong> Record the L2 norm of the full loss gradient during training. Outlier values can cause spurious instability in the middle of training, and the log is what we use to set a clipping threshold.</div>
+              <div><strong>Log the gradient norm.</strong> Record the L2 norm of the full loss gradient during training. Outlier values can cause spurious instability mid-run, and the log sets your clipping threshold.</div>
             </div>
           </div>
           <p class="fig-caption">The Playbook's procedure for identifying stability problems, from its sections on identifying unstable workloads and on when to apply warmup, with the wording kept close to the original. The Playbook's Figure 7b shows the confirming check on a real model.</p>
         </figure>
 
-        <p>To see what this signature looks like, Figure 4 runs the procedure on a toy model. A 13-trial sweep at constant learning rates produces a plot much like the Playbook's Figure 7a, where the best trial at $\text{lr}^* =$ <span data-num="fig-signature:default:best-lr">0.0281</span> is the last feasible rate before all <span data-num="fig-signature:default:diverged-count">5</span> larger rates on the grid diverge. Panel (b) shows the training loss at the selected rate twice, once as an evaluation every <span data-num="fig-signature:model:eval-every">100</span> steps would record it and once as an every-step log records it. At $\text{lr}^*$ the loss spikes to <span data-num="fig-signature:default:peak">9.57</span> times its starting value at step <span data-num="fig-signature:default:peak-step">14</span> and recovers by step 100, so the coarser schedule never sees the spike at all. This is exactly the kind of transient that the Playbook's every-step check is designed to catch.</p>
+        <p><a href="#fig-signature" class="figref" data-static-figref="1">Figure 4</a> traces this diagnostic on a simulated sweep. Thirteen constant learning rates reproduce Playbook Figure 7a's signature: $\text{lr}^* =$ <span data-num="fig-signature:default:best-lr">0.0281</span> is the highest surviving rate before all <span data-num="fig-signature:default:diverged-count">5</span> faster trials blow up. Panel (b) compares periodic logs every <span data-num="fig-signature:model:eval-every">100</span> steps against every-step logs at $\text{lr}^*$. Loss spikes to <span data-num="fig-signature:default:peak">9.57</span> times initialization at step <span data-num="fig-signature:default:peak-step">14</span> and recovers by step 100, proving invisible without per-step early checks.</p>
 
         <figure class="fig l-wide" id="fig-signature" role="group" aria-labelledby="fig-signature-title"
                 data-playbook-img="assets/playbook/axis_model_with_instability.png"
@@ -203,14 +214,14 @@
           </details>
         </figure>
 
-        <p>The rate at which the model first becomes unstable gets its own name in the Playbook, the <code>unstable_base_learning_rate</code>. Because it serves as the reference point for the warmup recipe below, it is worth pinning down between the best feasible grid point and the first diverging one, which is what the bracket in Figure 4 does.</p>
+        <p>The Playbook names that breakdown boundary the <code>unstable_base_learning_rate</code>. Because the warmup recipe below scales upward from this rate, bracketing it between the highest surviving trial and lowest diverging trial (<a href="#fig-signature" class="figref" data-static-figref="1">Figure 4</a>) provides a reliable anchor.</p>
       </section>
 
       <!-- ============================== WHAT TO TRY ============================== -->
       <section class="prose" id="fixes">
         <h2>What to try</h2>
 
-        <p>Once a sweep shows that an instability is limiting the learning rate, the natural first reaction is to lower the learning rate until the spikes go away. The Playbook deliberately puts that option at the bottom of its list as "a last resort", because a lower rate slows down the entire run to avoid a problem that may last only a few hundred steps or a handful of outlier batches. Figure 5 collects the full <a href="https://github.com/google-research/tuning_playbook#potential-fixes-for-common-instability-patterns" target="_blank" rel="noopener">list of potential fixes</a>.</p>
+        <p>Faced with divergence, cutting the learning rate is tempting. Yet the Playbook demotes lower rates to a "last resort" because they slow every well-behaved step to survive brief early curvature or rare outlier batches. <a href="#fig-fixes" class="figref" data-static-figref="1">Figure 5</a> gathers the full <a href="https://github.com/google-research/tuning_playbook#potential-fixes-for-common-instability-patterns" target="_blank" rel="noopener">Playbook repair hierarchy</a>.</p>
 
         <figure class="schematic l-wide" id="fig-fixes" role="group" aria-labelledby="fig-fixes-title">
           <figcaption class="fig-head">
@@ -251,18 +262,18 @@
           <p class="fig-caption">The fixes from the Playbook's section on optimization failures, with its notes on when each helps. The Playbook does not rank the first four. It marks lowering the learning rate as the last resort.</p>
         </figure>
 
-        <p>The architecture item is the vaguest of these, and related work helps fill it in. Goyal et al. initialized the last batch-normalization scale in each residual block to zero, so that each block starts out as the identity, and found that this eased optimization early in training with large batches <cite data-ref="goyal2017"><span class="cit-num"><a href="#ref-goyal2017">[5]</a></span></cite>. For Transformers, Wortsman et al. normalized the queries and keys in attention (qk-layernorm). Without it, the learning rate at which their models diverged fell as the models grew, while with it the models trained to low loss at high learning rates <cite data-ref="wortsman2023"><span class="cit-num"><a href="#ref-wortsman2023">[6]</a></span></cite>. Still, warmup and clipping are the Playbook's main tools, and since each comes with a concrete recipe, they are the subject of the next two sections.</p>
+        <p>Because the Playbook's architecture line is brief, literature context helps explain why normalization placement matters. Goyal et al. initialized each residual branch's terminal scale to zero so blocks start as near-identities, smoothing early large-batch steps <cite data-ref="goyal2017"><span class="cit-num"><a href="#ref-goyal2017">[6]</a></span></cite>. Even so, warmup and gradient clipping form the Playbook's primary tunable remedies (<a href="#fig-warmup-recipe" class="figref" data-static-figref="1">Figure 6</a> and <a href="#fig-clipping-recipe" class="figref" data-static-figref="1">Figure 8</a>).</p>
       </section>
 
       <!-- ============================== WARMUP ============================== -->
       <section class="prose" id="warmup">
         <h2>Learning-rate warmup</h2>
 
-        <p>If the trouble comes in the first few steps, when the model is still sharp, an obvious idea is to take small steps until it is not. That is what <span data-concept="warmup">learning-rate warmup</span> does, starting training at a small learning rate and ramping up to the base rate over the first $W$ steps (<code>warmup_steps</code>). With a linear ramp from zero, the rate at step $t$ is</p>
+        <p>When instability hits at step zero because curvature starts high, taking gentle steps first lets the weights settle. That is the role of <span data-concept="warmup">learning-rate warmup</span>: ramping from zero to the target base rate over $W$ steps (<code>warmup_steps</code>). A linear ramp follows</p>
 
         <p>$$\eta_t = \eta_{\text{base}} \cdot \min\!\left(1,\ \frac{t}{W}\right).$$</p>
 
-        <p>The Playbook recommends warmup when a sweep looks like Figure 4, with the best rate at the edge of the infeasible ones and the loss rising in the runs above it. Its recipe is worth noticing for its order of operations, because it fixes an ambitious target rate first and only then searches for the shortest ramp that reaches it.</p>
+        <p>Apply warmup whenever a sweep resembles <a href="#fig-signature" class="figref" data-static-figref="1">Figure 4</a>, with top feasible trials pressing against rising training losses. Notice how the Playbook sequences tuning in <a href="#fig-warmup-recipe" class="figref" data-static-figref="1">Figure 6</a>: lock in an ambitious target rate first, then search for the shortest ramp that keeps training stable.</p>
 
         <figure class="schematic l-text" id="fig-warmup-recipe" role="group" aria-labelledby="fig-warmup-recipe-title"
                 data-playbook-img="assets/playbook/beneficial_effect_warmup.png"
@@ -276,7 +287,7 @@
           <ol class="p08-steps">
             <li>
               <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h18" stroke-dasharray="2 2"/><path d="M12 4v16"/><circle cx="12" cy="12" r="3"/></svg></span>
-              <div class="p08-step-body"><strong>Start from the unstable rate.</strong> Use the learning rate at which the model becomes unstable, <code>unstable_base_learning_rate</code>, from the check in Figure 3.</div>
+              <div class="p08-step-body"><strong>Start from the unstable rate.</strong> Anchor on <code>unstable_base_learning_rate</code> bracketed in the diagnostic sweep (<a href="#fig-signature" class="figref" data-static-figref="1">Figure 4</a>).</div>
             </li>
             <li>
               <span class="p08-step-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 20V14M12 20V8M19 20V3"/></svg></span>
@@ -299,9 +310,9 @@
           <p class="fig-caption">The steps of the Playbook's section on how to apply learning-rate warmup, in order. The Playbook's Figure 8, under "The Playbook's figure", shows the result the recipe is after on a real Transformer.</p>
         </figure>
 
-        <p>One part of this recipe has since been qualified. <cite data-ref="wortsman2023">Wortsman et al. (2023) <span class="cit-num"><a href="#ref-wortsman2023">[6]</a></span></cite> found that warmups of up to 25% of training, well past the Playbook's 10% cap, still reduced the sensitivity of Transformers to the learning rate and lowered their loss.</p>
+        <p>Long-horizon Transformer runs qualify that 10% cap: <cite data-ref="wortsman2023">Wortsman et al. (2023) <span class="cit-num"><a href="#ref-wortsman2023">[8]</a></span></cite> observed warmups up to 25% of training cutting learning-rate sensitivity and lowering final loss.</p>
 
-        <p>We can watch the recipe at work by running the sweep of step 4 in the same toy as Figure 4, which is what Figure 7 does. The unstable base learning rate is $u =$ <span data-num="fig-warmup:model:unstable-lr">0.0316</span>, so the target is $10u \approx 0.316$, and with <code>max_train_steps</code> at <span data-num="fig-warmup:model:max-train-steps">100,000</span> the ramp may be at most <span data-num="fig-warmup:model:cap">10,000</span> steps long. As the recipe prescribes, each candidate runs for its ramp plus twice that length at the base rate. Panel (a) shows the schedule against the toy's stability limit, $2/\mu_{\max}$, where $\mu_{\max}$ is the toy's sharpness (the curvature of its sharp direction) at each step, and panel (b) keeps a record of each length tried.</p>
+        <p><a href="#fig-warmup" class="figref" data-static-figref="1">Figure 7</a> executes step 4 inside the <a href="#fig-signature" class="figref" data-static-figref="1">Figure 4</a> model. Starting from $u =$ <span data-num="fig-warmup:model:unstable-lr">0.0316</span> sets a target of $10u \approx 0.316$, while <code>max_train_steps</code> at <span data-num="fig-warmup:model:max-train-steps">100,000</span> caps the ramp at <span data-num="fig-warmup:model:cap">10,000</span> steps. Each candidate runs for one ramp plus twice that duration at target rate, plotting $\eta_t$ against sharpness limit $2/\mu_{\max}$ in panel (a) and stable versus diverging lengths in panel (b).</p>
 
         <figure class="fig l-wide" id="fig-warmup" role="group" aria-labelledby="fig-warmup-title"
                 data-playbook-img="assets/playbook/instability_during_warmup.png"
@@ -319,32 +330,35 @@
             <div class="fig-tut-step-data" data-label="Hold, then jump" data-preset="hold">This schedule holds a constant low rate for 1,000 steps and then jumps to $10u$. The flat dash-dot line shows that the low rate never pushed the sharpness down, so the limit is still 0.02 when the jump comes, and the run diverges two steps later.</div>
           </div>
         <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
-          <p class="fig-caption">Tuning <code>warmup_steps</code> in the toy model of Figure 4, with a target of ten times $u =$ <span data-num="fig-warmup:model:unstable-lr">0.0316</span>. Panel (a) plots the learning rate and the stability limit $2/\mu_{\max}$ against step on log axes. The figure loads with a <span data-num="fig-warmup:default:end">1,000</span>-step ramp, the shortest of the lengths tried that trains (<span data-num="fig-warmup:model:shortest-10x">1,000</span> steps). Its rate never crosses the limit, and the product $\eta \mu_{\max}$ peaks at <span data-num="fig-warmup:default:peak">1.98</span>, just under 2. A 100-step ramp crosses the limit at step <span data-num="fig-warmup:w100:first-above">6</span> and diverges at step <span data-num="fig-warmup:w100:divergence-step">14</span>, and a 300-step ramp diverges at step <span data-num="fig-warmup:w300:divergence-step">34</span>. Panel (b) marks each length tried with a filled circle for a run that reaches the base rate and a cross for one that diverges, with the 10% cap dashed.</p>
+          <p class="fig-caption">Tuning <code>warmup_steps</code> in the toy model of <a href="#fig-signature" class="figref" data-static-figref="1">Figure 4</a>, with a target of ten times $u =$ <span data-num="fig-warmup:model:unstable-lr">0.0316</span>. Panel (a) plots the learning rate and the stability limit $2/\mu_{\max}$ against step on log axes. The figure loads with a <span data-num="fig-warmup:default:end">1,000</span>-step ramp, the shortest of the lengths tried that trains (<span data-num="fig-warmup:model:shortest-10x">1,000</span> steps). Its rate never crosses the limit, and the product $\eta \mu_{\max}$ peaks at <span data-num="fig-warmup:default:peak">1.98</span>, just under 2. A 100-step ramp crosses the limit at step <span data-num="fig-warmup:w100:first-above">6</span> and diverges at step <span data-num="fig-warmup:w100:divergence-step">14</span>, and a 300-step ramp diverges at step <span data-num="fig-warmup:w300:divergence-step">34</span>. Panel (b) marks each length tried with a filled circle for a run that reaches the base rate and a cross for one that diverges, with the 10% cap dashed.</p>
           <details class="fig-model"><summary>How this toy works</summary>
-            <p>The toy is the one in Figure 4. The sharp direction starts with curvature $\mu_0 =$ <span data-num="fig-warmup:model:h0">100</span>, so the stability limit at step 0 is $2/\mu_0 = 0.02$, and relaxes toward the target $\mu^\star(\eta) = \min(\mu_0, \max(\mu_\infty, 2k/\eta))$ with $\mu_\infty =$ <span data-num="fig-warmup:model:h-inf">5</span> and $k =$ <span data-num="fig-warmup:model:c">0.8</span>. The rising learning rate is what lowers the target, which follows Gilmer et al.'s account of warmup. The rule and its constants are mine and are chosen for illustration. A run diverges when its loss passes <span data-num="fig-warmup:model:diverge-at">100</span> times its start. Each length $W$ runs for $3W$ steps (at least <span data-num="fig-warmup:model:run-floor">2,000</span>). The "hold, then jump" schedule holds $\eta =$ <span data-num="fig-warmup:model:hold-rate">0.0158</span> (half of $u$) for $W$ steps and then jumps to the base rate.</p>
+            <p>The toy is the one in <a href="#fig-signature" class="figref" data-static-figref="1">Figure 4</a>. The sharp direction starts with curvature $\mu_0 =$ <span data-num="fig-warmup:model:h0">100</span>, so the stability limit at step 0 is $2/\mu_0 = 0.02$, and relaxes toward the target $\mu^\star(\eta) = \min(\mu_0, \max(\mu_\infty, 2k/\eta))$ with $\mu_\infty =$ <span data-num="fig-warmup:model:h-inf">5</span> and $k =$ <span data-num="fig-warmup:model:c">0.8</span>. The rising learning rate lowers the target, following Gilmer et al.'s account of warmup. The rule and its constants are chosen for illustration. A run diverges when its loss passes <span data-num="fig-warmup:model:diverge-at">100</span> times its start. Each length $W$ runs for $3W$ steps (at least <span data-num="fig-warmup:model:run-floor">2,000</span>). The "hold, then jump" schedule holds $\eta =$ <span data-num="fig-warmup:model:hold-rate">0.0158</span> (half of $u$) for $W$ steps and then jumps to the base rate.</p>
           </details>
         </figure>
 
         <h3 id="why-warmup">Why a ramp works and a step does not</h3>
 
-        <p>In the toy, the sharp direction's curvature at step 0 sets the limit at 0.02, sixteen times below the target rate of 0.316, so jumping straight to the target lands far past the limit. A ramp succeeds because the learning rate both sets the size of each step and pushes the parameters toward flatter regions, which raises the limit. A slow ramp gives the sharpness time to fall ahead of the rate, whereas a fast one crosses the limit while the sharpness is still high, which is how the 100- and 300-step ramps in Figure 7 fail.</p>
+        <p>At step 0 in this model, curvature sets the ceiling at 0.02, sixteen times below 0.316, so jumping straight to the target rate overshoots immediately. Warmup works because rising steps actively nudge parameters into flatter regions, lifting the stability limit ahead of $\eta_t$. Fast ramps outrun that relaxation and fail, just like the 100- and 300-step schedules in <a href="#fig-warmup" class="figref" data-static-figref="1">Figure 7</a>.</p>
 
-        <p>The "hold, then jump" schedule lets us pull those two effects apart. A constant rate pushes the sharpness down only until the limit sits just above that rate, which matches Gilmer et al.'s observation that the sharpness settles near $2/\eta$. Holding <span data-num="fig-warmup:model:hold-rate">0.0158</span> for 1,000 steps keeps training stable, but in the toy that rate is too low to start the push at all, so the limit stays at 0.02. The jump to 0.316 at step 1,000 then lands about sixteen times past the limit, and the run diverges at step <span data-num="fig-warmup:hold:divergence-step">1,002</span>. Even a longer or higher hold would raise the limit only to about the hold rate, still far below the target. Goyal et al. saw the same failure in real networks, where a constant low-rate warmup followed by a jump made the training error spike, and on ResNet-50 with large batches it ended worse than no warmup at all (25.88% top-1 error against 24.84%), while a gradual ramp gave 23.74% <cite data-ref="goyal2017"><span class="cit-num"><a href="#ref-goyal2017">[5]</a></span></cite>. The Playbook's recipe already uses a ramp, and I read these results as a good reason to keep it that way.</p>
+        <p>The "hold, then jump" toggle splits those effects cleanly. Constant low rates push sharpness down only to roughly $2/\eta$. Holding <span data-num="fig-warmup:model:hold-rate">0.0158</span> for 1,000 steps leaves curvature stuck near $\mu_0$, so stepping up to 0.316 overshoots by sixteenfold and diverges at step <span data-num="fig-warmup:hold:divergence-step">1,002</span>. On ImageNet ResNet-50, Goyal et al. confirmed this empirically: holding a low constant warmup then jumping raised top-1 error to 25.88% (versus 24.84% without warmup), whereas a linear ramp reached 23.74% <cite data-ref="goyal2017"><span class="cit-num"><a href="#ref-goyal2017">[6]</a></span></cite>.</p>
 
-        <p>I should stress that the toy is a deliberate simplification. A real network's sharpness follows no formula like the toy's target, and Gilmer et al. also report models that did not benefit from warmup at the learning rates they tried, as well as one Transformer without layer normalization that warmup alone could not make train <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[3]</a></span></cite>.</p>
+        <p>Keep the toy's limits clear: real network curvature follows no closed relaxation rule, and Gilmer et al. report Transformers lacking normalization where warmup alone failed <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[4]</a></span></cite>.</p>
       </section>
 
       <!-- ============================== CLIPPING ============================== -->
       <section class="prose" id="clipping">
         <h2>Gradient clipping</h2>
 
-        <p>Warmup addresses instability at the start of training, but it can do nothing about a run that blows up deep into training because of a few outlier batches. For that mid-training failure, which the Playbook ties to outlier gradient norms, the natural tool is <span data-concept="clipping">gradient clipping</span>, which simply caps the size of each update. Whenever the gradient norm $\lVert g \rVert$ exceeds a threshold $c$, the gradient is rescaled to have norm $c$:</p>
+        <p>Warmup prevents initial curvature spikes yet cannot rescue runs that blow up deep into training on outlier batches. For mid-run spikes, <span data-concept="clipping">gradient clipping</span> (global L2 norm rescaling introduced for recurrent networks by <cite data-ref="pascanu2013">Pascanu et al. (2013) <span class="cit-num"><a href="#ref-pascanu2013">[7]</a></span></cite>) caps each update above threshold $c$:</p>
 
         <p>$$g' = c \, \frac{g}{\lVert g \rVert} \qquad \text{when } \lVert g \rVert &gt; c .$$</p>
 
-        <p>The update keeps its direction while its length shrinks to $c$. Everything then hinges on the choice of $c$, and the Playbook's answer is to set it from what the model's own gradients look like, with the ideal threshold "just above the 'typical' gradient norm".</p>
+        <p>Direction stays intact while norm shrinks to $c$. How tight should $c$ be? The Playbook sets it empirically from unclipped norms, placing the cutoff "just above the 'typical' gradient norm" (<a href="#fig-clipping-recipe" class="figref" data-static-figref="1">Figure 8</a>).</p>
 
-        <figure class="schematic l-text" id="fig-clipping-recipe" role="group" aria-labelledby="fig-clipping-recipe-title">
+        <figure class="schematic l-text" id="fig-clipping-recipe" role="group" aria-labelledby="fig-clipping-recipe-title"
+                data-playbook-quote="The ideal clip thresholds are just above the &quot;typical&quot; gradient norm. [...] Log the unclipped gradient norm during training. By default, generate: a plot of gradient norm vs step [and] a histogram of gradient norms aggregated over all steps. Choose a gradient clipping threshold based on the 90th percentile of gradient norms. [...] Extremely aggressive gradient clipping is in essence a strange way of reducing the learning rate. If we find ourselves using extremely aggressive clipping, we probably should just cut the learning rate instead. We would usually consider having >50% of the updates getting clipped somehow as &quot;extremely aggressive&quot;."
+                data-playbook-src="1948-1985"
+                data-playbook-caption="The Playbook's bulleted procedure from its Gradient clipping section.">
           <figcaption class="fig-head">
             <span class="fig-num" data-static-fignum="1">Figure 8</span>
             <span class="fig-title" id="fig-clipping-recipe-title">The Playbook's recipe for a clipping threshold</span>
@@ -372,9 +386,9 @@
           <p class="fig-caption">The steps of the Playbook's section on gradient clipping, in order. None of the papers cited here tests the 90th-percentile starting point or the 50% rule. Both are the Playbook authors' rules of thumb.</p>
         </figure>
 
-        <p>The 50% rule in that recipe deserves a moment, because it is not obvious why clipping most updates should amount to a smaller learning rate. With plain SGD or momentum the update is proportional to the gradient, so clipping a step multiplies that step's learning rate by $c/\lVert g \rVert$. If nearly every step is clipped, the run is effectively training at a learning rate scaled down by the average of that factor. Gilmer et al. describe a concrete case in which a model clipped at 1.0 while its gradient norms sat around 5.0 was, in their words, "artificially lowering the learning rate by a factor of 1/5", and they raised the threshold to 6.0 <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[3]</a></span></cite>.</p>
+        <p>Why treat 50% clipping as a hidden learning-rate cut? Because SGD and momentum scale updates linearly with gradients, clipping multiplies any step past $c$ by $c/\lVert g \rVert$. Clip most updates and the mean multiplier shrinks proportionally. Gilmer et al. documented a run clipped at 1.0 against typical norms of 5.0, which in their words was "artificially lowering the learning rate by a factor of 1/5" until they raised $c$ to 6.0 <cite data-ref="gilmer2021"><span class="cit-num"><a href="#ref-gilmer2021">[4]</a></span></cite>.</p>
 
-        <p>Figure 9 makes this quantitative using the Playbook's two default plots for a synthetic log of <span data-num="fig-clipping:model:steps">5,000</span> unclipped gradient norms, a series with an early stretch of elevated norms and <span data-num="fig-clipping:default:spikes">25</span> isolated spikes. With the threshold at the 90th percentile, $c =$ <span data-num="fig-clipping:default:threshold">1.71</span>, clipping acts on <span data-num="fig-clipping:default:clipped">10%</span> of the steps, catching the spikes and most of the early stretch, while the average factor applied to the gradient (the mean multiplier) stays at <span data-num="fig-clipping:default:multiplier">0.97</span>. Lowering the threshold to the median norm, <span data-num="fig-clipping:half:threshold">1.04</span>, clips half the steps and drops the mean multiplier to <span data-num="fig-clipping:half:multiplier">0.88</span>. At <span data-num="fig-clipping:nearly-all:threshold">0.40</span>, <span data-num="fig-clipping:nearly-all:clipped">99%</span> of steps are clipped and the mean multiplier is <span data-num="fig-clipping:nearly-all:multiplier">0.40</span>, which is close to cutting the learning rate by more than half.</p>
+        <p><a href="#fig-clipping" class="figref" data-static-figref="1">Figure 9</a> simulates this across <span data-num="fig-clipping:model:steps">5,000</span> unclipped norms combining early elevation with <span data-num="fig-clipping:default:spikes">25</span> mid-run spikes. At the 90th percentile ($c =$ <span data-num="fig-clipping:default:threshold">1.71</span>), clipping catches <span data-num="fig-clipping:default:clipped">10%</span> of updates and preserves a <span data-num="fig-clipping:default:multiplier">0.97</span> mean scale factor. Cutting $c$ to the median (<span data-num="fig-clipping:half:threshold">1.04</span>) clips half of steps and lowers the multiplier to <span data-num="fig-clipping:half:multiplier">0.88</span>, while $c =$ <span data-num="fig-clipping:nearly-all:threshold">0.40</span> clips <span data-num="fig-clipping:nearly-all:clipped">99%</span> of steps and slices effective step size down to <span data-num="fig-clipping:nearly-all:multiplier">0.40</span>.</p>
 
         <figure class="fig l-wide" id="fig-clipping" role="group" aria-labelledby="fig-clipping-title"
                 data-playbook-img="assets/playbook/gradient_clipping.png"
@@ -398,70 +412,75 @@
           </details>
         </figure>
 
-        <p>Real gradient norms differ in the details. In the Playbook's Figure 9, whose plot title names an unstable ResNet-200, the early norms start near $10^5$ on the plotted curve, and the figure's notes say clipping stabilized early training. The logic of the procedure carries over unchanged, though. We place the threshold just above where the norm usually sits, so that it acts only on the outliers, and we watch the fraction of clipped steps to tell us whether clipping has quietly turned into a learning-rate cut.</p>
+        <p>Real runs look messier in detail. In Playbook Figure 9 (an unstable ResNet-200), the plotted curve starts near roughly $10^5$ and falls to about 3 within a few thousand steps, values read by eye from the axis rather than tabulated in the text. Even so, the sizing rule transfers intact: set $c$ just above the bulk distribution to clip outliers alone, and watch the clipped fraction so clipping never quietly cuts your learning rate.</p>
+      </section>
+
+      <!-- ============================== MODERN STABILIZERS ============================== -->
+      <section class="prose" id="modern-stabilizers">
+        <h2>Stabilizing large transformers and low precision</h2>
+
+        <p>Modern large-scale training pushes beyond warmup and clipping alone, adding structural stabilizers that keep activation and logit magnitudes bounded across depth, width, and reduced precision. Those additions sit alongside the Playbook's core recipes rather than inside the original 2023 document.</p>
+
+        <ul>
+          <li><strong>Pre-norm with RMSNorm.</strong> Placing normalization inside residual branches ($x + f(\mathrm{Norm}(x))$) is already in the Playbook (<a href="#fig-fixes" class="figref" data-static-figref="1">Figure 5</a>), and modern transformers routinely replace standard LayerNorm with <cite data-ref="zhang2019rmsnorm">RMSNorm (Zhang &amp; Sennrich, 2019) <span class="cit-num"><a href="#ref-zhang2019rmsnorm">[9]</a></span></cite>, preserving rescaling invariance while dropping mean-centering overhead.</li>
+          <li><strong>QK-LayerNorm and z-loss.</strong> To prevent late-stage divergence in wide transformers, <cite data-ref="wortsman2023">Wortsman et al. (2023) <span class="cit-num"><a href="#ref-wortsman2023">[8]</a></span></cite> apply <dfn data-concept="qk-layernorm">QK-LayerNorm</dfn> to queries and keys before attention softmax dots grow unbounded, and pair it with output <dfn data-concept="z-loss">z-loss</dfn> ($\alpha\,\log^2 Z$) to keep output logit scales controlled at high learning rates.</li>
+          <li><strong>Use <code>bf16</code> headroom and <code>fp32</code> states.</strong> Unlike <code>fp16</code> (5-bit exponent overflowing near 65,504), <code>bf16</code> retains <code>fp32</code>'s 8-bit exponent range (up to ~$3.4 \times 10^{38}$), eliminating dynamic loss-scaling fragile failures while keeping optimizer moments and master weights in <code>fp32</code> (and tuning AdamW's $\epsilon$ away from tiny defaults like $10^{-8}$ if reduced-precision gradients risk underflow).</li>
+        </ul>
       </section>
 
       <!-- ============================== IN PRACTICE ============================== -->
-      <section class="prose" id="protocol">
+      <section class="prose in-practice" id="in-practice">
         <h2>In practice</h2>
 
-        <p>Taken together, the Playbook's advice on instability amounts to a short path from a suspicious sweep to a fix, which I have condensed into Figure 10.</p>
+        <p>Follow these five steps whenever an edge-crowded sweep flags potential instability, pairing the Playbook's workflow with modern architectural checks.</p>
 
-        <figure class="schematic l-wide" id="fig-practice" role="group" aria-labelledby="fig-practice-title">
-          <figcaption class="fig-head">
-            <span class="fig-num" data-static-fignum="1">Figure 10</span>
-            <span class="fig-title" id="fig-practice-title">From a suspicious sweep to a fix</span>
-            <span class="chip">Checklist</span>
-          </figcaption>
-          <ol class="p08-flow">
-            <li class="p08-flow-step">
-              <span class="p08-flow-num">1</span>
-              <div class="p08-flow-body">
-                <strong>Check whether instability limits the learning rate.</strong>
-                <p>Is the best rate in the sweep the largest one that trains, with loss rising in the runs just above it? If not, the failing rates mark the top of the useful range, and there is nothing to fix. <a href="#diagnosis">Identifying an unstable workload</a></p>
-              </div>
-            </li>
-            <li class="p08-flow-step">
-              <span class="p08-flow-num">2</span>
-              <div class="p08-flow-body">
-                <strong>Find when it breaks.</strong>
-                <p>Run about 500 steps at twice the best rate, evaluating every step, and look at the logged gradient norm over a full run.</p>
-                <div class="p08-branch">
-                  <div class="p08-branch-card">
-                    <span class="p08-branch-when">Loss spikes in the first steps</span>
-                    <span class="p08-branch-do">For early instability, start with warmup. <a href="#warmup">Warmup recipe</a></span>
-                  </div>
-                  <div class="p08-branch-card">
-                    <span class="p08-branch-when">Spikes or outlier norms mid-run</span>
-                    <span class="p08-branch-do">For mid-training instability, start with clipping at the 90th percentile. <a href="#clipping">Clipping recipe</a></span>
-                  </div>
+        <ol class="practice-steps">
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5L20 20"/></svg></span>
+            <div>
+              <h3>Verify instability caps your learning rate</h3>
+              <p>Check whether top feasible sweep trials crowd failing runs whose training curves spike or diverge; otherwise failures mark the top of the useful range (<a href="#diagnosis">Identifying an unstable workload</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M2 12h3l2-6 3 12 3-9 2 5h7"/></svg></span>
+            <div>
+              <h3>Pinpoint when failures strike</h3>
+              <p>Run about 500 steps at twice the best rate while logging every step alongside unclipped L2 gradient norms across the run.</p>
+              <div class="p08-branch">
+                <div class="p08-branch-card">
+                  <span class="p08-branch-when">Loss spikes in first steps</span>
+                  <span class="p08-branch-do">Start with linear warmup (<a href="#warmup">Warmup recipe</a>).</span>
+                </div>
+                <div class="p08-branch-card">
+                  <span class="p08-branch-when">Outlier norms mid-run</span>
+                  <span class="p08-branch-do">Clip at the 90th norm percentile (<a href="#clipping">Clipping recipe</a>).</span>
                 </div>
               </div>
-            </li>
-            <li class="p08-flow-step">
-              <span class="p08-flow-num">3</span>
-              <div class="p08-flow-body">
-                <strong>Confirm the gain against the baseline.</strong>
-                <p>Prepend the warmup to the existing schedule, or add the clipping, rerun at the higher learning rate, and compare with the baseline using the best checkpoint of each run. Keep the change only if it wins.</p>
-              </div>
-            </li>
-            <li class="p08-flow-step">
-              <span class="p08-flow-num">4</span>
-              <div class="p08-flow-body">
-                <strong>If it is still unstable, widen the search.</strong>
-                <p>Try a longer warmup, clip harder while keeping the clipped share under half, switch from momentum to Adam, or bring the architecture in line with standard practice (residual connections, normalization inside the branch, zero-initialized branches).</p>
-              </div>
-            </li>
-            <li class="p08-flow-step p08-flow-last">
-              <span class="p08-flow-num">5</span>
-              <div class="p08-flow-body">
-                <strong>Lower the learning rate as the last resort.</strong>
-                <p>If none of these allow a larger rate, accept the smaller one.</p>
-              </div>
-            </li>
-          </ol>
-          <p class="fig-caption">A condensed path through the Playbook's advice on optimization failures. Steps 1, 2 and 5 follow the Playbook closely. Step 3 applies its general rule for adopting a change, and the order within step 4 is mine.</p>
-        </figure>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
+            <div>
+              <h3>Confirm speedup against the baseline</h3>
+              <p>Prepend warmup or apply clipping at the higher target learning rate, then compare retrospective best checkpoints against the baseline (<a href="06-adopting-a-change.html">Part 6</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="4" rx="1"/><rect x="4" y="10" width="16" height="4" rx="1"/><rect x="4" y="16" width="16" height="4" rx="1"/></svg></span>
+            <div>
+              <h3>Widen fixes and harden transformer blocks</h3>
+              <p>Extend warmup, tighten clipping (staying well under 50% of steps), try Adam, or verify Pre-LN RMSNorm, QK-Norm, z-loss, and <code>bf16</code> precision with <code>fp32</code> optimizer state (<a href="#modern-stabilizers">Modern stabilizers</a>).</p>
+            </div>
+          </li>
+          <li>
+            <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v14M6 12l6 6 6-6"/></svg></span>
+            <div>
+              <h3>Lower the learning rate last</h3>
+              <p>Only if structural fixes and warmup fail to widen survival should you accept the lower stable step size (<a href="#fixes">What to try</a>).</p>
+            </div>
+          </li>
+        </ol>
       </section>
 
       <section class="prose" id="where">
@@ -475,8 +494,8 @@
 
       <section class="refs" id="references">
         <h2>References</h2>
-        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023) <span class="cit-num"><a href="#ref-playbook">[4]</a></span></cite>.</p>
-        <ol id="reflist"><li id="ref-bachlechner2020">Thomas Bachlechner, Bodhisattwa Prasad Majumder, Huanru Henry Mao, Garrison W. Cottrell, Julian McAuley (2021). <a href="https://arxiv.org/abs/2003.04887" target="_blank" rel="noopener">ReZero is All You Need: Fast Convergence at Large Depth</a>. Proceedings of the Thirty-Seventh Conference on Uncertainty in Artificial Intelligence (PMLR 161:1352-1361).</li><li id="ref-cohen2021">Jeremy M. Cohen, Simran Kaur, Yuanzhi Li, J. Zico Kolter, Ameet Talwalkar (2021). <a href="https://arxiv.org/abs/2103.00065" target="_blank" rel="noopener">Gradient Descent on Neural Networks Typically Occurs at the Edge of Stability</a>. International Conference on Learning Representations (ICLR 2021).</li><li id="ref-gilmer2021">Justin Gilmer, Behrooz Ghorbani, Ankush Garg, Sameer Kumar, Ying Xiao, Yanping Huang, Gregory Guresh, David Cardoze, Surya Ganguli, George E. Dahl (2022). <a href="https://arxiv.org/abs/2110.04369" target="_blank" rel="noopener">A Loss Curvature Perspective on Training Instabilities of Deep Learning Models</a>. International Conference on Learning Representations (ICLR 2022).</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li><li id="ref-goyal2017">Priya Goyal, Piotr Dollar, Ross Girshick, Pieter Noordhuis, Lukasz Wesolowski, Aapo Kyrola, Andrew Tulloch, Yangqing Jia, Kaiming He (2017). <a href="https://arxiv.org/abs/1706.02677" target="_blank" rel="noopener">Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour</a>. arXiv:1706.02677.</li><li id="ref-wortsman2023">Mitchell Wortsman, Peter J. Liu, Lechao Xiao, Katie Everett, Alex Alemi, Ben Adlam, John D. Co-Reyes, et al. (2023). <a href="https://arxiv.org/abs/2309.14322" target="_blank" rel="noopener">Small-scale proxies for large-scale Transformer training instabilities</a>. arXiv:2309.14322 (ICLR 2024).</li></ol>
+        <p class="refs-note">The Playbook is <cite data-ref="playbook">Godbole et al. (2023) <span class="cit-num"><a href="#ref-playbook">[5]</a></span></cite>.</p>
+        <ol id="reflist"><li id="ref-bachlechner2020">Thomas Bachlechner, Bodhisattwa Prasad Majumder, Huanru Henry Mao, Garrison W. Cottrell, Julian McAuley (2021). <a href="https://arxiv.org/abs/2003.04887" target="_blank" rel="noopener">ReZero is All You Need: Fast Convergence at Large Depth</a>. Proceedings of the Thirty-Seventh Conference on Uncertainty in Artificial Intelligence (PMLR 161:1352-1361).</li><li id="ref-cohen2021">Jeremy M. Cohen, Simran Kaur, Yuanzhi Li, J. Zico Kolter, Ameet Talwalkar (2021). <a href="https://arxiv.org/abs/2103.00065" target="_blank" rel="noopener">Gradient Descent on Neural Networks Typically Occurs at the Edge of Stability</a>. International Conference on Learning Representations (ICLR 2021).</li><li id="ref-cohen2022">Jeremy M. Cohen, Behrooz Ghorbani, Shankar Krishnan, Naman Agarwal, Sourabh Medapati, Michal Badura, Daniel Suo, David Cardoze, Zachary Nado, George E. Dahl, Justin Gilmer (2022). <a href="https://arxiv.org/abs/2207.14484" target="_blank" rel="noopener">Adaptive Gradient Methods at the Edge of Stability</a>. arXiv:2207.14484.</li><li id="ref-gilmer2021">Justin Gilmer, Behrooz Ghorbani, Ankush Garg, Sameer Kumar, Ying Xiao, Yanping Huang, Gregory Guresh, David Cardoze, Surya Ganguli, George E. Dahl (2022). <a href="https://arxiv.org/abs/2110.04369" target="_blank" rel="noopener">A Loss Curvature Perspective on Training Instabilities of Deep Learning Models</a>. International Conference on Learning Representations (ICLR 2022).</li><li id="ref-playbook">Varun Godbole, George E. Dahl, Justin Gilmer, Christopher J. Shallue, Zachary Nado (2023). <a href="https://github.com/google-research/tuning_playbook" target="_blank" rel="noopener">Deep Learning Tuning Playbook</a>. GitHub repository, Version 1.0 (commit 7554a51).</li><li id="ref-goyal2017">Priya Goyal, Piotr Dollar, Ross Girshick, Pieter Noordhuis, Lukasz Wesolowski, Aapo Kyrola, Andrew Tulloch, Yangqing Jia, Kaiming He (2017). <a href="https://arxiv.org/abs/1706.02677" target="_blank" rel="noopener">Accurate, Large Minibatch SGD: Training ImageNet in 1 Hour</a>. arXiv:1706.02677.</li><li id="ref-pascanu2013">Razvan Pascanu, Tomas Mikolov, Yoshua Bengio (2013). <a href="https://proceedings.mlr.press/v28/pascanu13.html" target="_blank" rel="noopener">On the difficulty of training recurrent neural networks</a>. Proceedings of the 30th International Conference on Machine Learning (PMLR 28(3):1310-1318).</li><li id="ref-wortsman2023">Mitchell Wortsman, Peter J. Liu, Lechao Xiao, Katie Everett, Alex Alemi, Ben Adlam, John D. Co-Reyes, et al. (2023). <a href="https://arxiv.org/abs/2309.14322" target="_blank" rel="noopener">Small-scale proxies for large-scale Transformer training instabilities</a>. arXiv:2309.14322 (ICLR 2024).</li><li id="ref-zhang2019rmsnorm">Biao Zhang, Rico Sennrich (2019). <a href="https://arxiv.org/abs/1910.07467" target="_blank" rel="noopener">Root Mean Square Layer Normalization</a>. Advances in Neural Information Processing Systems (NeurIPS 2019).</li></ol>
       </section>
 
       <nav class="pager" aria-label="Post navigation"><a class="prev" href="../pages/07-training-horizon.html"><small>&larr; Previous Post</small>How long to train</a><a class="next" href="../pages/09-pipeline-practice.html"><small>Next Post &rarr;</small>Input pipelines, evaluation, checkpoints and multi-host training</a></nav>

@@ -92,24 +92,7 @@
 .p08-norm-ok .p08-mark { color: var(--model); }
 .p08-norm-bad .p08-mark { color: var(--energy-text, var(--data)); }
 
-/* ---------- the closing path (fig-practice) ---------- */
-.p08-flow { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 0; }
-.p08-flow-step { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 14px; position: relative; padding-bottom: 16px; }
-.p08-flow-step::before {
-  content: ""; position: absolute; left: 19px; top: 40px; bottom: 0; width: 2px;
-  background: color-mix(in srgb, var(--model) 30%, transparent);
-}
-.p08-flow-step:last-child::before { display: none; }
-.p08-flow-num {
-  width: 40px; height: 40px; border-radius: 50%; background: var(--model); color: #fff;
-  display: inline-flex; align-items: center; justify-content: center; font: 700 1.05rem/1 var(--font);
-}
-.p08-flow-last .p08-flow-num { background: var(--surface); color: var(--energy-text, var(--data)); border: 2px solid var(--energy, var(--data)); }
-.p08-flow-body { padding-top: 8px; }
-.p08-flow-body > strong { font-size: 1.02rem; color: var(--ink); }
-.p08-flow-body p { margin: 4px 0 0; font-size: 0.95rem; line-height: 1.55; color: var(--ink-2); }
-.p08-flow-body p a { white-space: nowrap; }
-.p08-flow-body p a::before { content: "\2192\00a0"; }
+/* ---------- branch cards inside In practice step 2 ---------- */
 .p08-branch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
 .p08-branch-card {
   display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 6px;

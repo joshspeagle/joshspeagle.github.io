@@ -22,8 +22,8 @@ WRITING_ROOT = REPO_ROOT / "writing"
 BLOG_CSS_DIR = REPO_ROOT / "assets" / "blog" / "css"
 TOKENS_CSS = REPO_ROOT / "assets" / "css" / "tokens.css"
 
-STRICT_REFS = False
-STRICT_CONTENT = False
+STRICT_REFS = True
+STRICT_CONTENT = True
 
 
 def _load_js_state(series_dir: Path) -> tuple[dict, dict, dict]:

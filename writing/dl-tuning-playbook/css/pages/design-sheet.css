@@ -1,5 +1,5 @@
-/* Design sheet (design-sheet.html): specimen frames, swatches, the type table and code blocks.
-   The .practice-steps rules at the end are a proposal for site.css (see notes/review-2026-11/changes/index.md). */
+/* Design sheet (design-sheet.html): specimen frames, swatches, type table, and code blocks.
+   Shared .in-brief and .practice-steps rules live in assets/blog/css/editorial.css. */
 
 /* ---------- code blocks ---------- */
 pre.ds-code {

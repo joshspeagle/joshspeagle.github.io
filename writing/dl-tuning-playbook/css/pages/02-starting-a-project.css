@@ -1,6 +1,5 @@
 /* 02-starting-a-project.css: page-specific styles for Part 2 (starting a new project).
-   Owned by the post02 revision (notes/review-2026-11/changes/post02.md). Colours come from the
-   site tokens only, so both themes work without overrides. */
+   Uses shared semantic tokens so both light and dark themes work automatically. */
 
 /* ---------- shared bits ---------- */
 .p02-ico { width: 20px; height: 20px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }

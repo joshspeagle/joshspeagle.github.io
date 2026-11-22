@@ -31,20 +31,18 @@
     </header>
 
     <p class="lede">
-      The posts are built from a small set of shared components. Each one appears here as a live specimen with the markup that produces it, so a new post can reuse them without guessing. The styles live in <code>css/site.css</code> and the behavior in <code>js/site.js</code>. Switch the theme with the button in the header to check both palettes.
+      The posts are built from a small set of shared components. Each appears here as a live specimen with the markup that produces it, so future posts reuse them cleanly. Shared styles live in <code>assets/blog/css/editorial.css</code> and shared runtime scripts in <code>assets/blog/js/article.js</code>. Use the theme button in the header to inspect both palettes.
     </p>
 
-    <nav class="post-roadmap" aria-label="On this page">
-      <div class="post-roadmap-head">On this page</div>
-      <div class="post-roadmap-grid">
-        <a class="post-roadmap-item roadmap-item" href="#skeleton"><span class="post-roadmap-num roadmap-item-num">1</span><span class="post-roadmap-body"><strong>The post skeleton</strong><span>The seven parts every post follows, from header to flowchart.</span></span></a>
-        <a class="post-roadmap-item roadmap-item" href="#colour"><span class="post-roadmap-num roadmap-item-num">2</span><span class="post-roadmap-body"><strong>Color roles</strong><span>Each color means one thing in every figure and equation.</span></span></a>
-        <a class="post-roadmap-item roadmap-item" href="#type"><span class="post-roadmap-num roadmap-item-num">3</span><span class="post-roadmap-body"><strong>Type scale</strong><span>Rendered sizes at desktop and phone widths.</span></span></a>
-        <a class="post-roadmap-item roadmap-item" href="#figure-frame"><span class="post-roadmap-num roadmap-item-num">4</span><span class="post-roadmap-body"><strong>The figure frame</strong><span>Head, task line, toolbar, drawer, guided tour and caption.</span></span></a>
-        <a class="post-roadmap-item roadmap-item" href="#text-components"><span class="post-roadmap-num roadmap-item-num">5</span><span class="post-roadmap-body"><strong>Components in the text</strong><span>Concept terms, math asides, equations, scrubbable numbers and callouts.</span></span></a>
-        <a class="post-roadmap-item roadmap-item" href="#map"><span class="post-roadmap-num roadmap-item-num">6</span><span class="post-roadmap-body"><strong>The tuning-process map</strong><span>The flowchart that closes each post, and its markup contract.</span></span></a>
-      </div>
-    </nav>
+    <aside class="in-brief" aria-labelledby="on-this-page-heading">
+      <div class="in-brief-head" id="on-this-page-heading">On this page</div>
+      <ul>
+        <li><strong>Post skeleton:</strong> Seven shared sections from header and compact brief through practice steps and the flowchart (<a href="#skeleton">The post skeleton</a>).</li>
+        <li><strong>Color and type:</strong> Fixed color semantics and optical type hierarchy across desktop, mobile, and print (<a href="#colour">Color roles</a>, <a href="#type">Type scale</a>).</li>
+        <li><strong>Interactive anatomy:</strong> Figure head, task prompt, drawer tabs, live panels, and bound numerical spans (<a href="#figure-frame">The figure frame</a>).</li>
+        <li><strong>Prose widgets and map:</strong> Concept definitions, math asides, inline calculators, callouts, and interactive process flow (<a href="#text-components">Components</a>, <a href="#map">Flow map</a>).</li>
+      </ul>
+    </aside>
 
     <article class="post-body">
 
@@ -52,14 +50,14 @@
       <section class="prose" id="skeleton">
         <h2>The post skeleton</h2>
         <p>
-          Every post opens and closes the same way, so a reader always knows where the summary and the practical checklist are. The diagram marks the parts in page order. The Playbook itself is introduced once, in <a href="index.html#about">the landing page's about section</a>, and each post points there with its series note.
+          Every post opens and closes identically, so a reader always knows where the high-level takeaways and practical steps live. The Playbook itself is introduced once on <a href="index.html#about">the series index page</a>, which each post references in its series note.
         </p>
 
-        <div class="ds-skeleton" role="img" aria-label="Wireframe of a post: header, series note, lede, In this post box, body sections, In practice, Where this fits.">
+        <div class="ds-skeleton" role="img" aria-label="Wireframe of a post: header, series note, lede, In brief box, body sections, In practice, Where this fits.">
           <div class="ds-sk-row is-head"><span class="ds-sk-n">1</span><div><b>Header</b><span>Kicker "Part N of 9 · act name", a plain title, byline with one link to the Playbook section</span></div></div>
-          <div class="ds-sk-row is-note"><span class="ds-sk-n">2</span><div><b>Series note</b><span>One line linking to the landing page and its about section</span></div></div>
+          <div class="ds-sk-row is-note"><span class="ds-sk-n">2</span><div><b>Series note</b><span>One line linking to the series home page and its about section</span></div></div>
           <div class="ds-sk-row is-lede"><span class="ds-sk-n">3</span><div><b>Lede</b><span>Two to four sentences posing the practical problem from the reader's side</span></div></div>
-          <div class="ds-sk-row is-roadmap"><span class="ds-sk-n">4</span><div><b>In this post</b><span>One entry per section: a short title and the section's claim in one line</span></div></div>
+          <div class="ds-sk-row is-roadmap"><span class="ds-sk-n">4</span><div><b>In brief</b><span>Three or four scannable bullets directly beneath the lede, each linking its section</span></div></div>
           <div class="ds-sk-row is-body"><span class="ds-sk-n">5</span><div><b>Body sections</b><span>Unnumbered h2s; figures break out of the 680-px column to 840 or 1080 px</span></div></div>
           <div class="ds-sk-row is-practice"><span class="ds-sk-n">6</span><div><b>In practice</b><span>The actionable checklist as numbered, icon-led steps, with the Playbook's own rules linked</span></div></div>
           <div class="ds-sk-row is-map"><span class="ds-sk-n">7</span><div><b>Where this fits</b><span>The tuning-process map with this post's steps marked, then the references</span></div></div>
@@ -79,39 +77,36 @@
   &lt;a href="../index.html#about"&gt;what the Playbook is and how these notes work&lt;/a&gt;.&lt;/p&gt;
 &lt;p class="lede"&gt;...&lt;/p&gt;</code></pre>
 
-        <h3 id="skeleton-roadmap">In this post</h3>
+        <h3 id="skeleton-roadmap">In brief</h3>
         <p>
-          The box gives a skimming reader the post's argument. Each entry names a section and states its claim, so the box works as a summary and as a table of contents.
+          Directly below the lede, a compact four-bullet card states the post's core claims and links each reader directly to the matching section, serving laptops, mobile viewports, no-JS browsers, and print alike.
         </p>
-        <nav class="post-roadmap ds-live" aria-label="Example of the In this post box">
-          <div class="post-roadmap-head">In this post</div>
-          <div class="post-roadmap-grid">
-            <a class="post-roadmap-item roadmap-item" href="#skeleton-roadmap"><span class="post-roadmap-num roadmap-item-num">1</span><span class="post-roadmap-body"><strong>What the batch size controls</strong><span>The batch size sets training speed and cost, and is not tuned for validation error.</span></span></a>
-            <a class="post-roadmap-item roadmap-item" href="#skeleton-roadmap"><span class="post-roadmap-num roadmap-item-num">2</span><span class="post-roadmap-body"><strong>Feasible batch sizes</strong><span>Memory and throughput measurements set the range worth considering.</span></span></a>
-          </div>
-        </nav>
-<pre class="ds-code"><code>&lt;nav class="post-roadmap" aria-label="In this post"&gt;
-  &lt;div class="post-roadmap-head"&gt;In this post&lt;/div&gt;
-  &lt;div class="post-roadmap-grid"&gt;
-    &lt;a class="post-roadmap-item roadmap-item" href="#controls"&gt;
-      &lt;span class="post-roadmap-num roadmap-item-num"&gt;1&lt;/span&gt;
-      &lt;span class="post-roadmap-body"&gt;&lt;strong&gt;Short title&lt;/strong&gt;&lt;span&gt;The section's claim.&lt;/span&gt;&lt;/span&gt;
-    &lt;/a&gt;
-  &lt;/div&gt;
-&lt;/nav&gt;</code></pre>
+        <aside class="in-brief ds-live" aria-labelledby="ds-brief-specimen">
+          <div class="in-brief-head" id="ds-brief-specimen">In brief</div>
+          <ul>
+            <li><strong>What the batch size controls:</strong> Batch size sets training speed and cost, not final tuned validation accuracy (<a href="#skeleton-roadmap">Controls</a>).</li>
+            <li><strong>Feasible batch sizes:</strong> Hardware memory and doubling throughput tests delimit the working range (<a href="#skeleton-roadmap">Hardware limits</a>).</li>
+          </ul>
+        </aside>
+<pre class="ds-code"><code>&lt;aside class="in-brief" aria-labelledby="in-brief-heading"&gt;
+  &lt;div class="in-brief-head" id="in-brief-heading"&gt;In brief&lt;/div&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;strong&gt;Key claim:&lt;/strong&gt; One crisp sentence (&lt;a href="#controls"&gt;Section&lt;/a&gt;).&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/aside&gt;</code></pre>
 
         <h3 id="skeleton-practice">In practice</h3>
         <p>
-          The closing checklist uses numbered steps with an icon each, an imperative headline and one or two sentences of detail. The specimen below uses the classes proposed for <code>site.css</code> (they currently live in <code>css/pages/design-sheet.css</code>).
+          The closing checklist uses numbered steps with an icon badge each, an imperative headline, and one or two sentences of concrete action. Shared rules live in <code>assets/blog/css/editorial.css</code>.
         </p>
         <ol class="practice-steps">
           <li>
             <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15l3-4 3 2 4-5"/></svg></span>
-            <div><h4>Measure throughput first</h4><p>Time a few hundred steps at each candidate batch size before any tuning. <a href="https://github.com/google-research/tuning_playbook#determining-the-feasible-batch-sizes-and-estimating-training-throughput" target="_blank" rel="noopener">The Playbook's procedure ↗</a></p></div>
+            <div><h3>Measure throughput first</h3><p>Time a few hundred steps at each candidate batch size before any tuning. <a href="https://github.com/google-research/tuning_playbook#determining-the-feasible-batch-sizes-and-estimating-training-throughput" target="_blank" rel="noopener">The Playbook's procedure ↗</a></p></div>
           </li>
           <li>
             <span class="practice-steps-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.6"/><path d="M4 4v4h4"/></svg></span>
-            <div><h4>Re-tune after changing it</h4><p>A new batch size needs the learning rate and regularization tuned again.</p></div>
+            <div><h3>Re-tune after changing it</h3><p>A new batch size needs the learning rate and regularization tuned again.</p></div>
           </li>
         </ol>
       </section>
@@ -120,16 +115,16 @@
       <section class="prose" id="colour">
         <h2>Color roles</h2>
         <p>
-          A color names a role, and the role stays the same in every figure, equation and schematic. Figures use at most one focal color at a time. The swatches read the live custom properties, so they change with the theme.
+          A color names a semantic role, and that role stays constant in every figure, equation, and schematic. Figures elevate one primary relationship at a time. Swatches read live custom properties so theme changes apply everywhere immediately.
         </p>
         <ul class="ds-swatches">
-          <li><span class="ds-sw" style="--c: var(--model); --t: var(--model-tint)"></span><div><code>--model</code><b>Model and profiled curves</b><span>Smooth curves from a model, best-case (profiled) results and the main analytical quantity.</span></div></li>
-          <li><span class="ds-sw" style="--c: var(--data); --t: var(--data-tint)"></span><div><code>--data</code><b>Observed trials</b><span>Individual noisy runs and measurements, and the Playbook's own data.</span></div></li>
-          <li><span class="ds-sw" style="--c: var(--reader); --t: var(--reader-wash)"></span><div><code>--reader</code> (<code>--accent</code>)<b>Interactive state</b><span>Handles, the selected item and the active tour step. Also the focus ring.</span></div></li>
-          <li><span class="ds-sw" style="--c: var(--energy); --t: color-mix(in srgb, var(--energy) 15%, var(--surface))"></span><div><code>--energy</code><b>Focal highlight</b><span>The one item the reader should look at first, and the steps of the current post on the map.</span></div></li>
-          <li><span class="ds-sw" style="--c: var(--third); --t: var(--third-tint)"></span><div><code>--third</code><b>Context</b><span>Nuisance quantities, hardware limits, baselines and fixed slices.</span></div></li>
-          <li><span class="ds-sw" style="--c: var(--fourth); --t: var(--fourth-tint)"></span><div><code>--fourth</code><b>A second series</b><span>A further quantity when a figure needs one, such as a step count beside a time.</span></div></li>
-          <li><span class="ds-sw" style="--c: var(--context); --t: var(--surface-2)"></span><div><code>--context</code><b>Background marks</b><span>Gridlines, reference lines and de-emphasized runs.</span></div></li>
+          <li><span class="ds-sw" style="--c: var(--model); --t: var(--model-tint)"></span><div><code>--model</code><b>Model and profiled curves</b><span>Smooth model trajectories, best-case (profiled) results, and primary analytical trends.</span></div></li>
+          <li><span class="ds-sw" style="--c: var(--data); --t: var(--data-tint)"></span><div><code>--data</code><b>Observed trials</b><span>Noisy individual runs, measurements, diverging failures, and the Playbook's empirical benchmarks.</span></div></li>
+          <li><span class="ds-sw" style="--c: var(--reader); --t: var(--reader-wash)"></span><div><code>--reader</code> (<code>--accent</code>)<b>Interactive state</b><span>Scrubber handles, pressed toggles, active tour focus, and keyboard focus rings.</span></div></li>
+          <li><span class="ds-sw" style="--c: var(--energy); --t: color-mix(in srgb, var(--energy) 15%, var(--surface))"></span><div><code>--energy</code><b>UI and focal chrome highlight</b><span>Practice-step badges, theme controls, callout accents, and active map step highlights.</span></div></li>
+          <li><span class="ds-sw" style="--c: var(--third); --t: var(--third-tint)"></span><div><code>--third</code><b>Third series and baseline context</b><span>Okabe-Ito ochre/gold distinguishing fixed baselines, nuisance bounds, and hardware limits.</span></div></li>
+          <li><span class="ds-sw" style="--c: var(--fourth); --t: var(--fourth-tint)"></span><div><code>--fourth</code><b>Fourth series</b><span>Okabe-Ito purple for auxiliary quantities such as step count alongside wall time.</span></div></li>
+          <li><span class="ds-sw" style="--c: var(--context); --t: var(--surface-2)"></span><div><code>--context</code><b>Muted background marks</b><span>Slate gridlines, reference lines, and de-emphasized comparison runs.</span></div></li>
         </ul>
         <p>
           Text uses <code>--ink</code>, <code>--ink-2</code> and <code>--ink-3</code> in decreasing emphasis, on <code>--bg</code>, <code>--surface</code> and <code>--surface-2</code>. Most color roles also have a darker <code>-label</code> variant for text and a <code>-tint</code> variant for fills.
@@ -141,7 +136,7 @@
 
         <h3 id="themes">Light and dark themes</h3>
         <p>
-          The light theme is a warm paper palette and the dark theme a navy one. The header button cycles through automatic, light and dark, and stores the choice in <code>localStorage</code> under <code>tp-theme</code>. Automatic follows the operating system. Every color in a figure is a custom property, so a figure never has to redraw when the theme changes. To check a page in dark mode from a test script, set <code>localStorage.setItem('tp-theme', 'dark')</code> before the page loads.
+          Both palettes inherit from shared site design tokens: dark slate navy is the default theme on load, paired with a warm paper light palette and dedicated light-mode <code>@media print</code> overrides. The header control toggles dark and light modes and writes <code>localStorage['preferred-theme']</code>, synchronized across root pages and posts by a tiny inline <code>data-theme-boot</code> script in <code>&lt;head&gt;</code>. Figures read CSS custom properties directly and re-skin without redrawing.
         </p>
       </section>
 
@@ -176,7 +171,7 @@
       <section class="prose" id="figure-frame">
         <h2>The figure frame</h2>
         <p>
-          A figure is built from a fixed anatomy. The author writes the head, the task line, the caption and any extras. <code>site.js</code> numbers the figure, builds a toolbar from the extras it finds, and opens them one at a time in a drawer under the toolbar, so the plot stays visible while the reader compares it with the Playbook's figure or the model's assumptions.
+          A figure is built from a fixed anatomy. The author writes the head, the task line, the caption, and any extras. <code>article.js</code> numbers the figure, builds a toolbar from the extras it finds, and opens them one at a time in a drawer under the toolbar so the plot stays visible while the reader compares it with the Playbook's figure or the model's assumptions.
         </p>
         <ol class="ds-anatomy">
           <li><b>Head</b> <code>figcaption.fig-head</code>: number (added automatically), <code>span.fig-title</code> under about 70 characters, and one <code>span.chip</code> naming the kind of figure.</li>
@@ -349,15 +344,16 @@
         </p>
         <div class="playbook-map" data-default-node="d_adopt"></div>
         <h3 id="map-contract">Markup contract</h3>
-<pre class="ds-code"><code>&lt;link rel="stylesheet" href="../css/components/playbook-map.css"&gt;   &lt;!-- after site.css --&gt;
+<pre class="ds-code"><code>&lt;link rel="stylesheet" href="../../assets/blog/css/diagram-map.css"&gt;
 …
 &lt;div class="playbook-map"&gt;&lt;/div&gt;
 …
-&lt;script src="../js/components/playbook-map.js"&gt;&lt;/script&gt;           &lt;!-- after site.js --&gt;</code></pre>
+&lt;script src="js/data/flowmap-data.js"&gt;&lt;/script&gt;
+&lt;script src="../../assets/blog/js/flowmap.js"&gt;&lt;/script&gt;</code></pre>
         <ul>
           <li><b>On a post</b> no attributes are needed. The map reads <code>body[data-page]</code>, marks the steps that post covers in the focal color, and selects the first of them.</li>
-          <li><b><code>data-default-node</code></b> selects a particular step on load. Step ids are <code>s_arch</code>, <code>s_opt</code>, <code>s_batch</code>, <code>s_init</code>, <code>s_pipe</code>, <code>p_goal</code>, <code>p_roles</code>, <code>p_space</code>, <code>p_search</code>, <code>r_score</code>, <code>r_curves</code>, <code>r_instab</code>, <code>r_space</code>, <code>r_iso</code>, <code>d_adopt</code>, <code>d_yes</code>, <code>d_no</code>, <code>d_explore</code> and <code>d_final</code>. Older ids such as <code>d_gain</code> are mapped to their new steps. On a post, a step that post does not cover is ignored.</li>
-          <li><b><code>data-active-zone</code></b> outlines one phase (<code>setup</code>, <code>plan</code>, <code>read</code> or <code>decide</code>) on pages that are not posts. Older zone names are mapped.</li>
+          <li><b><code>data-default-node</code></b> selects a particular step on load. Step ids are <code>s_arch</code>, <code>s_opt</code>, <code>s_batch</code>, <code>s_init</code>, <code>s_pipe</code>, <code>p_goal</code>, <code>p_roles</code>, <code>p_space</code>, <code>p_search</code>, <code>r_score</code>, <code>r_curves</code>, <code>r_instab</code>, <code>r_space</code>, <code>r_iso</code>, <code>d_adopt</code>, <code>d_yes</code>, <code>d_no</code>, <code>d_explore</code>, and <code>d_final</code>. On a post, any id not belonging to that post is ignored.</li>
+          <li><b><code>data-active-zone</code></b> outlines one phase (<code>setup</code>, <code>plan</code>, <code>read</code>, or <code>decide</code>) on overview and reference pages.</li>
           <li><b>Reading progress</b>: opening a post adds its number to <code>localStorage</code> under <code>tp-posts-opened</code>, and the map fills the badges of posts the reader has opened.</li>
         </ul>
       </section>

@@ -1,6 +1,5 @@
 /* 07-training-horizon.css: page-specific layout for Part 7 (How long to train).
-   Owned by the post07 revision (notes/review-2026-11/changes/post07.md). Shared tokens only:
-   every colour is a site.css custom property, so both themes work without overrides. */
+   Uses shared semantic custom properties so light and dark themes work automatically. */
 
 /* ---------- shared schematic pieces ---------- */
 .p07-cap-key { display: inline-block; width: 18px; height: 0; vertical-align: middle; margin: 0 4px 0 2px; }
@@ -105,33 +104,3 @@ ol.p07-steps .p07-step-head { display: block; font-weight: 700; color: var(--ink
 .p07-sched-key i.above { background: var(--model-tint); outline: 1px solid var(--model); height: 6px; vertical-align: 1px; }
 @media (max-width: 899px) { .p07-sched { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 639px) { .p07-sched { gap: 10px; } .p07-sched-card { padding: 8px 8px 6px; } }
-
-/* ---------- In practice: three phases, steps numbered across the phases ---------- */
-.p07-fork { margin: 1.4rem auto 0.6rem; counter-reset: p07c; }
-.p07-fork-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; position: relative; }
-.p07-fork-col { border: 1px solid var(--border-2); border-radius: 6px; padding: 12px 16px 6px; background: var(--surface); }
-.p07-fork-col.is-free { border-top: 3px solid var(--model); }
-.p07-fork-col.is-after { border-top: 3px solid var(--ink-3); }
-.p07-fork-col.is-bound { border-top: 3px solid var(--energy); }
-.p07-fork-head { display: flex; align-items: center; gap: 8px; font-weight: 700; color: var(--ink); margin-bottom: 2px; }
-.p07-fork-head svg { flex: 0 0 auto; width: 22px; height: 22px; }
-.p07-fork-head svg * { stroke: var(--ink-2); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.p07-fork-sub { display: block; font-weight: 500; font-size: 0.86rem; color: var(--ink-2); margin-bottom: 4px; }
-ol.p07-check { list-style: none; padding: 0; margin: 10px 0 0; }
-ol.p07-check > li { counter-increment: p07c; position: relative; padding: 0 0 12px 38px; font-size: 0.95rem; line-height: 1.5; }
-ol.p07-check > li::before {
-  content: counter(p07c); position: absolute; left: 0; top: 0; width: 26px; height: 26px; border-radius: 50%;
-  display: grid; place-items: center; font: 700 0.82rem/1 var(--font); color: var(--surface); background: var(--ink-2);
-}
-.is-free ol.p07-check > li::before { background: var(--model); color: #fff; }
-.is-bound ol.p07-check > li::before { background: var(--energy); color: #fff; }
-ol.p07-check strong { display: block; color: var(--ink); }
-ol.p07-check a.p07-more { font-size: 0.86rem; white-space: nowrap; }
-@media (max-width: 899px) {
-  .p07-fork-cols { grid-template-columns: minmax(0, 1fr); }
-}
-
-/* ---------- "In this post": title above takeaway inside the shared .post-roadmap-item card ---------- */
-nav.post-roadmap a.roadmap-item { text-decoration: none; }
-nav.post-roadmap .roadmap-item-title { display: block; }
-nav.post-roadmap .roadmap-item-desc { display: block; }
