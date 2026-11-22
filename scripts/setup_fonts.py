@@ -17,8 +17,23 @@ SPEC = {
     "jetbrains-mono": ("JetBrains Mono",  [(400, "normal"), (500, "normal"), (700, "normal")]),
 }
 
+def _existing_fonts_present():
+    """Return True when every expected WOFF2 font and fonts.css already exist."""
+    if not os.path.isfile(CSS_OUT):
+        return False
+    for pkg, (_family, weights) in SPEC.items():
+        for weight, style in weights:
+            suffix = "italic" if style == "italic" else "normal"
+            if not os.path.isfile(os.path.join(FONTS_DIR, f"{pkg}-{weight}-{suffix}.woff2")):
+                return False
+    return True
+
+
 def main():
     if not os.path.isdir(NM):
+        if _existing_fonts_present():
+            print("node_modules/@fontsource not found; keeping existing vendored fonts in assets/fonts/.")
+            return
         raise SystemExit("node_modules/@fontsource not found — run `npm install` first.")
     os.makedirs(FONTS_DIR, exist_ok=True)
     faces, missing = [], []
@@ -57,7 +72,7 @@ def main():
             f"  src: url('../fonts/{fn}') format('woff2');",
             "}",
         ]
-    with open(CSS_OUT, "w", encoding="utf-8") as f:
+    with open(CSS_OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(lines) + "\n")
     print(f"Vendored {len(faces)} font files -> {FONTS_DIR}")
     print(f"Wrote {CSS_OUT}")

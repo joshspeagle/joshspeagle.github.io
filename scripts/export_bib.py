@@ -237,7 +237,7 @@ def main():
         print(f"{out_path} is up to date ({len(data.get('publications', []))} entries).")
         return
 
-    out_path.write_text(text, encoding="utf-8")
+    out_path.write_text(text, encoding="utf-8", newline="\n")
     print(f"Wrote {out_path} ({len(data.get('publications', []))} entries).")
 
 

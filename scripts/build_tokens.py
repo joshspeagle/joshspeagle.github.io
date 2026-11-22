@@ -32,7 +32,7 @@ def main():
     out.append("}")
     out.append("")
 
-    with open(OUT, "w", encoding="utf-8") as f:
+    with open(OUT, "w", encoding="utf-8", newline="\n") as f:
         f.write("\n".join(out))
     print(f"Wrote {OUT} ({len(tv)} themed + {len([k for k in base if not k.startswith('_')])} base tokens)")
 

@@ -685,7 +685,7 @@ def write_sitemap():
            + "\n".join(rows) + "\n</urlset>\n")
     old = SITEMAP_XML.read_text(encoding="utf-8") if SITEMAP_XML.exists() else None
     if old != xml:
-        SITEMAP_XML.write_text(xml, encoding="utf-8")
+        SITEMAP_XML.write_text(xml, encoding="utf-8", newline="\n")
         print("  -> Updated sitemap.xml")
     return xml
 
@@ -748,7 +748,7 @@ def write_feed(data):
            + "\n".join(rows) + '\n  </channel>\n</rss>\n')
     old = FEED_XML.read_text(encoding="utf-8") if FEED_XML.exists() else None
     if old != xml:
-        FEED_XML.write_text(xml, encoding="utf-8")
+        FEED_XML.write_text(xml, encoding="utf-8", newline="\n")
         print(f"  -> Updated {FEED_FILE}")
     return xml
 
@@ -1904,7 +1904,7 @@ def main():
             failures += 1
             continue
         if not path.exists() or path.read_text(encoding="utf-8") != html:
-            path.write_text(html, encoding="utf-8")
+            path.write_text(html, encoding="utf-8", newline="\n")
             print(f"    -> Updated {page['file']}")
         else:
             print(f"    -> No changes needed for {page['file']}")
