@@ -120,17 +120,20 @@ def _check_css_tokens(errors: list[str]) -> None:
 
 
 def _check_leak_and_crlf(errors: list[str]) -> None:
-    forbidden = (
-        re.compile(r"notes/revamp"),
-        re.compile(r"\bDS §"),
+    machine_forbidden = (
         re.compile(r"/mnt/[a-z]/"),
         re.compile(r"/home/[a-zA-Z0-9_-]+"),
         re.compile(r"file://"),
     )
+    shared_forbidden = (
+        re.compile(r"notes/revamp"),
+        re.compile(r"\bDS §"),
+    ) + machine_forbidden
     roots = [REPO_ROOT / "assets/blog", REPO_ROOT / "writing"]
     for base in roots:
         if not base.exists():
             continue
+        pats = shared_forbidden if base == REPO_ROOT / "assets/blog" else machine_forbidden
         for p in sorted(base.rglob("*")):
             if not p.is_file() or p.suffix.lower() not in {".html", ".css", ".js", ".json"}:
                 continue
@@ -138,11 +141,10 @@ def _check_leak_and_crlf(errors: list[str]) -> None:
             rel = p.relative_to(REPO_ROOT)
             if b"\r\n" in raw:
                 errors.append(f"[{rel}] Contains CRLF line endings (run build to normalize)")
-            if base == REPO_ROOT / "assets/blog":
-                txt = raw.decode("utf-8", errors="replace")
-                for pat in forbidden:
-                    if pat.search(txt):
-                        errors.append(f"[{rel}] Internal/machine reference matched {pat.pattern}")
+            txt = raw.decode("utf-8", errors="replace")
+            for pat in pats:
+                if pat.search(txt):
+                    errors.append(f"[{rel}] Internal/machine reference matched {pat.pattern}")
 
 
 def _check_hidden_preview(series_dir: Path, html_path: Path, raw: str, manifest: dict, errors: list[str]) -> None:
@@ -178,6 +180,18 @@ def _check_prose_rules(rel: str, raw: str, bucket: list[str]) -> None:
     )
     if contractions:
         bucket.append(f"[{rel}] Non-quote contractions found: {sorted(set(c.lower() for c in contractions))[:6]}")
+
+    banned_ci = re.compile(
+        r"\b(?:rules\s+out|profile\s+likelihood|favours|earns\s+its\s+keep|"
+        r"spends\s+a\s+token|the\s+bill\s+comes\s+due|load-bearing|how\s+it\s+has\s+landed|"
+        r"the\s+usual\s+way\s+in|a\s+lever\s+arm|a\s+dial\s+worth\s+turning)\b",
+        re.IGNORECASE,
+    )
+    for m in banned_ci.finditer(prose):
+        bucket.append(f"[{rel}] Disallowed/banned phrase: {m.group(0)!r}")
+    for tok in ("Toy S", "Toy D"):
+        if re.search(rf"\b{re.escape(tok)}\b", prose):
+            bucket.append(f"[{rel}] Leaked internal identifier: {tok!r}")
 
     sents = [s.strip() for s in re.split(r"(?<=[.!?])\s+", prose) if len(s.split()) >= 5]
     if len(sents) >= 10:
@@ -291,6 +305,11 @@ def check_all(errors: list[str], warnings: list[str]) -> None:
             elif hp.name == "reference.html":
                 if 'class="playbook-map"' not in raw:
                     content_bucket.append(f"[{rel}] Missing .playbook-map flowchart on reference page")
+                _check_prose_rules(rel, raw, content_bucket)
+            elif hp.name == "index.html":
+                if 'class="playbook-map"' not in raw:
+                    errors.append(f"[{rel}] Missing .playbook-map flowchart")
+                _check_prose_rules(rel, raw, content_bucket)
 
         # Internal link + #anchor target checks across all indexed writing pages
         for hp, raw in page_texts.items():

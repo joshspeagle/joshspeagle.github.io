@@ -160,6 +160,7 @@
 
         <p class="fig-task">Press play, or drag the timeline, and watch which checkpoints the buffer keeps.</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           A synthetic run of <span data-num="fig-checkpoint:model:steps">20,000</span> steps, evaluated every <span data-num="fig-checkpoint:model:interval">1,000</span> steps. (a) Validation error at each evaluation. The noise-free curve reaches its plateau of <span data-num="fig-checkpoint:model:v-star">0.2</span> by about step <span data-num="fig-checkpoint:model:level-step">5,298</span>, and each evaluation adds noise with a standard deviation of <span data-num="fig-checkpoint:model:sigma">0.005</span>. The best checkpoint, at step <span data-num="fig-checkpoint:default:selected-step">11,000</span> (<span data-num="fig-checkpoint:default:selected-value">0.1899</span>), is ringed, and the last one, at <span data-num="fig-checkpoint:default:last-value">0.1989</span>, is drawn open. (b) The <span data-num="fig-checkpoint:model:buffer-size">3</span> best checkpoints saved so far, which by the end of the run are steps <span data-num="fig-checkpoint:default:buffer">11,000, 6,000 and 7,000</span>.
         </p>
@@ -217,6 +218,7 @@
 
         <p class="fig-task">Point at or tap any trial to see its training curve in (c), and switch (b) between the two hyperparameters.</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           A synthetic study of <span data-num="fig-study:model:trials">20</span> quasi-random trials (trials placed by a quasi-random sequence, <a href="04-searching-the-space.html#coverage">Part 4</a>). (a) Learning rate against weight decay, colored by each trial's best validation error. (b) The axis plot, best validation error against one hyperparameter. (c) The training curve of the chosen trial, with its best checkpoint ringed and its last checkpoint open. The best trial, number <span data-num="fig-study:default:best-trial">10</span>, reaches <span data-num="fig-study:default:best-value">0.232</span> at step <span data-num="fig-study:default:best-step">11,000</span>, with learning rate <span data-num="fig-study:default:best-lr">3.1 &times; 10⁻³</span>, <span data-num="fig-study:default:best-position">66%</span> of the way across the learning-rate range.
         </p>
@@ -266,6 +268,7 @@
         </div>
         <p class="fig-task">Drag the fixed learning rate along the axis and watch which model looks better.</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           Validation error against learning rate for two depths of the same toy network. The vertical line is a learning rate held fixed for both models, and the open markers are what each model scores there. With "each at its best" on, the filled markers show the lowest point of each curve. Below about 1.9 × 10⁻³ the fixed comparison favors six layers, and above it four layers.
         </p>
@@ -329,6 +332,7 @@
         </figcaption>
         <p class="fig-task">Choose a goal, then press any hyperparameter to see its role and the reason for it.</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           Roles for three goals on one pipeline: whether to add dropout, whether more hidden layers help (with <span data-num="fig-roles:model:trials-per-value">12</span> trials per depth), and whether Adam or Nesterov momentum gives the lower error. Each reason quotes the Playbook. Where the Playbook allows more than one role, the second is shown as also acceptable, and a few choices that the Playbook leaves open are marked as this exercise's.
         </p>
@@ -472,6 +476,7 @@
 
         <p class="fig-task">Drag the range width in (a), or change the number of options and trials, and watch how often the design picks the truly best option.</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           (a) The share of <span data-num="fig-spread:model:repeats">200</span> repeated designs that pick the truly best option, against the width of the learning-rate range. With 3 options and 48 trials it is zero below <span data-num="fig-spread:model:optimum-enters">1.2</span> decades, peaks at <span data-num="fig-spread:default:p-best">98%</span> at <span data-num="fig-spread:default:best-width">1.375</span> decades, sits at 62% at the loaded default of 3 decades, and falls to <span data-num="fig-spread:default:p-at-5">52%</span> at 5 decades. (b) One of those designs at the chosen width. Each row is one option's study, with its trials (dots) along the learning-rate axis, its true best learning rate (diamond), its best trial (ringed) and that trial's score. The option the design picks is marked.
         </p>

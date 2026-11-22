@@ -446,7 +446,7 @@ var CAL = {
     /* DS §5.6: where the full form finds no position, the phone layout tries "retrain spread" and
        may drop the label, which the caption names; from 640 px the label moves to (b)'s header */
     if (lastBar) {
-      items.push({ id: 'retrain', text: ['retrain spread,', '±0.1%', '(the Playbook\'s estimate)'], role: 'data', series: 'retrain', tone: 'role',
+      items.push({ id: 'retrain', text: ['retrain spread,', '±' + sig2(BRACKET), '(the Playbook\'s estimate)'], role: 'data', series: 'retrain', tone: 'role',
         feature: { type: 'point', x: lastBar.x, y: lastBar.y, r: lastBar.r },
         phone: p.phone ? { text: 'retrain spread' } : { header: true }, captionNames: true, keySentence: true });
     }

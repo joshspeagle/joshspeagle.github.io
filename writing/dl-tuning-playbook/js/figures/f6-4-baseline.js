@@ -358,7 +358,7 @@
       yFormat: function (v) { return by('fixed2')(v); },
       aspect: function (w, phone) { return phone ? 230 / Math.max(w, 1) : 0.62; },
       maxHeight: function (w, phone) { return phone ? 230 : 290; },
-      margin: function (w, phone) { return phone ? { t: 8, r: 16, b: 36, l: 50 } : { t: 12, r: 16, b: 42, l: 58 }; }
+      margin: function (w, phone) { return phone ? { t: 8, r: 16, b: 48, l: 50 } : { t: 12, r: 16, b: 44, l: 58 }; }
     };
   }
 

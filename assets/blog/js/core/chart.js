@@ -338,7 +338,7 @@
         if (Math.abs(n.pos - t.pos) < h) return true;
         if (axis !== 'x') return false;
         var a0 = t.pos - (t.w || 0) / 2, a1 = t.pos + (t.w || 0) / 2, b0 = n.pos - (n.w || 0) / 2, b1 = n.pos + (n.w || 0) / 2;
-        return a0 < b1 + 2 && b0 < a1 + 2;
+        return a0 < b1 + 6 && b0 < a1 + 6;
       });
     });
   };

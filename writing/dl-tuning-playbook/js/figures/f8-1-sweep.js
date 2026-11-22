@@ -617,10 +617,18 @@
 
   function readout(state) {
     var thr = 'a loss of ' + fmt.exp(THRESHOLD);
-    if (state.bestJ === '') return 'No rate in the grid fits the training set to ' + thr + ' within ' + fmt.int(LIMIT) + ' steps.';
-    var j = +state.bestJ, c = CAL.tables.curve[j];
-    var where = state.edge === 'upper' ? 'at the grid’s upper edge' : state.edge === 'lower' ? 'at the grid’s lower edge' : 'inside the grid';
-    return 'The fastest rate in the grid, ' + fmt.lr(uOfIndex(j)) + ', fits the training set to ' + thr + ' in ' + fmt.steps(c.steps) + ' steps, ' + where + '.';
+    var lead;
+    if (state.bestJ === '') lead = 'No rate in the grid fits the training set to ' + thr + ' within ' + fmt.int(LIMIT) + ' steps.';
+    else {
+      var j = +state.bestJ, c = CAL.tables.curve[j];
+      var where = state.edge === 'upper' ? 'at the grid’s upper edge' : state.edge === 'lower' ? 'at the grid’s lower edge' : 'inside the grid';
+      lead = 'The fastest rate in the grid, ' + fmt.lr(uOfIndex(j)) + ', fits the training set to ' + thr + ' in ' + fmt.steps(c.steps) + ' steps, ' + where + '.';
+    }
+    if (state.curve && state.curve.length) {
+      var minPt = state.curve.reduce(function (m, pt) { return pt.ly < m.ly ? pt : m; });
+      lead += ' Across the whole curve, training fits fastest near ' + fmt.lr(minPt.u) + ' (' + fmt.steps(Math.pow(10, minPt.ly)) + ' steps).';
+    }
+    return lead;
   }
 
   function table(state) {

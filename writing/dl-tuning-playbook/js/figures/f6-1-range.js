@@ -272,7 +272,10 @@
       describe: 'validation error against learning rate',
       xDomain: dA.x.slice(), yDomain: dA.y.slice(),
       xLabel: 'learning rate', yLabel: 'validation error',
-      xTicks: function () { var out = []; for (var e = Math.ceil(dA.x[0]); e <= Math.floor(dA.x[1]); e++) out.push(e); return out; },
+      xTicks: function (dom, px) {
+        if (px < 300) return [-5, -3, -1];
+        var out = []; for (var e = Math.ceil(dA.x[0]); e <= Math.floor(dA.x[1]); e++) out.push(e); return out;
+      },
       xFormat: fmt.lr,
       /* no tick label at the frame's floor, where the lower bound's handle stands at the default */
       yTicks: function (dom, px) { return px < 160 ? [0.4, 0.6, 0.8] : [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]; },
@@ -280,7 +283,7 @@
       grid: 'y',
       aspect: function (w, phone) { return phone ? 0.84 : 0.56; },
       maxHeight: function (w, phone) { return phone ? 300 : 380; },
-      margin: function (w, phone) { return phone ? { t: 10, r: 16, b: 44, l: 46 } : { t: 12, r: 24, b: 48, l: 56 }; }
+      margin: function (w, phone) { return phone ? { t: 10, r: 20, b: 48, l: 50 } : { t: 12, r: 24, b: 48, l: 56 }; }
     });
     pa.update(drawA);
   }

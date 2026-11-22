@@ -130,6 +130,7 @@
 
         <p class="fig-task">Drag the trial slider or press Play, and switch between 2, 3 and 4 hyperparameters. Point at a trial to find it in the strips.</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption" data-src="1674-1677 1767-1769">
           Panels (a) to (c) show weight decay against learning rate for grid search (ochre), uniform random search (indigo) and quasi-random search (blue), with each trial's learning rate repeated in the strip below and its weight decay in the strip at the right. At the default 16 trials over four hyperparameters, the grid tests <span data-num="fig-coverage:default:grid-distinct-16">2</span> learning rates with a largest gap of <span data-num="fig-coverage:default:grid-gap-16">0.5</span>, random search <span data-num="fig-coverage:default:random-distinct-16">16</span> with a gap of <span data-num="fig-coverage:default:random-gap-16">0.19</span>, and quasi-random search <span data-num="fig-coverage:default:quasi-distinct-16">16</span> with a gap of <span data-num="fig-coverage:default:quasi-gap-16">0.094</span>. All coordinates are rescaled to the range 0 to 1, and no model is trained.
         </p>
@@ -389,6 +390,7 @@
 
         <p class="fig-task">Press Play or drag the slider to draw more simulated studies, and toggle which study sizes are shown. Point at a dot in panel (b) to see that study's trials in panel (a).</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption" data-src="1069-1080 1782-1796">
           Panel (a) shows the toy's pool of <span data-num="fig-best-of-k:model:pool-size">100</span> trials as validation error against learning rate, with <span data-num="fig-best-of-k:default:pool-infeasible">6</span> diverged trials as crosses along the top edge. The latest 6-trial study is in blue, its best trial ringed. Panel (b) has one dot per simulated study. After <span data-num="fig-best-of-k:default:draws">200</span> studies the IQR of the best is <span data-num="fig-best-of-k:default:iqr-6">0.022</span> at 6 trials, <span data-num="fig-best-of-k:default:iqr-10">0.0092</span> at 10 and <span data-num="fig-best-of-k:default:iqr-20">0.0044</span> at 20. The red bar spans the Playbook's retrain spread of $\pm$<span data-num="fig-best-of-k:model:bracket">0.001</span>, a width of <span data-num="fig-best-of-k:model:inside-width">0.002</span>. The pool is synthetic, and only its spreads at 6 and 20 trials were matched to the Playbook's figure.
         </p>

@@ -14,16 +14,11 @@
  * default and at the preset "half the updates clipped".
  *
  * Two stacked panels share the x axis, the norm or threshold on a log axis over CAL.domains.a.x:
- * (a) steps against unclipped gradient norm: the histogram at TP.clipping.BINS_PER_DECADE bins per
- *     decade in model blue; the 90th percentile of the norms a model-blue dash-dot level named on
- *     the x axis; the threshold a reader line named on the x axis by its value, with its handle on
- *     the axis and a press band along the line. Where the two lines stand within 2 px, as at the
- *     default, the level is drawn above the reader's line so both show.
- * (b) fraction of updates against threshold: the fraction clipped (model blue, filled markers) and
- *     the mean multiplier (third gold, open circles), sampled PER_DECADE times per decade with the
- *     current threshold added as a sample, markers thinned to 24 px and kept at the threshold (DS
- *     §4.2); half the updates a dashed limit named on the y axis; the threshold's reader line
- *     continued. The header carries the current fraction clipped (DS §5.7).
+ * (a) logged unclipped gradient norms against step (log y), with the clipping threshold as a
+ *     horizontal reader line, its handle on the y axis, and the clipped region tinted above it.
+ * (b) histogram of the unclipped gradient norms (log x), with the threshold a vertical reader line
+ *     and the 90th percentile a model-blue dash-dot level, both named on the x axis. The panel
+ *     header reports the mean multiplier on the gradient.
  *
  * The parameters: threshold (the handle, continuous on a log axis, cut, no ghost) and the seed
  * ("Draw again", cut). The threshold is held to four significant figures whenever it is set
@@ -196,7 +191,7 @@
          handle on the y axis, and the band above it tinted as the clipped region.
      (b) the histogram of the norms (log x), the threshold a vertical reader line named by its
          value, and the 90th percentile a model-blue dash-dot level named on the x axis. */
-  function margin(w, phone) { return phone ? { t: 8, r: 14, b: 38, l: 48 } : { t: 10, r: 20, b: 42, l: 64 }; }
+  function margin(w, phone) { return phone ? { t: 8, r: 22, b: 40, l: 48 } : { t: 10, r: 26, b: 42, l: 64 }; }
   var traceCache = { seed: null, rows: null };
   function traceRows(S) {
     if (traceCache.seed === S.seed) return traceCache.rows;
@@ -224,7 +219,7 @@
       xLog: 10, yLog: false, xDomain: X.slice(), yDomain: CAL.domains.a.y.slice(),
       xLabel: 'unclipped gradient norm', yLabel: 'steps',
       xTicks: 'pow10', xFormat: fmt.tick,
-      yTicks: function (dom, px) { return px < 120 ? [0, 450, 900] : [0, 300, 600, 900]; }, yFormat: fmt.int,
+      yTicks: function (dom, px) { return px < 120 ? [450, 900] : [300, 600, 900]; }, yFormat: fmt.int,
       grid: 'y',
       aspect: function (w, phone) { return (phone ? 170 : 190) / Math.max(w, 1); },
       margin: margin

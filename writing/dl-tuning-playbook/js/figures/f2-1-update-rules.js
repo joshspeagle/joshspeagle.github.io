@@ -256,6 +256,15 @@ var CAL = {
       "adam-over-sgd-fastest": 219.7802197802198
     },
     "default": {
+      "lr": 0.082,
+      "scale": 1,
+      "sgd-steps": 38,
+      "momentum-steps": 97,
+      "adam-steps": 108,
+      "adam-first-crossing": 79,
+      "end-step": 333
+    },
+    "scale-100": {
       "lr": 0.2,
       "scale": 100,
       "adam-steps": 79,

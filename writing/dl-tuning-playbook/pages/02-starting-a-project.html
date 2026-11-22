@@ -404,6 +404,7 @@
 
         <p class="fig-task">Drag the learning rate, switch the loss scale, click a rule's name in panel (b) or (c) to show its update and sliders, or open "More controls" to toggle Nesterov, RMSProp, and NAdam.</p>
         <div class="fig-panels"></div>
+        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>
         <p class="fig-caption">
           SGD (blue, filled circles), momentum (gold, open circles) and Adam (purple, open diamonds) on $\ell(\theta) = \tfrac{s}{2}(20\,\theta_1^2 + \theta_2^2)$ with loss scale $s$, all from $\theta_0 = (-4, 3.5)$. (a) The paths at the chosen learning rate. (b) Steps to reach the target loss ($0.01\,s$) at each of <span data-num="fig-update-rules:model:rates">97</span> learning rates, with crosses where a run diverges, a ring on each rule's fastest rate and the focus rule's stability limit dash-dotted. (c) Loss against step. The figure opens at $s = 1$ and a learning rate of 0.082, where all three rules converge.
         </p>

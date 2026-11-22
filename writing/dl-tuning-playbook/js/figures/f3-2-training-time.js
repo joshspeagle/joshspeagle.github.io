@@ -171,12 +171,12 @@
       describe: 'time per step, steps and training time, each relative to batch size 8, against batch size',
       xLog: 2, yLog: 10, xDomain: dA.x.slice(), yDomain: dA.y.slice(),
       xLabel: 'batch size', yLabel: 'relative to batch size 8',
-      xTicks: 'pow2', xFormat: fmt.int, xMinGap: 44,
+      xTicks: 'pow2', xFormat: fmt.int, xMinGap: 52,
       yTicks: 'pow10', yFormat: fmt.decade,
       grid: 'y',
       aspect: function (w, phone) { return phone ? 0.86 : 0.6; },
       maxHeight: function (w, phone) { return phone ? 318 : 420; },
-      margin: function (w, phone) { return phone ? { t: 10, r: 18, b: 44, l: 56 } : { t: 12, r: 26, b: 48, l: 60 }; }
+      margin: function (w, phone) { return phone ? { t: 10, r: 22, b: 50, l: 56 } : { t: 12, r: 26, b: 50, l: 60 }; }
     });
     pa.update(drawA);
   }
@@ -188,7 +188,7 @@
      name, when the two would overlap. Its stem stays at its value. */
   function separateNames(p, kneeName, readerName) {
     if (!kneeName || !readerName) return;
-    var gap = 6, a = kneeName, b = readerName;
+    var gap = 10, a = kneeName, b = readerName;
     var aLo = a.pos - a.w / 2, aHi = a.pos + a.w / 2, bLo = b.pos - b.w / 2, bHi = b.pos + b.w / 2;
     if (bLo >= aHi + gap || bHi <= aLo - gap) return;
     var lo = -p.margin.l + b.w / 2 + 1, hi = p.width + p.margin.r - b.w / 2 - 1;
@@ -217,7 +217,7 @@
        breaks into as many lines as the window's width needs (windowName). */
     var wName = windowName(p, E(s.llo), E(s.lhi), [CAL.knee, E(s.lbatch)]);
     C.window(p, E(s.llo), E(s.lhi), {
-      kind: 'highlight', id: 'within', name: wName.full, phone: { text: wName.phone }, captionNames: true
+      kind: 'highlight', id: 'within', name: wName.full, phone: { text: wName.phone, header: true }, captionNames: true
     });
 
     /* the knee, a level of the toy in the time-per-step token, named on the x axis */
@@ -249,7 +249,7 @@
     /* The minimum lies inside the window at every state, so its callout names the window as well
        and may stand in it (DS §5.2 item 7 keeps out the labels a region does not concern). */
     C.annotation(p, {
-      kind: 'callout', id: 'minimum', text: 'minimum', captionNames: true, names: 'within',
+      kind: 'callout', id: 'minimum', text: 'minimum', phone: { header: true }, captionNames: true, names: 'within',
       anchor: { x: mB, y: mT, r: 5, series: 'training-time' }
     });
 

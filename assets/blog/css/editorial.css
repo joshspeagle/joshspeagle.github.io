@@ -1732,25 +1732,37 @@ figure.schematic .fig-num {
   background: var(--surface-2);
   border: 1px solid var(--border-2);
   border-radius: 2px;
-  padding: 10px 12px;
-  margin-bottom: 12px;
-  gap: 10px 14px;
+  padding: 7px 10px;
+  margin-bottom: 10px;
+  gap: 6px 10px;
   align-items: center;
 }
 .fig-controls-more:has(+ .fig-dock:not(:empty)) {
   margin-bottom: 0;
   border-bottom: 0;
   border-radius: 2px 2px 0 0;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
 }
 .fig-controls-more:not(:empty) + .fig-dock {
   border-top: 1px dashed var(--axis);
   border-radius: 0 0 2px 2px;
-  padding-top: 8px;
+  padding-top: 6px;
 }
 .fig-controls {
-  gap: 10px 14px;
+  gap: 6px 10px;
   align-items: center;
+}
+.fig-nojs {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  border: 1px dashed var(--border-2);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: 0.88rem;
+}
+.fig-nojs p {
+  margin: 0;
 }
 
 /* High-Acuity Parameter Controls (.ctl, sliders, segments, toggles) */
@@ -1801,22 +1813,22 @@ button.preset,
 button.reset,
 button.draw {
   font-family: var(--mono);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
   line-height: 1.25;
   color: var(--ink-2);
   background: var(--surface);
   border: 1px solid var(--border-2);
   border-radius: var(--radius);
-  padding: 5px 11px;
-  min-height: 32px;
-  min-width: 32px;
+  padding: 4px 9px;
+  min-height: 30px;
+  min-width: 30px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
 }
 button.preset {
   clip-path: polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px);

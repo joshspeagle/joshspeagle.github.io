@@ -744,7 +744,7 @@ var CAL = {
   }
   function panelBOpts() {
     return {
-      letter: '(b)', describe: 'warmup lengths tried', note: 'warmup_steps tried',
+      letter: '(b)', describe: 'warmup lengths tried', note: 'Warmup steps tried',
       xLog: 10, xDomain: XA, yDomain: [SHOWN.length - 0.5, -0.5],
       xLabel: '', yLabel: '',
       xTicks: function (d, px) { return px < 500 ? [10, 100, 1000, 10000] : LIST.slice(); },
@@ -874,10 +874,10 @@ var CAL = {
       }
       /* the ramp's end named on the step axis, and the cursor with its step unless the two names
          would overlap (the counter in the header gives the step) */
-      var endName = fmt.int(W);
+      var endName = stepTick(W);
       C().level(p, 'x', W, { role: 'reader', text: endName, series: 'end' });
       if (t >= 1) {
-        var tName = fmt.int(t), apart = true;
+        var tName = stepTick(t), apart = true;
         if (C().measureText) {
           var w1 = C().measureText([endName], 'tick', p).w, w2 = C().measureText([tName], 'tick', p).w;
           apart = Math.abs(p.x(t) - p.x(W)) >= (w1 + w2) / 2 + 6;
@@ -898,8 +898,8 @@ var CAL = {
     var bPoints = [];
     function drawB(p, v, shownStrip, ctx) {
       var phone = p.phone;
-      /* the cap at 10% of max_train_steps, a dashed limit named on the axis (DS §4.7) */
-      C().level(p, 'x', CAP, { role: 'ref', text: phone ? '10% cap' : '10% of max_train_steps', line: true, series: 'cap' });
+      /* the cap at 10% of the step budget, a dashed limit named on the axis (DS §4.7) */
+      C().level(p, 'x', CAP, { role: 'ref', text: phone ? '10% cap' : '10% of step budget', line: true, series: 'cap' });
       /* the row names, left of the list, in the decade it leaves empty */
       var names = p.layers.names || p.layers.labels;
       SHOWN.forEach(function (rk, i) {
@@ -960,7 +960,7 @@ var CAL = {
       params: {
         end: {
           type: 'number', default: CAL.defaults.end, domain: [LIST[0], LIST[LIST.length - 1]], snap: LIST.slice(), scale: 'log',
-          change: 'restart', ghost: true, showEnd: true, control: 'handle', handle: 'a', label: 'End of the warmup ramp, warmup_steps',
+          change: 'restart', ghost: true, showEnd: true, control: 'handle', handle: 'a', label: 'End of the warmup ramp',
           format: function (x) { return fmt.int(x) + ' steps'; }
         },
         base: {

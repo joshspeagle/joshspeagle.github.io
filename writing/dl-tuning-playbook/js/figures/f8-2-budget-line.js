@@ -351,7 +351,7 @@
     var list = M().budgets();
     C.handle(p, {
       id: 'budget', axis: 'x', value: B, snap: list, min: list[0], max: list[list.length - 1], scale: 'log',
-      label: 'Step budget, max_train_steps', format: fmt.int, onLine: true,
+      label: 'Training step budget', format: fmt.int, onLine: true,
       onChange: function (x) { fig.set({ budget: x }, { transient: true }); },
       onSettle: function (x) { fig.set({ budget: x }); }
     });

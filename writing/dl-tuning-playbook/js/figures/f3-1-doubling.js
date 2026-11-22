@@ -280,12 +280,13 @@ var CAL = {
     return {
       key: 'a', describe: 'throughput against batch size', note: 'run 0 of ' + N,
       xDomain: X_DOMAIN, yDomain: Y_DOMAIN, yLog: 10,
-      xTicks: xTicks(), xFormat: function (t) { return fmt.int(bOf(t)); },
+      xTicks: function (dom, px) { return px < 380 ? [1, 3, 5, 7, 9] : xTicks(); },
+      xFormat: function (t) { return fmt.int(bOf(t)); }, xMinGap: 48,
       yTicks: [10, 100, 1000, 10000], yFormat: function (v) { return fmt.int(v); },
       xLabel: 'batch size', yLabel: 'throughput, examples per second',
       grid: 'both',
       aspect: function (w, phone) { return phone ? 0.9 : 0.5; },
-      margin: function (w, phone) { return phone ? { t: 10, r: 12, b: 40, l: 72 } : { t: 12, r: 16, b: 42, l: 118 }; },
+      margin: function (w, phone) { return phone ? { t: 10, r: 22, b: 42, l: 72 } : { t: 12, r: 24, b: 44, l: 118 }; },
       maxHeight: function (w, phone) { return phone ? 300 : 300; }
     };
   }

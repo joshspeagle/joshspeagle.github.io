@@ -10,7 +10,7 @@
  *   candidate run k  = MU - gain + sigma * zc_k,       k = 1..N
  * with zb, zc standard normals drawn once per seed (the first N are used, so raising N adds runs
  * and keeps the earlier ones). The observed gap is mean(baseline) - mean(candidate), so a positive
- * gap favours the candidate. Noise alone (gain 0) gives gaps with standard deviation
+ * gap favors the candidate. Noise alone (gain 0) gives gaps with standard deviation
  * se = sigma * sqrt(2 / N), the standard error of the gap. Panel (b) draws NULL_N such noise-only
  * gaps, se * zn_m, as a histogram, the band of +/- 2 se, and the observed gap.
  * sigma is the true seed-to-seed standard deviation; the band uses it, not a sample estimate.
@@ -172,9 +172,9 @@
         xDomain: B_DOMAIN.slice(), yDomain: [0, 1], yTicks: 'none', grid: 'none',
         xTicks: function (dom, px) { return px > 420 ? [-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8] : [-0.8, -0.4, 0, 0.4, 0.8]; },
         xFormat: function (v) { return String(v); },
-        xLabel: function (p) { return p.phone ? 'gap, points (> 0 favours candidate)' : 'gap between means, points (> 0 favours candidate)'; }, yLabel: '',
+        xLabel: function (p) { return p.phone ? 'gap, points (> 0 favors candidate)' : 'gap between means, points (> 0 favors candidate)'; }, yLabel: '',
         aspect: function (w, phone) { return phone ? 180 / Math.max(w, 1) : 185 / Math.max(w, 1); },
-        margin: function (w, phone) { return { t: 8, r: 14, b: 40, l: 10 }; }
+        margin: function (w, phone) { return { t: 8, r: 18, b: 40, l: 22 }; }
       });
       C().pointHover(pa, {
         by: 'run', label: 'Reading of the runs',

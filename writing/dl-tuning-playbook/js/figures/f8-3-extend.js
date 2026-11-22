@@ -772,9 +772,9 @@
   function pct(v) { return TP.fmt.byName('sig3')(100 * v) + '%'; }
   function readout(state) {
     var L = state.families.linear.below, Cs = state.families.cosine.below;
-    return 'With Round 2 ' + by('sig3')(state.k) + ' times as long as Round 1, the linear extension spends ' + pct(L.extension.fraction) +
-      ' of Round 2 below half the base rate and its pitfall ' + pct(L.pitfall.fraction) + '. The stretched cosine spends ' +
-      pct(Cs.extension.fraction) + ' and its pitfall ' + pct(Cs.pitfall.fraction) + '.';
+    return 'At ' + by('sig3')(state.k) + '× Round 1 length, linear extension spends ' + pct(L.extension.fraction) +
+      ' below half the base rate (pitfall ' + pct(L.pitfall.fraction) + ') vs. ' + pct(Cs.extension.fraction) +
+      ' for stretched cosine (pitfall ' + pct(Cs.pitfall.fraction) + '); high-rate duration matters alongside the cooldown slope.';
   }
 
   function init(element) {

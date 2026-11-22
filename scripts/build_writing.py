@@ -382,6 +382,11 @@ def _populate_figures(text: str) -> str:
         _fill_figref,
         main_body,
     )
+    main_body = re.sub(
+        r'(<div\s+class="fig-panels">\s*</div>)(?!\s*<noscript\b[^>]*\bclass="fig-nojs")',
+        r'\1\n        <noscript class="fig-nojs"><p>Interactive figure: enable JavaScript to adjust controls and view live plots.</p></noscript>',
+        main_body,
+    )
     return text[: main_m.start()] + main_open + main_body + main_close + text[main_m.end() :]
 
 

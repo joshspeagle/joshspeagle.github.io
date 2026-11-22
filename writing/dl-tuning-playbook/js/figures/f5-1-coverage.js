@@ -246,7 +246,7 @@ var CAL = {
   }
   /* The weight-decay strip in the frame's right margin: its gap from the frame and its width. */
   function wdStrip(phone) { return phone ? { gap: 3, w: 7, pad: 2 } : { gap: 6, w: 10, pad: 4 }; }
-  function innerLeft(phone) { return phone ? 3 : 6; }
+  function innerLeft(phone) { return phone ? 10 : 12; }
   /* The strip names of the phone layout stand in the strips' left margin. */
   var NAME_MARGIN = 88;
 
@@ -278,7 +278,7 @@ var CAL = {
         return (plot + m.t + m.b) / Math.max(w, 1);
       },
       margin: function (w, phone) {
-        if (phone) return { t: 2, b: last ? 36 : 3, r: 8, l: NAME_MARGIN };
+        if (phone) return { t: 2, b: last ? 36 : 3, r: 12, l: NAME_MARGIN };
         var s = wdStrip(false), g = gridVars(fig);
         return { t: 4, b: 36, r: s.gap + s.w + s.pad, l: (first ? g.y + g.gap : 0) + innerLeft(false) };
       }
