@@ -44,10 +44,50 @@
   }
 
   var svg = document.getElementById('board');
+  var boardNav = document.getElementById('board-nav');
+  var navItems = boardNav
+    ? Array.prototype.slice.call(boardNav.querySelectorAll('a[href^="#"]')).map(function (link) {
+        var sel = link.getAttribute('href');
+        return { link: link, target: sel ? document.querySelector(sel) : null };
+      }).filter(function (entry) { return Boolean(entry.target); })
+    : [];
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var pulsePath = null;
   var pulseStar = null;
   var trunkWaypoints = null;
   var trunkLen = 0;
+
+  navItems.forEach(function (entry) {
+    entry.link.addEventListener('click', function (e) {
+      e.preventDefault();
+      entry.target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', entry.link.getAttribute('href'));
+      }
+    });
+  });
+
+  function updateBoardNav(sy, vh, maxScroll) {
+    if (!navItems.length) return;
+    var active = navItems[0].link;
+    if (sy > 2) {
+      if (sy >= maxScroll - 24) {
+        active = navItems[navItems.length - 1].link;
+      } else {
+        var refY = sy + Math.min(220, vh * 0.34);
+        for (var i = 0; i < navItems.length; i++) {
+          var top = abs(navItems[i].target.getBoundingClientRect()).top;
+          if (top <= refY) active = navItems[i].link;
+        }
+      }
+    }
+    navItems.forEach(function (entry) {
+      var on = entry.link === active;
+      entry.link.classList.toggle('is-active', on);
+      if (on) entry.link.setAttribute('aria-current', 'location');
+      else entry.link.removeAttribute('aria-current');
+    });
+  }
 
   function build() {
     if (!svg) return;
@@ -62,7 +102,10 @@
     var doc = document.documentElement;
     var H = Math.max(doc.scrollHeight, document.body.scrollHeight);
     var W = doc.clientWidth;
-    if (W < 1180) return;
+    if (W < 1180) {
+      updateScrollHorizon();
+      return;
+    }
 
     svg.setAttribute('width', W);
     svg.setAttribute('height', H);
@@ -128,10 +171,11 @@
   }
 
   function updateScrollHorizon() {
-    if (!pulsePath || !trunkLen || !trunkWaypoints) return;
     var sy = window.scrollY || window.pageYOffset || 0;
     var vh = window.innerHeight || document.documentElement.clientHeight || 1;
     var maxScroll = Math.max(1, document.documentElement.scrollHeight - vh);
+    updateBoardNav(sy, vh, maxScroll);
+    if (!pulsePath || !trunkLen || !trunkWaypoints) return;
     var p;
     if (sy <= 2) {
       var rest = vh * 0.60 - trunkWaypoints.y0;
