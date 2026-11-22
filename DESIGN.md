@@ -52,7 +52,7 @@ All colors are defined in `assets/data/tokens.json` with paired `dark` and `ligh
 Every dashboard visualization integrates directly with the shared `[data-listview]` filter engine (`assets/js/redesign/listview.js`) via declarative `[data-lv-trigger]` controls, exact year filters (`data-lv-year`), non-chip facets (`data-lv-facet`), and URL query deep-links (`?cat=...&year=...&q=...`):
 
 1. **Homepage (`index.html`):**
-   - **Hero Canvas (`assets/js/redesign/hero.js`):** Deep-field spiral and elliptical galaxies across the left/center emit glowing violet-cyan-gold signal beams through the constellation network into an open rotated Bayesian posterior (`1σ`, `2σ`, `3σ` credible ellipses and live MCMC/nested-sampling cloud) on the right.
+   - **Hero Canvas (`assets/js/redesign/hero.js`):** Prior-to-posterior corner flow diagram inside a clean right-hand desktop stage (`W > 960px`) and stacked mobile/tablet frame (`W <= 960px`), continuously morphing an isotropic Gaussian prior into a bimodal crescent posterior with marching-squares iso-density contours, live 1D marginals, curved streamlines, and advected tracer samples.
    - **Left-Margin Constellation Rail (`assets/js/redesign/board.js` & `#board-nav`):** Vertical copper rail in the left margin (`W >= 1180px`) with scroll-coupled amber horizon paired with a compact fixed section-navigation rail (`W >= 1440px`) tracking the active homepage section.
    - **Hub Routing:** Clickable Research Area cards link directly to pre-filtered `publications.html?cat=<key>#pub-root`; About links to `biography.html` and `service.html`; Latest Highlights surfaces the three most recent news updates above the Research Group & Working With Me sections.
 2. **Publications (`publications.html`):**
