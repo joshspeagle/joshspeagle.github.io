@@ -212,17 +212,6 @@
   .p02-budget-warn { justify-content: flex-start; }
 }
 
-/* ---------- In practice ---------- */
-section.prose ol.p02-practice { list-style: none; margin: 14px 0 0; padding: 0; counter-reset: pr; position: relative; }
-ol.p02-practice::before { content: ""; position: absolute; left: 21px; top: 22px; bottom: 22px; width: 2px; background: color-mix(in srgb, var(--reader) 30%, var(--grid)); }
-ol.p02-practice > li { counter-increment: pr; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 14px; align-items: start; margin: 0 0 14px; position: relative; }
-.p02-practice-ico { width: 44px; height: 44px; border-radius: 50%; background: var(--surface); border: 2px solid var(--reader); color: var(--reader); display: inline-flex; align-items: center; justify-content: center; position: relative; z-index: 1; }
-.p02-practice-ico svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.p02-practice-ico::after { content: counter(pr); position: absolute; right: -6px; top: -6px; width: 19px; height: 19px; border-radius: 50%; background: var(--reader); color: var(--surface); font-family: var(--mono); font-size: 0.68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-ol.p02-practice h3 { margin: 2px 0 2px; font-family: var(--font-serif); font-size: 1.04rem; line-height: 1.3; }
-ol.p02-practice p { margin: 0; font-size: 0.93rem; line-height: 1.55; color: var(--ink-2); }
-ol.p02-practice a[target="_blank"] { font-size: 0.82rem; white-space: nowrap; }
-
 /* the family SVG scales to about 0.55 on a 390-px phone; larger type keeps it at 11 px or more */
 @media (max-width: 639px) {
   .p02-family .p02-svg-axis { font-size: 20px; }

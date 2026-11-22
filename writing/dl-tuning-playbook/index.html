@@ -32,10 +32,10 @@
     <article class="post-body">
       <section class="prose index-intro" id="intro">
         <p class="lede">
-          Google Research's <em>Deep Learning Tuning Playbook</em> offers something rare in machine learning, a written account by people who have trained neural networks for many years of how they actually get good results in practice. Much of its advice fits in a sentence, such as re-tuning the learning rate whenever the batch size changes, or scoring a training run by its best checkpoint rather than its last. Why each of those sentences is true usually takes considerably longer to explain, and that explanation is what this series is about.
+          Google Research's <em>Deep Learning Tuning Playbook</em> offers something rare in machine learning: a direct account, by people who have trained neural networks for years, of how they get good results in practice. Much of its advice fits in one sentence, such as retuning the learning rate when batch size changes or scoring a run by its best checkpoint rather than its last. Explaining why each sentence holds takes longer, and that explanation is the point of this series.
         </p>
         <p>
-          I wrote these posts to understand the Playbook myself. Coming to it as a statistician, I kept finding that the advice made the most sense once I could see the mechanism underneath it, so for each part we work through the argument, write down a simple model of what is going on, and build a small simulation wherever a picture helps us see why the advice holds. I'm sharing them in the hope that they are useful to others who are learning to tune models systematically, and to anyone curious about where these rules of thumb come from.
+          I wrote these posts to understand the Playbook for myself. Coming to it as an astrostatistician, I found that the advice clicked once I could see the mechanism underneath. In each part, I work through the argument, write down a minimal mathematical model, and build an interactive simulation whenever a picture reveals why the rule works. I share these notes to help readers who want to tune models systematically or trace where common heuristics come from.
         </p>
         <div class="index-actions">
           <a class="index-btn is-primary" href="pages/01-the-tuning-loop.html">Start with Part 1 <span aria-hidden="true">→</span></a>
@@ -92,14 +92,17 @@
           I have in mind a reader who has trained a few networks in PyTorch or JAX and knows what a learning rate, a validation set and an optimizer are, but who has not yet tuned a model systematically. The mathematics stays at the level of undergraduate calculus, linear algebra and introductory statistics, and each section keeps only one or two equations in the main text. Derivations and more technical asides live in collapsible boxes marked <span class="index-aside-mark">ƒ(x)</span>, which can be skipped without losing the thread.
         </p>
         <p>
-          Shaded terms show a short definition when you hover over or tap them. Most figures are interactive, and their toolbars offer a guided tour of what to look for, the Playbook's own version of the figure where one exists, and the assumptions behind the toy model.
+          Shaded terms show a short definition when you hover over or tap them. Most figures are interactive. Their toolbars offer a guided tour of what to look for, the Playbook's original figure where one exists, and the toy model assumptions.
+        </p>
+        <p>
+          <strong>Who should skip what:</strong> If you are new to structured hyperparameter tuning, read the three acts in order. If you already train modern transformers or fine-tune foundation models, skim <a href="pages/01-the-tuning-loop.html">Part 1</a> and <a href="pages/02-starting-a-project.html">Part 2</a> for role assignments and optimizer trade-offs, then focus on <a href="pages/03-batch-size.html">Part 3</a>, <a href="pages/07-training-horizon.html">Part 7</a>, and <a href="pages/08-training-instabilities.html">Part 8</a> (accumulation, WSD cooldowns, Adaptive Edge of Stability, and normalization fixes). If you are debugging a broken run right now, jump straight to <a href="pages/05-reading-the-results.html">Part 5</a>, <a href="pages/08-training-instabilities.html">Part 8</a>, or the searchable <a href="pages/reference.html">Reference</a>.
         </p>
       </section>
 
       <section class="prose" id="series">
         <h2>The series</h2>
         <p>
-          The nine parts fall into three acts. The first sets up how we run experiments we can trust, the second follows a single round of tuning from design to decision, and the third turns to training dynamics and the engineering that every round depends on. They read best in order, and each part links back to the earlier ideas it relies on.
+          The nine parts fall into three acts. Act I sets up how to run trustworthy experiments and choose initial defaults. Act II follows one tuning round from search placement to launching a change. Act III covers training horizons, numerical stability, and pipeline engineering. Each part links back to earlier ideas it relies on.
         </p>
 
         <div class="series-acts l-wide">
@@ -192,7 +195,7 @@
       <section class="prose" id="process">
         <h2>The tuning process on one page</h2>
         <p>
-          Taken as a whole, the Playbook describes tuning as a loop of rounds, each with a single goal, preceded by a handful of decisions that we make once at the start of a project. The flowchart below lays out that process and marks which part of the series covers each step. The same chart closes every post, with that post's steps highlighted, so that it is always clear where we are in the larger picture.
+          Taken as a whole, the Playbook frames tuning as a loop of single-goal rounds preceded by project-level setup choices. The flowchart below lays out that process and marks which post covers each step. The same chart closes every post with its active steps highlighted, making it clear where each topic sits in the workflow.
         </p>
         <div class="playbook-map" data-default-node="s_arch"></div>
       </section>
