@@ -94,6 +94,9 @@
   function build() {
     if (!svg) return;
     svg.innerHTML = '';
+    svg.setAttribute('width', 0);
+    svg.setAttribute('height', 0);
+    svg.removeAttribute('viewBox');
     pulsePath = null;
     pulseStar = null;
     trunkLen = 0;
