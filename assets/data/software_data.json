@@ -1,6 +1,6 @@
 {
-  "lastUpdated": "2026-11-01",
-  "lastFetched": "2026-11-01",
+  "lastUpdated": "2026-11-23",
+  "lastFetched": "2026-11-23",
   "githubUser": "joshspeagle",
   "manualEdits": [
     {
@@ -8,8 +8,34 @@
       "summary": "Added the external repos `jumufraktiv` and `lf2i` by hand (commit f723960) without re-running fetch_software.py; their stars/forks/downloads are as of that date, every other repo's are as of lastFetched."
     }
   ],
-  "reposChecksum": "912a5340296f12ac26d40d14e803ee8b8b8588cf6fa4cb700dd4db4f64d140ea",
+  "reposChecksum": "a41520c703fd2ffd64fd23ed11d58123135f42165a752ce332442bf68ee2865d",
   "repos": {
+    "FlexMESA": {
+      "url": "https://github.com/joshspeagle/FlexMESA",
+      "homepage": "http://joshspeagle.com/FlexMESA/",
+      "hasPages": true,
+      "stars": 2,
+      "forks": 0,
+      "language": "Rust",
+      "description": "Attempt to create a more flexible and extensible MESA",
+      "pushed": "2026-11-23",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": null
+    },
+    "brutus": {
+      "url": "https://github.com/joshspeagle/brutus",
+      "homepage": "http://joshspeagle.com/brutus/",
+      "hasPages": true,
+      "stars": 54,
+      "forks": 14,
+      "language": "Jupyter Notebook",
+      "description": "Modeling stellar photometry with \"brute force\" methods",
+      "pushed": "2026-11-23",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": 210
+    },
     "joshspeagle.github.io": {
       "url": "https://github.com/joshspeagle/joshspeagle.github.io",
       "homepage": "https://joshspeagle.github.io",
@@ -18,20 +44,98 @@
       "forks": 1,
       "language": "HTML",
       "description": "Personal website",
-      "pushed": "2026-11-01",
+      "pushed": "2026-11-22",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": null
+    },
+    "aparture": {
+      "url": "https://github.com/joshspeagle/aparture",
+      "homepage": "https://joshspeagle.com/aparture/",
+      "hasPages": true,
+      "stars": 20,
+      "forks": 4,
+      "language": "JavaScript",
+      "description": "An LLM-powered tool to help sift through the arxiv",
+      "pushed": "2026-11-21",
       "archived": false,
       "isFork": false,
       "downloads_month": null
     },
     "binference": {
       "url": "https://github.com/joshspeagle/binference",
-      "homepage": null,
+      "homepage": "http://joshspeagle.com/binference/",
+      "hasPages": true,
+      "stars": 2,
+      "forks": 0,
+      "language": "Python",
+      "description": "Population and hierarchical inference with PDFs",
+      "pushed": "2026-11-16",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": 160
+    },
+    "telescopic": {
+      "url": "https://github.com/joshspeagle/telescopic",
+      "homepage": "http://joshspeagle.com/telescopic/",
+      "hasPages": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "description": "Finite-sample MCMC with paired chains and telescoping sums",
+      "pushed": "2026-11-16",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": null
+    },
+    "dynesty": {
+      "url": "https://github.com/joshspeagle/dynesty",
+      "homepage": "https://dynesty.readthedocs.io/",
+      "hasPages": false,
+      "stars": 427,
+      "forks": 93,
+      "language": "Python",
+      "description": "Dynamic Nested Sampling package for computing Bayesian posteriors and evidences",
+      "pushed": "2026-11-14",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": 138417
+    },
+    "GSPICE": {
+      "url": "https://github.com/joshspeagle/GSPICE",
+      "homepage": "http://joshspeagle.com/GSPICE/",
+      "hasPages": true,
+      "stars": 0,
+      "forks": 0,
+      "language": "Python",
+      "description": "GSPICE: Gaussian Pixelwise Conditional Estimation",
+      "pushed": "2026-11-04",
+      "archived": false,
+      "isFork": true,
+      "downloads_month": 151
+    },
+    "dorothy": {
+      "url": "https://github.com/joshspeagle/dorothy",
+      "homepage": "http://joshspeagle.com/dorothy/",
+      "hasPages": true,
+      "stars": 3,
+      "forks": 0,
+      "language": "Python",
+      "description": "data-driven stellar abundances",
+      "pushed": "2026-11-04",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": null
+    },
+    "astrostat_uoft": {
+      "url": "https://github.com/joshspeagle/astrostat_uoft",
+      "homepage": "http://astrostatuoft.com/",
       "hasPages": true,
       "stars": 1,
       "forks": 0,
       "language": "Python",
-      "description": "Population and hierarchical inference with PDFs",
-      "pushed": "2026-11-01",
+      "description": "Astrostatistics Research Team (ART) Website",
+      "pushed": "2026-11-02",
       "archived": false,
       "isFork": false,
       "downloads_month": null
@@ -49,84 +153,6 @@
       "isFork": false,
       "downloads_month": null
     },
-    "aparture": {
-      "url": "https://github.com/joshspeagle/aparture",
-      "homepage": "https://joshspeagle.com/aparture/",
-      "hasPages": true,
-      "stars": 20,
-      "forks": 4,
-      "language": "JavaScript",
-      "description": "An LLM-powered tool to help sift through the arxiv",
-      "pushed": "2026-10-31",
-      "archived": false,
-      "isFork": false,
-      "downloads_month": null
-    },
-    "brutus": {
-      "url": "https://github.com/joshspeagle/brutus",
-      "homepage": "http://joshspeagle.com/brutus/",
-      "hasPages": true,
-      "stars": 56,
-      "forks": 14,
-      "language": "Python",
-      "description": "Modeling stellar photometry with \"brute force\" methods",
-      "pushed": "2026-10-29",
-      "archived": false,
-      "isFork": false,
-      "downloads_month": 50
-    },
-    "GSPICE": {
-      "url": "https://github.com/joshspeagle/GSPICE",
-      "homepage": null,
-      "hasPages": true,
-      "stars": 0,
-      "forks": 0,
-      "language": "Python",
-      "description": "GSPICE: Gaussian Pixelwise Conditional Estimation",
-      "pushed": "2026-10-29",
-      "archived": false,
-      "isFork": true,
-      "downloads_month": null
-    },
-    "dorothy": {
-      "url": "https://github.com/joshspeagle/dorothy",
-      "homepage": null,
-      "hasPages": true,
-      "stars": 3,
-      "forks": 0,
-      "language": "Python",
-      "description": "data-driven stellar abundances",
-      "pushed": "2026-10-29",
-      "archived": false,
-      "isFork": false,
-      "downloads_month": null
-    },
-    "dynesty": {
-      "url": "https://github.com/joshspeagle/dynesty",
-      "homepage": "https://dynesty.readthedocs.io/",
-      "hasPages": false,
-      "stars": 426,
-      "forks": 92,
-      "language": "Python",
-      "description": "Dynamic Nested Sampling package for computing Bayesian posteriors and evidences",
-      "pushed": "2026-10-28",
-      "archived": false,
-      "isFork": false,
-      "downloads_month": 73110
-    },
-    "telescopic": {
-      "url": "https://github.com/joshspeagle/telescopic",
-      "homepage": null,
-      "hasPages": true,
-      "stars": 0,
-      "forks": 0,
-      "language": "Python",
-      "description": "Finite-sample MCMC with paired chains and telescoping sums",
-      "pushed": "2026-10-24",
-      "archived": false,
-      "isFork": false,
-      "downloads_month": null
-    },
     "fabulous": {
       "url": "https://github.com/joshspeagle/fabulous",
       "homepage": "https://lee-group-cmu.github.io/lf2i/",
@@ -138,19 +164,6 @@
       "pushed": "2026-10-06",
       "archived": false,
       "isFork": true,
-      "downloads_month": null
-    },
-    "astrostat_uoft": {
-      "url": "https://github.com/joshspeagle/astrostat_uoft",
-      "homepage": "http://astrostatuoft.com/",
-      "hasPages": true,
-      "stars": 1,
-      "forks": 0,
-      "language": "Python",
-      "description": "Astrostatistics Research Team (ART) Website",
-      "pushed": "2026-09-09",
-      "archived": false,
-      "isFork": false,
       "downloads_month": null
     },
     "STATSTRO": {
@@ -294,7 +307,7 @@
       "pushed": "2025-08-10",
       "archived": false,
       "isFork": false,
-      "downloads_month": 21
+      "downloads_month": 33
     },
     "typical_sets": {
       "url": "https://github.com/joshspeagle/typical_sets",
@@ -411,7 +424,7 @@
       "pushed": "2018-10-01",
       "archived": false,
       "isFork": false,
-      "downloads_month": 14
+      "downloads_month": 23
     },
     "prospector": {
       "url": "https://github.com/joshspeagle/prospector",
@@ -428,7 +441,7 @@
     },
     "nestle": {
       "url": "https://github.com/joshspeagle/nestle",
-      "homepage": "https://kbarbary.github.io/nestle",
+      "homepage": "http://kbarbary.github.io/nestle",
       "hasPages": false,
       "stars": 0,
       "forks": 0,
@@ -503,7 +516,35 @@
       "pushed": "2026-10-06",
       "archived": false,
       "isFork": false,
-      "downloads_month": 12,
+      "downloads_month": 27,
+      "external": true
+    },
+    "lazy-tfm": {
+      "url": "https://github.com/biprateep/lazy-tfm",
+      "homepage": null,
+      "hasPages": false,
+      "stars": 4,
+      "forks": 2,
+      "language": "Python",
+      "description": "LAZY: Lazy but Accurate Z* for Yinz",
+      "pushed": "2026-11-15",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": 627,
+      "external": true
+    },
+    "alphauniverse": {
+      "url": "https://github.com/hanbangwu/alphauniverse",
+      "homepage": "https://alphauniverse.aiforscientists.org",
+      "hasPages": false,
+      "stars": 1,
+      "forks": 0,
+      "language": "Python",
+      "description": "The embedding-based astronomical virtual observatory",
+      "pushed": "2026-11-22",
+      "archived": false,
+      "isFork": false,
+      "downloads_month": null,
       "external": true
     }
   }

@@ -1,6 +1,6 @@
 {
   "site": {
-    "lastUpdated": "2026-11-01",
+    "lastUpdated": "2026-11-23",
     "jobTitle": "Assistant Professor of Astrostatistics",
     "affiliation": {
       "name": "University of Toronto",
@@ -601,7 +601,34 @@
             ]
           }
         ],
-        "mastersProjects": [],
+        "mastersProjects": [
+          {
+            "name": "Christine Hao",
+            "timelinePeriod": "Fall 2026-Present",
+            "supervisionType": "Co-Supervisor",
+            "coSupervisors": [
+              "<a href=\"https://astrockragh.github.io/\">Christian Kragh Jespersen</a> (<a href=\"https://www.astro.utoronto.ca/\">Astronomy & Astrophysics</a>)"
+            ],
+            "project": "What Fraction of Galaxy Age Measurements are Prior Dominated?",
+            "myCareerStage": "Assistant Professor",
+            "currentStatus": "PhD student (AST 1501)",
+            "courses": [
+              "Research Course"
+            ]
+          },
+          {
+            "name": "Milind Sarkar",
+            "timelinePeriod": "Summer 2026-Present",
+            "supervisionType": "Co-Supervisor",
+            "coSupervisors": [
+              "<a href=\"https://biprateep.de/\">Biprateep Dey</a> (<a href=\"https://www.dunlap.utoronto.ca/\">Dunlap Institute</a>)"
+            ],
+            "project": "Building, Applying, and Interpreting Astronomical Foundation Models",
+            "myCareerStage": "Assistant Professor",
+            "currentStatus": "BS–MS student",
+            "institution": "<a href=\"https://www.iisermohali.ac.in/\">IISER Mohali</a>"
+          }
+        ],
         "completed": {
           "postdoctoral": [
             {
@@ -631,6 +658,7 @@
               "currentStatus": "PhD (completed)",
               "outcome": "<a href=\"https://www.nsf.gov/funding/opportunities/aapf-nsf-astronomy-astrophysics-postdoctoral-fellowships\">NSF Astronomy and Astrophysics Postdoctoral Fellow</a> at <a href=\"https://www.umass.edu\">UMass Amherst</a> working with <a href=\"https://www.astrowhit.com/\">Kate Whitaker</a>",
               "awards": [
+                "<a href=\"https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award/\">2024 Jui Lin (Allen) Yen Award</a>",
                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
               ]
             },
@@ -646,6 +674,7 @@
               "currentStatus": "PhD (completed)",
               "outcome": "Joint <a href=\"https://astronomy.as.virginia.edu/\">GECO</a> and <a href=\"https://cosmicai.org/\">CosmicAI</a> Postdoctoral Fellow at the University of Virginia",
               "awards": [
+                "<a href=\"https://www.astro.utoronto.ca/2026-fieldus-award-recipients-simran-nerval-and-mairead-heiger/\">2026 Fieldus Award</a>",
                 "<a href=\"https://datasciences.utoronto.ca/doctoral-student-fellowship/\">DSI Fellowship</a>"
               ]
             },
@@ -677,6 +706,7 @@
               "currentStatus": "PhD (completed)",
               "outcome": "<a href=\"https://nserc-crsng.canada.ca/en/funding-opportunity/canada-postdoctoral-research-award-program\">NSERC Postdoctoral Fellow</a> at <a href=\"https://ucsd.edu\">UC San Diego</a> working with <a href=\"https://www.broekgaarden.nl/floor/wordpress/\">Floor Broekgaarden</a> and <a href=\"https://www.kylekremer.com/\">Kyle Kremer</a>",
               "awards": [
+                "<a href=\"https://www.astro.utoronto.ca/sam-berek-and-shivan-khullar-win-the-jui-lin-allen-yen-award-2/\">2025 Jui Lin (Allen) Yen Award</a>",
                 "<a href=\"https://nserc-crsng.canada.ca/en/funding-opportunity/canada-graduate-research-scholarship-doctoral-program\">NSERC PGS-D</a>"
               ]
             },
@@ -1779,7 +1809,8 @@
               "location": "Toronto, ON",
               "date": "Oct 2026",
               "year": 2026,
-              "type": "Invited Talk"
+              "type": "Invited Talk",
+              "url": "https://www.fields.utoronto.ca/activities/26-27/foundation-models"
             },
             {
               "title": "How AI has taken over the world and what it means for science",
@@ -1923,12 +1954,21 @@
               "type": "Colloquium"
             },
             {
+              "title": "A Deep Dive into Data-Driven Astrophysics",
+              "event": "NSF-Simons AI Institute for the Sky (SkAI): Colloquium",
+              "location": "Chicago, IL",
+              "date": "Nov 2026",
+              "year": 2026,
+              "type": "Colloquium"
+            },
+            {
               "title": "Learning and Doing Astronomy in the Age of AI",
               "event": "European Space Agency (ESA): Space Science AI/ML Seminar Series",
               "location": "Virtual",
               "date": "Oct 2026",
               "year": 2026,
-              "type": "Seminar"
+              "type": "Seminar",
+              "url": "https://www.cosmos.esa.int/web/data-science/talks"
             },
             {
               "title": "Foundations of LLM Agents, and the State of the Art",
@@ -2600,6 +2640,14 @@
           "name": "Panels",
           "talks": [
             {
+              "title": "Panel Discussion on AI for Scientific Discovery",
+              "event": "BIRS Workshop: Challenging AI for Scientific Discovery: from Neuroscience to Cosmology",
+              "location": "Banff, AB",
+              "date": "Oct 2026",
+              "year": 2026,
+              "type": "Panelist"
+            },
+            {
               "title": "Panel on inductive biases and interpretability",
               "event": "NeurIPS 2023: Workshop on Machine Learning and the Physical Sciences",
               "location": "New Orleans, LA",
@@ -2903,6 +2951,15 @@
         "content": "I regularly conduct workshops on Bayesian methods, Python for astronomy, and statistical computing for various audiences including graduate students, postdocs, and faculty."
       },
       "shortCourses": [
+        {
+          "title": "Tabular Foundation Models and Machine Learning Interpretability in Astronomy",
+          "program": "University of Arizona: TAP Computation & Data Initiative Workshop",
+          "location": "Tucson, AZ",
+          "terms": [
+            "Dec 2026"
+          ],
+          "programAbbr": "UA TAP"
+        },
         {
           "title": "Bayesian Inference",
           "program": "University of Toronto Statistical Sciences Research Program",
@@ -3274,6 +3331,37 @@
                   "url": "https://mscac.utoronto.ca/concentrations/ds/"
                 },
                 {
+                  "title": "Executive Committee",
+                  "role": "Committee Member",
+                  "periods": [
+                    "2026-Present"
+                  ],
+                  "tags": [
+                    "2026–Present: Member"
+                  ]
+                },
+                {
+                  "title": "Summer Research Program (UTSSRP)",
+                  "role": "Instructor & Organizer",
+                  "periods": [
+                    "2026"
+                  ],
+                  "tags": [
+                    "2026: Instructor & Organizer"
+                  ],
+                  "url": "https://www.statistics.utoronto.ca/UTSSRP"
+                },
+                {
+                  "title": "Undergraduate Curriculum Committee",
+                  "role": "Committee Member",
+                  "periods": [
+                    "2025-Present"
+                  ],
+                  "tags": [
+                    "2025–Present: Member"
+                  ]
+                },
+                {
                   "title": "Graduate Admissions Committee",
                   "role": "Committee Member",
                   "periods": [
@@ -3323,6 +3411,15 @@
             }
           ],
           "items": [
+            {
+              "organization": "ADASS 2027",
+              "role": "LOC Member · Astronomical Data Analysis Software & Systems (Toronto)",
+              "period": "2026-2027",
+              "tags": [
+                "2026–27: LOC Member"
+              ],
+              "url": "https://adass2027.org/"
+            },
             {
               "organization": "CASCA Annual General Meeting",
               "role": "SOC Co-Chair & LOC Member · Canadian Astronomical Society",
@@ -3554,7 +3651,8 @@
           "url": "https://joshspeagle.com/research/"
         },
         "cd_sbi": {
-          "group": "scratch"
+          "group": "scratch",
+          "blurb": "Calibrated confidence distributions via simulation-based inference"
         },
         "frasian_tilting": {
           "group": "scratch"
@@ -3567,19 +3665,40 @@
           "pypi": "arxivy",
           "blurb": "Helping keep up with the arXiv"
         },
+        "FlexMESA": {
+          "group": "stellar",
+          "docs": "https://joshspeagle.com/FlexMESA/",
+          "blurb": "Safe Rust + Python/JAX port of MESA for stellar evolution"
+        },
+        "lazy-tfm": {
+          "group": "inference",
+          "external": "biprateep/lazy-tfm",
+          "pypi": "lazy-tfm",
+          "docs": "https://lazy-tfm.readthedocs.io",
+          "paper": "https://ui.adsabs.harvard.edu/abs/2026arXiv261039332D",
+          "blurb": "Full conditional distributions from pretrained tabular foundation models (with Biprateep Dey)"
+        },
+        "alphauniverse": {
+          "group": "dataviz",
+          "external": "hanbangwu/alphauniverse",
+          "url": "https://alphauniverse.aiforscientists.org",
+          "blurb": "Omni-modal embedding search over COSMOS galaxies powered by AION (with Leo Wu, Nolan Koblischke & Biprateep Dey)"
+        },
         "binference": {
           "group": "inference",
+          "pypi": "binference",
           "docs": "https://joshspeagle.com/binference/",
           "blurb": "Population and hierarchical Bayesian inference with probability density functions"
         },
         "GSPICE": {
           "group": "stellar",
+          "pypi": "pygspice",
           "docs": "https://joshspeagle.com/GSPICE/",
-          "blurb": "Gaussian Pixelwise Conditional Estimation (GSPICE) for astronomical imaging and spectra"
+          "blurb": "Gaussian Pixelwise Conditional Estimation (GSPICE) for infilling masked astronomical spectra"
         },
         "telescopic": {
           "group": "inference",
-          "blurb": "Finite-sample MCMC with paired chains and telescoping sums"
+          "blurb": "Unbiased Markov chain Monte Carlo with coupled chains and telescoping sums"
         },
         "fabulous": {
           "group": "inference",

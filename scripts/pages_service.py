@@ -25,7 +25,7 @@ _AY_START = 2020
 _AY_LAST = len(_ACADEMIC_YEARS) - 1
 _ACTIVE_END_YEAR = f"{_AY_START + _AY_LAST}-{_AY_START + _AY_LAST + 1}"
 _RANGE_RE = re.compile(r"(\d{4})(?:[–-](\d{2,4}|Present))?")
-_LEAD_WORDS = ("chair", "president", "director", "founder", "organizer", "soc", "loc")
+_LEAD_WORDS = ("chair", "president", "director", "founder", "organizer")
 
 
 def _visible(seq):
@@ -282,24 +282,34 @@ def _workshop_rows(orgs, extra, acc):
             rows.append(_render_row(title, pos.get("note") or short, "Annual", acc, spans))
     if extra:
         stacks = {}
-        sum_spans = []
+        grouped_spans = {}
         sub_rows = []
         for it in extra:
             oname = it.get("organization", "")
             spans = _spans_from_pos(oname, it)
             if spans:
-                c0 = spans[0][0]
-                stacks.setdefault(c0, []).append((oname.split()[0], True,
+                c0 = min(s[0] for s in spans)
+                c1 = max(s[1] for s in spans)
+                item_lead = any(s[3] for s in spans)
+                stacks.setdefault(c0, []).append((oname.split()[0], item_lead,
                                                  f"{oname}: {it.get('role', '')}"))
-                sum_spans.extend(spans)
+                bucket = grouped_spans.setdefault((c0, c1), [])
+                bucket.append((oname, item_lead, spans))
             sub_rows.append(_render_row(oname, it.get("role", "").split(" · ")[-1],
                                         "SOC / LOC", acc, spans, parent_id="conf-org"))
-        if sum_spans:
-            merged_span = [(min(s[0] for s in sum_spans), max(s[1] for s in sum_spans),
-                            f"{len(extra)}× SOC / LOC Co-Chair", True,
-                            "; ".join(it.get("organization", "") for it in extra))]
+        if grouped_spans:
+            summary_spans = []
+            for (c0, c1), entries in sorted(grouped_spans.items()):
+                grp_lead = any(lead for _, lead, _ in entries)
+                if grp_lead:
+                    lbl = f"{len(entries)}× SOC / LOC Co-Chair" if len(entries) > 1 else "SOC / LOC Co-Chair"
+                elif len(entries) > 1:
+                    lbl = f"{len(entries)}× SOC / LOC"
+                else:
+                    lbl = entries[0][2][0][2] or "LOC Member"
+                summary_spans.append((c0, c1, lbl, grp_lead, "; ".join(oname for oname, _, _ in entries)))
             rows.append(_render_row("Conferences & Symposia", "Scientific & Local Organizing Committees",
-                                    f"{len(extra)} conf.", acc, merged_span, stacks=stacks, expand_id="conf-org"))
+                                    f"{len(extra)} conf.", acc, summary_spans, stacks=stacks, expand_id="conf-org"))
             rows.extend(sub_rows)
     return rows
 
