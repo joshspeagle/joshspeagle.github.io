@@ -365,9 +365,7 @@ class UnifiedPublicationPipeline:
             for ident in identity_keys(pub):
                 existing_lookup.setdefault(ident, pub)
 
-        # Fields to preserve from existing data. These are set by separate
-        # processes (LLM agents, post-processing, hand annotation) and no fetcher
-        # produces them, so without this they are lost on every run.
+        # Fields preserved from existing data when omitted by a partial fetch.
         preserve_fields = [
             "bibcode",
             "id",
@@ -384,6 +382,10 @@ class UnifiedPublicationPipeline:
             "featured",
             "scholar_id_aliases",
             "journal",
+            "authors",
+            "abstract",
+            "keywords",
+            "scholarUrl",
         ]
 
         def _lookup(pub):
@@ -399,13 +401,28 @@ class UnifiedPublicationPipeline:
                 continue
 
             # Fill gaps only: a fetched value always wins over a carried one.
-            if any(
-                field in existing and not pub.get(field) for field in preserve_fields
-            ):
-                carried += 1
+            did_carry = False
             for field in preserve_fields:
-                if field in existing and not pub.get(field):
+                if existing.get(field) and not pub.get(field):
                     pub[field] = existing[field]
+                    did_carry = True
+            existing_cbs = existing.get("citations_by_source")
+            if isinstance(existing_cbs, dict) and existing_cbs:
+                cbs = pub.get("citations_by_source")
+                if not isinstance(cbs, dict):
+                    cbs = {}
+                    pub["citations_by_source"] = cbs
+                for src, cnt in existing_cbs.items():
+                    if src not in cbs:
+                        cbs[src] = cnt
+                        did_carry = True
+                if cbs:
+                    pub["citations"] = max(
+                        [pub.get("citations") or 0, existing.get("citations") or 0]
+                        + [v for v in cbs.values() if isinstance(v, (int, float))]
+                    )
+            if did_carry:
+                carried += 1
 
         return carried
 
@@ -420,10 +437,10 @@ class UnifiedPublicationPipeline:
             self.paper_list, self.scholar_data, self.ads_data, self.openalex_data
         )
 
-        # Carry forward fields from existing data that fetchers don't produce
+        # Carry forward fields from existing data when omitted by partial fetches
         carried = self._carry_forward_existing_fields(merged_publications)
         if carried:
-            console.print(f"  ✓ Carried forward LLM categorization for {carried} papers")
+            console.print(f"  ✓ Preserved metadata/categorization for {carried} papers")
 
         console.print(f"  ✓ Merged into {len(merged_publications)} publications")
 

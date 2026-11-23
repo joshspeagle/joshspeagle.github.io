@@ -23,10 +23,10 @@ What it checks & synchronizes:
      - Compares service entries in `content.json` against the CV's
        `SELECTED PROFESSIONAL ACTIVITIES & SERVICE` section.
   4. PDF File Sync (`--sync-pdf`) & DOCX Update (`--update-docx`):
-     - Keeps `CV_speagle.pdf` and `docs/CV_speagle.pdf` identical to the newest
-       matching PDF across `--cv-dir` / `$CV_DIR` and the repo, and updates the summary
-       numbers in `CV_speagle.docx` directly (automatically omitting or restoring the
-       MSc bullet based on whether `masters == 0` or `> 0`).
+     - Propagates the authoritative master `CV_speagle.pdf` (from `--cv-dir` / `$CV_DIR`
+       when provided, or repo root `CV_speagle.pdf` -> `docs/CV_speagle.pdf` otherwise)
+       and updates summary counts in `CV_speagle.docx` directly (automatically
+       omitting or restoring the MSc bullet based on whether `masters == 0` or `> 0`).
 
 Usage:
   python3 scripts/sync_cv.py [--cv-dir PATH]
@@ -292,20 +292,31 @@ def audit_cv_sync(content: Dict, pub_data: Dict, cv_dir: Optional[object] = None
 
 
 def sync_pdf_files(cv_dir: Optional[object] = None) -> List[str]:
+    """Copy the canonical CV_speagle.pdf into repo root and docs/.
+
+    When ``cv_dir`` (or ``CV_DIR``) is set, its ``CV_speagle.pdf`` is the sole
+    authoritative master so stale or variant files in ``docs/`` can never overwrite it.
+    Without an external master directory, repo root ``CV_speagle.pdf`` is used as
+    the source for ``docs/CV_speagle.pdf``.
+    """
     actions = []
     cv_base = _resolve_cv_dir(cv_dir)
-    ext_pdf = (cv_base / "CV_speagle.pdf") if cv_base else None
-    pool = [p for p in (ext_pdf, REPO_CV_PDF, DOCS_CV_PDF) if p is not None]
-    candidates = [p for p in pool if p.exists()]
-    if not candidates:
-        return ["No CV_speagle.pdf found to sync."]
-    newest = max(candidates, key=lambda p: p.stat().st_mtime)
-    newest_hash = _sha256(newest)
-    for target in (REPO_CV_PDF, DOCS_CV_PDF):
-        if target != newest and _sha256(target) != newest_hash:
+    if cv_base is not None:
+        source_pdf = cv_base / "CV_speagle.pdf"
+        targets = (REPO_CV_PDF, DOCS_CV_PDF)
+    else:
+        source_pdf = REPO_CV_PDF
+        targets = (DOCS_CV_PDF,)
+
+    if not source_pdf.exists():
+        return [f"Source CV PDF not found at {source_pdf}; nothing synced."]
+
+    source_hash = _sha256(source_pdf)
+    for target in targets:
+        if _sha256(target) != source_hash:
             target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(newest, target)
-            actions.append(f"Copied {newest} -> {target}")
+            shutil.copy2(source_pdf, target)
+            actions.append(f"Copied {source_pdf} -> {target}")
     if not actions:
         actions.append("CV_speagle.pdf and docs/CV_speagle.pdf are already in sync.")
     return actions
@@ -579,7 +590,7 @@ def main():
     parser = argparse.ArgumentParser(description="Bidirectional CV <-> Website sync and audit tool.")
     parser.add_argument("--cv-dir", type=str, default=os.environ.get("CV_DIR"),
                         help="Optional external directory containing CV_speagle.docx and CV_speagle.pdf (defaults to $CV_DIR)")
-    parser.add_argument("--sync-pdf", action="store_true", help="Sync CV_speagle.pdf and docs/CV_speagle.pdf with newest PDF copy")
+    parser.add_argument("--sync-pdf", action="store_true", help="Copy the master CV_speagle.pdf into repo root and docs/")
     parser.add_argument("--update-docx", action="store_true", help="Update summary counts in <cv-dir>/CV_speagle.docx")
     parser.add_argument("--export-pdf", action="store_true", help="Export <cv-dir>/CV_speagle.docx to PDF via Word COM")
     parser.add_argument("--export-patch", type=str, default=None, help="Write Markdown CV sync report to file")

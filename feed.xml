@@ -6,7 +6,7 @@
     <description>News and press from Joshua S. Speagle, astrostatistics at the University of Toronto.</description>
     <language>en-us</language>
     <atom:link href="https://joshspeagle.com/feed.xml" rel="self" type="application/rss+xml"/>
-    <lastBuildDate>01 Nov 2026 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>23 Nov 2026 00:00:00 +0000</lastBuildDate>
     <item>
       <title>Tabular foundation models outperform bespoke photometric redshift estimators</title>
       <link>https://ui.adsabs.harvard.edu/abs/2026arXiv261039332D</link>
@@ -173,7 +173,7 @@
       <guid isPermaLink="false">tag:joshspeagle.com,2020-02-01:news/dynesty-published-in-monthly-notices-of-the-royal-astronomic</guid>
       <pubDate>01 Feb 2020 00:00:00 +0000</pubDate>
       <category>Software</category>
-      <description>The release paper for dynesty, our open-source Python package for dynamic nested sampling and Bayesian posterior and evidence estimation, appeared in MNRAS, 493, 3132 and has now been cited 2,600+ times.</description>
+      <description>The release paper for dynesty, our open-source Python package for dynamic nested sampling and Bayesian posterior and evidence estimation, appeared in MNRAS, 493, 3132 and has now been cited 3,000+ times.</description>
     </item>
     <item>
       <title>The Radcliffe Wave: the largest gaseous structure in the galaxy</title>
