@@ -40,13 +40,15 @@ LIBRARY_CACHE_JSON = PROJECT_ROOT / "assets" / "data" / "ads_library_cache.json"
 
 ADS_BIBLIB_DOCUMENTS_URL = "https://api.adsabs.harvard.edu/v1/biblib/documents/{library_id}"
 
-# Papers explicitly adjudicated as contributing co-author so repeated curation
-# audits stay aligned with curated ADS role libraries.
-REVIEWED_ROLE_EXCLUSIONS: Dict[str, str] = {
-    "2024MNRAS.528.4272H": "Reviewed as contributing co-author",
-    "2023ApJ...954..132M": "Reviewed as contributing co-author",
-    "2019MNRAS.487.3581F": "Reviewed as contributing co-author",
-    "2026arXiv261032913S": "Written prior to active supervision window (contributing co-author)",
+# Manually adjudicated authorship roles so repeated curation audits stay
+# aligned with curated ADS role libraries.
+REVIEWED_ROLE_OVERRIDES: Dict[str, Tuple[str, str]] = {
+    "2024MNRAS.528.4272H": ("other", "Reviewed as contributing co-author"),
+    "2023ApJ...954..132M": ("other", "Reviewed as contributing co-author"),
+    "2019MNRAS.487.3581F": ("other", "Reviewed as contributing co-author"),
+    "2026arXiv261032913S": ("other", "Written prior to active supervision window (contributing co-author)"),
+    "2026OJAp....959081H": ("significant", "Written prior to active supervision window (reviewed as significant)"),
+    "2026arXiv260905616G": ("significant", "Reviewed as significant contribution"),
 }
 
 
@@ -180,8 +182,6 @@ def _is_speagle(author_str: str) -> bool:
 def _non_refereed_role_exclusion(pub: Dict) -> Optional[str]:
     """Return an exclusion reason for theses, decadal white papers, and non-refereed notes."""
     bib = (pub.get("bibcode") or "").strip()
-    if bib in REVIEWED_ROLE_EXCLUSIONS:
-        return REVIEWED_ROLE_EXCLUSIONS[bib]
     journals = f"{pub.get('journal') or ''} {journal_from_bibcode(bib) or ''}".lower()
     title = str(pub.get("title") or "").lower()
     if "ph.d. thesis" in journals:
@@ -195,6 +195,10 @@ def _non_refereed_role_exclusion(pub: Dict) -> Optional[str]:
 
 def classify_paper_role(pub: Dict, mentee_index: Dict[str, List[Dict]]) -> Tuple[str, str]:
     """Infer ('primary'|'postdoc'|'student'|'significant'|'other', reason) for a paper."""
+    bib = (pub.get("bibcode") or "").strip()
+    if bib in REVIEWED_ROLE_OVERRIDES:
+        return REVIEWED_ROLE_OVERRIDES[bib]
+
     authors = pub.get("authors") or []
     year = int(pub.get("year") or 0)
     if not authors:
